@@ -13,10 +13,12 @@ if [[ "$HAS_NVIDIA" == true ]]; then
     install_packages "${drivers_list[@]}"
 
     log_info "Configuring NVIDIA kernel parameters for Wayland..."
+    
     sudo grubby --update-kernel=ALL --args="nvidia-drm.modeset=1 nvidia-drm.fbdev=1"
 
     if [[ "$HAS_INTEL" == true ]]; then
         log_info "Optimus laptop detected. Installing GPU switching support..."
+
         install_packages "switcheroo-control"
         sudo systemctl enable --now switcheroo-control
     fi

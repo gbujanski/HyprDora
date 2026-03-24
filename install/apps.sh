@@ -15,4 +15,4 @@ apps_list=(
     gimp
 )
 
-install_packages "${apps_list[@]}"
+install_selected_packages "${apps_list[@]}"

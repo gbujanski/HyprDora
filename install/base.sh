@@ -11,4 +11,4 @@ app_list=(
     lspci
 )
 
-install_packages "${app_list[@]}"
+install_selected_packages "${app_list[@]}"

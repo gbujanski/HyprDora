@@ -1,5 +1,4 @@
 loger() {
-
     local log_level="$1"
     local log_message="$2"
     local reset='\e[0m'
@@ -18,27 +17,21 @@ loger() {
         *) color="$reset" ;;
     esac
 
-	echo -e "${color}=================================="
-	echo -e "[${log_level}] ${log_message}"
-	echo -e "==================================${reset}"
+	echo -e "${color}[${log_level}] ${log_message}${reset}"
 }
 
 log_info() {
-    # $1 - log message
     loger "INFO" "$1"
 }
 
 log_warning() {
-    # $1 - log message
     loger "WARNING" "$1"
 }
 
 log_error() {
-    # $1 - log message
     loger "ERROR" "$1"
 }
 
 log_success() {
-    # $1 - log message
     loger "SUCCESS" "$1"
 }

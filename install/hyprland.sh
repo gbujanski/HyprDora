@@ -19,6 +19,7 @@ packages_list=(
     pipewire-pulseaudio
     wireplumber
 )
+
 install_packages "${packages_list[@]}"
 
 # NVIDIA-specific Wayland environment variables for Hyprland
