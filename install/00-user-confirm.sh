@@ -17,6 +17,7 @@ app_list=(
     htop
     docker
     lazydocker
+    util-linux-user
 )
 
 log_info "Welcome to the Fedora Hyprland installation script!

@@ -46,16 +46,22 @@ fi
 REPO_DIR="$(pwd)"
 CONFIG_DIR="$HOME/.config"
 
-mkdir -p "$CONFIG_DIR"
+if [ ! -d "$CONFIG_DIR" ]; then
+    log_info "Creating config directory at $CONFIG_DIR"
+    mkdir -p "$CONFIG_DIR"
+fi
 
-if [ -d "$CONFIG_DIR/hypr" ] && [ ! -L "$CONFIG_DIR/hypr" ]; then
+if [ -d "$CONFIG_DIR/hypr" ]; then
+    log_info "Backing up existing Hypr config directory at $CONFIG_DIR/hypr"
     mv "$CONFIG_DIR/hypr" "$CONFIG_DIR/hypr_backup_$(date +%Y%m%d_%H%M%S)"
 fi
 
-if [ -d "$CONFIG_DIR/waybar" ] && [ ! -L "$CONFIG_DIR/waybar" ]; then
+if [ -d "$CONFIG_DIR/waybar" ]; then
+    log_info "Backing up existing Waybar config directory at $CONFIG_DIR/waybar"
     mv "$CONFIG_DIR/waybar" "$CONFIG_DIR/waybar_backup_$(date +%Y%m%d_%H%M%S)"
 fi
 
+log_info "Linking Hyprland and Waybar configs from repository to $CONFIG_DIR"
 ln -sf "$REPO_DIR/configs/hypr" "$CONFIG_DIR/hypr"
 ln -sf "$REPO_DIR/configs/waybar" "$CONFIG_DIR/waybar"
 
