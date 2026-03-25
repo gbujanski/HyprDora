@@ -12,7 +12,6 @@ packages_list=(
     waybar
     wofi
     dunst
-    kitty
     qt5-qtwayland
     qt6-qtwayland
     pipewire
