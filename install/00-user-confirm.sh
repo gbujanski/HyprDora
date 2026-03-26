@@ -11,7 +11,7 @@ app_list=(
     zen-browser
     discord
     filezilla
-    onlyoffice-desktopeditors
+    onlyoffice
     VirtualBox
     gimp
     htop

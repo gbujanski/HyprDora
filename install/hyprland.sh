@@ -61,7 +61,7 @@ if [ -d "$CONFIG_DIR/waybar" ]; then
     mv "$CONFIG_DIR/waybar" "$CONFIG_DIR/waybar_backup_$(date +%Y%m%d_%H%M%S)"
 fi
 
-log_info "Linking Hyprland and Waybar configs from repository to $CONFIG_DIR"
-ln -sf "$REPO_DIR/configs/hypr" "$CONFIG_DIR/hypr"
-ln -sf "$REPO_DIR/configs/waybar" "$CONFIG_DIR/waybar"
+log_info "Copying Hyprland and Waybar configs from repository to $CONFIG_DIR"
+cp -r "$REPO_DIR/configs/hypr" "$CONFIG_DIR/hypr"
+cp -r "$REPO_DIR/configs/waybar" "$CONFIG_DIR/waybar"
 

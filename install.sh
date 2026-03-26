@@ -20,10 +20,10 @@ export GUM_CHOOSE_HEADER="Choose packages to install:
 (All packages are selected by default)"
 
 source install/00-user-confirm.sh
-source install/copr.sh
-source install/zsh.sh
-source install/apps.sh
 source install/update.sh
+source install/copr.sh
+source install/apps.sh
+source install/zsh.sh
 source install/drivers.sh
 source install/hyprland.sh
 
