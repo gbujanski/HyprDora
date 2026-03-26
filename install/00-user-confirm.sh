@@ -20,6 +20,13 @@ app_list=(
     util-linux-user
 )
 
+dev_languages=(
+    python3
+    nodejs
+    java-21-openjdk-devel
+    dotnet-sdk-8.0
+)
+
 log_info "Welcome to the Fedora Hyprland installation script!
 This script will guide you through the installation process of Fedora with Hyprland and various applications and drivers.
 You can chose manual or automatic installation. In manual mode, you can select which packages to install and whether to update the system before installation.
@@ -38,6 +45,7 @@ else
 
     system_update_answer=$(gum confirm "Do you want to update the system before installing packages?" --default="Yes" && echo 1 || echo 0)
     manual_selection_answer=$(gum confirm "Do you want to manually select packages to install?" --default="No" && echo 1 || echo 0)
+    dev_languages_answer=$(gum confirm "Do you want to manually select  development languages to install?" --default="No" && echo 1 || echo 0)
 fi
 
 if [[ "$manual_selection_answer" -eq 1 ]]; then
@@ -48,4 +56,14 @@ if [[ "$manual_selection_answer" -eq 1 ]]; then
     fi
 else
     selected_apps=("${app_list[@]}")
+fi
+
+if [[ "$dev_languages_answer" -eq 1 ]]; then
+    dev_languages_selection=$(gum choose --no-limit --selected="*" "${dev_languages[@]}")
+
+    if [ -n "$dev_languages_selection" ]; then
+        mapfile -t selected_dev_languages <<< "$dev_languages_selection"
+    fi
+else
+    selected_dev_languages=("${dev_languages[@]}")
 fi
