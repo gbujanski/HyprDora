@@ -17,6 +17,14 @@ packages_list=(
     pipewire
     pipewire-pulseaudio
     wireplumber
+    thunar
+    thunar-archive-plugin
+    thunar-volman
+    papirus-icon-theme
+    nwg-look
+    tumbler
+    gnome-keyring
+    nwg-drawer
 )
 
 install_packages "${packages_list[@]}"
