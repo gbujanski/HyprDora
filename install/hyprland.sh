@@ -17,6 +17,7 @@ packages_list=(
     pipewire
     pipewire-pulseaudio
     wireplumber
+    pavucontrol
     thunar
     thunar-archive-plugin
     thunar-volman
@@ -24,7 +25,10 @@ packages_list=(
     nwg-look
     tumbler
     gnome-keyring
-    nwg-drawer
+    fuzzel
+    blueman-manager
+    cliphist
+    bibata-cursor-themes
 )
 
 install_packages "${packages_list[@]}"
@@ -73,3 +77,6 @@ log_info "Copying Hyprland and Waybar configs from repository to $CONFIG_DIR"
 cp -r "$REPO_DIR/configs/hypr" "$CONFIG_DIR/hypr"
 cp -r "$REPO_DIR/configs/waybar" "$CONFIG_DIR/waybar"
 
+gsettings set org.gnome.desktop.interface icon-theme 'Papirus'
+gsettings set org.gnome.desktop.interface cursor-theme 'Bibata-Modern-Ice'
+gsettings set org.gnome.desktop.interface cursor-size 24

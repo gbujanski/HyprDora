@@ -4,3 +4,4 @@ install_packages "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-relea
 install_packages "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm"
 
 sudo dnf copr enable -yq sdegler/hyprland
+sudo dnf copr enable -yq peterwu/rendezvous
