@@ -23,7 +23,14 @@ else
     if curl -fsSL "$font_url" -o "$tmp_dir/${font_name}.zip"; then
 
         mkdir -p "$font_dir"
-        unzip -q "$tmp_dir/${font_name}.zip" -d "$font_dir"
+        
+        if unzip -q "$tmp_dir/${font_name}.zip" -d "$font_dir"; then
+            if [ -n "$(ls -A "$font_dir")" ]; then
+                log_info "Nerd Font installed successfully."
+            else
+                log_error "Unzip succeeded but folder is empty!"
+            fi
+        fi
         
         fc-cache -f "$font_dir"
     else 
