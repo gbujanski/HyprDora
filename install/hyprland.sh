@@ -77,6 +77,7 @@ log_info "Copying Hyprland and Waybar configs from repository to $CONFIG_DIR"
 cp -r "$REPO_DIR/configs/hypr" "$CONFIG_DIR/hypr"
 cp -r "$REPO_DIR/configs/waybar" "$CONFIG_DIR/waybar"
 
+systemctl --user enable hyprpolkitagent.service
 gsettings set org.gnome.desktop.interface icon-theme 'Papirus'
 gsettings set org.gnome.desktop.interface cursor-theme 'Bibata-Modern-Ice'
 gsettings set org.gnome.desktop.interface cursor-size 24
