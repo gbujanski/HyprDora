@@ -4,3 +4,4 @@ source postinstall/icon-theme.sh
 source postinstall/cursor-theme.sh
 source postinstall/keyring.sh
 source postinstall/code.sh
+source postinstall/git.sh

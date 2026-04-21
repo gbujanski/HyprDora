@@ -67,3 +67,16 @@ if [[ "$dev_languages_answer" -eq 1 ]]; then
 else
     selected_dev_languages=("${dev_languages[@]}")
 fi
+
+if [[ " ${selected_apps[*]} " =~ " git " ]]; then
+    manual_config_git=$(gum confirm "Do you want to configure Git right now?" --default="No" && echo 1 || echo 0)
+
+    if [[ "$manual_config_git" -eq 1 ]]; then
+        git_setup=1
+        git_username=$(gum input --placeholder="Enter your Git username")
+        git_email=$(gum input --placeholder="Enter your Git email")
+        git_merge_type=$(gum choose "Choose Git pull behavior:" "merge" "rebase")
+    else
+        git_setup=0
+    fi
+fi
