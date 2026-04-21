@@ -6,8 +6,6 @@ loger() {
     local green='\e[1;32m'
     local yellow='\e[1;33m'
     local blue='\e[1;34m'
-    local magenta='\e[1;35m'
-    local cyan='\e[1;36m'
 
     case "$log_level" in
         "INFO") color="$green" ;;
