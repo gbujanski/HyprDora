@@ -18,6 +18,7 @@ app_list=(
     docker
     lazydocker
     util-linux-user
+    gnome-calculator
 )
 
 dev_languages=(
