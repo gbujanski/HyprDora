@@ -4,4 +4,4 @@ if [ ! -d "$HOME/.local/share/keyrings" ]; then
     mkdir -p "$HOME/.local/share/keyrings"
 fi
 
-echo "Default_keyring" > "$HOME/.local/share/keyrings/default"
+echo "login" > "$HOME/.local/share/keyrings/default"

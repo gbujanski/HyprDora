@@ -29,6 +29,7 @@ packages_list=(
     blueman-manager
     cliphist
     bibata-cursor-themes
+    sddm
 )
 
 install_packages "${packages_list[@]}"
