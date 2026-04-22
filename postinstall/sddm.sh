@@ -8,5 +8,5 @@ sudo tee /etc/sddm.conf.d/theme.conf <<EOF
 Current=Hyprdora
 EOF
 
-sudo authselect enable-feature with-gnome-keyring
+sudo authselect enable-feature with-pam-gnome-keyring
 sudo authselect apply-changes
