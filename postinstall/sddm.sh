@@ -8,5 +8,15 @@ sudo tee /etc/sddm.conf.d/theme.conf <<EOF
 Current=Hyprdora
 EOF
 
+sudo mkdir -p /var/lib/sddm
+sudo tee /var/lib/sddm/state.conf <<EOF
+[Last]
+Session=hyprland.desktop
+EOF
+sudo chown -R sddm:sddm /var/lib/sddm
+
 sudo authselect enable-feature with-pam-gnome-keyring
 sudo authselect apply-changes
+
+sudo systemctl enable sddm.service
+sudo systemctl set-default graphical.target

@@ -25,6 +25,7 @@ packages_list=(
     nwg-look
     tumbler
     gnome-keyring
+    gnome-keyring-pam
     fuzzel
     blueman-manager
     cliphist
