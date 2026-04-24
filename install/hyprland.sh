@@ -11,7 +11,7 @@ packages_list=(
     xdg-desktop-portal-gtk
     waybar
     wofi
-    dunst
+    swaync
     qt5-qtwayland
     qt6-qtwayland
     pipewire

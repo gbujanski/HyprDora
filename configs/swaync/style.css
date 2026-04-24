@@ -1,0 +1,50 @@
+/* Resetujemy wszystko na ostro i kanciasto */
+* {
+    font-family: monospace;
+    border-radius: 0px;
+    background-clip: border-box;
+}
+
+/* Główne okno panelu bocznego */
+.control-center {
+    background: #000000;
+    border: 2px solid #00ff00;
+    color: #00ff00;
+}
+
+/* Wyskakujące dymki z powiadomieniami na pulpicie */
+.blank-window {
+    background: transparent;
+}
+.floating-notifications {
+    background: transparent;
+}
+
+/* Styl pojedynczego powiadomienia (zarówno w panelu, jak i na pulpicie) */
+.notification {
+    background: #000000;
+    border: 1px solid #00ff00;
+    box-shadow: none;
+    margin: 5px;
+    padding: 10px;
+}
+
+/* Teksty powiadomień */
+.notification-content {
+    color: #ffffff; /* Treść na biało */
+}
+.summary {
+    color: #00ff00; /* Tytuł na zielono */
+    font-weight: bold;
+}
+
+/* Przycisk "Nie przeszkadzać" i "Wyczyść wszystko" */
+.widget-title > button {
+    background: transparent;
+    color: #00ff00;
+    border: 1px solid #00ff00;
+}
+.widget-title > button:hover {
+    background: #00ff00;
+    color: #000000;
+}

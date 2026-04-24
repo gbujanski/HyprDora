@@ -1,0 +1,16 @@
+{
+    "$schema": "/etc/xdg/swaync/configSchema.json",
+    "positionX": "right",
+    "positionY": "top",
+    "control-center-width": 380,
+    "control-center-margin-top": 10,
+    "control-center-margin-bottom": 10,
+    "control-center-margin-right": 10,
+    "control-center-margin-left": 10,
+    "fit-to-screen": false,
+    "widgets": [
+        "title",
+        "dnd",
+        "notifications"
+    ]
+}
