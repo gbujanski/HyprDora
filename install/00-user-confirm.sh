@@ -14,7 +14,7 @@ app_list=(
     onlyoffice
     VirtualBox
     gimp
-    htop
+    btop
     docker
     lazydocker
     util-linux-user
