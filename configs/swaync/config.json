@@ -11,6 +11,49 @@
     "widgets": [
         "title",
         "dnd",
+        "volume",
+        "backlight",
+        "button-grid",
         "notifications"
-    ]
+    ],
+
+    "widget-config": {
+        "title": {
+            "text": "Notifications",
+            "clear-all-button": true,
+            "button-text": "Clear All"
+        },
+        "volume": {
+            "label": "Volume"
+        },
+        "backlight": {
+            "label": "Brightness"
+        },
+        "buttons-grid": {
+            "actions": [
+                {
+                    "label": "Wi-Fi",
+                    "tupe": "toggle",
+                    "active": true,
+                    "command": "nmcli radio wifi toggle"
+                },
+                {
+                    "label": "Bluetooth",
+                    "tupe": "toggle",
+                    "active": true,
+                    "command": "rfkill toggle bluetooth"
+                },
+                {
+                    "label": "Suspend",
+                    "tupe": "button",
+                    "command": "systemctl suspend"
+                },
+                {
+                    "label": "Poweroff",
+                    "tupe": "button",
+                    "command": "systemctl poweroff"
+                }
+            ]
+        }
+    }
 }
