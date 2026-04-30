@@ -14,11 +14,9 @@
     "modules-left": [
         "hyprland/workspaces"
     ],
-    "reload_style_on_change": true,
     "modules-center": [
         "custom/weather",
         "clock",
-        "custom/notification"
     ],
     "modules-right": [
         "pulseaudio",
@@ -26,13 +24,30 @@
         "memory",
         "battery",
         "tray",
-        "custom/power"
+        "custom/swaync"
     ],
     "custom/weather": {
-        "format": "{}",
-        "tooltip": false,
-        "interval": 450,
-        "exec": "curl -s 'https://wttr.in/waw?format=1'"
+        "format": "{icon} {text}",
+        "return-type": "json",
+        "interval": 1800,
+        "format-icons": {
+            "Clear": "󰖙",
+            "Sunny": "󰖙",
+            "Partly cloudy": "󰖕",
+            "Cloudy": "󰖐",
+            "Overcast": "󰖐",
+            "Mist": "󰖑",
+            "Patchy rain possible": "󰖗",
+            "Light rain": "󰖗",
+            "Moderate rain at times": "󰖗",
+            "Moderate rain": "󰖗",
+            "Heavy rain": "󰖖",
+            "Light snow": "󰖘",
+            "Moderate snow": "󰖘",
+            "Fog": "󰖑",
+            "default": "󰖐"
+        },
+        "exec": "curl -s 'https://wttr.in/waw?format=%C|%t' | awk -F '|' '{printf \"{\\\"text\\\":\\\"%s\\\", \\\"alt\\\":\\\"%s\\\"}\\n\", $2, $1}'"
     },
     "hyprland/workspaces": {
         "format": "[{id}]",
@@ -44,10 +59,6 @@
         // "icon-size": 21,
         "spacing": 10,
         "icon-theme": "Papirus"
-        // "icons": {
-        //   "blueman": "bluetooth",
-        //   "TelegramDesktop": "$HOME/.local/share/icons/hicolor/16x16/apps/telegram.png"
-        // }
     },
     "clock": {
         "format": "{:L%d %A %H:%M}",
@@ -55,30 +66,13 @@
     },
     "cpu": {
         "format": "[ CPU: {usage}% ]",
-        "tooltip": false
+        "tooltip": false,
+        "on-click": "btop",
     },
     "memory": {
-        "format": "[ RAM: {}% ]"
-    },
-    "custom/notification": {
+        "format": "[ RAM: {}% ]",
         "tooltip": false,
-        "format": "{icon}",
-        "format-icons": {
-            "notification": "<span foreground='#f38ba8'><sup></sup></span>",
-            "none": "",
-            "dnd-notification": "<span foreground='#f38ba8'><sup></sup></span>",
-            "dnd-none": "",
-            "inhibited-notification": "<span foreground='#f38ba8'><sup></sup></span>",
-            "inhibited-none": "",
-            "dnd-inhibited-notification": "<span foreground='#f38ba8'><sup></sup></span>",
-            "dnd-inhibited-none": ""
-        },
-        "return-type": "json",
-        "exec-if": "which swaync-client",
-        "exec": "swaync-client -swb",
-        "on-click": "swaync-client -t -sw",
-        "on-click-right": "swaync-client -d -sw",
-        "escape": true
+        "on-click": "btop",
     },
     "battery": {
         "states": {
@@ -91,8 +85,6 @@
         "format-charging": "{capacity}%  ",
         "format-plugged": "{capacity}%  ",
         "format-alt": "{time} {icon}",
-        // "format-good": "", // An empty format will hide the module
-        // "format-full": "",
         "format-icons": ["", "", "", "", ""]
     },
     "pulseaudio": {
@@ -114,8 +106,19 @@
         },
         "on-click": "pavucontrol"
     },
-    "custom/power": {
-        "format" : " ",
-        "on-click": "~/.config/waybar/scripts/power.sh"
-    },
+    "custom/swaync": {
+        "tooltip": false,
+        "format": "{icon}",
+        "format-icons": {
+            "notification": "󱅫",
+            "none": "󰂚",
+            "dnd-notification": "󰂛",
+            "dnd-none": "󰂛"
+        },
+        "return-type": "json",
+        "exec-if": "which swaync-client",
+        "exec": "swaync-client -swb",
+        "on-click": "swaync-client -t -sw",
+        "escape": true
+    }
 }
