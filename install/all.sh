@@ -4,5 +4,6 @@ source install/copr.sh
 source install/apps.sh
 source install/zsh.sh
 source install/drivers.sh
+source install/drivers-gaming.sh
 source install/dev-language.sh
 source install/hyprland.sh

@@ -48,6 +48,8 @@ else
     system_update_answer=$(gum confirm "Do you want to update the system before installing packages?" --default="Yes" && echo 1 || echo 0)
     manual_selection_answer=$(gum confirm "Do you want to manually select packages to install?" --default="No" && echo 1 || echo 0)
     dev_languages_answer=$(gum confirm "Do you want to manually select  development languages to install?" --default="No" && echo 1 || echo 0)
+    games_answer=$(gum confirm "Do you want to install games stack?" --default="No" && echo 1 || echo 0)
+
 fi
 
 if [[ "$manual_selection_answer" -eq 1 ]]; then
