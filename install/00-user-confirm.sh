@@ -4,6 +4,7 @@ app_list=(
     wget
     tar
     unzip
+    p7zip
     lspci
     alacritty
     neovim

@@ -20,6 +20,7 @@ packages_list=(
     pavucontrol
     thunar
     thunar-archive-plugin
+    file-roller
     thunar-volman
     papirus-icon-theme
     nwg-look
