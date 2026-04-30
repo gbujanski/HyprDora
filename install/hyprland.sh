@@ -9,6 +9,7 @@ packages_list=(
     hyprpolkitagent
     xdg-desktop-portal-hyprland
     xdg-desktop-portal-gtk
+    xdg-utils
     waybar
     wofi
     swaync
