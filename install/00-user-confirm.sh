@@ -1,25 +1,25 @@
 app_list=(
-    git
-    curl
-    wget
-    tar
-    unzip
-    p7zip
-    lspci
-    alacritty
-    neovim
-    code
-    zen-browser
-    discord
-    filezilla
-    onlyoffice
-    VirtualBox
-    gimp
-    btop
-    docker
-    lazydocker
-    util-linux-user
-    gnome-calculator
+    git                # Version control system
+    curl               # Command line tool for transferring data with URLs
+    wget               # Simpler command line tool for downloading files
+    tar                # Standard archive utility (.tar)
+    unzip              # Tool for extracting .zip archives
+    p7zip              # Tool for extracting .7z and .rar archives
+    pciutils           # Hardware utilities (includes 'lspci' command)
+    alacritty          # Fast, GPU-accelerated terminal emulator
+    neovim             # Modern, highly extensible terminal text editor
+    code               # Visual Studio Code (code editor)
+    zen-browser        # Lightweight web browser (Firefox fork)
+    discord            # Text and voice chat application
+    filezilla          # FTP client for connecting to servers
+    onlyoffice         # Office suite (Word, Excel, etc.)
+    VirtualBox         # Creating and managing virtual machines
+    gimp               # Advanced raster graphics editor
+    btop               # Beautiful terminal-based system resource monitor
+    docker             # Engine for containerizing applications
+    lazydocker         # Terminal UI for managing Docker
+    util-linux-user    # Basic user utilities (includes 'chsh' to change shell)
+    gnome-calculator   # Standard GUI calculator
 )
 
 dev_languages=(
