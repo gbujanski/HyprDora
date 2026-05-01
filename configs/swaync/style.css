@@ -1,50 +1,109 @@
-/* Resetujemy wszystko na ostro i kanciasto */
+@define-color bg-main rgba(24, 24, 24, 1);
+@define-color color-main rgb(0, 200, 0);
+@define-color color-main-inactive rgb(0, 88, 0);
+@define-color border-hyprland rgb(146, 146, 146);
+
+
 * {
+    all: unset;
     font-family: monospace;
-    border-radius: 0px;
-    background-clip: border-box;
+    transition: none !important;
+    animation: none !important;
+    border-radius: 0px !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
 }
 
-/* Główne okno panelu bocznego */
 .control-center {
-    background: #000000;
-    border: 2px solid #00ff00;
-    color: #00ff00;
+    background-color: @bg-main;
+    border-top: 1px solid @border-hyprland;
+    color: @color-main;
 }
 
-/* Wyskakujące dymki z powiadomieniami na pulpicie */
-.blank-window {
-    background: transparent;
-}
-.floating-notifications {
-    background: transparent;
+.widget-buttons-grid,
+.widget-volume,
+.widget-dnd,
+.widget-title {
+    background-color: @bg-main;
+    padding: 10px 14px;
+    border-bottom: 1px solid @color-main-inactive;
 }
 
-/* Styl pojedynczego powiadomienia (zarówno w panelu, jak i na pulpicie) */
+.widget-buttons-grid > flowbox > flowboxchild > button {
+    background-color: transparent;
+    border: 1px solid @color-main-inactive;
+    color: @color-main;
+    padding: 6px 10px;
+    margin: 4px;
+    text-align: center
+}
+
+.widget-buttons-grid > flowbox > flowboxchild > button:hover {
+    background-color: @color-main-inactive;
+    border-color: @color-main;
+    color: @bg-main;
+}
+
+.widget-volume > box > button {
+    color: @color-main;
+    background: transparent;
+    padding-right: 10px;
+}
+
+scale trough {
+    background-color: @bg-main;
+    border: 1px solid @color-main-inactive;
+    min-height: 6px;
+}
+
+scale highlight {
+    background-color: @color-main;
+}
+
+scale slider {
+    background-color: @color-main;
+    border: 1px solid @bg-main;
+    min-width: 10px;
+    min-height: 10px;
+}
+
+switch {
+    background: transparent;
+    border: 1px solid @color-main-inactive;
+}
+
+switch:checked {
+    background: @color-main-inactive;
+    border-color: @color-main;
+}
+
+switch slider {
+    background: @color-main;
+    border: 1px solid @bg-main;
+}
+
+.notification-row {
+    outline: none;
+}
+
 .notification {
-    background: #000000;
-    border: 1px solid #00ff00;
-    box-shadow: none;
-    margin: 5px;
+    background-color: @bg-main;
+    border: 1px solid @color-main-inactive;
+    margin: 10px 14px;
     padding: 10px;
 }
 
-/* Teksty powiadomień */
 .notification-content {
-    color: #ffffff; /* Treść na biało */
-}
-.summary {
-    color: #00ff00; /* Tytuł na zielono */
-    font-weight: bold;
+    color: @color-main;
 }
 
-/* Przycisk "Nie przeszkadzać" i "Wyczyść wszystko" */
-.widget-title > button {
-    background: transparent;
-    color: #00ff00;
-    border: 1px solid #00ff00;
+.close-button {
+    background-color: transparent;
+    color: @color-main-inactive;
+    border: 1px solid transparent;
 }
-.widget-title > button:hover {
-    background: #00ff00;
-    color: #000000;
+
+.close-button:hover {
+    color: @color-main;
+    border: 1px solid @color-main;
 }

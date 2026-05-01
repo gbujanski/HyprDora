@@ -1,59 +1,80 @@
 {
-    "$schema": "/etc/xdg/swaync/configSchema.json",
-    "positionX": "right",
-    "positionY": "top",
-    "control-center-width": 380,
-    "control-center-margin-top": 10,
-    "control-center-margin-bottom": 10,
-    "control-center-margin-right": 10,
-    "control-center-margin-left": 10,
-    "fit-to-screen": false,
-    "widgets": [
-        "title",
-        "dnd",
-        "volume",
-        "backlight",
-        "button-grid",
-        "notifications"
-    ],
+  "$schema": "/etc/xdg/swaync/configSchema.json",
+  "positionX": "right",
+  "positionY": "top",
+  "control-center-width": 280,
+  "fit-to-screen": true,
+  "keyboard-shortcuts": true,
+  "image-visibility": "when-available",
+  "transition-time": 200,
+  "hide-on-action": true,
 
-    "widget-config": {
-        "title": {
-            "text": "Notifications",
-            "clear-all-button": true,
-            "button-text": "Clear All"
-        },
-        "volume": {
-            "label": "Volume"
-        },
-        "backlight": {
-            "label": "Brightness"
-        },
-        "buttons-grid": {
-            "actions": [
-                {
-                    "label": "Wi-Fi",
-                    "tupe": "toggle",
-                    "active": true,
-                    "command": "nmcli radio wifi toggle"
-                },
-                {
-                    "label": "Bluetooth",
-                    "tupe": "toggle",
-                    "active": true,
-                    "command": "rfkill toggle bluetooth"
-                },
-                {
-                    "label": "Suspend",
-                    "tupe": "button",
-                    "command": "systemctl suspend"
-                },
-                {
-                    "label": "Poweroff",
-                    "tupe": "button",
-                    "command": "systemctl poweroff"
-                }
-            ]
+  "widgets": [
+    "buttons-grid#power",
+    "volume",
+    "buttons-grid#audio-routes",
+    "buttons-grid#toggles",
+    "dnd",
+    "title"
+  ],
+
+  "widget-config": {
+    "buttons-grid#power": {
+      "actions": [
+        {
+          "label": "",
+          "text": "Power Menu",
+          "command": "~/.config/rofi/sys-power.sh"
         }
+      ]
+    },
+
+    "volume": {
+      "label": " "
+    },
+
+    "buttons-grid#audio-routes": {
+      "actions": [
+        {
+          "label": "  Speakers",
+          "command": "pavucontrol -t 3"
+        },
+        {
+          "label": "  Microphone",
+          "command": "pavucontrol -t 4"
+        }
+      ]
+    },
+
+    "buttons-grid#toggles": {
+      "actions": [
+        {
+          "label": "󰖩  Wi-Fi",
+          "command": "alacritty -e nmtui"
+        },
+        {
+          "label": "󰂯  Bluetooth",
+          "command": "blueman-manager"
+        },
+        {
+          "label": "󰓅  Perf",
+          "command": "powerprofilesctl set performance"
+        },
+        {
+          "label": "󰾆  Save",
+          "command": "powerprofilesctl set power-saver"
+        }
+      ]
+    },
+
+    "dnd": {
+      "text": "Do Not Disturb"
+    },
+
+    "title": {
+      "text": "Notifications",
+      "clear-all-button": true,
+      "button-text": "Clear All"
     }
+  }
 }

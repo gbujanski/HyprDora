@@ -1,0 +1,55 @@
+configuration {
+    kb-select-1: "l"; /* Lock */
+    kb-select-2: "u"; /* Suspend */
+    kb-select-3: "r"; /* Reboot */
+    kb-select-4: "s"; /* Shutdown */
+    kb-select-5: "e"; /* Logout */
+}
+
+* {
+    bg: #181818;
+    fg: #00C800;
+    
+    background-color: @bg;
+    text-color: @fg;
+    font: "monospace 12";
+}
+
+window {
+    width: 350px;
+    padding: 20px;
+    border: 2px solid;
+    border-color: @fg;
+    location: center;
+}
+
+inputbar {
+    enabled: false;
+}
+
+mainbox {
+    children: [ listview ];
+}
+
+listview {
+    lines: 5;
+    columns: 1;
+    layout: vertical;
+    spacing: 5px;
+}
+
+element {
+    padding: 10px;
+    background-color: transparent;
+}
+
+element-text {
+    background-color: inherit;
+    text-color: inherit;
+    horizontal-align: 0.5;
+}
+
+element selected {
+    background-color: @fg;
+    text-color: @bg;
+}
