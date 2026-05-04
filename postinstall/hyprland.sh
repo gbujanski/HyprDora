@@ -36,6 +36,5 @@ fi
 log_info "Copying Hyprland configs from repository to $CONFIG_DIR"
 cp -r "$REPO_DIR/configs/hypr" "$CONFIG_DIR/hypr"
 
-chmod +x "$CONFIG_DIR/hypr/scripts/screenshot.sh"
 systemctl --user enable hyprpolkitagent.service
 xdg-user-dirs-update
