@@ -32,6 +32,8 @@ packages_list=(
     blueman                      # GUI Bluetooth manager (applet and settings)
     cliphist                     # Clipboard manager that remembers copy history
     wl-clipboard                 # Command-line copy/paste utilities for Wayland
+    grim                         # Utility to grab images from a Wayland compositor (screenshots)
+    slurp                        # Tool to select a region in a Wayland compositor (used with grim)
     swappy                       # Lightweight image editor for sketching on screenshots
     xdg-user-dirs                # Tool to manage "well known" user directories (Pictures, Downloads, etc.)
     libnotify                    # Library for sending desktop notifications
