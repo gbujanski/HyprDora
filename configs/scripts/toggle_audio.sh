@@ -16,8 +16,8 @@ CURRENT_ID=$(echo "$SINKS_SECTION" | grep "*" | grep -oP '\d+(?=\.)' | head -n 1
 
 if [ "$CURRENT_ID" == "$SPEAKER_ID" ]; then
     wpctl set-default "$HEADPHONES_ID"
-    notify-send "Audio" "Switched to: ($HEADPHONES_NAME)" --icon=audio-headphones
+    notify-send "Audio" "Switched to: ($HEADPHONES_NAME)" --icon=audio-headphones-symbolic
 else
     wpctl set-default "$SPEAKER_ID"
-    notify-send "Audio" "Switched to: ($SPEAKER_NAME)" --icon=audio-speakers
+    notify-send "Audio" "Switched to: ($SPEAKER_NAME)" --icon=audio-speakers-symbolic
 fi

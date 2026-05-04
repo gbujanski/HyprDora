@@ -32,6 +32,8 @@ packages_list=(
     blueman                      # GUI Bluetooth manager (applet and settings)
     cliphist                     # Clipboard manager that remembers copy history
     wl-clipboard                 # Command-line copy/paste utilities for Wayland
+    swappy                       # Lightweight image editor for sketching on screenshots
+    xdg-user-dirs                # Tool to manage "well known" user directories (Pictures, Downloads, etc.)
     libnotify                    # Library for sending desktop notifications
     bibata-cursor-themes         # Mouse cursor themes
     sddm                         # Display Manager (GUI login screen)

@@ -1,4 +1,4 @@
-if [[ "$games_answer" -eq 1]]; then
+if [[ "$games_answer" -eq 1 ]]; then
     log_info "Installing gaming packages..."
 
     drivers_list=(
