@@ -20,6 +20,8 @@ app_list=(
     lazydocker         # Terminal UI for managing Docker
     util-linux-user    # Basic user utilities (includes 'chsh' to change shell)
     gnome-calculator   # Standard GUI calculator
+    loupe              # Fast, modern GTK4 image viewer
+    gnome-text-editor  # Modern GUI text editor with syntax highlighting
 )
 
 dev_languages=(

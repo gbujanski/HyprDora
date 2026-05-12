@@ -39,6 +39,10 @@ packages_list=(
     libnotify                    # Library for sending desktop notifications
     bibata-cursor-themes         # Mouse cursor themes
     sddm                         # Display Manager (GUI login screen)
+    snapper                      # Ultimate BTRFS snapshot tool for system backups
+    python3-dnf-plugin-snapper   # Automatically creates snapshots before/after DNF transactions
+    grub-btrfs                   # Adds snapshots to the GRUB boot menu for disaster recovery
+    btrfs-assistant              # BTRFS snapshot management tool
 )
 
 install_packages "${packages_list[@]}"

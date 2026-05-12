@@ -7,3 +7,4 @@ source postinstall/git.sh
 source postinstall/sddm.sh
 source postinstall/swaync.sh
 source postinstall/hyprdora.sh
+source postinstall/snapper.sh
