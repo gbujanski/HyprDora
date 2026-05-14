@@ -1,4 +1,11 @@
-sudo snapper -c root create-config /
+log_info "Setting up Snapper for Btrfs snapshots..."
+
+# if snapper config already exists, skip creation
+if [ -f "/etc/snapper/configs/root" ]; then
+    log_info "Snapper config for root already exists. Skipping creation."
+else
+    sudo snapper -c root create-config /
+fi
 
 # --- Timeline Retention Settings ---
 # Disable hourly, monthly, and yearly snapshots to save space
@@ -19,6 +26,3 @@ sudo systemctl enable --now snapper-timeline.timer
 sudo systemctl enable --now snapper-cleanup.timer
 
 sudo grub2-mkconfig -o /boot/grub2/grub.cfg
-
-sudo systemctl enable --now grub-btrfsd
-

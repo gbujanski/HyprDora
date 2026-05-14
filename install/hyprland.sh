@@ -41,8 +41,8 @@ packages_list=(
     sddm                         # Display Manager (GUI login screen)
     snapper                      # Ultimate BTRFS snapshot tool for system backups
     python3-dnf-plugin-snapper   # Automatically creates snapshots before/after DNF transactions
-    grub-btrfs                   # Adds snapshots to the GRUB boot menu for disaster recovery
     btrfs-assistant              # BTRFS snapshot management tool
+    power-profiles-daemon        # Daemon for managing power profiles (performance, balanced, power saver)
 )
 
 install_packages "${packages_list[@]}"
