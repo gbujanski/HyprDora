@@ -4,5 +4,5 @@ if [ ! -d "$HOME/.config/swaync" ]; then
 fi
 
 log_info "Copying SwayNC configs from repository to $CONFIG_DIR"
-cp -r "$REPO_DIR/configs/swaync" "$CONFIG_DIR/swaync"
-cp -r "$REPO_DIR/configs/rofi" "$CONFIG_DIR/rofi"
+cp -r "$REPO_DIR/configs/swaync" "$CONFIG_DIR"
+cp -r "$REPO_DIR/configs/rofi" "$CONFIG_DIR"

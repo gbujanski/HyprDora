@@ -49,4 +49,3 @@ if [[ "$HAS_INTEL" == true ]]; then
 
     install_packages "${drivers_list[@]}"
 fi
-v0.31: add descriptions for GPU driver packages

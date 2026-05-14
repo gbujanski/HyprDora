@@ -1,11 +1,3 @@
-configuration {
-    kb-select-1: "l"; /* Lock */
-    kb-select-2: "u"; /* Suspend */
-    kb-select-3: "r"; /* Reboot */
-    kb-select-4: "s"; /* Shutdown */
-    kb-select-5: "e"; /* Logout */
-}
-
 * {
     bg: #181818;
     fg: #00C800;

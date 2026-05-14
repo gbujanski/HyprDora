@@ -38,3 +38,5 @@ cp -r "$REPO_DIR/configs/hypr" "$CONFIG_DIR/hypr"
 
 systemctl --user enable hyprpolkitagent.service
 xdg-user-dirs-update
+
+sudo systemctl enable --now power-profiles-daemon.service

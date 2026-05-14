@@ -19,6 +19,7 @@
         "clock",
     ],
     "modules-right": [
+        "power-profiles-daemon",
         "pulseaudio",
         "cpu",
         "memory",
@@ -73,6 +74,16 @@
         "format": "[ RAM: {}% ]",
         "tooltip": false,
         "on-click": "btop",
+    },
+    "power-profiles-daemon": {
+        "format": "{icon}",
+        "tooltip": false,
+        "format-icons": {
+            "performance": "[ PERFORMANCE ]",
+            "balanced": "",
+            "power-saver": "[ POWER SAVE ]"
+        },
+        "on-click": "~/.config/hyprdora/scripts/power-profiles.sh"
     },
     "battery": {
         "states": {

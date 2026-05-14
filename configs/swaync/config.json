@@ -60,12 +60,8 @@
           "command": "blueman-manager"
         },
         {
-          "label": "󰓅  Perf",
-          "command": "powerprofilesctl set performance"
-        },
-        {
-          "label": "󰾆  Save",
-          "command": "powerprofilesctl set power-saver"
+            "label": "[ Power Mode ]",
+            "command": "~/.config/hyprdora/scripts/power-profiles.sh"
         }
       ]
     },
