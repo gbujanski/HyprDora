@@ -52,16 +52,20 @@
     "buttons-grid#toggles": {
       "actions": [
         {
-          "label": "󰖩  Wi-Fi",
+          "label": "[ Wi-Fi ]",
           "command": "alacritty --class systui -e nmtui"
         },
         {
-          "label": "󰂯  Bluetooth",
+          "label": "[ Bluetooth ]",
           "command": "alacritty --class systui -e bluetoothctl"
         },
         {
-            "label": "[ Power Mode ]",
-            "command": "~/.config/hyprdora/scripts/power-profiles.sh"
+          "label": "[ Power Mode ]",
+          "command": "~/.config/hyprdora/scripts/power-profiles.sh"
+        },
+        {
+          "label": "[ Displays ]",
+          "command": "nwg-displays"
         }
       ]
     },

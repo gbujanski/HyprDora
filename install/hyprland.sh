@@ -24,6 +24,7 @@ packages_list=(
     thunar-volman                # Plugin for automatic mounting of USB drives
     papirus-icon-theme           # Beautiful, flat system icon set
     nwg-look                     # GUI application to customize GTK themes and colors
+    nwg-displays                 # GUI application to manage display settings (resolution, refresh rate, etc.)
     tumbler                      # Daemon for generating thumbnails (images/videos) in Thunar
     gnome-keyring                # Secure wallet for passwords and SSH keys
     gnome-keyring-pam            # Automatically unlocks the keyring upon system login
