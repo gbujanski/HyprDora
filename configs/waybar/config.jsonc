@@ -68,12 +68,12 @@
     "cpu": {
         "format": "[ CPU: {usage}% ]",
         "tooltip": false,
-        "on-click": "btop",
+        "on-click": "alacritty --class systui -e btop",
     },
     "memory": {
         "format": "[ RAM: {}% ]",
         "tooltip": false,
-        "on-click": "btop",
+        "on-click": "alacritty --class systui -e btop",
     },
     "power-profiles-daemon": {
         "format": "{icon}",
@@ -115,7 +115,7 @@
             "car": "",
             "default": ["", "", ""]
         },
-        "on-click": "pavucontrol"
+        "on-click": "alacritty --class sysmixer -e wiremix"
     },
     "custom/swaync": {
         "tooltip": false,

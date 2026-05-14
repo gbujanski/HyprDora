@@ -18,7 +18,6 @@ packages_list=(
     pipewire                     # Modern audio and video server (replaces PulseAudio)
     pipewire-pulseaudio          # Compatibility layer so older apps see Pipewire as PulseAudio
     wireplumber                  # Audio session manager (manages inputs/outputs for Pipewire)
-    pavucontrol                  # GUI audio mixer (controls volume for mic and apps)
     thunar                       # Fast file manager (from XFCE)
     thunar-archive-plugin        # Thunar plugin to allow "Extract here" right-click action
     file-roller                  # GUI archive manager (often required by Thunar)
@@ -43,6 +42,8 @@ packages_list=(
     python3-dnf-plugin-snapper   # Automatically creates snapshots before/after DNF transactions
     btrfs-assistant              # BTRFS snapshot management tool
     power-profiles-daemon        # Daemon for managing power profiles (performance, balanced, power saver)
+    nmtui                        # Text-based network manager (for Wi-Fi and Ethernet configuration in the terminal)
+    wiremix                      # Graphical mixer for Pipewire (similar to pavucontrol but with more features
 )
 
 install_packages "${packages_list[@]}"

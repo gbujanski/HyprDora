@@ -40,11 +40,11 @@
       "actions": [
         {
           "label": "  Speakers",
-          "command": "pavucontrol -t 3"
+          "command": "alacritty --class sysaudio -e wiremix -v output"
         },
         {
           "label": "  Microphone",
-          "command": "pavucontrol -t 4"
+          "command": "alacritty --class sysaudio -e wiremix -v input"
         }
       ]
     },
@@ -53,11 +53,11 @@
       "actions": [
         {
           "label": "󰖩  Wi-Fi",
-          "command": "alacritty -e nmtui"
+          "command": "alacritty --class systui -e nmtui"
         },
         {
           "label": "󰂯  Bluetooth",
-          "command": "blueman-manager"
+          "command": "alacritty --class systui -e bluetoothctl"
         },
         {
             "label": "[ Power Mode ]",
