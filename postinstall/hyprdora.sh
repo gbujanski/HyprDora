@@ -3,13 +3,13 @@ CONFIG_DIR="$HOME/.config"
 ASSETS_DIR="$REPO_DIR/assets"
 WALLPAPER_DIR="$HOME/.config/hypr/wallpapers"
 
-cp -r $REPO_DIR/configs/scripts $CONFIG_DIR/hyprdora
+cp -r $REPO_DIR/configs/scripts $CONFIG_DIR/hyprdora/scripts
 
 chmod +x $CONFIG_DIR/hyprdora/scripts/*
 
 log_info "Konfiguracja własnych akcji dla Thunara..."
 
-mkdir -p ~/.config/Thunar
+mkdir -p "$CONFIG_DIR/Thunar"
 
 log_info "Setting up Thunar custom actions..."
 
