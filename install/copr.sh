@@ -5,3 +5,4 @@ install_packages "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree
 
 sudo dnf copr enable -yq sdegler/hyprland
 sudo dnf copr enable -yq peterwu/rendezvous
+sudo dnf copr enable -y tofik/nwg-shell
