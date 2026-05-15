@@ -4,7 +4,7 @@ log_info "Setting up Snapper for Btrfs snapshots..."
 if [ -f "/etc/snapper/configs/root" ]; then
     log_info "Snapper config for root already exists. Skipping creation."
 else
-    sudo snapper -c root create-config /
+    sudo snapper -c root create-config / &> /dev/null;
 fi
 
 # --- Timeline Retention Settings ---
@@ -25,4 +25,4 @@ sudo sed -i 's/^NUMBER_LIMIT_IMPORTANT=.*/NUMBER_LIMIT_IMPORTANT="3"/' /etc/snap
 sudo systemctl enable --now snapper-timeline.timer
 sudo systemctl enable --now snapper-cleanup.timer
 
-sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+sudo grub2-mkconfig -o /boot/grub2/grub.cfg &> /dev/null;
