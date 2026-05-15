@@ -6,6 +6,9 @@ set -e
 
 source utils/all.sh
 
+show_logo
+echo ""
+
 log_warning "This script requires sudo privileges. 
 You may be prompted for your password."
 
