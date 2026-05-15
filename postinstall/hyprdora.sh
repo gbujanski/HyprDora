@@ -29,7 +29,7 @@ cat << 'EOF' > ~/.config/Thunar/uca.xml
 </actions>
 EOF
 
-thunar -q
+killall thunar 2>/dev/null || true
 
 log_info "Ustawianie domyślnej tapety..."
 
@@ -43,8 +43,7 @@ ipc = true
 
 wallpaper {
     monitor = 
-    path = $WALLPAPER_DIR/default.jpg
+    path = $WALLPAPER_DIR/hyprdora-wallpaper.jpg
     fit_mode = cover
 }
 EOF
-
