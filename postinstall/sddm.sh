@@ -1,3 +1,5 @@
+log_info "Configuring SDDM theme..."
+
 REPO_DIR="$(pwd)"
 
 sudo cp -r "$REPO_DIR/configs/sddm/theme/Hyprdora" /usr/share/sddm/themes/

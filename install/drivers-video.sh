@@ -1,5 +1,3 @@
-log_info "Installing video acceleration and compute packages..."
-
 if [[ "$HAS_NVIDIA" == true ]]; then
     log_info "Installing NVIDIA video and compute packages..."
     drivers_list=(

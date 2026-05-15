@@ -1,3 +1,5 @@
+log_info "Starting Hyprland post-install configuration..."
+
 # NVIDIA-specific Wayland environment variables for Hyprland
 GPU_INFO=$(lspci | grep -E "VGA|3D")
 

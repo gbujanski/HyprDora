@@ -1,3 +1,5 @@
+log_info "Setting up HyprDora configurations..."
+
 REPO_DIR="$(pwd)"
 CONFIG_DIR="$HOME/.config"
 ASSETS_DIR="$REPO_DIR/assets"
@@ -6,8 +8,6 @@ WALLPAPER_DIR="$HOME/.config/hypr/wallpapers"
 cp -r $REPO_DIR/configs/scripts $CONFIG_DIR/hyprdora/scripts
 
 chmod +x $CONFIG_DIR/hyprdora/scripts/*
-
-log_info "Konfiguracja własnych akcji dla Thunara..."
 
 mkdir -p "$CONFIG_DIR/Thunar"
 
@@ -31,7 +31,7 @@ EOF
 
 killall thunar 2>/dev/null || true
 
-log_info "Ustawianie domyślnej tapety..."
+log_info "Setting up desktop wallpaper..."
 
 mkdir -p "$WALLPAPER_DIR"
 
