@@ -23,6 +23,28 @@ export GUM_CHOOSE_HEADER="Choose packages to install:
 source install/all.sh
 source postinstall/all.sh
 
+CLI_MODE=""
+CLI_GH_NAME=""
+CLI_GH_EMAIL=""
+CLI_GH_MERGE=""
+
+for arg in "$@"; do
+  case $arg in
+    --mode=*)       CLI_MODE="${arg#*=}" ;;
+    --gh-name=*)    CLI_GH_NAME="${arg#*=}" ;;
+    --gh-email=*)   CLI_GH_EMAIL="${arg#*=}" ;;
+    --gh-merge=*)   CLI_GH_MERGE="${arg#*=}" ;;
+    --help)
+      echo "Usage: install.sh [--mode=auto|manual] [--gh-name=NAME] [--gh-email=EMAIL] [--gh-merge=merge|rebase]"
+      exit 0
+      ;;
+    *)
+      echo "Unknown argument: $arg"
+      exit 1
+      ;;
+  esac
+done
+
 log_info "Installation complete!"
 log_info "Reboot is highly recommended to ensure all changes take effect properly."
 

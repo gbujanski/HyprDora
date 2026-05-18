@@ -37,7 +37,11 @@ You can chose manual or automatic installation. In manual mode, you can select w
 In automatic mode, all packages will be installed with default settings."
 
 
-manual_install_answer=$(gum confirm "Select installation mode." --affirmative="Automatic" --negative="Manual" --default="Yes" && echo 1 || echo 0)
+if [[ -n "$CLI_MODE" ]]; then
+  [[ "$CLI_MODE" == "auto" ]] && manual_install_answer=1 || manual_install_answer=0
+else
+  manual_install_answer=$(gum confirm "Select installation mode." --affirmative="Automatic" --negative="Manual" --default="Yes" && echo 1 || echo 0)
+fi
 
 if [[ "$manual_install_answer" -eq 1 ]]; then
     log_info "You have selected Automatic installation mode. All packages will be installed with default settings."
@@ -75,14 +79,21 @@ else
 fi
 
 if [[ " ${selected_apps[*]} " =~ " git " ]]; then
+  if [[ -n "$CLI_GH_NAME" || -n "$CLI_GH_EMAIL" || -n "$CLI_GH_MERGE" ]]; then
+    git_setup=1
+    [[ -n "$CLI_GH_NAME" ]] && git_username="$CLI_GH_NAME" || git_username=$(gum input --placeholder="Enter your Git username")
+    [[ -n "$CLI_GH_EMAIL" ]] && git_email="$CLI_GH_EMAIL" || git_email=$(gum input --placeholder="Enter your Git email")
+    [[ -n "$CLI_GH_MERGE" ]] && git_merge_type="$CLI_GH_MERGE" || git_merge_type=$(gum choose "Choose Git pull behavior:" "merge" "rebase")
+  else
     manual_config_git=$(gum confirm "Do you want to configure Git right now?" --default="No" && echo 1 || echo 0)
 
     if [[ "$manual_config_git" -eq 1 ]]; then
-        git_setup=1
-        git_username=$(gum input --placeholder="Enter your Git username")
-        git_email=$(gum input --placeholder="Enter your Git email")
-        git_merge_type=$(gum choose "Choose Git pull behavior:" "merge" "rebase")
+      git_setup=1
+      git_username=$(gum input --placeholder="Enter your Git username")
+      git_email=$(gum input --placeholder="Enter your Git email")
+       git_merge_type=$(gum choose "Choose Git pull behavior:" "merge" "rebase")
     else
-        git_setup=0
+      git_setup=0
     fi
+  fi
 fi
