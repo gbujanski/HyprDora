@@ -31,15 +31,17 @@ dev_languages=(
     dotnet-sdk-8.0
 )
 
-log_info "Welcome to the Fedora Hyprland installation script!
-This script will guide you through the installation process of Fedora with Hyprland and various applications and drivers.
-You can chose manual or automatic installation. In manual mode, you can select which packages to install and whether to update the system before installation.
-In automatic mode, all packages will be installed with default settings."
-
+log_info "Welcome to the Fedora Hyprland installation script!"
 
 if [[ -n "$CLI_MODE" ]]; then
   [[ "$CLI_MODE" == "auto" ]] && manual_install_answer=1 || manual_install_answer=0
 else
+
+log_info "This script will guide you through the installation process of Fedora with Hyprland and various applications and drivers.
+You can chose manual or automatic installation. 
+In manual mode, you can select which packages to install and whether to update the system before installation.
+In automatic mode, all packages will be installed with default settings."
+
   manual_install_answer=$(gum confirm "Select installation mode." --affirmative="Automatic" --negative="Manual" --default="Yes" && echo 1 || echo 0)
 fi
 
