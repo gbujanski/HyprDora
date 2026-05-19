@@ -20,9 +20,6 @@ export GUM_CHOOSE_HEADER="Choose packages to install:
 [↑/↓] Navigate   [Space] Toggle   [Enter] Confirm
 (All packages are selected by default)"
 
-source install/all.sh
-source postinstall/all.sh
-
 CLI_MODE=""
 CLI_GH_NAME=""
 CLI_GH_EMAIL=""
@@ -44,6 +41,9 @@ for arg in "$@"; do
       ;;
   esac
 done
+
+source install/all.sh
+source postinstall/all.sh
 
 log_info "Installation complete!"
 log_info "Reboot is highly recommended to ensure all changes take effect properly."
