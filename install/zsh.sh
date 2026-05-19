@@ -43,7 +43,7 @@ fi
 
 if [ "$(basename "$SHELL")" != "zsh" ]; then
     log_info "Changing default shell to Zsh..."
-    chsh -s "$(which zsh)"
+    sudo usermod -s "$(which zsh)" "$USER"
 else
     log_info "Zsh is already the default shell. Skipping."
 fi
