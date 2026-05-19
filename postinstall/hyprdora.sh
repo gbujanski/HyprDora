@@ -4,10 +4,13 @@ REPO_DIR="$(pwd)"
 CONFIG_DIR="$HOME/.config"
 ASSETS_DIR="$REPO_DIR/assets"
 WALLPAPER_DIR="$HOME/.config/hypr/wallpapers"
+HYPRDORA_DIR="$CONFIG_DIR/hyprdora"
 
-cp -r $REPO_DIR/configs/scripts $CONFIG_DIR/hyprdora/scripts
+mkdir -p "$HYPRDORA_DIR"
 
-chmod +x $CONFIG_DIR/hyprdora/scripts/*
+cp -r $REPO_DIR/configs/scripts $HYPRDORA_DIR/scripts
+
+chmod +x $HYPRDORA_DIR/scripts/*
 
 mkdir -p "$CONFIG_DIR/Thunar"
 
