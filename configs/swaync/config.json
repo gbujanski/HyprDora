@@ -40,11 +40,11 @@
       "actions": [
         {
           "label": "  Speakers",
-          "command": "alacritty --class sysaudio -e wiremix -v output"
+          "command": "swaync-client -cp && alacritty --class sysaudio -e wiremix -v output"
         },
         {
           "label": "  Microphone",
-          "command": "alacritty --class sysaudio -e wiremix -v input"
+          "command": "swaync-client -cp && alacritty --class sysaudio -e wiremix -v input"
         }
       ]
     },
@@ -53,11 +53,11 @@
       "actions": [
         {
           "label": "[ Wi-Fi ]",
-          "command": "alacritty --class systui -e nmtui"
+          "command": "swaync-client -cp && alacritty --class systui -e nmtui"
         },
         {
           "label": "[ Bluetooth ]",
-          "command": "alacritty --class systui -e bluetoothctl"
+          "command": "swaync-client -cp && alacritty --class systui -e bluetoothctl"
         },
         {
           "label": "[ Power Mode ]",
@@ -65,7 +65,7 @@
         },
         {
           "label": "[ Displays ]",
-          "command": "nwg-displays"
+          "command": "swaync-client -cp && nwg-displays"
         }
       ]
     },

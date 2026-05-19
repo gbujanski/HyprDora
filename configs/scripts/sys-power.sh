@@ -1,6 +1,6 @@
 #!/bin/bash
 
-swaync-client -t
+swaync-client -cp
 
 lock="[  Lock (l) ]"
 suspend="[  Suspend (u) ]"

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+swaync-client -cp
+
 active=$(powerprofilesctl get)
 available=$(powerprofilesctl list)
 
