@@ -10,7 +10,7 @@ if [[ "$HAS_NVIDIA" == true ]]; then
         nvidia-settings               # Official GUI tool for managing NVIDIA GPU settings
     )
 
-    install_packages "${drivers_list[@]}"
+    install_packages_dnf "${drivers_list[@]}"
 
     log_info "Configuring NVIDIA kernel parameters for Wayland..."
     
@@ -19,7 +19,7 @@ if [[ "$HAS_NVIDIA" == true ]]; then
     if [[ "$HAS_INTEL" == true ]]; then
         log_info "Optimus laptop detected. Installing GPU switching support..."
 
-        install_packages "switcheroo-control"
+        install_packages_dnf "switcheroo-control"
         sudo systemctl enable --now switcheroo-control
     fi
 fi
@@ -34,7 +34,7 @@ if [[ "$HAS_AMD" == true ]]; then
         vulkan-tools                  # Diagnostic tools for Vulkan (includes 'vkcube', 'vulkaninfo')
     )
 
-    install_packages "${drivers_list[@]}"
+    install_packages_dnf "${drivers_list[@]}"
 fi
 
 if [[ "$HAS_INTEL" == true ]]; then
@@ -47,5 +47,5 @@ if [[ "$HAS_INTEL" == true ]]; then
         vulkan-tools                  # Diagnostic tools for Vulkan (includes 'vkcube', 'vulkaninfo')
     )
 
-    install_packages "${drivers_list[@]}"
+    install_packages_dnf "${drivers_list[@]}"
 fi

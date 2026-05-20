@@ -6,7 +6,7 @@ if [[ "$HAS_NVIDIA" == true ]]; then
         ocl-icd                  # OpenCL ICD loader (base requirement for OpenCL)
         opencl-headers           # C header files for OpenCL API
     )
-    install_packages "${drivers_list[@]}"
+    install_packages_dnf "${drivers_list[@]}"
 fi
 
 if [[ "$HAS_AMD" == true ]]; then
@@ -19,7 +19,7 @@ if [[ "$HAS_AMD" == true ]]; then
         ocl-icd                  # OpenCL ICD loader (base requirement for OpenCL)
         opencl-headers           # C header files for OpenCL API
     )
-    install_packages "${drivers_list[@]}"
+    install_packages_dnf "${drivers_list[@]}"
 fi
 
 if [[ "$HAS_INTEL" == true ]]; then
@@ -32,5 +32,5 @@ if [[ "$HAS_INTEL" == true ]]; then
         ocl-icd                  # OpenCL ICD loader (base requirement for OpenCL)
         opencl-headers           # C header files for OpenCL API
     )
-    install_packages "${drivers_list[@]}"
+    install_packages_dnf "${drivers_list[@]}"
 fi

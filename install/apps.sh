@@ -12,11 +12,11 @@ else
                 ;;
             "lazydocker")
                 if ! command -v curl &> /dev/null; then
-                    install_packages curl
+                    install_packages_dnf curl
                 fi
 
                 if ! command -v tar &> /dev/null; then
-                    install_packages tar
+                    install_packages_dnf tar
                 fi
                 
                 curl https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh | bash
@@ -26,11 +26,11 @@ else
                 rpm_url="https://download.onlyoffice.com/install/desktop/editors/linux/onlyoffice-desktopeditors.x86_64.rpm"
                 
                 if ! command -v wget &> /dev/null; then
-                    install_packages wget
+                    install_packages_dnf wget
                 fi
 
                 if wget -q --show-progress "$rpm_url" -O "$tmp_dir/onlyoffice.rpm"; then
-                    install_packages "$tmp_dir/onlyoffice.rpm"
+                    install_packages_dnf "$tmp_dir/onlyoffice.rpm"
                 else
                     log_error "Failed to download OnlyOffice. Skipping."
                 fi
@@ -39,7 +39,7 @@ else
                 ;;
             "zen-browser")
                 if ! command -v flatpak &> /dev/null; then
-                    install_packages flatpak
+                    install_packages_dnf flatpak
                 fi
 
                 sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
@@ -54,6 +54,6 @@ else
     done
 
     if [ ${#apps_to_install[@]} -gt 0 ]; then
-        install_packages "${apps_to_install[@]}"
+        install_packages_dnf "${apps_to_install[@]}"
     fi
 fi

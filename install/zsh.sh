@@ -1,6 +1,6 @@
 log_info "Installing Zsh and Oh My Zsh..."
 
-install_packages "zsh"
+install_packages_dnf "zsh"
 
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended

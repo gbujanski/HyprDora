@@ -12,7 +12,7 @@ log_warning "This script requires sudo privileges.
 You may be prompted for your password."
 
 if ! command -v gum &> /dev/null; then
-	install_packages gum
+	install_packages_dnf gum
 fi
 
 export GUM_CHOOSE_ORDERED=true

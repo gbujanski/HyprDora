@@ -15,5 +15,5 @@ if [[ "$games_answer" -eq 1 ]]; then
         vulkan-loader.i686         # 32-bit Vulkan loader
         mesa-vulkan-drivers.i686   # 32-bit Vulkan drivers (mostly for AMD and Intel GPUs)
     )
-    install_packages "${drivers_list[@]}"
+    install_packages_dnf "${drivers_list[@]}"
 fi
