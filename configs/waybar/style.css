@@ -50,6 +50,12 @@ button {
     color: @color-main;
 }
 
+#workspaces button:hover {
+    background: transparent;
+    box-shadow: none;
+    text-shadow: none;
+}
+
 @keyframes blink {
     to {
         color: @color-error;
