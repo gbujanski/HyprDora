@@ -43,6 +43,9 @@ packages_list=(
     python3-dnf-plugin-snapper   # Automatically creates snapshots before/after DNF transactions
     btrfs-assistant              # BTRFS snapshot management tool
     power-profiles-daemon        # Daemon for managing power profiles (performance, balanced, power saver)
+    NetworkManager-wifi          # Plugin allowing NM to manage wireless connections
+    wpa_supplicant               # Backend daemon for WEP/WPA/WPA2/WPA3 encryption
+    iw                           # CLI configuration utility for wireless devices
     nmtui                        # Text-based network manager (for Wi-Fi and Ethernet configuration in the terminal)
     wiremix                      # Graphical mixer for Pipewire (similar to pavucontrol but with more features
     cargo                        # Rust package manager and build system (used to compile bluetui)

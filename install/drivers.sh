@@ -23,3 +23,11 @@ fi
 if [[ "${INSTALL_VIDEO:-false}" == "true" ]]; then
     source install/drivers-video.sh
 fi
+
+if lspci -nn | grep -iq "Network controller.*Broadcom"; then
+    log_info "Detected Broadcom Wi-Fi chipset. Starting installation of proprietary drivers..."
+
+    install_packages_dnf broadcom-wl akmod-wl kernel-devel kernel-headers gcc make dkms
+    
+    log_info "Broadcom drivers installed successfully."
+fi
