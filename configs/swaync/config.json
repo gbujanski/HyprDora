@@ -57,7 +57,7 @@
         },
         {
           "label": "[ Bluetooth ]",
-          "command": "swaync-client -cp && alacritty --class systui -e bluetoothctl"
+          "command": "swaync-client -cp && alacritty --class systui -e bluetui"
         },
         {
           "label": "[ Power Mode ]",
