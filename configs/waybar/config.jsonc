@@ -24,6 +24,7 @@
         "cpu",
         "memory",
         "battery",
+        "network",
         "tray",
         "custom/swaync"
     ],
@@ -115,6 +116,12 @@
             "default": ["", "", ""]
         },
         "on-click": "alacritty --class sysmixer -e wiremix"
+    },
+    "network": {
+        "format-wifi": "[ WIFI {signalStrength}% ]",
+        "format-ethernet": "[ ETHERNET ]",
+        "format-disconnected": "[ OFFLINE ]",
+        "on-click": "alacritty --class systui -e nmtui"
     },
     "custom/swaync": {
         "tooltip": false,
