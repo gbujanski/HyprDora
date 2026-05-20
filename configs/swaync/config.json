@@ -25,7 +25,7 @@
     "buttons-grid#power": {
       "actions": [
         {
-          "label": "",
+          "label": "[ Power Menu ]",
           "text": "Power Menu",
           "command": "~/.config/hyprdora/scripts/sys-power.sh"
         }
@@ -33,17 +33,17 @@
     },
 
     "volume": {
-      "label": " "
+      "label": "[ Vol: ]"
     },
 
     "buttons-grid#audio-routes": {
       "actions": [
         {
-          "label": "  Speakers",
+          "label": "[ Speakers ]",
           "command": "swaync-client -cp && alacritty --class sysaudio -e wiremix -v output"
         },
         {
-          "label": "  Microphone",
+          "label": "[ Microphone ]",
           "command": "swaync-client -cp && alacritty --class sysaudio -e wiremix -v input"
         }
       ]
