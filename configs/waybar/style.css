@@ -52,15 +52,13 @@ button {
 
 @keyframes blink {
     to {
-        background-color: #ffffff;
-        color: #000000;
+        color: @color-error;
     }
 }
 
 /* Using steps() instead of linear as a timing function to limit cpu usage */
 #battery.critical:not(.charging) {
-    background-color: #f53c3c;
-    color: #ffffff;
+    color: @color-warning;
     animation-name: blink;
     animation-duration: 0.5s;
     animation-timing-function: steps(12);
@@ -68,16 +66,20 @@ button {
     animation-direction: alternate;
 }
 
+#battery.warning:not(.charging) {
+    color: @color-warning;
+}
+
 label:focus {
     background-color: #000000;
 }
 
 #wireplumber.muted {
-    background-color: #f53c3c;
+    background-color: @color-error;
 }
 
 #temperature.critical {
-    background-color: #eb4d4b;
+    background-color: @color-error;
 }
 
 #tray > .passive {
@@ -86,7 +88,7 @@ label:focus {
 
 #tray > .needs-attention {
     -gtk-icon-effect: highlight;
-    background-color: #eb4d4b;
+    background-color: @color-error;
 }
 
 #idle_inhibitor.activated {
@@ -112,7 +114,7 @@ label:focus {
 }
 
 #privacy-item.screenshare {
-    background-color: #cf5700;
+    background-color: @color-warning;
 }
 
 #privacy-item.audio-in {
