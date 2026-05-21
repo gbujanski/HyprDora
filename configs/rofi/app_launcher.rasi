@@ -1,0 +1,75 @@
+/* Sekcja konfiguracyjna (historia i sortowanie) */
+configuration {
+    modi: "drun";
+    show-icons: true;
+    disable-history: false;
+    sort: true;
+    sorting-method: "normal";
+    
+    drun-display-format: "{name}";
+}
+
+* {
+    bg: #181818;
+    fg: #00C800;
+    
+    background-color: @bg;
+    text-color: @fg;
+    font: "monospace 12";
+}
+
+window {
+    width: 450px; 
+    padding: 20px;
+    border: 2px solid;
+    border-color: @fg;
+    location: center;
+}
+
+mainbox {
+    children: [ inputbar, listview ];
+    spacing: 15px; 
+}
+
+inputbar {
+    padding: 10px;
+    border: 1px solid;
+    border-color: @fg;
+    children: [ entry ];
+}
+
+entry {
+    placeholder: "";
+    placeholder-color: #005500; 
+    text-color: @fg;
+}
+
+listview {
+    lines: 10;        
+    columns: 1;       
+    layout: vertical;
+    spacing: 5px;
+}
+
+element {
+    orientation: horizontal; 
+    padding: 10px;
+    spacing: 15px;           
+    background-color: transparent;
+}
+
+element-icon {
+    size: 24px;              
+    background-color: transparent;
+}
+
+element-text {
+    background-color: inherit;
+    text-color: inherit;
+    vertical-align: 0.5;     
+}
+
+element selected {
+    background-color: @fg;
+    text-color: @bg;
+}

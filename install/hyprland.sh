@@ -28,7 +28,6 @@ packages_list=(
     tumbler                      # Daemon for generating thumbnails (images/videos) in Thunar
     gnome-keyring                # Secure wallet for passwords and SSH keys
     gnome-keyring-pam            # Automatically unlocks the keyring upon system login
-    fuzzel                       # Your main, lightweight, and fast App Launcher
     bluez                        # Official Linux Bluetooth protocol stack (the core daemon)
     cliphist                     # Clipboard manager that remembers copy history
     wl-clipboard                 # Command-line copy/paste utilities for Wayland
