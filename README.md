@@ -43,7 +43,7 @@ Modern desktop environments are getting heavier with every release. GNOME, KDE, 
 
 HyprDora was built around one idea: **the system should serve you, not the other way around.**
 
-Idle resource usage hovers around **~800 MB RAM and ~1–2% CPU**. The rest is yours.
+Idle resource usage hovers around **~900 MB RAM and ~1–2% CPU**. The rest is yours.
 
 ---
 
