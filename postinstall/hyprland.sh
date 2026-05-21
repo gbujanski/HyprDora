@@ -45,11 +45,10 @@ sudo systemctl enable --now power-profiles-daemon.service
 
 log_info "Keyboard layout configuration for Hyprland..."
 
-local sys_layout
 sys_layout=$(localectl status | grep "X11 Layout" | awk '{print $3}')
 
 if [[ -n "$sys_layout" && "$sys_layout" != "us" ]]; then
-    local kb_conf="$HOME/.config/hypr/keyboard.conf"
+    kb_conf="$HOME/.config/hypr/hyprland_kb_layout.conf"
     
     cat <<EOF > "$kb_conf"
 input {

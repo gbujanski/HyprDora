@@ -47,8 +47,10 @@ packages_list=(
     wpa_supplicant               # Backend daemon for WEP/WPA/WPA2/WPA3 encryption
     iw                           # CLI configuration utility for wireless devices
     nmtui                        # Text-based network manager (for Wi-Fi and Ethernet configuration in the terminal)
-    wiremix                      # Graphical mixer for Pipewire (similar to pavucontrol but with more features
+    wiremix                      # Graphical mixer for Pipewire (similar to pavucontrol but with more features)
     cargo                        # Rust package manager and build system (used to compile bluetui)
+    dbus-devel                   # Development headers for D-Bus (required to compile bluetui)
+    pkgconf                      # Tool for helping compilers find libraries (provides pkg-config)
 )
 
 packages_list_cargo=(
