@@ -47,7 +47,7 @@ Scope {
             exclusionMode: ExclusionMode.Normal
             color: "transparent"
             WlrLayershell.layer: WlrLayer.Overlay
-            WlrLayershell.namespace: "gui-demo-actioncenter"
+            WlrLayershell.namespace: "hyprdora-actioncenter"
             // OnDemand, a nie Exclusive: przy Exclusive Hyprland kieruje wszystkie
             // kliknięcia do tej warstwy i pasek przestaje reagować. Fokus i tak
             // trafia do panelu zaraz po otwarciu, więc Esc działa.

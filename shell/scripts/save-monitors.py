@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Zapisuje reguły monitorów do bloku GUI-demo w monitors.conf.
+"""Zapisuje reguły monitorów do bloku HyprDora w monitors.conf.
 
 Użycie: save-monitors.py ŚCIEŻKA, a na stdin lista reguł w JSON.
 Reszta pliku, w tym reguła awaryjna, pozostaje bez zmian. Pierwotny plik trafia
@@ -12,8 +12,8 @@ import shutil
 import sys
 import tempfile
 
-BEGIN = "# >>> GUI-demo: zarządzane przez centrum akcji"
-END = "# <<< GUI-demo"
+BEGIN = "# >>> HyprDora: zarządzane przez centrum akcji"
+END = "# <<< HyprDora"
 
 
 def without_block(lines):

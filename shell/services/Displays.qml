@@ -309,10 +309,10 @@ Singleton {
 
         // Strażnik działa poza shellem: cofnie zmianę, nawet gdyby shell padł po jej zastosowaniu.
         changeCounter++;
-        watchdogToken = `${runtimeDir}/gui-demo-display-${Quickshell.processId}-${changeCounter}`;
+        watchdogToken = `${runtimeDir}/hyprdora-display-${Quickshell.processId}-${changeCounter}`;
         Quickshell.execDetached(["sh", "-c",
             'touch "$1"; sleep "$3"; if [ -e "$1" ]; then rm -f "$1"; hyprctl --batch "$2"; fi',
-            "gui-demo-display-watchdog", watchdogToken, batchFor(previousRules), String(confirmSeconds + 3)]);
+            "hyprdora-display-watchdog", watchdogToken, batchFor(previousRules), String(confirmSeconds + 3)]);
 
         applier.command = ["hyprctl", "--batch", batchFor(orderedRules(targets))];
         applier.running = true;
@@ -458,14 +458,7 @@ Singleton {
         target: Hyprland
 
         function onRawEvent(event) {
-            if (event.name.startsWith("monitor")) {
-                refreshDelay.restart();
-            } else if (event.name === "configreloaded") {
-                refreshDelay.restart();
-                // Tylko w trybie testowym: przeładowanie konfiguracji usuwa tymczasowe skróty.
-                Quickshell.execDetached(["sh", "-c", '[ -e "$1" ] && exec "$2"', "gui-demo-dev-binds",
-                    `${root.runtimeDir}/gui-demo-dev`, Quickshell.shellPath("scripts/dev-binds.sh")]);
-            }
+            if (event.name.startsWith("monitor") || event.name === "configreloaded") refreshDelay.restart();
         }
     }
 

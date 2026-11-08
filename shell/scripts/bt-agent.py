@@ -34,7 +34,7 @@ except ImportError:
     add_unix_signal = GLib.unix_signal_add
 
 BLUEZ = "org.bluez"
-AGENT_PATH = "/org/guidemo/agent"
+AGENT_PATH = "/org/hyprdora/agent"
 CAPABILITY = "KeyboardDisplay"
 REJECTED = "org.bluez.Error.Rejected"
 

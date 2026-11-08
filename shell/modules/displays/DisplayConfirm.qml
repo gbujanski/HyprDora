@@ -22,7 +22,7 @@ Scope {
             implicitHeight: 136
             color: "transparent"
             WlrLayershell.layer: WlrLayer.Overlay
-            WlrLayershell.namespace: "gui-demo-display-confirm"
+            WlrLayershell.namespace: "hyprdora-display-confirm"
             WlrLayershell.keyboardFocus: modelData === Panels.focusedScreen() ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
             Rectangle {

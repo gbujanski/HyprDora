@@ -123,7 +123,7 @@ Scope {
             // Pusta maska przepuszcza kliknięcia do okien pod wskaźnikiem.
             mask: Region {}
             WlrLayershell.layer: WlrLayer.Overlay
-            WlrLayershell.namespace: "gui-demo-osd"
+            WlrLayershell.namespace: "hyprdora-osd"
             WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
 
             Rectangle {

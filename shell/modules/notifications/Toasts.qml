@@ -24,7 +24,7 @@ Scope {
             implicitHeight: Math.max(1, column.implicitHeight)
             color: "transparent"
             WlrLayershell.layer: WlrLayer.Overlay
-            WlrLayershell.namespace: "gui-demo-notifications"
+            WlrLayershell.namespace: "hyprdora-notifications"
             WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
 
             Column {

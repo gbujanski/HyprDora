@@ -16,7 +16,7 @@ PanelWindow {
     }
     implicitHeight: Theme.barHeight
     color: Theme.background
-    WlrLayershell.namespace: "gui-demo-bar"
+    WlrLayershell.namespace: "hyprdora-bar"
 
     Workspaces {
         anchors {
