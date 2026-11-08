@@ -8,7 +8,7 @@ Rectangle {
 
     required property var device
 
-    // Pierwsze kliknięcie kosza uzbraja, drugie usuwa parowanie.
+    // The first click arms the button, the second removes the pairing.
     property bool forgetArmed: false
 
     implicitHeight: 44
@@ -71,7 +71,7 @@ Rectangle {
         visible: root.device.paired
         icon: Icons.trash
         iconColor: root.forgetArmed ? Theme.error : Theme.muted
-        tooltip: root.forgetArmed ? "Kliknij ponownie, aby zapomnieć urządzenie" : "Zapomnij urządzenie"
+        tooltip: root.forgetArmed ? I18n.t("bluetooth.forgetArmed") : I18n.t("bluetooth.forget")
         onClicked: {
             if (root.forgetArmed) {
                 root.forgetArmed = false;

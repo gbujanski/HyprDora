@@ -1,7 +1,7 @@
 import QtQuick
 import qs.config
 
-// Wiersz z bieżącą wartością, który rozwija listę opcji: [{ value, label }].
+// Row showing the current value that expands into options: [{ value, label }].
 Column {
     id: root
 
@@ -42,7 +42,7 @@ Column {
 
             Label {
                 anchors.verticalCenter: parent.verticalCenter
-                text: root.currentOption?.label ?? "Brak"
+                text: root.currentOption?.label ?? I18n.t("common.none")
                 font.weight: Font.Medium
             }
 

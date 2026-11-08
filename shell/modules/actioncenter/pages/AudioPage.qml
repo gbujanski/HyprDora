@@ -9,7 +9,7 @@ import qs.modules.actioncenter
 Column {
     spacing: 14
 
-    // Pełne dane wszystkich węzłów są potrzebne tylko przy otwartej stronie.
+    // Full data for all nodes is needed only while this page is open.
     PwObjectTracker {
         objects: [...Audio.sinks, ...Audio.sources, ...Audio.playbackStreams]
     }
@@ -18,12 +18,12 @@ Column {
         width: parent.width
         spacing: 2
 
-        SectionTitle { text: "WYJŚCIE" }
+        SectionTitle { text: I18n.t("section.output") }
 
         VolumeRow {
             width: parent.width
             node: Audio.sink
-            emptyTitle: "Brak wyjścia dźwięku"
+            emptyTitle: I18n.t("audio.noOutput")
         }
 
         Repeater {
@@ -43,12 +43,12 @@ Column {
         width: parent.width
         spacing: 2
 
-        SectionTitle { text: "WEJŚCIE" }
+        SectionTitle { text: I18n.t("section.input") }
 
         VolumeRow {
             width: parent.width
             node: Audio.source
-            emptyTitle: "Brak mikrofonu"
+            emptyTitle: I18n.t("audio.noMicrophone")
             isMicrophone: true
         }
 
@@ -69,11 +69,11 @@ Column {
         width: parent.width
         spacing: 2
 
-        SectionTitle { text: "APLIKACJE" }
+        SectionTitle { text: I18n.t("section.applications") }
 
         Label {
             visible: Audio.playbackStreams.length === 0
-            text: "Żadna aplikacja nie odtwarza dźwięku"
+            text: I18n.t("audio.noStreams")
             color: Theme.muted
             topPadding: 4
             bottomPadding: 4

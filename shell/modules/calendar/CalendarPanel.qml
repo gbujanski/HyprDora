@@ -5,13 +5,11 @@ import qs.config
 import qs.components
 import qs.services
 
-// Kalendarz z pogodą pod zegarem. Działa jak centrum akcji: klik obok
-// lub Esc zamyka, a zamknięte okno nie istnieje.
+// Calendar with weather below the clock. Like the action center, a click outside
+// or Esc closes it, and a closed window does not exist.
 Scope {
     id: root
 
-    readonly property var monthNames: ["Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec",
-        "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"]
 
     Connections {
         target: Panels
@@ -48,9 +46,8 @@ Scope {
             color: "transparent"
             WlrLayershell.layer: WlrLayer.Overlay
             WlrLayershell.namespace: "hyprdora-calendar"
-            // OnDemand, a nie Exclusive: przy Exclusive Hyprland kieruje wszystkie
-            // kliknięcia do tej warstwy i pasek przestaje reagować. Fokus i tak
-            // trafia do panelu zaraz po otwarciu, więc Esc działa.
+            // OnDemand, not Exclusive: with Exclusive, Hyprland routes all clicks to this layer
+            // and the bar stops reacting. Focus still reaches the panel on open, so Esc works.
             WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
 
             SystemClock {
@@ -67,7 +64,6 @@ Scope {
             Rectangle {
                 id: panel
 
-                // Wyświetlany miesiąc; startuje od bieżącego.
                 property int year: clock.date.getFullYear()
                 property int month: clock.date.getMonth()
                 readonly property bool isCurrentMonth: year === clock.date.getFullYear() && month === clock.date.getMonth()
@@ -84,7 +80,7 @@ Scope {
                 }
 
                 Component.onCompleted: {
-                    // Zerwanie wiązań: dalej sterują tylko przyciski.
+                    // Breaks the bindings: from here on only the buttons drive it.
                     year = clock.date.getFullYear();
                     month = clock.date.getMonth();
                     forceActiveFocus();
@@ -120,14 +116,13 @@ Scope {
                     event.accepted = true;
                 }
 
-                // Pochłania kliknięcia, żeby nie trafiały do obszaru zamykającego.
+                // Absorbs clicks so they do not reach the closing area.
                 MouseArea {
                     anchors.fill: parent
                     acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
 
-                    // Gładzik wysyła dziesiątki zdarzeń na jeden ruch, więc między
-                    // zmianami miesiąca jest minimalny odstęp. Dłuższe przewijanie
-                    // przechodzi przez kolejne miesiące w tempie, które da się śledzić.
+                    // A touchpad sends dozens of events per gesture, so month changes have a minimum delay.
+                    // Longer scrolling moves through months at a pace that can be followed.
                     property real lastStep: 0
 
                     onWheel: wheel => {
@@ -155,13 +150,13 @@ Scope {
                         spacing: 1
 
                         Label {
-                            text: clock.date.toLocaleDateString(Qt.locale(), "dddd")
+                            text: clock.date.toLocaleDateString(I18n.locale, "dddd")
                             color: Theme.muted
                             font.pixelSize: Theme.fontSizeSmall
                         }
 
                         Label {
-                            text: clock.date.toLocaleDateString(Qt.locale(), "d MMMM yyyy")
+                            text: clock.date.toLocaleDateString(I18n.locale, "d MMMM yyyy")
                             font.pixelSize: Theme.fontSizeTitle + 3
                             font.weight: Font.DemiBold
                         }
@@ -174,7 +169,7 @@ Scope {
                         Label {
                             anchors.verticalCenter: parent.verticalCenter
                             leftPadding: 4
-                            text: `${root.monthNames[panel.month]} ${panel.year}`
+                            text: `${I18n.monthName(panel.month)} ${panel.year}`
                             font.weight: Font.Medium
                         }
 
@@ -189,21 +184,21 @@ Scope {
                                 anchors.verticalCenter: parent.verticalCenter
                                 visible: !panel.isCurrentMonth
                                 implicitHeight: 26
-                                text: "Dziś"
+                                text: I18n.t("calendar.today")
                                 onClicked: panel.showToday()
                             }
 
                             IconButton {
                                 icon: Icons.chevronLeft
                                 iconColor: Theme.muted
-                                tooltip: "Poprzedni miesiąc"
+                                tooltip: I18n.t("calendar.previousMonth")
                                 onClicked: panel.shiftMonth(-1)
                             }
 
                             IconButton {
                                 icon: Icons.chevronRight
                                 iconColor: Theme.muted
-                                tooltip: "Następny miesiąc"
+                                tooltip: I18n.t("calendar.nextMonth")
                                 onClicked: panel.shiftMonth(1)
                             }
                         }

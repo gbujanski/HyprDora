@@ -1,7 +1,7 @@
 import QtQuick
 import qs.config
 
-// Element paska: ikona, opcjonalny tekst, tło przy najechaniu i podpowiedź.
+// Bar item: icon, optional text, hover background and tooltip.
 Rectangle {
     id: root
 

@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
-"""Łączy z nową siecią Wi-Fi przez D-Bus NetworkManagera.
+"""Connect to a new Wi-Fi network through NetworkManager's D-Bus API.
 
-Quickshell.Networking nie przyjmuje hasła, a przekazanie go w argumentach nmcli
-ujawniłoby je w liście procesów. Dlatego żądanie przychodzi jedną linią JSON na stdin:
+Quickshell.Networking does not accept a password, and passing one to nmcli as
+an argument would expose it in the process list. The request therefore arrives
+as one line of JSON on stdin:
     {"ssid": "...", "password": "...", "hidden": false}
 
-Wynik to jedna linia JSON na stdout:
-    {"ok": true} albo {"ok": false, "reason": "...", ...}
+The result is one line of JSON on stdout:
+    {"ok": true} or {"ok": false, "reason": "...", ...}
 
-Po nieudanej próbie profil jest usuwany, żeby nie zostawiać błędnego hasła.
-Hasło nigdy nie trafia do wyjścia ani logów.
+After a failed attempt the profile is deleted, so no wrong password remains.
+The password never reaches output or logs.
 """
 
 import json
@@ -40,10 +41,13 @@ TIMEOUT_SECONDS = 45
 
 
 def finish(**result):
+    """Print the result as one line of JSON."""
     print(json.dumps(result), flush=True)
 
 
 class Connector:
+    """One connection attempt driven by NetworkManager signals."""
+
     def __init__(self, request):
         self.request = request
         self.bus = Gio.bus_get_sync(Gio.BusType.SYSTEM, None)
@@ -54,6 +58,7 @@ class Connector:
         self.result = None
 
     def call(self, path, interface, method, args, reply):
+        """Call a NetworkManager method and return its unpacked reply."""
         return self.bus.call_sync(
             NM, path, interface, method, args,
             GLib.VariantType(reply) if reply else None,
@@ -61,15 +66,18 @@ class Connector:
         ).unpack()
 
     def prop(self, path, interface, name):
+        """Return a D-Bus property value."""
         return self.call(path, PROPS, "Get", GLib.Variant("(ss)", (interface, name)), "(v)")[0]
 
     def wifi_device(self):
+        """Return the path of the first Wi-Fi device, or None."""
         for path in self.call(NM_PATH, NM, "GetDevices", None, "(ao)")[0]:
             if self.prop(path, NM + ".Device", "DeviceType") == DEVICE_TYPE_WIFI:
                 return path
         return None
 
     def strongest_access_point(self, device, ssid):
+        """Return the path of the strongest access point for an SSID, or None."""
         best, best_strength = None, -1
         wanted = ssid.encode()
         for path in self.prop(device, NM + ".Device.Wireless", "AccessPoints"):
@@ -81,6 +89,7 @@ class Connector:
         return best
 
     def connection_settings(self):
+        """Build the NetworkManager settings for the requested network."""
         ssid = self.request["ssid"]
         password = self.request.get("password") or ""
         hidden = bool(self.request.get("hidden"))
@@ -96,13 +105,14 @@ class Connector:
         }
         if password:
             security = {"psk": GLib.Variant("s", password)}
-            # Dla widocznej sieci NetworkManager dobiera tryb na podstawie punktu dostępu.
+            # For a visible network, NetworkManager picks the mode from the access point.
             if hidden:
                 security["key-mgmt"] = GLib.Variant("s", "wpa-psk")
             settings["802-11-wireless-security"] = security
         return settings
 
     def conclude(self, **result):
+        """Record the first result, delete a failed profile and stop the loop."""
         if self.result is not None:
             return
         self.result = result
@@ -123,6 +133,7 @@ class Connector:
         self.handle_active_state(state, reason)
 
     def handle_active_state(self, state, reason):
+        """Conclude when the connection activates or fails."""
         if state == ACTIVE_ACTIVATED:
             self.conclude(ok=True)
         elif state == ACTIVE_DEACTIVATED:
@@ -146,6 +157,7 @@ class Connector:
         return GLib.SOURCE_REMOVE
 
     def run(self):
+        """Start the connection and return the result as a dict."""
         ssid = self.request.get("ssid") or ""
         if not ssid:
             return {"ok": False, "reason": "invalid_request"}
@@ -180,7 +192,7 @@ class Connector:
         GLib.timeout_add_seconds(TIMEOUT_SECONDS, self.on_timeout)
         add_unix_signal(GLib.PRIORITY_DEFAULT, signal.SIGTERM, self.on_terminate)
 
-        # Stan mógł zmienić się przed subskrypcją.
+        # The state may have changed before the subscription.
         try:
             self.handle_active_state(self.prop(self.active_path, NM + ".Connection.Active", "State"), 0)
         except GLib.Error:
@@ -191,6 +203,7 @@ class Connector:
 
 
 def main():
+    """Read the request from stdin and return an exit code."""
     try:
         request = json.loads(sys.stdin.readline())
     except ValueError:

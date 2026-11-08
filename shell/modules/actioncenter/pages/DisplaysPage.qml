@@ -55,7 +55,7 @@ Column {
         spacing: 6
         visible: page.multiple
 
-        SectionTitle { text: "TRYB" }
+        SectionTitle { text: I18n.t("section.mode") }
 
         Grid {
             width: parent.width
@@ -64,10 +64,10 @@ Column {
 
             Repeater {
                 model: [
-                    { id: "extend", label: "Rozszerz" },
-                    { id: "mirror", label: "Kopia ekranu" },
-                    { id: "internal", label: "Tylko laptop" },
-                    { id: "external", label: "Tylko zewnętrzny" }
+                    { id: "extend", label: I18n.t("displays.extend") },
+                    { id: "mirror", label: I18n.t("displays.mirror") },
+                    { id: "internal", label: I18n.t("displays.internalOnly") },
+                    { id: "external", label: I18n.t("displays.externalOnly") }
                 ]
 
                 TextButton {
@@ -86,7 +86,7 @@ Column {
         spacing: 6
         visible: page.multiple && Displays.activeDraft.length > 0
 
-        SectionTitle { text: "UKŁAD" }
+        SectionTitle { text: I18n.t("section.layout") }
 
         DisplayLayout {
             width: parent.width
@@ -94,7 +94,7 @@ Column {
 
         Label {
             visible: Displays.activeDraft.length > 1
-            text: "Przeciągnij ekran, aby zmienić układ."
+            text: I18n.t("displays.dragHint")
             color: Theme.muted
             font.pixelSize: Theme.fontSizeSmall
         }
@@ -105,7 +105,7 @@ Column {
         spacing: 2
         visible: page.multiple
 
-        SectionTitle { text: "EKRANY" }
+        SectionTitle { text: I18n.t("section.screens") }
 
         Repeater {
             model: Displays.draft
@@ -141,7 +141,7 @@ Column {
                     leftMargin: 8
                     verticalCenter: parent.verticalCenter
                 }
-                text: page.monitor?.mirrorOf ? `Kopia ekranu ${page.monitor.mirrorOf}` : "Włączony"
+                text: page.monitor?.mirrorOf ? I18n.t("displays.mirrorOf", { screen: page.monitor.mirrorOf }) : I18n.t("displays.enabled")
                 color: Theme.muted
             }
 
@@ -152,7 +152,7 @@ Column {
                     verticalCenter: parent.verticalCenter
                 }
                 checked: page.monitor?.enabled ?? false
-                // Ostatniego aktywnego ekranu nie można wyłączyć.
+                // The last active screen cannot be turned off.
                 active: !(page.monitor?.enabled ?? false) || page.canDisable
                 onToggled: Displays.setEnabled(page.monitor.name, !page.monitor.enabled)
             }
@@ -161,7 +161,7 @@ Column {
         Dropdown {
             width: parent.width
             visible: page.monitor?.enabled ?? false
-            title: "Rozdzielczość"
+            title: I18n.t("displays.resolution")
             options: page.resolutions
             currentValue: page.monitor ? `${page.monitor.width}x${page.monitor.height}` : ""
             onSelected: value => {
@@ -173,7 +173,7 @@ Column {
         Dropdown {
             width: parent.width
             visible: page.monitor?.enabled ?? false
-            title: "Odświeżanie"
+            title: I18n.t("displays.refresh")
             options: page.refreshRates
             currentValue: page.monitor?.refresh
             onSelected: value => Displays.setMode(page.monitor.name, page.monitor.width, page.monitor.height, value)
@@ -190,7 +190,7 @@ Column {
                     leftMargin: 8
                     verticalCenter: parent.verticalCenter
                 }
-                text: "Skala"
+                text: I18n.t("displays.scale")
                 color: Theme.muted
             }
 
@@ -214,12 +214,12 @@ Column {
         visible: Displays.dirty && !Displays.pending
 
         TextButton {
-            text: "Odrzuć"
+            text: I18n.t("displays.discard")
             onClicked: Displays.resetDraft()
         }
 
         TextButton {
-            text: "Zastosuj"
+            text: I18n.t("displays.apply")
             primary: true
             onClicked: Displays.applyDraft()
         }

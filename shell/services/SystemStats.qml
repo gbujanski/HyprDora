@@ -5,15 +5,15 @@ import Quickshell
 import Quickshell.Io
 import qs.config
 
-// CPU i pamięć z /proc, bez uruchamiania procesów. Odczyt trwa tylko wtedy,
-// gdy ktoś wywołał acquire(), czyli przy otwartym widoku ze statystykami.
+// CPU and memory from /proc, without starting processes. Reading happens only
+// after acquire(), that is, while a statistics view is open.
 Singleton {
     id: root
 
     property int consumers: 0
     readonly property bool active: consumers > 0
 
-    // Wartości 0..1; cpu < 0 oznacza, że nie ma jeszcze dwóch próbek.
+    // Values 0..1; cpu < 0 means two samples are not available yet.
     property real cpu: -1
     property real memTotal: 0
     property real memUsed: 0
@@ -24,29 +24,36 @@ Singleton {
 
     property var previous: null
 
+    /** Registers a consumer and starts reading. */
     function acquire() {
         consumers += 1;
         if (consumers === 1) {
             sample();
-            // Pierwszy wynik po krótkiej przerwie zamiast po pełnym interwale.
+            // The first result comes after a short pause rather than a full interval.
             firstSample.restart();
         }
     }
 
+    /** Removes a consumer and stops reading after the last one. */
     function release() {
         consumers = Math.max(0, consumers - 1);
         if (consumers === 0) {
-            // Różnica liczona przez czas zamknięcia panelu byłaby średnią, a nie bieżącym obciążeniem.
+            // A difference spanning the closed period would be an average, not the current load.
             previous = null;
             cpu = -1;
         }
     }
 
+    /** Reads CPU and memory once. */
     function sample() {
         statFile.reload();
         memFile.reload();
     }
 
+    /**
+     * Updates CPU load from /proc/stat.
+     * @param {string} text  file contents
+     */
     function parseStat(text) {
         const line = text.split("\n", 1)[0];
         const v = line.trim().split(/\s+/).slice(1, 9).map(Number);
@@ -59,6 +66,10 @@ Singleton {
         previous = { idle, total };
     }
 
+    /**
+     * Updates memory and swap from /proc/meminfo.
+     * @param {string} text  file contents
+     */
     function parseMeminfo(text) {
         const values = {};
         for (const line of text.split("\n")) {
@@ -71,11 +82,17 @@ Singleton {
         swapUsed = swapTotal - (values.SwapFree ?? 0);
     }
 
+    /**
+     * Formats bytes in gigabytes.
+     * @param {real} bytes  size
+     * @returns {string}
+     */
     function formatBytes(bytes) {
         const gib = bytes / 1073741824;
-        return gib >= 10 ? `${Math.round(gib)} GB` : `${gib.toFixed(1).replace(".", ",")} GB`;
+        return gib >= 10 ? `${Math.round(gib)} GB` : `${gib.toLocaleString(I18n.locale, "f", 1)} GB`;
     }
 
+    /** Opens the process monitor. */
     function openMonitor() {
         Quickshell.execDetached(Settings.btopCommand);
     }

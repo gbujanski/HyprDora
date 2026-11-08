@@ -37,7 +37,7 @@ Rectangle {
         font.pixelSize: Theme.fontSize
         clip: true
         echoMode: root.secret && !root.revealed ? TextInput.Password : TextInput.Normal
-        // Bez podpowiedzi metod wprowadzania: hasło nie może trafić do ich pamięci.
+        // Input method hints are off so a password never reaches their history.
         inputMethodHints: root.secret ? Qt.ImhSensitiveData | Qt.ImhNoPredictiveText | Qt.ImhHiddenText : Qt.ImhNone
         activeFocusOnTab: true
         onAccepted: root.accepted()
@@ -61,7 +61,7 @@ Rectangle {
         visible: root.secret
         icon: Icons.eye(root.revealed)
         iconColor: Theme.muted
-        tooltip: root.revealed ? "Ukryj hasło" : "Pokaż hasło"
+        tooltip: root.revealed ? I18n.t("password.hide") : I18n.t("password.show")
         onClicked: root.revealed = !root.revealed
     }
 }

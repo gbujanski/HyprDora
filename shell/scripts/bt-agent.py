@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
-"""Agent parowania BlueZ dla centrum akcji.
+"""BlueZ pairing agent for the action center.
 
-Quickshell.Bluetooth nie rejestruje agenta, więc urządzenia wymagające PIN-u lub
-potwierdzenia kodu nie sparowałyby się bez tego procesu. Działa tylko w trakcie
-używania strony Bluetooth.
+Quickshell.Bluetooth does not register an agent, so devices that need a PIN or
+code confirmation could not pair without this process. It runs only while the
+Bluetooth page is in use.
 
-Stdout (linie JSON):
+Stdout (JSON lines):
     {"event": "ready"}
     {"event": "request", "id": 1, "kind": "confirm", "device": "...", "value": "123456"}
     {"event": "display", "device": "...", "value": "123456"}
     {"event": "cancel"}
-Rodzaje "kind": pin, passkey, confirm, authorize, authorize-service.
+Values of "kind": pin, passkey, confirm, authorize, authorize-service.
 
-Stdin (linie JSON):
+Stdin (JSON lines):
     {"id": 1, "accept": true, "value": "1234"}
 """
 
@@ -70,11 +70,12 @@ INTROSPECTION = """
 
 
 def emit(**message):
+    """Print one JSON line to the shell."""
     print(json.dumps(message), flush=True)
 
 
 def build_reply(kind, value):
-    """Zwraca wariant odpowiedzi albo None, gdy wartość jest nieprawidłowa."""
+    """Return the reply variant, or None when the value is invalid."""
     if kind == "pin":
         return GLib.Variant("(s)", (value,)) if 1 <= len(value) <= 16 else None
     if kind == "passkey":
@@ -85,6 +86,8 @@ def build_reply(kind, value):
 
 
 class Agent:
+    """org.bluez.Agent1 implementation that forwards requests to the shell."""
+
     def __init__(self, bus, loop):
         self.bus = bus
         self.loop = loop
@@ -93,6 +96,7 @@ class Agent:
         self.input_buffer = b""
 
     def device_name(self, path):
+        """Return a device's alias, or its address when unavailable."""
         try:
             reply = self.bus.call_sync(
                 BLUEZ, path, "org.freedesktop.DBus.Properties", "Get",
@@ -104,6 +108,7 @@ class Agent:
             return path.rsplit("/", 1)[-1].removeprefix("dev_").replace("_", ":")
 
     def request(self, invocation, kind, device, value=""):
+        """Store a pending call and ask the shell to answer it."""
         request_id = self.next_id
         self.next_id += 1
         self.pending[request_id] = (invocation, kind)
@@ -116,7 +121,7 @@ class Agent:
             self.loop.quit()
         elif method == "Cancel":
             for pending, _kind in self.pending.values():
-                pending.return_dbus_error("org.bluez.Error.Canceled", "Anulowano")
+                pending.return_dbus_error("org.bluez.Error.Canceled", "Canceled")
             self.pending.clear()
             invocation.return_value(None)
             emit(event="cancel")
@@ -138,17 +143,19 @@ class Agent:
             invocation.return_value(None)
 
     def answer(self, message):
+        """Complete a pending call with the shell's response."""
         entry = self.pending.pop(message.get("id"), None)
         if entry is None:
             return
         invocation, kind = entry
         reply = build_reply(kind, str(message.get("value", ""))) if message.get("accept") else None
         if reply is None:
-            invocation.return_dbus_error(REJECTED, "Odrzucono")
+            invocation.return_dbus_error(REJECTED, "Rejected")
         else:
             invocation.return_value(reply)
 
     def on_stdin(self, fd, _condition):
+        """Read responses from stdin and quit when it closes."""
         data = os.read(fd, 4096)
         if not data:
             self.loop.quit()
@@ -164,6 +171,7 @@ class Agent:
 
 
 def main():
+    """Register the agent, run until stopped and return an exit code."""
     loop = GLib.MainLoop()
     bus = Gio.bus_get_sync(Gio.BusType.SYSTEM, None)
     agent = Agent(bus, loop)

@@ -5,7 +5,7 @@ import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Io
 
-// Stan paneli wspólny dla pasków, skrótów klawiszowych i samych paneli.
+// Panel state shared by bars, keybindings and the panels.
 Singleton {
     id: root
 
@@ -16,25 +16,38 @@ Singleton {
     property bool calendarOpen: false
     property var calendarScreen: null
 
+    /**
+     * Returns the screen with Hyprland's focused monitor.
+     * @returns {ShellScreen or null}
+     */
     function focusedScreen() {
         const name = Hyprland.focusedMonitor?.name;
         return Quickshell.screens.find(s => s.name === name) ?? Quickshell.screens[0] ?? null;
     }
 
+    /**
+     * Opens the action center.
+     * @param {ShellScreen} screen  target, or null for the focused screen
+     * @param {string} page  page name, main by default
+     */
     function openActionCenter(screen, page) {
         actionCenterScreen = screen ?? focusedScreen();
         actionCenterPage = page || "main";
         actionCenterOpen = actionCenterScreen !== null;
-        // Oba panele przejmują klawiaturę, więc otwarty jest najwyżej jeden.
+        // Both panels take the keyboard, so at most one is open.
         if (actionCenterOpen) calendarOpen = false;
     }
 
+    /** Closes the action center. */
     function closeActionCenter() {
         actionCenterOpen = false;
     }
 
-    // Ponowne wywołanie dla tej samej strony i ekranu zamyka panel,
-    // a dla innej strony lub ekranu przenosi go tam.
+    /**
+     * Closes the action center if it shows this page on this screen, otherwise moves it there.
+     * @param {ShellScreen} screen  target, or null for the focused screen
+     * @param {string} page  page name, main by default
+     */
     function toggleActionCenter(screen, page) {
         const target = screen ?? focusedScreen();
         const samePlace = target === actionCenterScreen && (page || "main") === actionCenterPage;
@@ -42,23 +55,32 @@ Singleton {
         else openActionCenter(target, page);
     }
 
+    /**
+     * Opens the calendar.
+     * @param {ShellScreen} screen  target, or null for the focused screen
+     */
     function openCalendar(screen) {
         calendarScreen = screen ?? focusedScreen();
         calendarOpen = calendarScreen !== null;
         if (calendarOpen) actionCenterOpen = false;
     }
 
+    /** Closes the calendar. */
     function closeCalendar() {
         calendarOpen = false;
     }
 
+    /**
+     * Closes the calendar if open on this screen, otherwise opens it there.
+     * @param {ShellScreen} screen  target, or null for the focused screen
+     */
     function toggleCalendar(screen) {
         const target = screen ?? focusedScreen();
         if (calendarOpen && target === calendarScreen) closeCalendar();
         else openCalendar(target);
     }
 
-    // Ekran z otwartym panelem mógł właśnie zostać odłączony.
+    // The screen holding an open panel may have just been unplugged.
     Connections {
         target: Quickshell
         function onScreensChanged() {
@@ -92,7 +114,7 @@ Singleton {
         function isOpen(): bool { return root.calendarOpen; }
     }
 
-    // Tutaj, a nie w Session: ten singleton istnieje od startu, więc skrót działa od razu.
+    // Here rather than in Session: this singleton exists from startup, so the shortcut works at once.
     IpcHandler {
         target: "powermenu"
 

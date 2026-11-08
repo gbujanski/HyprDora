@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Networking as QsNet
+import qs.config
 
 Singleton {
     id: root
@@ -17,8 +18,8 @@ Singleton {
     readonly property string ssid: activeNetwork?.name ?? ""
     readonly property real signal: activeNetwork?.signalStrength ?? 0
 
-    // Bieżąca sieć, potem zapisane, potem najsilniejszy sygnał (zaokrąglony,
-    // żeby lista nie przeskakiwała przy drobnych wahaniach).
+    // Current network, then saved ones, then strongest signal (rounded, so the list does not
+    // jump on small fluctuations).
     readonly property var networks: {
         const list = wifiDevice?.networks.values.filter(n => n.name !== "") ?? [];
         const rank = n => (n.connected ? 2 : n.known ? 1 : 0);
@@ -26,33 +27,46 @@ Singleton {
         return list.sort((a, b) => rank(b) - rank(a) || level(b) - level(a) || a.name.localeCompare(b.name));
     }
 
-    // Skanowanie zużywa energię, więc działa tylko przy otwartej stronie Wi-Fi.
+    // Scanning uses power, so it runs only while the Wi-Fi page is open.
     property bool scanRequested: false
     onScanRequestedChanged: applyScanner()
     onWifiDeviceChanged: applyScanner()
 
+    /** Starts or stops scanning according to scanRequested. */
     function applyScanner() {
         if (wifiDevice) wifiDevice.scannerEnabled = scanRequested;
     }
 
-    // Stan formularza i łączenia. SSID sieci, dla której pokazano formularz hasła.
+    // Form and connection state. promptSsid is the network whose password form is shown.
     property string promptSsid: ""
     property bool hiddenPrompt: false
     property string busySsid: ""
     property string errorSsid: ""
     property string errorMessage: ""
 
+    /**
+     * Turns Wi-Fi on or off.
+     * @param {bool} enabled  new state
+     */
     function setWifiEnabled(enabled) {
         QsNet.Networking.wifiEnabled = enabled;
     }
 
+    /**
+     * Tells whether a network requires a password.
+     * @param {WifiNetwork} network  network to check
+     * @returns {bool}
+     */
     function needsPassword(network) {
         return network.security !== QsNet.WifiSecurityType.Open
             && network.security !== QsNet.WifiSecurityType.Owe;
     }
 
-    // Formularz obsługuje tylko hasło współdzielone. Pozostałe tryby (firmowe EAP,
-    // przestarzałe WEP) trzeba skonfigurować w nmcli lub nmtui.
+    /**
+     * Tells whether the form can handle a network's security. Only shared-key modes are supported; EAP and WEP need nmcli or nmtui.
+     * @param {WifiNetwork} network  network to check
+     * @returns {bool}
+     */
     function isSupported(network) {
         switch (network.security) {
         case QsNet.WifiSecurityType.Open:
@@ -66,39 +80,54 @@ Singleton {
         }
     }
 
+    /**
+     * Returns a readable security type.
+     * @param {WifiNetwork} network  network to describe
+     * @returns {string}
+     */
     function securityLabel(network) {
         switch (network.security) {
-        case QsNet.WifiSecurityType.Open: return "Otwarta";
-        case QsNet.WifiSecurityType.Owe: return "Otwarta, szyfrowana";
+        case QsNet.WifiSecurityType.Open: return I18n.t("wifi.security.open");
+        case QsNet.WifiSecurityType.Owe: return I18n.t("wifi.security.owe");
         case QsNet.WifiSecurityType.Sae: return "WPA3";
         case QsNet.WifiSecurityType.Wpa2Psk: return "WPA2";
         case QsNet.WifiSecurityType.WpaPsk: return "WPA";
         case QsNet.WifiSecurityType.Wpa2Eap:
         case QsNet.WifiSecurityType.WpaEap:
-        case QsNet.WifiSecurityType.Wpa3SuiteB192: return "Firmowa (EAP)";
+        case QsNet.WifiSecurityType.Wpa3SuiteB192: return I18n.t("wifi.security.enterprise");
         case QsNet.WifiSecurityType.StaticWep:
         case QsNet.WifiSecurityType.DynamicWep: return "WEP";
-        default: return "Nieznane";
+        default: return I18n.t("wifi.security.unknown");
         }
     }
 
+    /** Clears the connection error. */
     function clearError() {
         errorSsid = "";
         errorMessage = "";
     }
 
+    /** Closes the password form. */
     function closePrompt() {
         promptSsid = "";
         hiddenPrompt = false;
     }
 
+    /**
+     * Ends a connection attempt with an error.
+     * @param {string} ssid  affected network
+     * @param {string} message  user message
+     */
     function fail(ssid, message) {
         busySsid = "";
         errorSsid = ssid;
         errorMessage = message;
     }
 
-    // Kliknięcie sieci na liście.
+    /**
+     * Handles a click on a network in the list.
+     * @param {WifiNetwork} network  clicked network
+     */
     function activate(network) {
         clearError();
         closePrompt();
@@ -106,7 +135,7 @@ Singleton {
         if (network.known) {
             connectKnown(network);
         } else if (!isSupported(network)) {
-            fail(network.name, "Ten typ zabezpieczeń wymaga konfiguracji przez nmcli lub nmtui.");
+            fail(network.name, I18n.t("wifi.error.unsupported"));
         } else if (needsPassword(network)) {
             promptSsid = network.name;
         } else {
@@ -114,6 +143,10 @@ Singleton {
         }
     }
 
+    /**
+     * Connects to a saved network and watches the result.
+     * @param {WifiNetwork} network  saved network
+     */
     function connectKnown(network) {
         busySsid = network.name;
         knownWatcher.sawConnecting = false;
@@ -122,6 +155,12 @@ Singleton {
         network.connect();
     }
 
+    /**
+     * Connects to a new network through the helper.
+     * @param {string} ssid  network name
+     * @param {string} password  password, may be empty
+     * @param {bool} hidden  whether the network is hidden
+     */
     function connectNew(ssid, password, hidden) {
         if (helper.running) return;
         clearError();
@@ -132,24 +171,34 @@ Singleton {
         helper.running = true;
     }
 
+    /** Disconnects from the current network. */
     function disconnectActive() {
         clearError();
         activeNetwork?.disconnect();
     }
 
+    /**
+     * Removes a saved network.
+     * @param {WifiNetwork} network  network to forget
+     */
     function forget(network) {
         clearError();
         network.forget();
     }
 
+    /**
+     * Maps a helper result to a user message.
+     * @param {object} result  parsed helper output
+     * @returns {string}
+     */
     function messageForHelper(result) {
         switch (result.reason) {
-        case "wrong_password": return "Nieprawidłowe hasło.";
-        case "not_found": return "Sieć jest poza zasięgiem.";
-        case "timeout": return "Sieć nie odpowiedziała na czas.";
-        case "rejected": return "NetworkManager odrzucił ustawienia sieci.";
-        case "no_device": return "Nie znaleziono karty Wi-Fi.";
-        default: return "Nie udało się połączyć.";
+        case "wrong_password": return I18n.t("wifi.error.wrongPassword");
+        case "not_found": return I18n.t("wifi.error.notFound");
+        case "timeout": return I18n.t("wifi.error.timeout");
+        case "rejected": return I18n.t("wifi.error.rejected");
+        case "no_device": return I18n.t("wifi.error.noDevice");
+        default: return I18n.t("wifi.error.failed");
         }
     }
 
@@ -162,7 +211,7 @@ Singleton {
         command: ["python3", "-I", Quickshell.shellPath("scripts/nm-connect.py")]
         stdinEnabled: true
 
-        // Żądanie zawiera hasło: przechodzi tylko przez stdin i nie jest nigdzie zachowywane.
+        // The request contains the password: it goes only through stdin and is never stored.
         onStarted: {
             write(pendingRequest + "\n");
             pendingRequest = "";
@@ -176,16 +225,16 @@ Singleton {
                     const result = JSON.parse(line);
                     if (result.ok) root.busySsid = "";
                     else root.fail(ssid, root.messageForHelper(result));
-                    console.info("wifi: wynik pomocnika:", result.ok ? "ok" : result.reason,
+                    console.info("wifi: helper result:", result.ok ? "ok" : result.reason,
                         result.activeReason ?? "", result.deviceReason ?? "");
                 } catch (e) {
-                    root.fail(ssid, "Nie udało się połączyć.");
+                    root.fail(ssid, I18n.t("wifi.error.failed"));
                 }
             }
         }
 
         onExited: {
-            if (!resultReceived && root.busySsid !== "") root.fail(root.busySsid, "Nie udało się połączyć.");
+            if (!resultReceived && root.busySsid !== "") root.fail(root.busySsid, I18n.t("wifi.error.failed"));
         }
     }
 
@@ -211,8 +260,8 @@ Singleton {
                 const ssid = network.name;
                 root.finishKnown();
                 root.fail(ssid, badSecret
-                    ? "Zapisane hasło nie działa. Zapomnij sieć i połącz się ponownie."
-                    : "Nie udało się połączyć.");
+                    ? I18n.t("wifi.error.savedPassword")
+                    : I18n.t("wifi.error.failed"));
             }
         }
     }
@@ -223,10 +272,11 @@ Singleton {
         onTriggered: {
             const ssid = knownWatcher.network?.name ?? "";
             root.finishKnown();
-            root.fail(ssid, "Sieć nie odpowiedziała na czas.");
+            root.fail(ssid, I18n.t("wifi.error.timeout"));
         }
     }
 
+    /** Stops watching a saved-network connection. */
     function finishKnown() {
         knownTimeout.stop();
         knownWatcher.network = null;
@@ -254,7 +304,7 @@ Singleton {
                 }))
             });
         }
-        // Bez hasła: argumenty wywołania IPC są widoczne w liście procesów.
+        // No password here: IPC call arguments are visible in the process list.
         function prompt(ssid: string): void { root.clearError(); root.promptSsid = ssid; }
         function connectOpen(ssid: string): void { root.connectNew(ssid, "", false); }
     }

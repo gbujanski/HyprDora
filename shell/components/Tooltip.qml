@@ -2,7 +2,7 @@ import QtQuick
 import Quickshell
 import qs.config
 
-// Podpowiedź wyświetlana pod elementem paska po krótkim najechaniu.
+// Tooltip shown below a bar item after a short hover.
 Scope {
     id: root
 

@@ -2,8 +2,8 @@ import QtQuick
 import qs.config
 import qs.components
 
-// Siatka miesiąca od poniedziałku, z numerami tygodni ISO. Zawsze sześć
-// wierszy, żeby panel nie zmieniał wysokości przy przełączaniu miesięcy.
+// Month grid from Monday with ISO week numbers. Always six rows,
+// so the panel keeps its height across months.
 Column {
     id: root
 
@@ -11,11 +11,11 @@ Column {
     property int month: 0
     property date today: new Date()
 
-    readonly property var dayNames: ["Pn", "Wt", "Śr", "Cz", "Pt", "So", "Nd"]
+    readonly property var dayNames: [1, 2, 3, 4, 5, 6, 0].map(day => I18n.shortDayName(day))
     readonly property real cellWidth: width / 8
     readonly property int cellHeight: 32
 
-    // 42 kolejne dni zaczynające się od poniedziałku przed pierwszym dniem miesiąca.
+    // 42 consecutive days from the Monday before the first of the month.
     readonly property var days: {
         const first = new Date(year, month, 1);
         const offset = (first.getDay() + 6) % 7;
@@ -26,7 +26,7 @@ Column {
 
     function isoWeek(day) {
         const t = new Date(Date.UTC(day.getFullYear(), day.getMonth(), day.getDate()));
-        // Czwartek tego samego tygodnia wyznacza rok i numer tygodnia.
+        // The Thursday of the same week determines the ISO year and week number.
         t.setUTCDate(t.getUTCDate() + 3 - (t.getUTCDay() + 6) % 7);
         const yearStart = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
         return Math.ceil(((t - yearStart) / 86400000 + 1) / 7);
@@ -43,7 +43,7 @@ Column {
             width: root.cellWidth
             height: 24
             horizontalAlignment: Text.AlignHCenter
-            text: "Tydz."
+            text: I18n.t("calendar.week")
             color: Theme.dim
             font.pixelSize: Theme.fontSizeSmall - 1
         }

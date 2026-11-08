@@ -5,17 +5,16 @@ import Quickshell.Services.UPower
 import qs.config
 import qs.services
 
-// Ostrzeżenia o niskiej baterii jako zwykłe powiadomienia (przez notify-send),
-// więc trafiają do toastów i historii. Każdy próg ostrzega raz na rozładowanie;
-// podłączenie zasilacza zamyka ostrzeżenie i zeruje stan.
+// Low-battery warnings sent as regular notifications, so they reach toasts and history.
+// Each threshold warns once per discharge; plugging in closes the warning and resets the state.
 Scope {
     id: root
 
-    // 0: brak ostrzeżenia, 1: niski poziom, 2: krytyczny.
+    // 0: none, 1: low, 2: critical.
     property int warned: 0
     property int notificationId: 0
 
-    // Przed wczytaniem danych UPower poziom wynosi 0, co dałoby fałszywy alarm.
+    // The level is 0 until UPower data loads, which would be a false alarm.
     readonly property bool ready: Power.hasBattery && (Power.battery?.ready ?? false)
     readonly property bool discharging: ready && UPower.onBattery && !Power.charging
     readonly property int severity: !discharging ? 0
@@ -34,7 +33,7 @@ Scope {
             warned = 0;
             return;
         }
-        // Tylko eskalacja: wahania wokół progu nie powtarzają ostrzeżenia.
+        // Escalate only, so jitter around a threshold does not repeat the warning.
         if (severity > warned) {
             warned = severity;
             send(severity);
@@ -44,16 +43,15 @@ Scope {
     function send(level) {
         const critical = level >= 2;
         const percent = Math.round(Power.level * 100);
-        const time = Power.secondsLeft > 0 ? `, ok. ${Power.formatTime(Power.secondsLeft)}` : "";
-        const summary = critical ? "Bateria prawie rozładowana" : "Niski poziom baterii";
-        const body = `Zostało ${percent}%${time}. `
-            + (critical ? "Zapisz pracę i podłącz zasilacz." : "Podłącz zasilacz.");
-        // Krytyczne nie znika samo i przebija się przez Nie przeszkadzać.
-        // Niskie też nie znika samo (-t 0), żeby nie dało się go przeoczyć.
-        const command = ["notify-send", "--print-id", "--app-name=Bateria",
+        const time = Power.secondsLeft > 0 ? I18n.t("battery.warning.timeLeft", { time: Power.formatTime(Power.secondsLeft) }) : "";
+        const summary = critical ? I18n.t("battery.warning.criticalTitle") : I18n.t("battery.warning.lowTitle");
+        const body = I18n.t("battery.warning.level", { percent, time }) + " "
+            + (critical ? I18n.t("battery.warning.criticalBody") : I18n.t("battery.warning.lowBody"));
+        // Neither level expires on its own, so it cannot be missed. Critical also bypasses Do Not Disturb.
+        const command = ["notify-send", "--print-id", `--app-name=${I18n.t("battery.appName")}`,
             `--icon=${critical ? "battery-empty" : "battery-caution"}`,
             `--urgency=${critical ? "critical" : "normal"}`, "--expire-time=0"];
-        // Krytyczne zastępuje niskie zamiast dokładać drugie.
+        // Critical replaces the low warning instead of adding a second one.
         if (notificationId > 0) command.push(`--replace-id=${notificationId}`);
         command.push(summary, body);
         sender.command = command;

@@ -10,8 +10,6 @@ import qs.modules.calendar
 import qs.modules.battery
 
 ShellRoot {
-    // Osobny pasek na każdym monitorze; Variants sam tworzy i usuwa instancje
-    // przy podłączaniu oraz odłączaniu ekranów.
     Variants {
         model: Quickshell.screens
 

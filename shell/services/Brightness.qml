@@ -28,7 +28,7 @@ Singleton {
                 keyboard: { device: root.keyboard.device, raw: root.keyboard.raw, max: root.keyboard.maxRaw, level: root.keyboard.level }
             });
         }
-        // Dla klawiszy jasności: step 0.05 / step -0.05.
+        // For brightness keys: step 0.05 / step -0.05.
         function step(delta: real): void { root.display.step(delta); }
         function set(value: real): void { root.display.setLevel(value); }
         function get(): real { return root.display.level; }

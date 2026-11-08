@@ -2,17 +2,17 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 
-// Jedno urządzenie podświetlenia obsługiwane przez brightnessctl.
-// Poziom 0..1 jest liczony w skali odbieranej przez oko (moc = p^exponent,
-// dla ekranu p^3 jak w CIE L*), a 0 oznacza minimumFraction mocy zamiast
-// zgaszonego podświetlenia. Ta sama skala obsługuje suwak, OSD i klawisze (IPC).
+// One backlight device driven by brightnessctl.
+// Level 0..1 is on a perceptual scale (power = p^exponent, p^3 for screens as in CIE L*),
+// and 0 means minimumFraction of power rather than an unlit screen.
+// The slider, OSD and keys (IPC) share this scale.
 Scope {
     id: root
 
     property string deviceClass: "backlight"
     property string nameContains: ""
     property real exponent: 1
-    // Najniższa moc (ułamek maksimum) odpowiadająca poziomowi 0.
+    // Lowest power, as a fraction of maximum, that corresponds to level 0.
     property real minimumFraction: 0
 
     property string device: ""
@@ -22,11 +22,16 @@ Scope {
 
     readonly property bool available: device !== "" && maxRaw > 0
     readonly property real floorPerceived: Math.pow(minimumFraction, 1 / exponent)
-    // Wartość poniżej minimum (np. ustawiona spoza shella) pokazujemy jako 0.
+    // A value below the minimum, for example set outside the shell, shows as 0.
     readonly property real level: available
         ? Math.max(0, Math.min(1, (Math.pow(raw / maxRaw, 1 / exponent) - floorPerceived) / (1 - floorPerceived)))
         : 0
 
+    /**
+     * Converts a level to a raw device value, never below the floor.
+     * @param {real} value  level, 0..1
+     * @returns {int}
+     */
     function rawFor(value) {
         const clamped = Math.max(0, Math.min(1, value));
         const perceived = floorPerceived + (1 - floorPerceived) * clamped;
@@ -34,6 +39,10 @@ Scope {
         return Math.max(minimumRaw, Math.round(Math.pow(perceived, exponent) * maxRaw));
     }
 
+    /**
+     * Sets the device to a level.
+     * @param {real} value  level, 0..1
+     */
     function setLevel(value) {
         if (!available) return;
         pendingRaw = rawFor(value);
@@ -41,13 +50,15 @@ Scope {
         flush();
     }
 
-    // Zmiana o delta z wyrównaniem do wielokrotności kroku, żeby klawisze
-    // dawały równe wartości (35%, 40%…) niezależnie od punktu startu.
+    /**
+     * Changes the level by a delta, aligned to multiples of its size so keys give even values.
+     * @param {real} delta  signed step size
+     */
     function step(delta) {
         if (!available || delta === 0) return;
         const size = Math.abs(delta);
-        // Poziom odczytany z wartości sprzętowej bywa o włos obok kroku (59,996%
-        // zamiast 60%), więc bliskie wartości przyciągamy do najbliższego kroku.
+        // A level read from hardware can land just off a step (59.996% instead of 60%),
+        // so nearby values snap to the closest step.
         const steps = level / size;
         const near = Math.abs(steps - Math.round(steps)) < 0.1;
         const base = delta > 0
@@ -56,8 +67,7 @@ Scope {
         setLevel((base + (delta > 0 ? 1 : -1)) * size);
     }
 
-    // Przy przeciąganiu suwaka zmiany przychodzą szybciej, niż działa brightnessctl:
-    // wykonujemy tylko jedną naraz i zawsze kończymy na ostatniej wartości.
+    /** Writes the latest pending value. Slider drags outrun brightnessctl, so only one write runs at a time and the last value always wins. */
     function flush() {
         if (writer.running || pendingRaw < 0) return;
         writer.command = ["brightnessctl", "-q", "-d", device, "set", String(pendingRaw)];
@@ -92,7 +102,7 @@ Scope {
         id: valueFile
         path: root.device !== "" ? `/sys/class/${root.deviceClass === "leds" ? "leds" : "backlight"}/${root.device}/brightness` : ""
         printErrors: false
-        // inotify widzi też zmiany z klawiszy; udev nie zgłasza ich dla klawiatury.
+        // inotify also sees changes from keys; udev does not report them for keyboards.
         watchChanges: true
         onFileChanged: reload()
         onLoaded: {

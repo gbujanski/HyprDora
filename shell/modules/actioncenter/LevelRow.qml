@@ -2,7 +2,7 @@ import QtQuick
 import qs.config
 import qs.components
 
-// Ikona, nazwa, procent i suwak dla jasności oraz podobnych wartości.
+// Icon, name, percentage and slider for brightness and similar values.
 Item {
     id: root
 

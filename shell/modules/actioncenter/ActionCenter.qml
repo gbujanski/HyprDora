@@ -9,9 +9,9 @@ import qs.modules.actioncenter.pages
 Scope {
     id: root
 
-    readonly property var pageTitles: ({ audio: "Dźwięk", wifi: "Wi-Fi", bluetooth: "Bluetooth", power: "Zasilanie", displays: "Monitory" })
+    readonly property var pageTitles: ({ audio: I18n.t("page.audio"), wifi: "Wi-Fi", bluetooth: "Bluetooth", power: I18n.t("page.power"), displays: I18n.t("page.displays") })
 
-    // Okno żyje jeszcze chwilę po zamknięciu, żeby animacja mogła się skończyć.
+    // The window outlives closing briefly so the animation can finish.
     Connections {
         target: Panels
         function onActionCenterOpenChanged() {
@@ -27,8 +27,8 @@ Scope {
     LazyLoader {
         active: Panels.actionCenterOpen || closeDelay.running
 
-        // Okno obejmuje cały ekran pod paskiem: klik poza panelem go zamyka,
-        // a pasek pozostaje klikalny.
+        // The window covers the screen below the bar: clicking outside the panel closes it,
+        // and the bar stays clickable.
         PanelWindow {
             id: window
 
@@ -48,9 +48,8 @@ Scope {
             color: "transparent"
             WlrLayershell.layer: WlrLayer.Overlay
             WlrLayershell.namespace: "hyprdora-actioncenter"
-            // OnDemand, a nie Exclusive: przy Exclusive Hyprland kieruje wszystkie
-            // kliknięcia do tej warstwy i pasek przestaje reagować. Fokus i tak
-            // trafia do panelu zaraz po otwarciu, więc Esc działa.
+            // OnDemand, not Exclusive: with Exclusive, Hyprland routes all clicks to this layer
+            // and the bar stops reacting. Focus still reaches the panel on open, so Esc works.
             WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
 
             MouseArea {
@@ -84,13 +83,13 @@ Scope {
 
                 Behavior on opacity { NumberAnimation { duration: Theme.animPanel } }
 
-                // Esc: z podstrony wraca do głównego widoku, z głównego zamyka panel.
+                // Esc returns from a subpage to the main view, and closes the panel from there.
                 Keys.onEscapePressed: {
                     if (Panels.actionCenterPage !== "main") Panels.actionCenterPage = "main";
                     else Panels.closeActionCenter();
                 }
 
-                // Pochłania kliknięcia, żeby nie trafiały do obszaru zamykającego.
+                // Absorbs clicks so they do not reach the closing area.
                 MouseArea {
                     anchors.fill: parent
                     acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
@@ -116,7 +115,7 @@ Scope {
                         IconButton {
                             anchors.verticalCenter: parent.verticalCenter
                             icon: Icons.back
-                            tooltip: "Wróć"
+                            tooltip: I18n.t("nav.back")
                             onClicked: Panels.actionCenterPage = "main"
                         }
 
@@ -142,7 +141,6 @@ Scope {
 
                         Loader {
                             id: pageLoader
-                            // Miejsce na pasek przewijania, gdy treść się nie mieści.
                             width: flick.width - (flick.contentHeight > flick.height ? 8 : 0)
                             sourceComponent: {
                                 switch (Panels.actionCenterPage) {
@@ -155,7 +153,7 @@ Scope {
                                 }
                             }
                             onSourceComponentChanged: flick.contentY = 0
-                            // Usunięta strona zabiera fokus, a bez niego Esc przestałby działać.
+                            // A destroyed page takes focus with it, and Esc would stop working.
                             onLoaded: (item.wantsFocus ? item : panel).forceActiveFocus()
                         }
 
@@ -165,7 +163,6 @@ Scope {
                             function onScrollToTop() { flick.contentY = 0; }
                         }
 
-                        // Pasek przewijania, widoczny tylko gdy treść się nie mieści.
                         Rectangle {
                             parent: flick
                             anchors.right: parent.right

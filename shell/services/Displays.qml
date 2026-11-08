@@ -4,8 +4,9 @@ import QtQuick
 import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Io
+import qs.config
 
-// Monitory: odczyt stanu, szkic zmian, bezpieczne zastosowanie i zapis.
+// Monitors: state, draft changes, safe application and saving.
 Singleton {
     id: root
 
@@ -18,7 +19,7 @@ Singleton {
     property string selectedName: ""
     property string errorMessage: ""
 
-    // Zmiana czeka na potwierdzenie; bez niego wraca stan poprzedni.
+    // A change waits for confirmation; without one, the previous state returns.
     property bool pending: false
     property int secondsLeft: 0
     property var previousRules: []
@@ -31,23 +32,48 @@ Singleton {
     readonly property bool hasExternal: monitors.some(m => !isInternal(m))
     readonly property bool dirty: JSON.stringify(draft.map(rule)) !== JSON.stringify(monitors.map(rule))
 
+    /**
+     * Tells whether a monitor is a built-in panel.
+     * @param {object} monitor  monitor entry
+     * @returns {bool}
+     */
     function isInternal(monitor) {
         return /^(eDP|LVDS|DSI)/.test(monitor.name);
     }
 
+    /**
+     * Returns a monitor's width after scaling.
+     * @param {object} monitor  monitor entry
+     * @returns {int}
+     */
     function logicalWidth(monitor) {
         return Math.ceil(monitor.width / monitor.scale);
     }
 
+    /**
+     * Returns a monitor's height after scaling.
+     * @param {object} monitor  monitor entry
+     * @returns {int}
+     */
     function logicalHeight(monitor) {
         return Math.ceil(monitor.height / monitor.scale);
     }
 
+    /**
+     * Returns a readable monitor name.
+     * @param {object} monitor  monitor entry
+     * @returns {string}
+     */
     function displayName(monitor) {
-        if (isInternal(monitor)) return "Ekran laptopa";
+        if (isInternal(monitor)) return I18n.t("displays.laptopScreen");
         return monitor.description || monitor.name;
     }
 
+    /**
+     * Parses Hyprland mode strings such as 1920x1080@60.00Hz.
+     * @param {list} modes  mode strings
+     * @returns {list}
+     */
     function parseModes(modes) {
         const result = [];
         for (const text of modes) {
@@ -57,6 +83,11 @@ Singleton {
         return result;
     }
 
+    /**
+     * Parses `hyprctl -j monitors all` output.
+     * @param {string} text  JSON output
+     * @returns {list}
+     */
     function parseMonitors(text) {
         const raw = JSON.parse(text);
         const names = {};
@@ -78,17 +109,33 @@ Singleton {
         }));
     }
 
+    /**
+     * Returns the mode part of a monitor rule.
+     * @param {object} monitor  monitor entry
+     * @returns {string}
+     */
     function modeText(monitor) {
         if (monitor.width > 0 && monitor.height > 0)
             return `${monitor.width}x${monitor.height}@${Number(monitor.refresh).toFixed(2)}`;
         return "preferred";
     }
 
+    /**
+     * Returns the optional transform and VRR part of a rule.
+     * @param {object} monitor  monitor entry
+     * @returns {string}
+     */
     function extras(monitor) {
         return (monitor.transform ? `,transform,${monitor.transform}` : "") + (monitor.vrr ? ",vrr,1" : "");
     }
 
-    // Reguła dla podanego identyfikatora monitora.
+    /**
+     * Builds a monitor rule for a given identifier.
+     * @param {string} id  connector name or desc: selector
+     * @param {object} monitor  monitor entry
+     * @param {string} position  position override, optional
+     * @returns {string}
+     */
     function ruleFor(id, monitor, position) {
         if (!monitor.enabled) return `${id},disable`;
         const where = position ?? (monitor.mirrorOf ? "auto" : `${monitor.x}x${monitor.y}`);
@@ -96,12 +143,20 @@ Singleton {
         return `${id},${modeText(monitor)},${where},${monitor.scale}${mirror}${extras(monitor)}`;
     }
 
+    /**
+     * Builds a monitor rule addressed by connector name.
+     * @param {object} monitor  monitor entry
+     * @returns {string}
+     */
     function rule(monitor) {
         return ruleFor(monitor.name, monitor);
     }
 
-    // W pliku: opis jest stabilniejszy niż nazwa złącza. Ekran laptopa zawsze zostaje
-    // włączony, żeby start bez zewnętrznego monitora nie dał czarnego ekranu.
+    /**
+     * Builds the rule stored on disk. The description is more stable than the connector name, and the laptop screen always stays on so booting without an external monitor cannot give a black screen.
+     * @param {object} monitor  monitor entry
+     * @returns {string}
+     */
     function savedRule(monitor) {
         const id = monitor.description ? `desc:${monitor.description}` : monitor.name;
         if (isInternal(monitor) && !monitor.enabled)
@@ -109,53 +164,95 @@ Singleton {
         return ruleFor(id, monitor);
     }
 
+    /**
+     * Joins rules into one `hyprctl --batch` argument.
+     * @param {list} rules  monitor rules
+     * @returns {string}
+     */
     function batchFor(rules) {
         return rules.map(r => `keyword monitor ${r}`).join(" ; ");
     }
 
-    // Najpierw włączane, potem wyłączane: nigdy nie zostajemy bez aktywnego ekranu.
+    /**
+     * Returns rules with enabled monitors first, so there is always an active screen.
+     * @param {list} targets  monitor entries
+     * @returns {list}
+     */
     function orderedRules(targets) {
         const on = targets.filter(m => m.enabled);
         const off = targets.filter(m => !m.enabled);
         return [...on, ...off].map(rule);
     }
 
+    /**
+     * Checks a target layout.
+     * @param {list} targets  monitor entries
+     * @returns {string} empty when valid
+     */
     function validationError(targets) {
-        if (!targets.some(m => m.enabled && !m.mirrorOf)) return "Co najmniej jeden ekran musi zostać włączony.";
+        if (!targets.some(m => m.enabled && !m.mirrorOf)) return I18n.t("displays.error.needOne");
         for (const m of targets) {
             if (m.mirrorOf && !targets.some(o => o.name === m.mirrorOf && o.enabled && !o.mirrorOf))
-                return "Ekran źródłowy kopii musi być włączony.";
+                return I18n.t("displays.error.mirrorSource");
         }
         return "";
     }
 
+    /** Reads the current monitor state unless a read is running. */
     function refresh() {
         if (!fetcher.running) fetcher.running = true;
     }
 
+    /**
+     * Selects the monitor edited on the page.
+     * @param {string} name  connector name
+     */
     function select(name) {
         selectedName = name;
     }
 
+    /** Discards the draft and returns to the current state. */
     function resetDraft() {
         draft = monitors.map(m => Object.assign({}, m));
         errorMessage = "";
     }
 
+    /**
+     * Merges changes into one draft monitor.
+     * @param {string} name  connector name
+     * @param {object} patch  fields to change
+     */
     function editDraft(name, patch) {
         draft = draft.map(m => m.name === name ? Object.assign({}, m, patch) : m);
     }
 
+    /**
+     * Sets a draft monitor's mode.
+     * @param {string} name  connector name
+     * @param {int} width  width in pixels
+     * @param {int} height  height in pixels
+     * @param {real} refreshRate  refresh rate in Hz
+     */
     function setMode(name, width, height, refreshRate) {
         editDraft(name, { width: width, height: height, refresh: refreshRate });
         draft = layoutWithoutOverlap(draft);
     }
 
+    /**
+     * Sets a draft monitor's scale.
+     * @param {string} name  connector name
+     * @param {real} scale  new scale
+     */
     function setScale(name, scale) {
         editDraft(name, { scale: scale });
         draft = layoutWithoutOverlap(draft);
     }
 
+    /**
+     * Turns a draft monitor on or off.
+     * @param {string} name  connector name
+     * @param {bool} enabled  new state
+     */
     function setEnabled(name, enabled) {
         const target = draft.find(m => m.name === name);
         if (!target) return;
@@ -171,7 +268,11 @@ Singleton {
         draft = layoutWithoutOverlap(draft);
     }
 
-    // Przesuwa ekrany w poziomie tak, żeby po zmianie rozmiaru nie nachodziły na siebie.
+    /**
+     * Rearranges screens in a row if a size change made them overlap.
+     * @param {list} list  monitor entries
+     * @returns {list}
+     */
     function layoutWithoutOverlap(list) {
         const active = list.filter(m => m.enabled && !m.mirrorOf);
         const overlaps = active.some((a, i) => active.slice(i + 1).some(b =>
@@ -180,6 +281,11 @@ Singleton {
         return overlaps ? arrangeInRow(list) : normalized(list);
     }
 
+    /**
+     * Places active screens side by side in their current order.
+     * @param {list} list  monitor entries
+     * @returns {list}
+     */
     function arrangeInRow(list) {
         const positions = {};
         let x = 0;
@@ -190,7 +296,11 @@ Singleton {
         return list.map(m => m.name in positions ? Object.assign({}, m, { x: positions[m.name], y: 0 }) : m);
     }
 
-    // Najmniejsze współrzędne aktywnych ekranów zawsze wynoszą 0.
+    /**
+     * Shifts active screens so the smallest coordinates are 0.
+     * @param {list} list  monitor entries
+     * @returns {list}
+     */
     function normalized(list) {
         const active = list.filter(m => m.enabled && !m.mirrorOf);
         if (active.length === 0) return list;
@@ -199,7 +309,12 @@ Singleton {
         return list.map(m => m.enabled && !m.mirrorOf ? Object.assign({}, m, { x: m.x - minX, y: m.y - minY }) : m);
     }
 
-    // Upuszczony ekran przykleja się do najbliższej krawędzi innego ekranu.
+    /**
+     * Snaps a dropped screen to the nearest free edge of another screen.
+     * @param {string} name  connector name
+     * @param {int} x  drop position
+     * @param {int} y  drop position
+     */
     function placeDraft(name, x, y) {
         const moving = draft.find(m => m.name === name);
         const others = activeDraft.filter(m => m.name !== name);
@@ -232,6 +347,11 @@ Singleton {
         }
     }
 
+    /**
+     * Builds the layout for a preset.
+     * @param {string} preset  extend, mirror, internal or external
+     * @returns {list or null when unavailable}
+     */
     function presetTargets(preset) {
         const copy = monitors.map(m => Object.assign({}, m, { mirrorOf: "" }));
         const internal = copy.find(isInternal) ?? copy[0];
@@ -286,15 +406,24 @@ Singleton {
         }
     }
 
+    /**
+     * Applies a preset, pending confirmation.
+     * @param {string} preset  preset name
+     */
     function applyPreset(preset) {
         const targets = presetTargets(preset);
         if (targets) startChange(targets);
     }
 
+    /** Applies the draft, pending confirmation. */
     function applyDraft() {
         startChange(draft);
     }
 
+    /**
+     * Applies a layout, arming a watchdog that restores the previous one.
+     * @param {list} targets  monitor entries
+     */
     function startChange(targets) {
         if (pending || applier.running) return;
         const problem = validationError(targets);
@@ -307,7 +436,7 @@ Singleton {
         errorMessage = "";
         previousRules = orderedRules(monitors);
 
-        // Strażnik działa poza shellem: cofnie zmianę, nawet gdyby shell padł po jej zastosowaniu.
+        // The watchdog runs outside the shell, so it reverts the change even if the shell crashes.
         changeCounter++;
         watchdogToken = `${runtimeDir}/hyprdora-display-${Quickshell.processId}-${changeCounter}`;
         Quickshell.execDetached(["sh", "-c",
@@ -321,11 +450,13 @@ Singleton {
         countdown.restart();
     }
 
+    /** Cancels the running watchdog. */
     function disarmWatchdog() {
         if (watchdogToken !== "") Quickshell.execDetached(["rm", "-f", watchdogToken]);
         watchdogToken = "";
     }
 
+    /** Confirms the pending change and saves it. */
     function keepChange() {
         if (!pending) return;
         countdown.stop();
@@ -335,6 +466,7 @@ Singleton {
         refresh();
     }
 
+    /** Restores the layout from before the pending change. */
     function revertChange() {
         if (!pending) return;
         countdown.stop();
@@ -344,7 +476,7 @@ Singleton {
         applier.running = true;
     }
 
-    // Odłączono jedyny aktywny ekran, np. przy trybie „tylko zewnętrzny”.
+    /** Turns a screen back on when the only active one was unplugged, for example in external-only mode. */
     function rescueIfNoActiveScreen() {
         if (pending || monitors.length === 0 || monitors.some(m => m.enabled && !m.mirrorOf)) return;
         const internal = monitors.find(isInternal) ?? monitors[0];
@@ -352,7 +484,7 @@ Singleton {
         applier.running = true;
     }
 
-    // Po odłączeniu monitora jedyny ekran może zostać z dawną pozycją, np. 3360x0.
+    /** Moves a lone screen to 0x0. After unplugging a monitor it can keep an old position such as 3360x0. */
     function normalizeSingleScreen() {
         if (pending || applier.running) return;
         const active = monitors.filter(m => m.enabled && !m.mirrorOf);
@@ -383,7 +515,7 @@ Singleton {
                 try {
                     parsed = root.parseMonitors(text);
                 } catch (e) {
-                    console.warn("displays: nieczytelna odpowiedź hyprctl");
+                    console.warn("displays: unreadable hyprctl response");
                     return;
                 }
                 root.monitors = parsed;
@@ -410,15 +542,15 @@ Singleton {
         onExited: exitCode => {
             const failed = exitCode !== 0 || applierOutput.text.split(/\s+/).some(word => word !== "" && word !== "ok");
             if (failed) {
-                root.errorMessage = "Hyprland odrzucił ustawienia monitora.";
-                console.warn("displays: odpowiedź hyprctl:", applierOutput.text.trim());
+                root.errorMessage = I18n.t("displays.error.rejected");
+                console.warn("displays: hyprctl response:", applierOutput.text.trim());
                 root.revertChange();
             }
             refreshDelay.restart();
         }
     }
 
-    // Hyprland potrzebuje chwili na zastosowanie reguł.
+    // Hyprland needs a moment to apply the rules.
     Timer {
         id: refreshDelay
         interval: 400
@@ -441,15 +573,15 @@ Singleton {
         }
 
         onRunningChanged: {
-            // Skrypt czyta stdin do końca, więc zamykamy go po wysłaniu reguł.
+            // The script reads stdin to the end, so it is closed after the rules are sent.
             if (running) Qt.callLater(() => { saver.stdinEnabled = false; });
             else stdinEnabled = true;
         }
 
         onExited: exitCode => {
             if (exitCode !== 0) {
-                root.errorMessage = "Nie udało się zapisać ustawień monitorów.";
-                console.warn("displays: zapis:", saverErrors.text.trim());
+                root.errorMessage = I18n.t("displays.error.saveFailed");
+                console.warn("displays: save:", saverErrors.text.trim());
             }
         }
     }

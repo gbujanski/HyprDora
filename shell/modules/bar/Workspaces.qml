@@ -12,8 +12,7 @@ Row {
     readonly property int persistentCount: 5
     readonly property var monitor: Hyprland.monitorFor(screen)
 
-    // Zawsze 1-5 (jak w dotychczasowym waybarze) oraz każdy wyższy, który istnieje.
-    // Ujemne identyfikatory to workspace'y specjalne, dlatego są pomijane.
+    // Always 1-5, plus any higher workspace that exists. Negative ids are special workspaces.
     readonly property var ids: {
         const result = [];
         for (let i = 1; i <= persistentCount; i++) result.push(i);

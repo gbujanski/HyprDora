@@ -6,8 +6,8 @@ import qs.config
 import qs.components
 import qs.services
 
-// Wskaźnik głośności i jasności. Reaguje na samą zmianę wartości, więc działa dla
-// klawiszy, wpctl, brightnessctl i innych aplikacji bez osobnego wyzwalania.
+// Volume and brightness indicator. It reacts to value changes, so it works for keys,
+// wpctl, brightnessctl and other applications without explicit triggers.
 Scope {
     id: root
 
@@ -18,7 +18,7 @@ Scope {
     property bool showBar: true
     property bool shown: false
 
-    // Odczyty początkowe i zmiana urządzenia to nie są zmiany wykonane przez użytkownika.
+    // Initial readings and device switches are not user changes.
     property bool armed: false
     property real lastVolume: -1
     property real lastDisplay: -1
@@ -42,7 +42,7 @@ Scope {
 
     function showVolume() {
         root.show("volume", Icons.volume(Audio.volume, Audio.muted),
-            Audio.muted ? "Wyciszono" : `${Math.round(Audio.volume * 100)}%`,
+            Audio.muted ? I18n.t("osd.muted") : `${Math.round(Audio.volume * 100)}%`,
             Audio.muted ? 0 : Audio.volume, true);
     }
 
@@ -85,7 +85,7 @@ Scope {
         function onMutedChanged() { root.showVolume(); }
         function onSourceMutedChanged() {
             root.show("microphone", Icons.microphone(Audio.sourceMuted),
-                Audio.sourceMuted ? "Mikrofon wyciszony" : "Mikrofon włączony", 0, false);
+                Audio.sourceMuted ? I18n.t("osd.micMuted") : I18n.t("osd.micOn"), 0, false);
         }
     }
 
@@ -120,7 +120,7 @@ Scope {
             implicitWidth: 300
             implicitHeight: 52
             color: "transparent"
-            // Pusta maska przepuszcza kliknięcia do okien pod wskaźnikiem.
+            // An empty mask lets clicks through to windows below.
             mask: Region {}
             WlrLayershell.layer: WlrLayer.Overlay
             WlrLayershell.namespace: "hyprdora-osd"

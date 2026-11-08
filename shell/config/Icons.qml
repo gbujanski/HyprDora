@@ -3,10 +3,20 @@ pragma Singleton
 import QtQuick
 import Quickshell
 
-// Glify Nerd Font podane kodami, żeby nie zależeć od edytora i kodowania plików.
+// Nerd Font glyphs given as code points, independent of editors and file encodings.
 Singleton {
+    /**
+     * Returns the character for a code point.
+     * @param {int} code  code point
+     * @returns {string}
+     */
     function glyph(code) { return String.fromCodePoint(code); }
 
+    /**
+     * Returns the Wi-Fi icon for a signal level.
+     * @param {real} strength  signal, 0..1
+     * @returns {string}
+     */
     function wifi(strength) {
         if (strength > 0.75) return glyph(0xF0928);
         if (strength > 0.5) return glyph(0xF0925);
@@ -19,8 +29,19 @@ Singleton {
     readonly property string close: glyph(0xF0156)
     readonly property string alert: glyph(0xF0026)
     readonly property string plus: glyph(0xF0415)
+    /**
+     * Returns the password visibility icon.
+     * @param {bool} visible  whether the text is shown
+     * @returns {string}
+     */
     function eye(visible) { return glyph(visible ? 0xF0208 : 0xF0209); }
 
+    /**
+     * Returns the volume icon.
+     * @param {real} level  volume, 0..1
+     * @param {bool} muted  whether muted
+     * @returns {string}
+     */
     function volume(level, muted) {
         if (muted || level <= 0) return glyph(0xF0581);
         if (level < 0.34) return glyph(0xF057F);
@@ -28,6 +49,11 @@ Singleton {
         return glyph(0xF057E);
     }
 
+    /**
+     * Returns the microphone icon.
+     * @param {bool} muted  whether muted
+     * @returns {string}
+     */
     function microphone(muted) { return glyph(muted ? 0xF036D : 0xF036C); }
     readonly property string chevronLeft: glyph(0xF0141)
     readonly property string chevronRight: glyph(0xF0142)
@@ -45,6 +71,11 @@ Singleton {
     readonly property string keyboard: glyph(0xF030C)
     readonly property string balanced: glyph(0xF05D1)
 
+    /**
+     * Returns an icon for a Bluetooth device type.
+     * @param {string} icon  BlueZ icon name
+     * @returns {string}
+     */
     function bluetoothDevice(icon) {
         const name = icon ?? "";
         if (name.includes("headset") || name.includes("headphone")) return glyph(0xF02CB);
@@ -58,6 +89,12 @@ Singleton {
     }
     readonly property string bluetoothConnected: glyph(0xF00B1)
 
+    /**
+     * Returns the battery icon.
+     * @param {real} level  charge, 0..1
+     * @param {bool} charging  whether charging
+     * @returns {string}
+     */
     function battery(level, charging) {
         if (charging) return glyph(0xF0084);
         if (level >= 0.95) return glyph(0xF0079);
@@ -98,7 +135,12 @@ Singleton {
     readonly property string sunrise: glyph(0xF059C)
     readonly property string sunset: glyph(0xF059B)
 
-    // Kody WMO z Open-Meteo.
+    /**
+     * Returns the icon for a WMO weather code.
+     * @param {int} code  WMO code
+     * @param {bool} isDay  whether it is daytime
+     * @returns {string}
+     */
     function weather(code, isDay) {
         const day = isDay ?? true;
         switch (code) {

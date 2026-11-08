@@ -3,7 +3,7 @@ import qs.config
 import qs.components
 import qs.services
 
-// Układ ekranów: przeciągnięcie przykleja ekran do krawędzi sąsiedniego.
+// Screen layout: dragging snaps a screen to a neighbor's edge.
 Rectangle {
     id: root
 

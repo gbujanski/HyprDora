@@ -3,7 +3,7 @@ import qs.config
 import qs.components
 import qs.services
 
-// Wspólna karta dla toastu i historii w centrum akcji.
+// Card shared by toasts and the action center history.
 Rectangle {
     id: root
 
@@ -24,7 +24,7 @@ Rectangle {
         id: hover
     }
 
-    // Klik w treść: domyślna akcja aplikacji, jeśli ją udostępnia.
+    // Clicking the body runs the application's default action, if it has one.
     MouseArea {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
@@ -138,7 +138,7 @@ Rectangle {
         }
         icon: Icons.close
         iconColor: Theme.muted
-        tooltip: "Usuń"
+        tooltip: I18n.t("notifications.remove")
         onClicked: root.notification.dismiss()
     }
 }

@@ -1,7 +1,7 @@
 import QtQuick
 import qs.config
 
-// Wybór jednej z kilku opcji: [{ value, label, icon, enabled }].
+// Single choice from options: [{ value, label, icon, enabled }].
 Rectangle {
     id: root
 

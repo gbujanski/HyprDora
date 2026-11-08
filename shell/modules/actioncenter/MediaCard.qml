@@ -80,21 +80,21 @@ Rectangle {
             IconButton {
                 icon: Icons.previous
                 active: root.player?.canGoPrevious ?? false
-                tooltip: "Poprzedni"
+                tooltip: I18n.t("media.previous")
                 onClicked: root.player.previous()
             }
 
             IconButton {
                 icon: root.player?.isPlaying ? Icons.pause : Icons.play
                 active: root.player?.canTogglePlaying ?? false
-                tooltip: root.player?.isPlaying ? "Wstrzymaj" : "Odtwarzaj"
+                tooltip: root.player?.isPlaying ? I18n.t("media.pause") : I18n.t("media.play")
                 onClicked: root.player.togglePlaying()
             }
 
             IconButton {
                 icon: Icons.next
                 active: root.player?.canGoNext ?? false
-                tooltip: "Następny"
+                tooltip: I18n.t("media.next")
                 onClicked: root.player.next()
             }
 
@@ -102,7 +102,7 @@ Rectangle {
                 visible: Media.players.length > 1
                 icon: Icons.swap
                 iconColor: Theme.muted
-                tooltip: `Przełącz odtwarzacz (${root.player?.identity ?? ""})`
+                tooltip: I18n.t("media.switchPlayer", { player: root.player?.identity ?? "" })
                 onClicked: Media.cyclePlayer()
             }
         }

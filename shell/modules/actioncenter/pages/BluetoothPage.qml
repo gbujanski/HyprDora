@@ -22,7 +22,7 @@ Column {
 
     onRequestChanged: {
         codeField.clear();
-        // Bezpośrednio z prośby: powiązania zależne mogą być tu jeszcze nieaktualne.
+        // Read directly from the request, since dependent bindings may still be stale here.
         const kind = request?.kind;
         if (kind === "pin" || kind === "passkey") Qt.callLater(() => codeField.focusInput());
         else page.forceActiveFocus();
@@ -39,8 +39,8 @@ Column {
         Label {
             anchors.verticalCenter: parent.verticalCenter
             font.weight: Font.Medium
-            text: !Bluetooth.hasAdapter ? "Brak adaptera Bluetooth"
-                : Bluetooth.blocked ? "Bluetooth zablokowany" : "Bluetooth"
+            text: !Bluetooth.hasAdapter ? I18n.t("bluetooth.noAdapterLong")
+                : Bluetooth.blocked ? I18n.t("bluetooth.blocked") : "Bluetooth"
             color: Bluetooth.hasAdapter && !Bluetooth.blocked ? Theme.foreground : Theme.warning
         }
 
@@ -60,7 +60,7 @@ Column {
         text: Bluetooth.errorMessage
     }
 
-    // Karta leży poza listami: odświeżenie wyszukiwania nie może jej przerwać.
+    // Kept outside the lists so a discovery refresh cannot interrupt it.
     Rectangle {
         width: parent.width
         visible: page.request !== null
@@ -84,7 +84,7 @@ Column {
                 width: parent.width
                 elide: Text.ElideRight
                 font.weight: Font.Medium
-                text: `Parowanie: ${page.request?.device ?? ""}`
+                text: I18n.t("bluetooth.pairing", { device: page.request?.device ?? "" })
             }
 
             Label {
@@ -93,12 +93,12 @@ Column {
                 color: Theme.muted
                 text: {
                     switch (page.requestKind) {
-                    case "confirm": return "Czy ten sam kod widać na urządzeniu?";
-                    case "display": return "Wpisz ten kod na urządzeniu:";
-                    case "pin": return "Podaj PIN urządzenia.";
-                    case "passkey": return "Podaj kod widoczny na urządzeniu (do 6 cyfr).";
-                    case "authorize": return "Zezwolić na sparowanie?";
-                    case "authorize-service": return "Urządzenie chce użyć usługi. Zezwolić?";
+                    case "confirm": return I18n.t("bluetooth.prompt.confirm");
+                    case "display": return I18n.t("bluetooth.prompt.display");
+                    case "pin": return I18n.t("bluetooth.prompt.pin");
+                    case "passkey": return I18n.t("bluetooth.prompt.passkey");
+                    case "authorize": return I18n.t("bluetooth.prompt.authorize");
+                    case "authorize-service": return I18n.t("bluetooth.prompt.authorizeService");
                     default: return "";
                     }
                 }
@@ -116,7 +116,7 @@ Column {
                 id: codeField
                 width: parent.width
                 visible: page.needsInput
-                placeholder: page.requestKind === "pin" ? "PIN" : "Kod"
+                placeholder: page.requestKind === "pin" ? "PIN" : I18n.t("bluetooth.code")
                 onAccepted: page.submitCode()
                 onCancelled: Bluetooth.cancelPairing()
             }
@@ -126,7 +126,7 @@ Column {
                 spacing: 6
 
                 TextButton {
-                    text: page.requestKind === "display" || page.needsInput ? "Anuluj" : "Odrzuć"
+                    text: page.requestKind === "display" || page.needsInput ? I18n.t("common.cancel") : I18n.t("bluetooth.reject")
                     onClicked: Bluetooth.cancelPairing()
                 }
 
@@ -134,7 +134,7 @@ Column {
                     visible: page.requestKind !== "display"
                     primary: true
                     active: !page.needsInput || codeField.text !== ""
-                    text: page.needsInput ? "OK" : page.requestKind === "confirm" ? "Potwierdź" : "Zezwól"
+                    text: page.needsInput ? "OK" : page.requestKind === "confirm" ? I18n.t("bluetooth.confirm") : I18n.t("bluetooth.allow")
                     onClicked: {
                         if (page.needsInput) page.submitCode();
                         else Bluetooth.answer(true, "");
@@ -149,7 +149,7 @@ Column {
         spacing: 2
         visible: Bluetooth.enabled && Bluetooth.pairedDevices.length > 0
 
-        SectionTitle { text: "SPAROWANE" }
+        SectionTitle { text: I18n.t("section.paired") }
 
         Repeater {
             model: ScriptModel {
@@ -169,11 +169,11 @@ Column {
         spacing: 2
         visible: Bluetooth.enabled
 
-        SectionTitle { text: "DOSTĘPNE" }
+        SectionTitle { text: I18n.t("section.available") }
 
         Label {
             visible: Bluetooth.discoveredDevices.length === 0
-            text: Bluetooth.discovering ? "Szukanie urządzeń…" : "Nie znaleziono urządzeń"
+            text: Bluetooth.discovering ? I18n.t("bluetooth.searching") : I18n.t("bluetooth.noneFound")
             color: Theme.muted
             topPadding: 4
             bottomPadding: 4

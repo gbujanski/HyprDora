@@ -27,7 +27,7 @@ Column {
         } else {
             ssidField.clear();
             passwordField.clear();
-            // Fokus wraca na stronę, żeby Esc nadal działał.
+            // Focus returns to the page so Esc keeps working.
             page.forceActiveFocus();
         }
     }
@@ -45,7 +45,7 @@ Column {
         Network.connectNew(ssid, password, hidden);
     }
 
-    // WPA wymaga od 8 do 63 znaków. Ukryta sieć może nie mieć hasła.
+    // WPA requires 8 to 63 characters. A hidden network may have no password.
     readonly property bool passwordValid: {
         const length = passwordField.text.length;
         if (Network.hiddenPrompt && length === 0) return true;
@@ -60,7 +60,7 @@ Column {
 
         Label {
             anchors.verticalCenter: parent.verticalCenter
-            text: !Network.hardwareEnabled ? "Wi-Fi zablokowane sprzętowo" : "Wi-Fi"
+            text: !Network.hardwareEnabled ? I18n.t("wifi.hardwareBlocked") : "Wi-Fi"
             color: Network.hardwareEnabled ? Theme.foreground : Theme.warning
             font.weight: Font.Medium
         }
@@ -82,7 +82,7 @@ Column {
             : Network.errorSsid !== "" ? `${Network.errorSsid}: ${Network.errorMessage}` : Network.errorMessage
     }
 
-    // Formularz leży poza listą: odświeżenie skanu nie może skasować wpisywanego hasła.
+    // Kept outside the list so a scan refresh cannot erase a password being typed.
     Rectangle {
         width: parent.width
         visible: page.formVisible
@@ -106,14 +106,14 @@ Column {
                 width: parent.width
                 elide: Text.ElideRight
                 font.weight: Font.Medium
-                text: Network.hiddenPrompt ? "Sieć ukryta" : `Hasło do sieci ${Network.promptSsid}`
+                text: Network.hiddenPrompt ? I18n.t("wifi.hiddenNetwork") : I18n.t("wifi.passwordFor", { ssid: Network.promptSsid })
             }
 
             TextField {
                 id: ssidField
                 width: parent.width
                 visible: Network.hiddenPrompt
-                placeholder: "Nazwa sieci"
+                placeholder: I18n.t("wifi.networkName")
                 onAccepted: page.submitForm()
                 onCancelled: page.cancelForm()
             }
@@ -122,7 +122,7 @@ Column {
                 id: passwordField
                 width: parent.width
                 secret: true
-                placeholder: Network.hiddenPrompt ? "Hasło (puste, gdy sieć otwarta)" : "Hasło"
+                placeholder: Network.hiddenPrompt ? I18n.t("wifi.passwordOptional") : I18n.t("wifi.password")
                 onAccepted: page.submitForm()
                 onCancelled: page.cancelForm()
             }
@@ -132,12 +132,12 @@ Column {
                 spacing: 6
 
                 TextButton {
-                    text: "Anuluj"
+                    text: I18n.t("common.cancel")
                     onClicked: page.cancelForm()
                 }
 
                 TextButton {
-                    text: "Połącz"
+                    text: I18n.t("wifi.connect")
                     primary: true
                     active: page.canSubmit
                     onClicked: page.submitForm()
@@ -151,17 +151,17 @@ Column {
         spacing: 2
         visible: Network.wifiEnabled
 
-        SectionTitle { text: "SIECI" }
+        SectionTitle { text: I18n.t("section.networks") }
 
         Label {
             visible: Network.networks.length === 0
-            text: "Szukanie sieci…"
+            text: I18n.t("wifi.searching")
             color: Theme.muted
             topPadding: 4
             bottomPadding: 4
         }
 
-        // ScriptModel zachowuje wiersze przy zmianie kolejności i odświeżaniu sygnału.
+        // ScriptModel keeps rows alive across reordering and signal updates.
         Repeater {
             model: ScriptModel {
                 values: Network.networks
@@ -176,7 +176,7 @@ Column {
 
         ListRow {
             width: parent.width
-            text: "Połącz z siecią ukrytą"
+            text: I18n.t("wifi.connectHidden")
             trailingIcon: Icons.plus
             onClicked: {
                 Network.clearError();

@@ -5,15 +5,14 @@ import Quickshell
 import Quickshell.Io
 import qs.config
 
-// Pogoda z Open-Meteo: pobierana co 30 min, z kopią na dysku, żeby po restarcie
-// shella pasek od razu miał wynik. Bez sieci zostaje ostatni wynik, dopóki nie
-// jest starszy niż weatherMaxAge.
+// Weather from Open-Meteo, cached on disk so the bar has a result right after a restart.
+// Without a network the last result stays until it is older than weatherMaxAge.
 Singleton {
     id: root
 
     // { temp, feels, code, isDay, wind, humidity }
     property var current: null
-    // [{ date: "RRRR-MM-DD", code, max, min, precipitation }]
+    // [{ date: "YYYY-MM-DD", code, max, min, precipitation }]
     property var daily: []
     property string sunrise: ""
     property string sunset: ""
@@ -32,17 +31,20 @@ Singleton {
 
     property var request: null
 
+    /**
+     * Returns the age of the last result.
+     * @returns {real} milliseconds, Infinity when none
+     */
     function age() {
         return fetchedAt > 0 ? Date.now() - fetchedAt : Infinity;
     }
 
-    // Odświeża tylko wtedy, gdy wynik jest starszy niż interwał. Wołane przy
-    // otwarciu kalendarza i po odzyskaniu sieci (np. po wybudzeniu, gdy
-    // timer stał razem z systemem).
+    /** Refreshes only when the result is older than the interval. Called when the calendar opens and when the network returns, for example after a resume. */
     function refreshIfStale() {
         if (age() >= Settings.weatherInterval) refresh();
     }
 
+    /** Fetches the weather. */
     function refresh() {
         if (loading) return;
         loading = true;
@@ -58,7 +60,7 @@ Singleton {
                 cache.setText(JSON.stringify({ fetchedAt, current, daily, sunrise, sunset }));
                 retry.stop();
             } else {
-                fail(xhr.status === 0 ? "Brak połączenia z serwerem pogody" : `Błąd serwera pogody (${xhr.status})`);
+                fail(xhr.status === 0 ? I18n.t("weather.error.noConnection") : I18n.t("weather.error.server", { status: xhr.status }));
             }
         };
         xhr.open("GET", url);
@@ -66,6 +68,10 @@ Singleton {
         timeout.restart();
     }
 
+    /**
+     * Records a failed fetch and schedules a retry.
+     * @param {string} message  user message
+     */
     function fail(message) {
         error = message;
         loading = false;
@@ -73,6 +79,7 @@ Singleton {
         retry.restart();
     }
 
+    /** Drops a result older than weatherMaxAge. */
     function dropIfTooOld() {
         if (current !== null && age() > Settings.weatherMaxAge) {
             current = null;
@@ -80,6 +87,12 @@ Singleton {
         }
     }
 
+    /**
+     * Stores a server response.
+     * @param {string} text  response body
+     * @param {real} time  fetch timestamp
+     * @returns {bool} whether the response was valid
+     */
     function apply(text, time) {
         let data;
         try {
@@ -111,7 +124,10 @@ Singleton {
         return true;
     }
 
-    // Kopia na dysku zawiera już przetworzone dane, a nie odpowiedź serwera.
+    /**
+     * Restores the disk cache, which holds processed data rather than a server response.
+     * @param {string} text  cache contents
+     */
     function applyCache(text) {
         try {
             const saved = JSON.parse(text);
@@ -125,36 +141,45 @@ Singleton {
         } catch (e) {}
     }
 
-    // Kody WMO używane przez Open-Meteo.
+    /**
+     * Returns a description for a WMO weather code.
+     * @param {int} code  WMO code
+     * @returns {string}
+     */
     function describe(code) {
         switch (code) {
-        case 0: return "Bezchmurnie";
-        case 1: return "Przeważnie bezchmurnie";
-        case 2: return "Częściowe zachmurzenie";
-        case 3: return "Pochmurno";
-        case 45: case 48: return "Mgła";
-        case 51: case 53: case 55: return "Mżawka";
-        case 56: case 57: return "Marznąca mżawka";
-        case 61: return "Słaby deszcz";
-        case 63: return "Deszcz";
-        case 65: return "Ulewny deszcz";
-        case 66: case 67: return "Marznący deszcz";
-        case 71: return "Słaby śnieg";
-        case 73: return "Śnieg";
-        case 75: return "Intensywny śnieg";
-        case 77: return "Ziarnisty śnieg";
-        case 80: case 81: return "Przelotny deszcz";
-        case 82: return "Gwałtowna ulewa";
-        case 85: case 86: return "Przelotny śnieg";
-        case 95: return "Burza";
-        case 96: case 99: return "Burza z gradem";
-        default: return "Nieznana pogoda";
+        case 0: return I18n.t("weather.code.clear");
+        case 1: return I18n.t("weather.code.mostlyClear");
+        case 2: return I18n.t("weather.code.partlyCloudy");
+        case 3: return I18n.t("weather.code.overcast");
+        case 45: case 48: return I18n.t("weather.code.fog");
+        case 51: case 53: case 55: return I18n.t("weather.code.drizzle");
+        case 56: case 57: return I18n.t("weather.code.freezingDrizzle");
+        case 61: return I18n.t("weather.code.lightRain");
+        case 63: return I18n.t("weather.code.rain");
+        case 65: return I18n.t("weather.code.heavyRain");
+        case 66: case 67: return I18n.t("weather.code.freezingRain");
+        case 71: return I18n.t("weather.code.lightSnow");
+        case 73: return I18n.t("weather.code.snow");
+        case 75: return I18n.t("weather.code.heavySnow");
+        case 77: return I18n.t("weather.code.snowGrains");
+        case 80: case 81: return I18n.t("weather.code.showers");
+        case 82: return I18n.t("weather.code.violentShowers");
+        case 85: case 86: return I18n.t("weather.code.snowShowers");
+        case 95: return I18n.t("weather.code.thunderstorm");
+        case 96: case 99: return I18n.t("weather.code.hail");
+        default: return I18n.t("weather.code.unknown");
         }
     }
 
+    /**
+     * Formats a temperature in whole degrees.
+     * @param {real} value  temperature
+     * @returns {string}
+     */
     function formatTemp(value) {
         if (value === null || value === undefined || isNaN(value)) return "–";
-        // Bez „-0°”.
+        // Avoids "-0°".
         const rounded = Math.round(value);
         return `${rounded === 0 ? 0 : rounded}°`;
     }
@@ -189,7 +214,7 @@ Singleton {
             const xhr = root.request;
             root.request = null;
             xhr?.abort();
-            root.fail("Serwer pogody nie odpowiada");
+            root.fail(I18n.t("weather.error.timeout"));
         }
     }
 

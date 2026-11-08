@@ -6,7 +6,7 @@ import qs.services
 Column {
     id: page
 
-    // ActionCenter przekazuje fokus tej stronie, bo obsługuje klawiaturę.
+    // ActionCenter gives this page focus because it handles the keyboard.
     readonly property bool wantsFocus: true
 
     spacing: 2
@@ -14,7 +14,7 @@ Column {
     Component.onCompleted: Session.resetSelection()
     Component.onDestruction: Session.cancelConfirm()
 
-    // Esc poza potwierdzeniem nie jest obsługiwany tutaj, więc trafia do panelu i wraca do widoku głównego.
+    // Outside a confirmation, Esc is not handled here, so it reaches the panel and returns to the main view.
     Keys.onPressed: event => {
         switch (event.key) {
         case Qt.Key_Escape:
@@ -108,7 +108,7 @@ Column {
         }
     }
 
-    // Potwierdzenie pod listą, żeby widok zmieniał się jak najmniej.
+    // The confirmation sits below the list so the view changes as little as possible.
     Item {
         width: parent.width
         height: 8
@@ -143,7 +143,7 @@ Column {
                 bottomPadding: 6
                 wrapMode: Text.Wrap
                 color: Theme.muted
-                text: "Niezapisana praca w otwartych aplikacjach może przepaść."
+                text: I18n.t("power.confirmWarning")
             }
 
             Row {
@@ -151,7 +151,7 @@ Column {
                 spacing: 6
 
                 ConfirmButton {
-                    text: "Anuluj"
+                    text: I18n.t("common.cancel")
                     selected: !Session.confirmSelected
                     onClicked: Session.cancelConfirm()
                 }

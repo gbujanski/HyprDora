@@ -11,13 +11,13 @@ BarButton {
 
     readonly property bool open: Panels.calendarOpen && Panels.calendarScreen === screen
 
-    // Minutowa dokładność: zegar nie budzi procesu co sekundę.
+    // Minute precision, so the clock does not wake the process every second.
     SystemClock {
         id: clock
         precision: SystemClock.Minutes
     }
 
-    label: clock.date.toLocaleString(Qt.locale(), "ddd d MMM   HH:mm")
+    label: clock.date.toLocaleString(I18n.locale, "ddd d MMM   HH:mm")
     contentColor: open ? Theme.accent : Theme.foreground
     onClicked: Panels.toggleCalendar(root.screen)
 }

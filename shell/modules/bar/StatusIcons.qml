@@ -17,7 +17,7 @@ Row {
         visible: Power.profile !== PowerProfile.Balanced
         icon: Power.profile === PowerProfile.Performance ? Icons.performance : Icons.powerSaver
         contentColor: Power.profile === PowerProfile.Performance ? Theme.warning : Theme.accent
-        tooltip: Power.profile === PowerProfile.Performance ? "Profil: wydajność" : "Profil: oszczędzanie energii"
+        tooltip: Power.profile === PowerProfile.Performance ? I18n.t("power.profilePerformanceTooltip") : I18n.t("power.profileSaverTooltip")
         onClicked: Panels.toggleActionCenter(root.screen, "main")
     }
 
@@ -28,7 +28,7 @@ Row {
         contentColor: Bluetooth.connectedDevices.length > 0 ? Theme.foreground : Theme.muted
         tooltip: Bluetooth.connectedDevices.length > 0
             ? Bluetooth.connectedDevices.map(d => d.name).join(", ")
-            : "Bluetooth włączony"
+            : I18n.t("bluetooth.on")
         onClicked: Panels.toggleActionCenter(root.screen, "bluetooth")
     }
 
@@ -36,9 +36,9 @@ Row {
         anchors.verticalCenter: parent.verticalCenter
         icon: Network.connected ? Icons.wifi(Network.signal) : Icons.wifiOff
         contentColor: Network.connected ? Theme.foreground : Theme.muted
-        tooltip: Network.busySsid !== "" ? `Łączenie: ${Network.busySsid}`
+        tooltip: Network.busySsid !== "" ? I18n.t("wifi.connectingTo", { ssid: Network.busySsid })
             : Network.connected ? `${Network.ssid} (${Math.round(Network.signal * 100)}%)`
-            : Network.wifiEnabled ? "Brak połączenia" : "Wi-Fi wyłączone"
+            : Network.wifiEnabled ? I18n.t("wifi.notConnected") : I18n.t("wifi.off")
         onClicked: Panels.toggleActionCenter(root.screen, "wifi")
     }
 
@@ -61,20 +61,19 @@ Row {
             : Power.level <= 0.15 ? Theme.error
             : Power.level <= 0.30 ? Theme.warning
             : Theme.foreground
-        tooltip: Power.full ? "Naładowana"
+        tooltip: Power.full ? I18n.t("battery.full")
             : Power.secondsLeft <= 0 ? ""
-            : Power.charging ? `Do naładowania: ${Power.formatTime(Power.secondsLeft)}`
-            : `Pozostało: ${Power.formatTime(Power.secondsLeft)}`
+            : Power.charging ? I18n.t("battery.timeToFull", { time: Power.formatTime(Power.secondsLeft) })
+            : I18n.t("battery.timeLeft", { time: Power.formatTime(Power.secondsLeft) })
         onClicked: Panels.toggleActionCenter(root.screen, "main")
     }
 
-    // Centrum akcji i licznik powiadomień.
     BarButton {
         anchors.verticalCenter: parent.verticalCenter
         icon: Notifications.dnd ? Icons.bellOff : Notifications.count > 0 ? Icons.bellBadge : Icons.bell
         label: Notifications.count > 0 ? String(Notifications.count) : ""
         contentColor: Panels.actionCenterOpen || Notifications.count > 0 ? Theme.accent : Theme.foreground
-        tooltip: Notifications.dnd ? "Nie przeszkadzać" : Notifications.count > 0 ? `Powiadomienia: ${Notifications.count}` : "Centrum akcji"
+        tooltip: Notifications.dnd ? I18n.t("notifications.dnd") : Notifications.count > 0 ? I18n.t("notifications.count", { count: Notifications.count }) : I18n.t("actionCenter.title")
         onClicked: Panels.toggleActionCenter(root.screen, "main")
     }
 }

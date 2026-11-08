@@ -4,7 +4,7 @@ import qs.config
 import qs.components
 import qs.services
 
-// Bez danych (brak sieci i brak świeżej kopii) moduł znika z paska.
+// Hidden from the bar when there is no data.
 BarButton {
     id: root
 
@@ -15,7 +15,7 @@ BarButton {
     label: Weather.available ? Weather.formatTemp(Weather.current.temp) : ""
     contentColor: Panels.calendarOpen && Panels.calendarScreen === screen ? Theme.accent : Theme.foreground
     tooltip: Weather.available
-        ? `${Settings.weatherPlace}: ${Weather.describe(Weather.current.code)}, odczuwalna ${Weather.formatTemp(Weather.current.feels)}`
+        ? I18n.t("weather.tooltip", { place: Settings.weatherPlace, description: Weather.describe(Weather.current.code), feels: Weather.formatTemp(Weather.current.feels) })
         : ""
     onClicked: Panels.toggleCalendar(root.screen)
 }

@@ -1,7 +1,7 @@
 import QtQuick
 import qs.config
 
-// Kafel szybkich ustawień: kliknięcie przełącza, strzałka otwiera podstronę.
+// Quick settings tile: a click toggles, the arrow opens a subpage.
 Rectangle {
     id: root
 

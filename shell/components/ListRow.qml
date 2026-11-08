@@ -1,7 +1,7 @@
 import QtQuick
 import qs.config
 
-// Klikalny wiersz listy, opcjonalnie z ikoną oznaczającą wybór.
+// Clickable list row, optionally marked as selected.
 Rectangle {
     id: root
 

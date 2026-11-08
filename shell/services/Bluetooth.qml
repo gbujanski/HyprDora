@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Bluetooth as QsBt
 import Quickshell.Io
+import qs.config
 
 Singleton {
     id: root
@@ -14,7 +15,7 @@ Singleton {
     readonly property bool blocked: adapter?.state === QsBt.BluetoothAdapterState.Blocked
     readonly property bool discovering: adapter?.discovering ?? false
 
-    // Urządzenia bez nazwy to zwykle anonimowe nadajniki BLE, które tylko zaśmiecają listę.
+    // Unnamed devices are usually anonymous BLE beacons that only clutter the list.
     readonly property var devices: (adapter?.devices.values ?? [])
         .filter(d => d.paired || d.deviceName !== "")
     readonly property var pairedDevices: devices
@@ -27,10 +28,10 @@ Singleton {
 
     property string errorMessage: ""
 
-    // Prośba agenta wymagająca reakcji: { id, kind, device, value } albo null.
+    // Agent request awaiting a response: { id, kind, device, value } or null.
     property var request: null
 
-    // Strona Bluetooth: wyszukiwanie, widoczność dla parowania i agent działają tylko wtedy.
+    // Discovery, pairability and the agent run only while the Bluetooth page is open.
     property bool pageOpen: false
     property bool agentReady: false
     property var pairingDevice: null
@@ -41,14 +42,15 @@ Singleton {
     onAdapterChanged: applyPageState()
     onPoweredOnChanged: applyPageState()
 
+    /** Applies pairable and discovery state from the page state. */
     function applyPageState() {
         if (!adapter || !poweredOn) return;
         adapter.pairable = pageOpen;
         if (adapter.discovering !== pageOpen) adapter.discovering = pageOpen;
     }
 
-    // Tuż po włączeniu BlueZ może odrzucić start wyszukiwania ("Resource Not Ready"),
-    // a później zakończyć je sam. Przy otwartej stronie ponawiamy próbę.
+    // Right after power-on, BlueZ can reject discovery ("Resource Not Ready") and later end it
+    // by itself, so it is retried while the page is open.
     Timer {
         interval: 3000
         repeat: true
@@ -56,10 +58,18 @@ Singleton {
         onTriggered: root.applyPageState()
     }
 
+    /**
+     * Powers the adapter on or off.
+     * @param {bool} value  new state
+     */
     function setEnabled(value) {
         if (adapter) adapter.enabled = value;
     }
 
+    /**
+     * Handles a click on a device: disconnects, connects or starts pairing.
+     * @param {BluetoothDevice} device  clicked device
+     */
     function activate(device) {
         errorMessage = "";
         if (connector.device === device || pairingDevice === device) return;
@@ -69,7 +79,7 @@ Singleton {
             connectDevice(device);
         } else if (pairingDevice === null) {
             if (!agentReady) {
-                errorMessage = "Agent parowania nie jest gotowy. Spróbuj za chwilę.";
+                errorMessage = I18n.t("bluetooth.agentNotReady");
                 return;
             }
             pairingDevice = device;
@@ -77,6 +87,10 @@ Singleton {
         }
     }
 
+    /**
+     * Starts a connection attempt with retries.
+     * @param {BluetoothDevice} device  device to connect
+     */
     function connectDevice(device) {
         if (connector.running) return;
         connector.device = device;
@@ -84,48 +98,67 @@ Singleton {
         connector.attempt();
     }
 
-    // Tekst dla kodów błędów zwracanych przez BlueZ.
+    /**
+     * Maps a BlueZ error to a user message.
+     * @param {BluetoothDevice} device  affected device
+     * @param {string} detail  BlueZ error text
+     * @returns {string}
+     */
     function connectErrorMessage(device, detail) {
         const text = detail ?? "";
         if (text.includes("key-missing") || text.includes("AuthenticationFailed") || text.includes("AuthenticationRejected"))
-            return `${device.name}: urządzenie odrzuciło klucz parowania. Spróbuj ponownie, a jeśli to się powtórzy, zapomnij je i sparuj od nowa.`;
+            return I18n.t("bluetooth.error.keyRejected", { device: device.name });
         if (text.includes("page-timeout") || text.includes("Host is down") || text.includes("profile-unavailable"))
-            return `${device.name}: nie odpowiada. Sprawdź, czy jest włączone i nie jest zajęte przez inne urządzenie.`;
-        return `Nie udało się połączyć: ${device.name}.`;
+            return I18n.t("bluetooth.error.noResponse", { device: device.name });
+        return I18n.t("bluetooth.error.connectFailed", { device: device.name });
     }
 
+    /**
+     * Removes a device's pairing.
+     * @param {BluetoothDevice} device  device to forget
+     */
     function forget(device) {
         errorMessage = "";
         device.forget();
     }
 
+    /**
+     * Returns the status line for a device.
+     * @param {BluetoothDevice} device  device to describe
+     * @returns {string}
+     */
     function statusText(device) {
-        if (pairingDevice === device || device.pairing) return "Parowanie…";
-        // Po parowaniu BlueZ zgłasza Connected już dla samego łącza, jeszcze bez profili.
-        if (connector.device === device) return "Łączenie…";
+        if (pairingDevice === device || device.pairing) return I18n.t("bluetooth.status.pairing");
+        // After pairing, BlueZ reports Connected for the bare link, before profiles are up.
+        if (connector.device === device) return I18n.t("status.connecting");
         switch (device.state) {
-        case QsBt.BluetoothDeviceState.Connecting: return "Łączenie…";
-        case QsBt.BluetoothDeviceState.Disconnecting: return "Rozłączanie…";
+        case QsBt.BluetoothDeviceState.Connecting: return I18n.t("status.connecting");
+        case QsBt.BluetoothDeviceState.Disconnecting: return I18n.t("bluetooth.status.disconnecting");
         case QsBt.BluetoothDeviceState.Connected:
-            return device.batteryAvailable ? `Połączono, bateria ${Math.round(device.battery * 100)}%` : "Połączono";
+            return device.batteryAvailable ? I18n.t("bluetooth.status.connectedBattery", { percent: Math.round(device.battery * 100) }) : I18n.t("bluetooth.status.connected");
         }
-        return device.paired ? "Sparowano" : "Dostępne";
+        return device.paired ? I18n.t("bluetooth.status.paired") : I18n.t("bluetooth.status.available");
     }
 
+    /**
+     * Sends the response to the pending agent request.
+     * @param {bool} accept  whether to accept
+     * @param {string} value  PIN or passkey, if requested
+     */
     function answer(accept, value) {
         if (!request) return;
         agent.write(JSON.stringify({ id: request.id, accept: accept, value: value ?? "" }) + "\n");
         request = null;
     }
 
-    // Anulowanie z karty parowania, także gdy tylko wyświetlamy kod.
+    /** Cancels pairing, including when only a code is displayed. */
     function cancelPairing() {
         if (request?.kind !== "display") answer(false, "");
         request = null;
         pairingDevice?.cancelPair();
     }
 
-    // Koniec parowania: zaufanie pozwala później łączyć się bez pytania.
+    // Trusting the device allows later connections without a prompt.
     Connections {
         target: root.pairingDevice
         ignoreUnknownSignals: true
@@ -139,14 +172,14 @@ Singleton {
                 device.trusted = true;
                 root.connectDevice(device);
             } else {
-                root.errorMessage = `Nie udało się sparować: ${device.name}.`;
+                root.errorMessage = I18n.t("bluetooth.error.pairFailed", { device: device.name });
             }
         }
     }
 
-    // Device1.Connect wywołujemy bezpośrednio. BluetoothDevice.connect() odmawia, gdy
-    // Connected jest już prawdą, a tak jest zaraz po parowaniu: łącze działa, ale profile
-    // audio nie są uruchomione. Dostajemy też kod błędu, którego moduł nie udostępnia.
+    // Device1.Connect is called directly. BluetoothDevice.connect() refuses when Connected is
+    // already true, as it is right after pairing, when the link is up but audio profiles are not.
+    // This also returns an error code the module does not expose.
     Process {
         id: connector
 
@@ -177,7 +210,7 @@ Singleton {
             device = null;
             if (exitCode !== 0) {
                 root.errorMessage = root.connectErrorMessage(current, detail);
-                console.warn("bluetooth: łączenie nieudane:", detail.trim());
+                console.warn("bluetooth: connection failed:", detail.trim());
             }
         }
     }
@@ -208,7 +241,7 @@ Singleton {
                 try {
                     message = JSON.parse(line);
                 } catch (e) {
-                    console.warn("bt-agent: nieczytelna linia");
+                    console.warn("bt-agent: unreadable line");
                     return;
                 }
                 switch (message.event) {
@@ -225,7 +258,7 @@ Singleton {
                     root.request = null;
                     break;
                 case "error":
-                    root.errorMessage = "Nie udało się uruchomić agenta parowania.";
+                    root.errorMessage = I18n.t("bluetooth.error.agentFailed");
                     console.warn("bt-agent:", message.detail);
                     break;
                 }

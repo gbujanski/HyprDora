@@ -11,7 +11,7 @@ Rectangle {
     readonly property bool busy: Network.busySsid === network.name
     readonly property bool hasError: Network.errorSsid === network.name
 
-    // Pierwsze kliknięcie kosza uzbraja, drugie usuwa: zapomnienie kasuje zapisane hasło.
+    // The first click arms the button, the second forgets the network and its saved password.
     property bool forgetArmed: false
 
     implicitHeight: 44
@@ -61,9 +61,9 @@ Rectangle {
             color: root.hasError ? Theme.error : Theme.muted
             font.pixelSize: Theme.fontSizeSmall
             text: {
-                if (root.busy) return "Łączenie…";
-                if (root.network.connected) return `Połączono, ${Network.securityLabel(root.network)}`;
-                if (root.network.known) return `Zapisana, ${Network.securityLabel(root.network)}`;
+                if (root.busy) return I18n.t("status.connecting");
+                if (root.network.connected) return I18n.t("wifi.connectedWith", { security: Network.securityLabel(root.network) });
+                if (root.network.known) return I18n.t("wifi.savedWith", { security: Network.securityLabel(root.network) });
                 return Network.securityLabel(root.network);
             }
         }
@@ -83,7 +83,7 @@ Rectangle {
             visible: root.network.connected
             icon: Icons.close
             iconColor: Theme.muted
-            tooltip: "Rozłącz"
+            tooltip: I18n.t("wifi.disconnect")
             onClicked: Network.disconnectActive()
         }
 
@@ -92,7 +92,7 @@ Rectangle {
             visible: root.network.known
             icon: Icons.trash
             iconColor: root.forgetArmed ? Theme.error : Theme.muted
-            tooltip: root.forgetArmed ? "Kliknij ponownie, aby zapomnieć sieć" : "Zapomnij sieć"
+            tooltip: root.forgetArmed ? I18n.t("wifi.forgetArmed") : I18n.t("wifi.forget")
             onClicked: {
                 if (root.forgetArmed) {
                     root.forgetArmed = false;

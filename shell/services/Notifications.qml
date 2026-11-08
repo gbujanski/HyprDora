@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Notifications
+import qs.config
 
 Singleton {
     id: root
@@ -13,11 +14,11 @@ Singleton {
 
     property bool dnd: false
 
-    // Czas otrzymania i aktualnie pokazywane toasty, po identyfikatorze powiadomienia.
+    // Receive times and currently shown toasts, by notification id.
     property var receivedAt: ({})
     property var popupIds: []
 
-    // Do opisu „5 min temu”; odświeżane tylko przy otwartym panelu.
+    // For relative times; updated only while the panel is open.
     property date now: new Date()
 
     readonly property var tracked: server.trackedNotifications.values
@@ -25,6 +26,10 @@ Singleton {
     readonly property int count: history.length
     readonly property var popups: tracked.filter(n => popupIds.includes(n.id)).reverse().slice(0, maxPopups)
 
+    /**
+     * Records a new notification and shows it unless silenced.
+     * @param {Notification} notification  incoming notification
+     */
     function handle(notification) {
         notification.tracked = true;
 
@@ -44,43 +49,64 @@ Singleton {
         trimHistory();
     }
 
+    /** Expires notifications beyond the history limit. */
     function trimHistory() {
         const excess = history.slice(maxHistory);
         for (const notification of excess) notification.expire();
     }
 
-    // Toast znika, ale powiadomienie zostaje w historii. Powiadomienia ulotne nie trafiają tam wcale.
+    /**
+     * Hides a toast. The notification stays in history unless it is transient.
+     * @param {Notification} notification  shown notification
+     */
     function endPopup(notification) {
         popupIds = popupIds.filter(id => id !== notification.id);
         if (notification.transient) notification.expire();
     }
 
-    // Czas toastu w ms; 0 oznacza brak automatycznego zamknięcia.
+    /**
+     * Returns how long a toast stays visible.
+     * @param {Notification} notification  shown notification
+     * @returns {int} milliseconds, 0 for no timeout
+     */
     function popupTimeout(notification) {
         if (notification.urgency === NotificationUrgency.Critical) return 0;
-        // expireTimeout jest w milisekundach, a -1 oznacza „domyślnie”.
+        // expireTimeout is in milliseconds, and -1 means default.
         const timeout = notification.expireTimeout;
         if (timeout >= 0) return timeout;
         return notification.urgency === NotificationUrgency.Low ? 3000 : 5000;
     }
 
+    /** Dismisses every notification in history. */
     function clearAll() {
         for (const notification of history.slice()) notification.dismiss();
     }
 
+    /**
+     * Runs a notification's default action.
+     * @param {Notification} notification  target notification
+     * @returns {bool} whether one existed
+     */
     function invokeDefault(notification) {
         const action = notification.actions.find(a => a.identifier === "default");
         if (action) action.invoke();
         return action !== undefined;
     }
 
-    // Akcje do pokazania jako przyciski. „default” obsługuje kliknięcie w treść.
+    /**
+     * Returns actions to show as buttons. The default action is run by clicking the body.
+     * @param {Notification} notification  target notification
+     * @returns {list}
+     */
     function visibleActions(notification) {
         return notification.actions.filter(a => a.identifier !== "default" && a.text !== "");
     }
 
-    // Niektórzy nadawcy wysyłają znaczniki mimo braku deklaracji ich obsługi. Usuwamy tylko
-    // znaczniki ze specyfikacji i wyświetlamy zwykły tekst, więc nic nie jest interpretowane.
+    /**
+     * Removes specification markup that some senders use without checking support. The result is shown as plain text, so nothing is interpreted.
+     * @param {string} text  notification body
+     * @returns {string}
+     */
     function plainBody(text) {
         return (text ?? "")
             .replace(/<\/?(b|i|u|a|img)(\s[^>]*)?\/?>/gi, "")
@@ -91,15 +117,25 @@ Singleton {
             .replace(/&amp;/g, "&");
     }
 
+    /**
+     * Returns when a notification arrived, in relative form.
+     * @param {Notification} notification  target notification
+     * @returns {string}
+     */
     function relativeTime(notification) {
         const received = receivedAt[notification.id];
         if (!received) return "";
         const minutes = Math.floor((now - received) / 60000);
-        if (minutes < 1) return "teraz";
-        if (minutes < 60) return `${minutes} min temu`;
-        return received.toLocaleString(Qt.locale(), "HH:mm");
+        if (minutes < 1) return I18n.t("time.now");
+        if (minutes < 60) return I18n.t("time.minutesAgo", { minutes });
+        return received.toLocaleString(I18n.locale, "HH:mm");
     }
 
+    /**
+     * Finds an image or icon for a notification.
+     * @param {Notification} notification  target notification
+     * @returns {string} empty when none
+     */
     function iconSource(notification) {
         if (notification.image) return notification.image;
         for (const name of [notification.appIcon, notification.desktopEntry]) {
@@ -120,7 +156,7 @@ Singleton {
         imageSupported: true
         bodySupported: true
         persistenceSupported: true
-        // Treść jest pokazywana jako zwykły tekst, więc nie deklarujemy obsługi znaczników.
+        // The body is shown as plain text, so markup support is not declared.
         bodyMarkupSupported: false
 
         onNotification: notification => root.handle(notification)

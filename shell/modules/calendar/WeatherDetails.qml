@@ -4,17 +4,16 @@ import qs.config
 import qs.components
 import qs.services
 
-// Bieżąca pogoda i prognoza na kolejne dni.
+// Current weather and the forecast.
 Column {
     id: root
 
-    readonly property var dayNames: ["Nd", "Pn", "Wt", "Śr", "Cz", "Pt", "So"]
     readonly property var current: Weather.current
 
     function dayLabel(iso, index) {
-        if (index === 0) return "Dziś";
+        if (index === 0) return I18n.t("calendar.today");
         const [y, m, d] = iso.split("-").map(Number);
-        return dayNames[new Date(y, m - 1, d).getDay()];
+        return I18n.shortDayName(new Date(y, m - 1, d).getDay());
     }
 
     function formatNumber(value) {
@@ -29,7 +28,7 @@ Column {
 
         SectionTitle {
             anchors.verticalCenter: parent.verticalCenter
-            text: `POGODA · ${Settings.weatherPlace.toUpperCase()}`
+            text: I18n.t("section.weather", { place: Settings.weatherPlace.toUpperCase() })
         }
 
         Row {
@@ -42,8 +41,8 @@ Column {
             Label {
                 anchors.verticalCenter: parent.verticalCenter
                 visible: Weather.fetchedAt > 0
-                text: Weather.loading ? "Odświeżanie…"
-                    : new Date(Weather.fetchedAt).toLocaleTimeString(Qt.locale(), "HH:mm")
+                text: Weather.loading ? I18n.t("weather.refreshing")
+                    : new Date(Weather.fetchedAt).toLocaleTimeString(I18n.locale, "HH:mm")
                 color: Theme.dim
                 font.pixelSize: Theme.fontSizeSmall
             }
@@ -55,7 +54,7 @@ Column {
                 icon: Icons.refresh
                 iconColor: Theme.muted
                 active: !Weather.loading
-                tooltip: "Odśwież"
+                tooltip: I18n.t("weather.refresh")
                 onClicked: Weather.refresh()
             }
         }
@@ -64,12 +63,11 @@ Column {
     Label {
         width: parent.width
         visible: !Weather.available
-        text: Weather.loading ? "Pobieranie pogody…" : (Weather.error || "Brak danych o pogodzie")
+        text: Weather.loading ? I18n.t("weather.loading") : (Weather.error || I18n.t("weather.noData"))
         color: Theme.muted
         wrapMode: Text.WordWrap
     }
 
-    // Bieżące warunki.
     Row {
         visible: Weather.available
         width: parent.width
@@ -99,7 +97,7 @@ Column {
             }
 
             Label {
-                text: root.current ? `Odczuwalna ${Weather.formatTemp(root.current.feels)}` : ""
+                text: root.current ? I18n.t("weather.feelsLike", { temp: Weather.formatTemp(root.current.feels) }) : ""
                 color: Theme.muted
                 font.pixelSize: Theme.fontSizeSmall
             }
@@ -112,10 +110,10 @@ Column {
 
         Repeater {
             model: root.current ? [
-                { icon: Icons.wind, text: `${root.formatNumber(root.current.wind)} km/h`, tip: "Wiatr" },
-                { icon: Icons.humidity, text: `${root.formatNumber(root.current.humidity)}%`, tip: "Wilgotność" },
-                { icon: Icons.sunrise, text: Weather.sunrise, tip: "Wschód słońca" },
-                { icon: Icons.sunset, text: Weather.sunset, tip: "Zachód słońca" }
+                { icon: Icons.wind, text: `${root.formatNumber(root.current.wind)} km/h`, tip: I18n.t("weather.wind") },
+                { icon: Icons.humidity, text: `${root.formatNumber(root.current.humidity)}%`, tip: I18n.t("weather.humidity") },
+                { icon: Icons.sunrise, text: Weather.sunrise, tip: I18n.t("weather.sunrise") },
+                { icon: Icons.sunset, text: Weather.sunset, tip: I18n.t("weather.sunset") }
             ].filter(item => item.text !== "") : []
 
             Row {
@@ -139,7 +137,6 @@ Column {
         }
     }
 
-    // Prognoza dzienna.
     Row {
         id: forecast
 
@@ -186,7 +183,7 @@ Column {
 
                 Label {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    // Pusty wiersz zamiast znikania, żeby kolumny miały równą wysokość.
+                    // A blank line rather than nothing, so columns keep equal height.
                     text: modelData.precipitation >= 20 ? `${modelData.precipitation}%` : " "
                     color: Theme.muted
                     font.pixelSize: Theme.fontSizeSmall - 1
@@ -198,7 +195,7 @@ Column {
     Label {
         width: parent.width
         visible: Weather.available && Weather.error !== ""
-        text: `${Weather.error}. Pokazuję ostatni wynik.`
+        text: I18n.t("weather.showingLast", { error: Weather.error })
         color: Theme.warning
         font.pixelSize: Theme.fontSizeSmall
         wrapMode: Text.WordWrap

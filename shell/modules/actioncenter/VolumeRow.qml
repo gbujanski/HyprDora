@@ -4,13 +4,13 @@ import qs.config
 import qs.components
 import qs.services
 
-// Wyciszenie, nazwa i suwak głośności dla jednego węzła PipeWire.
+// Mute button, name and volume slider for one PipeWire node.
 Item {
     id: root
 
     property PwNode node: null
     property string title: Audio.displayName(node)
-    property string emptyTitle: "Brak urządzenia"
+    property string emptyTitle: I18n.t("audio.noDevice")
     property bool isMicrophone: false
     property bool showChevron: false
 
@@ -31,7 +31,7 @@ Item {
         active: root.available
         icon: root.isMicrophone ? Icons.microphone(root.muted) : Icons.volume(root.volume, root.muted)
         iconColor: root.muted ? Theme.muted : Theme.foreground
-        tooltip: root.muted ? "Włącz dźwięk" : "Wycisz"
+        tooltip: root.muted ? I18n.t("audio.unmute") : I18n.t("audio.mute")
         onClicked: Audio.toggleNodeMute(root.node)
     }
 
@@ -65,7 +65,7 @@ Item {
                 id: percent
                 anchors.right: parent.right
                 visible: root.available
-                text: root.muted ? "wyciszone" : `${Math.round(root.volume * 100)}%`
+                text: root.muted ? I18n.t("audio.muted") : `${Math.round(root.volume * 100)}%`
                 color: Theme.muted
                 font.pixelSize: Theme.fontSizeSmall
             }
@@ -88,7 +88,7 @@ Item {
         visible: root.showChevron
         icon: Icons.chevronRight
         iconColor: Theme.muted
-        tooltip: "Urządzenia i aplikacje"
+        tooltip: I18n.t("audio.devicesAndApps")
         onClicked: root.chevronClicked()
     }
 }

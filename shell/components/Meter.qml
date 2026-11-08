@@ -1,14 +1,13 @@
 import QtQuick
 import qs.config
 
-// Pasek zajętości bez interakcji. Kolor ostrzega przy wysokich wartościach,
-// a przy reversed (np. bateria) przy niskich.
+// Read-only usage bar. Its color warns at high values, or at low values when reversed.
 Rectangle {
     id: root
 
     property real value: 0
     property bool reversed: false
-    // Przezroczysty oznacza kolor dobierany automatycznie.
+    // Transparent means the color is picked automatically.
     property color fillColor: "transparent"
     readonly property color autoColor: {
         const v = reversed ? 1 - value : value;

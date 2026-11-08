@@ -5,7 +5,7 @@ import qs.config
 import qs.services
 
 Scope {
-    // Przy otwartym centrum akcji te same powiadomienia są widoczne na liście.
+    // The same notifications are listed in the action center while it is open.
     LazyLoader {
         active: Notifications.popups.length > 0 && !Panels.actionCenterOpen
 
@@ -58,7 +58,7 @@ Scope {
                             onTriggered: Notifications.endPopup(card.modelData)
                         }
 
-                        // Podmiana treści (replaces_id) wydłuża życie toastu.
+                        // Replacing the content (replaces_id) extends the toast's lifetime.
                         Connections {
                             target: card.modelData
                             function onSummaryChanged() { lifetime.restart(); }

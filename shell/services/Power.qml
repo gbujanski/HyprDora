@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Services.UPower
+import qs.config
 
 Singleton {
     id: root
@@ -15,39 +16,52 @@ Singleton {
         || battery?.state === UPowerDeviceState.PendingCharge
     readonly property bool full: battery?.state === UPowerDeviceState.FullyCharged
 
-    // Czas w sekundach do rozładowania albo naładowania; 0, gdy nieznany.
+    // Seconds until empty or full; 0 when unknown.
     readonly property real secondsLeft: charging ? (battery?.timeToFull ?? 0) : (battery?.timeToEmpty ?? 0)
 
-    // Pobór (przy rozładowaniu) albo moc ładowania w watach; 0, gdy nieznane.
+    // Draw or charging power in watts; 0 when unknown.
     readonly property real rate: Math.abs(battery?.changeRate ?? 0)
 
-    // Kondycja zna tylko fizyczna bateria, a nie urządzenie zbiorcze UPower.
+    // Only the physical battery reports health, not UPower's aggregate device.
     readonly property var physicalBattery: UPower.devices.values.find(d => d.isLaptopBattery) ?? null
     readonly property real health: physicalBattery?.healthSupported ? physicalBattery.healthPercentage / 100 : 0
 
-    readonly property string stateText: full ? "Naładowana"
-        : charging ? "Ładowanie"
-        : !UPower.onBattery ? "Podłączona, nie ładuje"
-        : "Rozładowywanie"
+    readonly property string stateText: full ? I18n.t("battery.full")
+        : charging ? I18n.t("battery.state.charging")
+        : !UPower.onBattery ? I18n.t("battery.state.notCharging")
+        : I18n.t("battery.state.discharging")
 
     readonly property int profile: PowerProfiles.profile
     readonly property bool hasPerformance: PowerProfiles.hasPerformanceProfile
 
+    /**
+     * Sets the power profile.
+     * @param {int} value  PowerProfile value
+     */
     function setProfile(value) {
         PowerProfiles.profile = value;
     }
 
-    // Godzina rozładowania albo naładowania, np. „17:40”; pusta, gdy czas nieznany.
+    /**
+     * Returns the clock time when the battery empties or fills.
+     * @param {real} seconds  time remaining
+     * @returns {string} empty when unknown
+     */
     function endClock(seconds) {
         if (!(seconds > 0)) return "";
-        return new Date(Date.now() + seconds * 1000).toLocaleTimeString(Qt.locale(), "HH:mm");
+        return new Date(Date.now() + seconds * 1000).toLocaleTimeString(I18n.locale, "HH:mm");
     }
 
+    /**
+     * Formats a duration in hours and minutes.
+     * @param {real} seconds  duration
+     * @returns {string}
+     */
     function formatTime(seconds) {
         const minutes = Math.round(seconds / 60);
         const h = Math.floor(minutes / 60);
         const m = minutes % 60;
-        return h > 0 ? `${h} godz. ${m} min` : `${m} min`;
+        return h > 0 ? I18n.t("time.hoursMinutes", { hours: h, minutes: m }) : I18n.t("time.minutes", { minutes: m });
     }
 
     IpcHandler {

@@ -17,46 +17,81 @@ Singleton {
 
     readonly property var sinks: audioNodes(n => n.type === PwNodeType.AudioSink)
     readonly property var sources: audioNodes(n => n.type === PwNodeType.AudioSource)
-    // Strumień odtwarzania też ma isSink == true, dlatego rozpoznajemy go po typie.
+    // Playback streams also have isSink == true, so they are recognized by type.
     readonly property var playbackStreams: audioNodes(n => n.type === PwNodeType.AudioOutStream)
 
+    /**
+     * Returns audio nodes accepted by a predicate, sorted by name.
+     * @param {function} predicate  test applied to each node
+     * @returns {list}
+     */
     function audioNodes(predicate) {
         return Pipewire.nodes.values
             .filter(n => n.audio && predicate(n))
             .sort((a, b) => displayName(a).localeCompare(displayName(b)));
     }
 
+    /**
+     * Returns a readable name for a node.
+     * @param {PwNode} node  node to name
+     * @returns {string}
+     */
     function displayName(node) {
         if (!node) return "";
         if (node.isStream) return node.properties?.["application.name"] || node.nickname || node.name;
         return node.description || node.nickname || node.name;
     }
 
+    /**
+     * Sets a node's volume, clamped to 0..1.
+     * @param {PwNode} node  target node
+     * @param {real} value  new volume
+     */
     function setNodeVolume(node, value) {
         if (node?.audio) node.audio.volume = Math.max(0, Math.min(1, value));
     }
 
+    /**
+     * Toggles mute on a node.
+     * @param {PwNode} node  target node
+     */
     function toggleNodeMute(node) {
         if (node?.audio) node.audio.muted = !node.audio.muted;
     }
 
+    /**
+     * Sets the default output volume.
+     * @param {real} value  new volume, 0..1
+     */
     function setVolume(value) {
         setNodeVolume(sink, value);
     }
 
+    /**
+     * Changes the default output volume by a delta.
+     * @param {real} delta  amount to add
+     */
     function changeVolume(delta) {
         setVolume(volume + delta);
     }
 
+    /**
+     * Makes a node the default output.
+     * @param {PwNode} node  output node
+     */
     function selectSink(node) {
         Pipewire.preferredDefaultAudioSink = node;
     }
 
+    /**
+     * Makes a node the default input.
+     * @param {PwNode} node  input node
+     */
     function selectSource(node) {
         Pipewire.preferredDefaultAudioSource = node;
     }
 
-    // PipeWire udostępnia właściwości tylko śledzonych węzłów.
+    // PipeWire exposes properties only for tracked nodes.
     PwObjectTracker {
         objects: [root.sink, root.source].filter(n => n)
     }

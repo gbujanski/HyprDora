@@ -2,7 +2,7 @@ import QtQuick
 import qs.config
 import qs.components
 
-// Ikona, nazwa, wartość, pasek zajętości i opcjonalne szczegóły pod spodem.
+// Icon, name, value, usage bar and optional details below.
 Item {
     id: root
 

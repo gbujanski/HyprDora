@@ -5,8 +5,7 @@ import qs.config
 import qs.components
 import qs.services
 
-// Pytanie o zachowanie zmian. Osobne okno na każdym ekranie, bo panel może właśnie
-// tracić swój monitor, a potwierdzenie musi być widoczne na tym, który działa.
+// One window per screen: the panel's monitor may be going away, and the prompt must be visible on one that works.
 Scope {
     Variants {
         model: Displays.pending ? Quickshell.screens : []
@@ -45,13 +44,13 @@ Scope {
                     spacing: 6
 
                     Label {
-                        text: "Zachować te ustawienia ekranu?"
+                        text: I18n.t("displays.confirmTitle")
                         font.pixelSize: Theme.fontSizeTitle
                         font.weight: Font.DemiBold
                     }
 
                     Label {
-                        text: `Automatyczny powrót za ${Displays.secondsLeft} s`
+                        text: I18n.t("displays.revertIn", { seconds: Displays.secondsLeft })
                         color: Theme.muted
                         bottomPadding: 8
                     }
@@ -61,12 +60,12 @@ Scope {
                         spacing: 6
 
                         TextButton {
-                            text: "Cofnij (Esc)"
+                            text: I18n.t("displays.revert")
                             onClicked: Displays.revertChange()
                         }
 
                         TextButton {
-                            text: "Zachowaj (Enter)"
+                            text: I18n.t("displays.keep")
                             primary: true
                             onClicked: Displays.keepChange()
                         }

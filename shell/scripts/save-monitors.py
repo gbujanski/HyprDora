@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Zapisuje reguły monitorów do bloku HyprDora w monitors.conf.
+"""Save monitor rules to the HyprDora block in monitors.conf.
 
-Użycie: save-monitors.py ŚCIEŻKA, a na stdin lista reguł w JSON.
-Reszta pliku, w tym reguła awaryjna, pozostaje bez zmian. Pierwotny plik trafia
-jednorazowo do .orig, a stan sprzed każdego zapisu do .bak. Zapis jest atomowy.
+Usage: save-monitors.py PATH, with a JSON list of rules on stdin.
+The rest of the file, including the fallback rule, is left unchanged. The
+original file is copied once to .orig, and the state before each save to .bak.
+The write is atomic.
 """
 
 import json
@@ -12,11 +13,12 @@ import shutil
 import sys
 import tempfile
 
-BEGIN = "# >>> HyprDora: zarządzane przez centrum akcji"
+BEGIN = "# >>> HyprDora: managed by the action center"
 END = "# <<< HyprDora"
 
 
 def without_block(lines):
+    """Return the lines outside the managed block."""
     result = []
     inside = False
     for line in lines:
@@ -31,10 +33,11 @@ def without_block(lines):
 
 
 def main():
+    """Merge the rules into the file and return an exit code."""
     path = sys.argv[1]
     rules = json.load(sys.stdin)
     if not isinstance(rules, list) or not rules or not all(isinstance(r, str) and "\n" not in r for r in rules):
-        print("nieprawidłowe reguły", file=sys.stderr)
+        print("invalid rules", file=sys.stderr)
         return 2
 
     original = ""
