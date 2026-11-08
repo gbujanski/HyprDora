@@ -219,6 +219,7 @@ Scope {
 
                     WeatherDetails {
                         width: parent.width
+                        visible: Settings.hasWeatherLocation
                     }
                 }
             }

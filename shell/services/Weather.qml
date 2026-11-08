@@ -23,13 +23,27 @@ Singleton {
 
     readonly property bool available: current !== null
 
-    readonly property string url: "https://api.open-meteo.com/v1/forecast"
+    readonly property string url: !Settings.hasWeatherLocation ? "" : "https://api.open-meteo.com/v1/forecast"
         + `?latitude=${Settings.weatherLatitude}&longitude=${Settings.weatherLongitude}`
         + "&current=temperature_2m,apparent_temperature,weather_code,is_day,wind_speed_10m,relative_humidity_2m"
         + "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset"
         + "&timezone=auto&forecast_days=6"
 
     property var request: null
+
+    onUrlChanged: {
+        const pending = request;
+        request = null;
+        pending?.abort();
+        timeout.stop();
+        retry.stop();
+        loading = false;
+        error = "";
+        current = null;
+        daily = [];
+        fetchedAt = 0;
+        cache.reload();
+    }
 
     /**
      * Returns the age of the last result.
@@ -46,7 +60,7 @@ Singleton {
 
     /** Fetches the weather. */
     function refresh() {
-        if (loading) return;
+        if (loading || url === "") return;
         loading = true;
         const xhr = new XMLHttpRequest();
         request = xhr;
@@ -57,7 +71,7 @@ Singleton {
             loading = false;
             if (xhr.status === 200 && apply(xhr.responseText, Date.now())) {
                 error = "";
-                cache.setText(JSON.stringify({ fetchedAt, current, daily, sunrise, sunset }));
+                cache.setText(JSON.stringify({ url, fetchedAt, current, daily, sunrise, sunset }));
                 retry.stop();
             } else {
                 fail(xhr.status === 0 ? I18n.t("weather.error.noConnection") : I18n.t("weather.error.server", { status: xhr.status }));
@@ -131,7 +145,7 @@ Singleton {
     function applyCache(text) {
         try {
             const saved = JSON.parse(text);
-            if (!saved.current || !(saved.fetchedAt > 0)) return;
+            if (saved.url !== url || !saved.current || !(saved.fetchedAt > 0)) return;
             current = saved.current;
             daily = saved.daily ?? [];
             sunrise = saved.sunrise ?? "";

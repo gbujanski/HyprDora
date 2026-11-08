@@ -11,7 +11,7 @@ Singleton {
     id: root
 
     readonly property int confirmSeconds: 15
-    readonly property string configPath: `${Quickshell.env("HOME")}/.config/hypr/monitors.conf`
+    readonly property string configPath: `${Settings.configDir}/hypr/monitors.conf`
     readonly property string runtimeDir: Quickshell.env("XDG_RUNTIME_DIR")
 
     property var monitors: []
