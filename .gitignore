@@ -1,0 +1,6 @@
+*.log
+.qmlls.ini
+__pycache__/
+/build/
+*.rpm
+*.iso
