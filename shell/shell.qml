@@ -8,8 +8,12 @@ import qs.modules.osd
 import qs.modules.displays
 import qs.modules.calendar
 import qs.modules.battery
+import qs.services
 
 ShellRoot {
+    // Singletons are created on first use, and this one has no UI that would use it.
+    readonly property var wallpaper: Wallpaper
+
     Variants {
         model: Quickshell.screens
 

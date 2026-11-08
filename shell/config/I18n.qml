@@ -10,7 +10,7 @@ Singleton {
     id: root
 
     readonly property string requested: Settings.language === "auto" ? Qt.locale().name.split("_")[0] : Settings.language
-    property var english: ({})
+    property var english: null
     property var strings: ({})
     property bool loaded: false
 
@@ -33,8 +33,9 @@ Singleton {
      * @returns {string}
      */
     function t(key, values) {
-        const entry = strings[key] ?? english[key];
+        const entry = strings[key] ?? english?.[key];
         if (entry === undefined) {
+            if (english === null) return "";
             console.warn("i18n: missing key:", key);
             return key;
         }
