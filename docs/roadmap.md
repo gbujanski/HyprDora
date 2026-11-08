@@ -80,7 +80,7 @@ Anything that needs logic and can run in QML is written in QML. External program
 |---|---|
 | `screenshot.sh` | capture service in QML (section 6) |
 | `set-wallpaper.sh` | `Wallpaper` service: `hyprctl hyprpaper` plus writing `hyprpaper.conf`. The Thunar action calls `qs -c hyprdora ipc call wallpaper set %f` |
-| `save-monitors.py` | `FileView` writes all of `monitors.lua` atomically and keeps the previous version as `.bak`. The block merging is no longer needed, because the file is fully generated |
+| `save-monitors.py` | stage 2, with the move to Lua: `FileView` writes all of `monitors.lua` atomically and keeps the previous version as `.bak`. The block merging is no longer needed, because the file is fully generated |
 | `dev-*.sh`, `install.sh`, `uninstall.sh` | removed, replaced by `make dev` and the RPM |
 
 Verified on 2026-11-08 under `qs`: atomic `FileView` writes and XDG paths from `StandardPaths`, which replace `xdg-user-dir`.
@@ -207,7 +207,7 @@ The first decision records: RPM + kickstart over scripts and `bootc`, one reposi
 
 ## 10. Development mode
 
-`make dev` starts the shell from the repository in a nested Hyprland with the repository's Lua config, without touching the running session. Verified: a nested Hyprland runs alongside the live one and is controlled separately with `hyprctl -i`.
+`make dev` starts the shell from the repository in a nested Hyprland, without touching the running session. Until stage 2 it uses the minimal `hypr/dev.conf`, then the repository's Lua config. Config files are redirected to `build/dev/config`. Verified: a nested Hyprland runs alongside the live one and is controlled separately with `hyprctl -i`.
 
 ## 11. Stages
 

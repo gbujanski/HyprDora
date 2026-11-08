@@ -1,3 +1,53 @@
-# Hardware quirks
+# Hardware and platform quirks
 
-Findings from testing on real hardware are added here when the shell moves in, in stage 1.
+Findings from testing on real hardware. Each one explains code that may otherwise look unnecessary.
+
+## Wi-Fi
+
+- `Quickshell.Networking` works on the proprietary `wl` driver: scanning, signal and saved networks.
+- `WifiNetwork.connect()` does not accept a password, so new networks go through `shell/scripts/nm-connect.py`. The helper also reports the exact failure and deletes the profile after a failed attempt.
+- A wrong password can produce a kernel warning from `net/wireless/sme.c` with `wl`. The connection recovers on its own.
+
+## Bluetooth
+
+- Quickshell does not register a pairing agent, so devices needing a PIN or code confirmation require `shell/scripts/bt-agent.py`.
+- After pairing, BlueZ reports `Connected` for the bare link, before audio profiles start, and `BluetoothDevice.connect()` then refuses. The shell calls `Device1.Connect` directly, retrying on `busy` and `InProgress`.
+- Right after power-on, BlueZ can reject discovery with "Resource Not Ready" and may later end it by itself. Discovery is retried while the page is open.
+
+## Hyprland
+
+- `WlrKeyboardFocus.Exclusive` makes Hyprland route all clicks to that layer, so panels use `OnDemand` to keep the bar clickable.
+- `mirrorOf` in `hyprctl monitors` is a monitor id, not a name.
+- Saving a monitor config triggers a config reload.
+
+## Monitors
+
+- Saved rules use `desc:` selectors, because connector names can change.
+- The laptop screen is always saved as enabled, so booting without an external monitor cannot give a black screen. "External only" therefore lasts until the session ends.
+- A watchdog outside the shell reverts a monitor change if the shell dies before it is confirmed.
+
+## Power and backlight
+
+- UPower's aggregate device has no health data. It comes from the physical battery.
+- `udev` does not report keyboard backlight changes, so brightness is watched with inotify through `FileView.watchChanges`.
+
+## Audio
+
+- Playback streams have `isSink == true`, so nodes are recognized by `PwNodeType`.
+
+## Notifications
+
+- `expireTimeout` is in milliseconds, and -1 means the default.
+
+## Quickshell
+
+- `console.log` is hidden by default. Use `console.info` or `console.warn`.
+- A singleton is created on first use, so its `IpcHandler` does not exist until something references it.
+- Devices and adapters appear asynchronously. The UI must react through bindings rather than read state once at startup.
+- `FileView` with `preload: false` does not load the file after `reload()`.
+- A QML property cannot start with `on` followed by a capital letter, because it is treated as a signal handler.
+- Icons from a theme require `//@ pragma IconTheme`.
+
+## Input
+
+- A touchpad sends dozens of scroll events per gesture, so month changes in the calendar have a minimum delay (`calendarScrollDelay`).
