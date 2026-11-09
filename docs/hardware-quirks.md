@@ -18,7 +18,11 @@ Findings from testing on real hardware. Each one explains code that may otherwis
 
 - `WlrKeyboardFocus.Exclusive` makes Hyprland route all clicks to that layer, so panels use `OnDemand` to keep the bar clickable.
 - `mirrorOf` in `hyprctl monitors` is a monitor id, not a name.
-- Saving a monitor config triggers a config reload.
+- `hl.monitor` merges with the existing rule, so a rule must state `disabled = false` and an empty `mirror` to re-enable a screen or stop mirroring.
+- In Lua mode, `hyprctl keyword` and old `dispatch` syntax fail. Use `hyprctl eval` and `hyprctl dispatch 'hl.dsp...'`.
+- Hyprland reloads the config when a file loaded with `require` changes, but not one loaded with `dofile`.
+- A reload runs the whole config again, which drops rules applied with `hyprctl eval`.
+- If both `hyprland.lua` and `hyprland.conf` exist, `hyprland.lua` is used.
 
 ## Monitors
 

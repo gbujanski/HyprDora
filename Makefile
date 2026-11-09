@@ -1,6 +1,11 @@
 QT_BIN ?= /usr/lib64/qt6/bin
 DEV_DIR := $(CURDIR)/build/dev/config
 
+# qmllint cannot see Quickshell's types or the qs.* modules, so these categories only report noise.
+QMLLINT_FLAGS := --import disable --unqualified disable --unresolved-type disable --missing-type disable \
+	--missing-property disable --uncreatable-type disable --required disable \
+	--signal-handler-parameters disable --incompatible-type disable
+
 QML_FILES := $(shell find shell -name '*.qml' 2>/dev/null)
 SHELL_FILES := $(shell find kickstart -name '*.sh' 2>/dev/null)
 PYTHON_FILES := $(shell find shell/scripts -name '*.py' 2>/dev/null)
@@ -19,7 +24,7 @@ lint: lint-qml lint-shell lint-python lint-lua
 
 lint-qml:
 ifneq ($(QML_FILES),)
-	$(QT_BIN)/qmllint $(QML_FILES)
+	$(QT_BIN)/qmllint $(QMLLINT_FLAGS) $(QML_FILES)
 	@for file in $(QML_FILES); do \
 		$(QT_BIN)/qmlformat "$$file" | diff -u "$$file" - || exit 1; \
 	done

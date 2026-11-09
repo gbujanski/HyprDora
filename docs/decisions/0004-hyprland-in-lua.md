@@ -4,6 +4,6 @@
 
 **Decision.** The config is written in Lua. Default keybindings are a plain list in one file, a user file lists only the differences, and a small library merges them.
 
-**Consequences.** In Lua mode, old `hyprctl dispatch` syntax and `hyprctl keyword` return errors, so the shell is ported to the new commands in the same stage.
+**Consequences.** In Lua mode, old `hyprctl dispatch` syntax and `hyprctl keyword` return errors, so the shell is ported to the new commands in the same stage. Monitor layouts are written to a generated `monitors.lua`.
 
 **Rejected.** The classic config format: merging defaults with user changes, including disabling a binding, needs logic it does not have.

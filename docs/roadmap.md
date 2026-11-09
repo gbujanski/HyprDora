@@ -112,8 +112,8 @@ Verified on 2026-11-08 on a nested Hyprland 0.56.2: Lua config loads, and `requi
 ├── apps.lua                     # terminal, file manager, launcher
 ├── binds.lua                    # ALL default keybindings
 ├── autostart.lua  env.lua  look.lua  input.lua  rules.lua
-├── gpu/                         # hybrid.lua, nvidia.lua
-└── lib/binds.lua                # keybinding logic
+├── gpu/                         # hybrid.lua, nvidia.lua (stage 6)
+└── lib/                         # keybinding merging, named actions, user file loading
 
 ~/.config/hypr/                  # user files
 ├── hyprland.lua                 # one line: loads HyprDora
@@ -149,7 +149,7 @@ return {
 }
 ```
 
-`lib/binds.lua` merges both lists, reports duplicate keys, then calls `hl.bind`. Descriptions allow a keybinding cheat sheet in the action center later and a generated table in the README. Brightness keys use the shell IPC with `brightnessctl` as a fallback when the shell is not running. The MacBook has no `Print` key, so capture also gets a `SUPER` shortcut.
+`lib/binds.lua` merges both lists, reports duplicate keys, then calls `hl.bind`. Descriptions allow a keybinding cheat sheet in the action center later and a generated table in the README. Brightness keys use the shell IPC with `brightnessctl` as a fallback when the shell is not running. The MacBook has no `Print` key, so capture also gets a `SUPER` shortcut. Capture keybindings arrive with the tool in stage 3.
 
 **What Lua mode breaks.** Old `hyprctl` syntax returns errors (verified). The shell must be ported in the same stage:
 
@@ -157,10 +157,10 @@ return {
 |---|---|---|---|
 | `modules/bar/Workspaces.qml:64-65` | `Hyprland.dispatch("workspace N")` | clicking workspaces stops working | `hl.dsp.focus({ workspace = N })` |
 | `services/Session.qml:18` | `hyprctl dispatch exit` | logout stops working | `hyprctl dispatch 'hl.dsp.exit()'` |
-| `services/Displays.qml:314,317,343,351,360` | `hyprctl keyword monitor`, `--batch` | **monitor changes and automatic rollback stop working** | `hyprctl eval 'hl.monitor({...})'` |
+| `services/Displays.qml` | `hyprctl keyword monitor`, `--batch` | **monitor changes and automatic rollback stop working** | `hyprctl eval 'hl.monitor({...})'` |
 | `scripts/save-monitors.py` | block in `monitors.conf` | saving the layout stops working | `monitors.lua` written from QML |
 
-`hyprctl eval` with `hl.monitor` returned `ok`, but its effect and the rollback guard variant still need verifying on a nested instance and an external monitor.
+Verified on a nested instance with a virtual monitor: `hyprctl eval` with `hl.monitor` applies rules, including the automatic revert and the watchdog. A real external monitor is checked by hand.
 
 ## 6. Capture tool
 
@@ -211,14 +211,14 @@ The first decision records: RPM + kickstart over scripts and `bootc`, one reposi
 
 ## 11. Stages
 
-Each stage ends with something that can be run and judged. Commits follow the "test, then approve" flow.
+Stages 0, 1 and 2 are done. Each stage ends with something that can be run and judged. Commits follow the "test, then approve" flow.
 
 | Stage | Scope | Done when |
 |---|---|---|
 | 0 | New local repository, layout, license, `Makefile`, linters, docs skeleton, first decision records | repository exists locally |
 | 1 | Move the shell in logical commits; rename; `settings.json`; English; i18n with `en` and `pl`; `Wallpaper` service; `make dev` | shell runs from the new location |
 | 2 | Hyprland config in Lua, keybindings, shell port to the new commands | laptop runs on Lua; monitors, logout and workspaces verified |
-| 3 | Capture tool (section 6) | screenshot and recording work from the panel and shortcuts |
+| 3 | Displays: snap to the center of a neighbor's edge, as a third option next to the two corners, so an ultrawide lines up with the laptop. Then the capture tool (section 6) | a screen can be centered on an edge; screenshot and recording work from the panel and shortcuts |
 | 4 | RPM packages (`hyprdora`, personal layer) built locally | package installs on clean Fedora in a VM |
 | 5 | Kickstart and ISO (`mkksiso`), first-login step, tests in virt-manager | ISO produces a working desktop in a VM |
 | 6 | Real hardware: MacBook, then the AMD desktop, then the Legion (NVIDIA, Secure Boot) | all three work |
