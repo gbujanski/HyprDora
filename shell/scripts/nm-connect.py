@@ -20,10 +20,10 @@ import sys
 import gi
 
 gi.require_version("Gio", "2.0")
-from gi.repository import Gio, GLib  # noqa: E402
+from gi.repository import Gio, GLib
 
 try:
-    from gi.repository import GLibUnix  # noqa: E402
+    from gi.repository import GLibUnix
 
     add_unix_signal = GLibUnix.signal_add
 except ImportError:

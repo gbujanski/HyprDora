@@ -15,7 +15,7 @@ Singleton {
         { id: "suspend", label: I18n.t("session.suspend"), icon: Icons.sleep, key: "u", confirm: false,
           command: ["systemctl", "suspend"] },
         { id: "logout", label: I18n.t("session.logout"), icon: Icons.logout, key: "e", confirm: true,
-          command: ["hyprctl", "dispatch", "exit"] },
+          command: ["hyprctl", "dispatch", "hl.dsp.exit()"] },
         { id: "reboot", label: I18n.t("session.reboot"), icon: Icons.restart, key: "r", confirm: true,
           command: ["systemctl", "reboot"] },
         { id: "poweroff", label: I18n.t("session.poweroff"), icon: Icons.power, key: "s", confirm: true,
