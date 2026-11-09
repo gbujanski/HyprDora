@@ -40,7 +40,7 @@ Shell name: `qs -c hyprdora`. User settings: `~/.config/hyprdora/settings.json`.
 - Applications: `alacritty`, `btop`, Thunar with plugins, `file-roller`, `tumbler`, `ffmpegthumbnailer`, Loupe, Showtime, Papers, `gnome-calculator`, `gnome-text-editor`, `gnome-disk-utility`
 - Base tools: `git`, `curl`, `wget`, `tar`, `unzip`, `p7zip`, `pciutils`
 - Look and login: Papirus, Bibata Modern Ice (24), dark GTK theme, wallpaper, SDDM with the Hyprdora theme
-- Snapshots: `snapper`, DNF plugin, `btrfs-assistant`
+- Snapshots: `snapper`, a `dnf5` action that takes a snapshot around each transaction, `btrfs-assistant`
 
 **Personal layer (separate from the desktop):** `neovim`, VS Code, Zen + Flatseal (flatpak), Discord, FileZilla, GIMP, OnlyOffice (official repository), virt-manager, `docker-ce`, Python 3, Node.js, Java 25, .NET 10, zsh + Oh My Zsh (agnoster). Zen is set as the default browser in this layer.
 
@@ -57,9 +57,9 @@ Shell name: `qs -c hyprdora`. User settings: `~/.config/hyprdora/settings.json`.
 
 | Place | Contents |
 |---|---|
-| kickstart | repositories, keyboard layout, drivers, system services, snapper, `/var/lib/docker` subvolume, keyring PAM |
-| package | applications, shell, default configs, themes |
-| first login | user Hyprland config, Oh My Zsh, optional git identity, default applications, `xdg-user-dirs-update` |
+| kickstart | repositories, drivers, system services, snapper, `/var/lib/docker` subvolume, keyring PAM |
+| package | applications, shell, default configs, default applications, themes |
+| first login | keyboard layout, Thunar action, Oh My Zsh, `xdg-user-dirs-update` |
 
 ## 4. Shell
 
@@ -210,7 +210,7 @@ The first decision records: RPM + kickstart over scripts and `bootc`, one reposi
 
 ## 11. Stages
 
-Stages 0 to 4 are done. Each stage ends with something that can be run and judged. Commits follow the "test, then approve" flow.
+Stages 0 to 5 are done. Each stage ends with something that can be run and judged. Commits follow the "test, then approve" flow.
 
 | Stage | Scope | Done when |
 |---|---|---|

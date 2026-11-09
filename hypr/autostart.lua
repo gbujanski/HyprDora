@@ -21,6 +21,7 @@ local session_only = {
         .. " && systemctl --user start hyprdora-session.target"
         .. " ; systemctl --user start hyprpolkitagent",
     "gnome-keyring-daemon --start --components=secrets",
+    "/usr/libexec/hyprdora/first-login.sh",
     "wl-paste --type text --watch cliphist store",
     "wl-paste --type image --watch cliphist store",
     "hypridle" .. packaged_unless_user("hypridle.conf"),

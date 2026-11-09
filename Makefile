@@ -2,6 +2,10 @@ QT_BIN ?= /usr/lib64/qt6/bin
 DEV_DIR := $(CURDIR)/build/dev/config
 RPM_DIR := $(CURDIR)/build/rpm
 VERSION := $(shell sed -n 's/^Version: *//p' packaging/hyprdora.spec)
+ISO_DIR := $(CURDIR)/build/iso
+ISO_SOURCE ?= $(ISO_DIR)/source/Fedora-Everything-netinst-x86_64-44-1.7.iso
+ISO_OUT ?= $(ISO_DIR)/hyprdora-$(VERSION).iso
+KICKSTART ?= kickstart/hyprdora.ks
 
 # qmllint cannot see Quickshell's types or the qs.* modules, so these categories only report noise.
 QMLLINT_FLAGS := --import disable --unqualified disable --unresolved-type disable --missing-type disable \
@@ -20,7 +24,7 @@ help:
 	@echo "make dev    run the shell in a nested Hyprland"
 	@echo "make lint   run all linters on existing files"
 	@echo "make rpm    build RPM packages"
-	@echo "make iso    build the install ISO (stage 5)"
+	@echo "make iso    build the install ISO"
 
 lint: lint-qml lint-shell lint-python lint-lua
 
@@ -60,6 +64,12 @@ rpm:
 	rpmbuild -bb --define "_topdir $(RPM_DIR)" packaging/hyprdora.spec
 	@echo "Packages are in $(RPM_DIR)/RPMS/noarch"
 
-iso:
-	@echo "make $@ is not implemented yet, see docs/roadmap.md" >&2
-	@exit 1
+iso: rpm
+	rm -rf $(ISO_DIR)/content
+	mkdir -p $(ISO_DIR)/content/hyprdora
+	cp $(RPM_DIR)/RPMS/noarch/hyprdora*-$(VERSION)-*.rpm $(ISO_DIR)/content/hyprdora/
+	createrepo_c -q $(ISO_DIR)/content/hyprdora
+	rm -f $(ISO_OUT)
+	sudo mkksiso --ks $(KICKSTART) --add $(ISO_DIR)/content/hyprdora -V HyprDora-44 $(ISO_SOURCE) $(ISO_OUT)
+	sudo chown $(shell id -u):$(shell id -g) $(ISO_OUT)
+	@echo "ISO is $(ISO_OUT)"

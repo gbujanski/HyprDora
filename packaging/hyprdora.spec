@@ -88,7 +88,7 @@ Requires(post): sddm
 
 # Snapshots
 Requires:       snapper
-Requires:       python3-dnf-plugin-snapper
+Requires:       libdnf5-plugin-actions
 Requires:       btrfs-assistant
 
 %description
@@ -148,6 +148,10 @@ install -Dpm 644 configs/alacritty/alacritty.toml %{buildroot}%{_sysconfdir}/ala
 install -Dpm 644 configs/sddm/hyprdora.conf %{buildroot}%{_sysconfdir}/sddm.conf.d/hyprdora.conf
 install -Dpm 644 configs/session/hyprdora.desktop %{buildroot}%{_datadir}/wayland-sessions/hyprdora.desktop
 install -Dpm 644 configs/gtk/90_hyprdora.gschema.override %{buildroot}%{_datadir}/glib-2.0/schemas/90_hyprdora.gschema.override
+install -Dpm 644 configs/dnf/hyprdora-snapper.actions %{buildroot}%{_sysconfdir}/dnf/libdnf5-plugins/actions.d/hyprdora-snapper.actions
+install -Dpm 644 configs/mimeapps.list %{buildroot}%{_sysconfdir}/xdg/mimeapps.list
+install -Dpm 755 kickstart/system-setup.sh %{buildroot}%{_libexecdir}/%{name}/system-setup.sh
+install -Dpm 755 kickstart/first-login.sh %{buildroot}%{_libexecdir}/%{name}/first-login.sh
 install -Dpm 644 configs/systemd/hyprdora-session.target %{buildroot}%{_prefix}/lib/systemd/user/hyprdora-session.target
 install -d %{buildroot}%{_datadir}/sddm/themes
 cp -a configs/sddm/theme/Hyprdora %{buildroot}%{_datadir}/sddm/themes/
@@ -166,6 +170,9 @@ fi
 %license LICENSE assets/fonts/OFL.txt
 %doc README.md
 %{_datadir}/%{name}
+%{_libexecdir}/%{name}
+%config(noreplace) %{_sysconfdir}/xdg/mimeapps.list
+%config(noreplace) %{_sysconfdir}/dnf/libdnf5-plugins/actions.d/hyprdora-snapper.actions
 %{_datadir}/fonts/%{name}
 %{_datadir}/wayland-sessions/hyprdora.desktop
 %{_prefix}/lib/systemd/user/hyprdora-session.target
