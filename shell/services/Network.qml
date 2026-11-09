@@ -34,7 +34,8 @@ Singleton {
 
     /** Starts or stops scanning according to scanRequested. */
     function applyScanner() {
-        if (wifiDevice) wifiDevice.scannerEnabled = scanRequested;
+        if (wifiDevice)
+            wifiDevice.scannerEnabled = scanRequested;
     }
 
     // Form and connection state. promptSsid is the network whose password form is shown.
@@ -58,8 +59,7 @@ Singleton {
      * @returns {bool}
      */
     function needsPassword(network) {
-        return network.security !== QsNet.WifiSecurityType.Open
-            && network.security !== QsNet.WifiSecurityType.Owe;
+        return network.security !== QsNet.WifiSecurityType.Open && network.security !== QsNet.WifiSecurityType.Owe;
     }
 
     /**
@@ -87,17 +87,25 @@ Singleton {
      */
     function securityLabel(network) {
         switch (network.security) {
-        case QsNet.WifiSecurityType.Open: return I18n.t("wifi.security.open");
-        case QsNet.WifiSecurityType.Owe: return I18n.t("wifi.security.owe");
-        case QsNet.WifiSecurityType.Sae: return "WPA3";
-        case QsNet.WifiSecurityType.Wpa2Psk: return "WPA2";
-        case QsNet.WifiSecurityType.WpaPsk: return "WPA";
+        case QsNet.WifiSecurityType.Open:
+            return I18n.t("wifi.security.open");
+        case QsNet.WifiSecurityType.Owe:
+            return I18n.t("wifi.security.owe");
+        case QsNet.WifiSecurityType.Sae:
+            return "WPA3";
+        case QsNet.WifiSecurityType.Wpa2Psk:
+            return "WPA2";
+        case QsNet.WifiSecurityType.WpaPsk:
+            return "WPA";
         case QsNet.WifiSecurityType.Wpa2Eap:
         case QsNet.WifiSecurityType.WpaEap:
-        case QsNet.WifiSecurityType.Wpa3SuiteB192: return I18n.t("wifi.security.enterprise");
+        case QsNet.WifiSecurityType.Wpa3SuiteB192:
+            return I18n.t("wifi.security.enterprise");
         case QsNet.WifiSecurityType.StaticWep:
-        case QsNet.WifiSecurityType.DynamicWep: return "WEP";
-        default: return I18n.t("wifi.security.unknown");
+        case QsNet.WifiSecurityType.DynamicWep:
+            return "WEP";
+        default:
+            return I18n.t("wifi.security.unknown");
         }
     }
 
@@ -131,7 +139,8 @@ Singleton {
     function activate(network) {
         clearError();
         closePrompt();
-        if (network.connected) return;
+        if (network.connected)
+            return;
         if (network.known) {
             connectKnown(network);
         } else if (!isSupported(network)) {
@@ -162,11 +171,16 @@ Singleton {
      * @param {bool} hidden  whether the network is hidden
      */
     function connectNew(ssid, password, hidden) {
-        if (helper.running) return;
+        if (helper.running)
+            return;
         clearError();
         closePrompt();
         busySsid = ssid;
-        helper.pendingRequest = JSON.stringify({ ssid: ssid, password: password, hidden: hidden });
+        helper.pendingRequest = JSON.stringify({
+            ssid: ssid,
+            password: password,
+            hidden: hidden
+        });
         helper.resultReceived = false;
         helper.running = true;
     }
@@ -193,12 +207,18 @@ Singleton {
      */
     function messageForHelper(result) {
         switch (result.reason) {
-        case "wrong_password": return I18n.t("wifi.error.wrongPassword");
-        case "not_found": return I18n.t("wifi.error.notFound");
-        case "timeout": return I18n.t("wifi.error.timeout");
-        case "rejected": return I18n.t("wifi.error.rejected");
-        case "no_device": return I18n.t("wifi.error.noDevice");
-        default: return I18n.t("wifi.error.failed");
+        case "wrong_password":
+            return I18n.t("wifi.error.wrongPassword");
+        case "not_found":
+            return I18n.t("wifi.error.notFound");
+        case "timeout":
+            return I18n.t("wifi.error.timeout");
+        case "rejected":
+            return I18n.t("wifi.error.rejected");
+        case "no_device":
+            return I18n.t("wifi.error.noDevice");
+        default:
+            return I18n.t("wifi.error.failed");
         }
     }
 
@@ -223,10 +243,11 @@ Singleton {
                 const ssid = root.busySsid;
                 try {
                     const result = JSON.parse(line);
-                    if (result.ok) root.busySsid = "";
-                    else root.fail(ssid, root.messageForHelper(result));
-                    console.info("wifi: helper result:", result.ok ? "ok" : result.reason,
-                        result.activeReason ?? "", result.deviceReason ?? "");
+                    if (result.ok)
+                        root.busySsid = "";
+                    else
+                        root.fail(ssid, root.messageForHelper(result));
+                    console.info("wifi: helper result:", result.ok ? "ok" : result.reason, result.activeReason ?? "", result.deviceReason ?? "");
                 } catch (e) {
                     root.fail(ssid, I18n.t("wifi.error.failed"));
                 }
@@ -234,7 +255,8 @@ Singleton {
         }
 
         onExited: {
-            if (!resultReceived && root.busySsid !== "") root.fail(root.busySsid, I18n.t("wifi.error.failed"));
+            if (!resultReceived && root.busySsid !== "")
+                root.fail(root.busySsid, I18n.t("wifi.error.failed"));
         }
     }
 
@@ -255,13 +277,10 @@ Singleton {
             } else if (network.state === QsNet.NetworkState.Connected) {
                 root.finishKnown();
             } else if (network.state === QsNet.NetworkState.Disconnected && knownWatcher.sawConnecting) {
-                const badSecret = network.nmReason === QsNet.NMConnectionStateReason.NoSecrets
-                    || network.nmReason === QsNet.NMConnectionStateReason.LoginFailed;
+                const badSecret = network.nmReason === QsNet.NMConnectionStateReason.NoSecrets || network.nmReason === QsNet.NMConnectionStateReason.LoginFailed;
                 const ssid = network.name;
                 root.finishKnown();
-                root.fail(ssid, badSecret
-                    ? I18n.t("wifi.error.savedPassword")
-                    : I18n.t("wifi.error.failed"));
+                root.fail(ssid, badSecret ? I18n.t("wifi.error.savedPassword") : I18n.t("wifi.error.failed"));
             }
         }
     }
@@ -296,16 +315,21 @@ Singleton {
                 prompt: root.promptSsid,
                 error: root.errorMessage,
                 networks: root.networks.map(n => ({
-                    name: n.name,
-                    signal: Math.round(n.signalStrength * 100),
-                    known: n.known,
-                    connected: n.connected,
-                    security: root.securityLabel(n)
-                }))
+                            name: n.name,
+                            signal: Math.round(n.signalStrength * 100),
+                            known: n.known,
+                            connected: n.connected,
+                            security: root.securityLabel(n)
+                        }))
             });
         }
         // No password here: IPC call arguments are visible in the process list.
-        function prompt(ssid: string): void { root.clearError(); root.promptSsid = ssid; }
-        function connectOpen(ssid: string): void { root.connectNew(ssid, "", false); }
+        function prompt(ssid: string): void {
+            root.clearError();
+            root.promptSsid = ssid;
+        }
+        function connectOpen(ssid: string): void {
+            root.connectNew(ssid, "", false);
+        }
     }
 }

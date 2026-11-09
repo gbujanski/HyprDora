@@ -9,13 +9,17 @@ Rectangle {
     property string trailingIcon: ""
     property bool selected: false
 
-    signal clicked()
+    signal clicked
 
     implicitHeight: 34
     radius: Theme.radius
     color: selected ? Theme.surface : area.containsMouse ? Theme.surface : "transparent"
 
-    Behavior on color { ColorAnimation { duration: Theme.animFast } }
+    Behavior on color {
+        ColorAnimation {
+            duration: Theme.animFast
+        }
+    }
 
     Label {
         anchors {

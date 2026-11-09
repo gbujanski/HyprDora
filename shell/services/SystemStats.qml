@@ -57,13 +57,17 @@ Singleton {
     function parseStat(text) {
         const line = text.split("\n", 1)[0];
         const v = line.trim().split(/\s+/).slice(1, 9).map(Number);
-        if (v.length < 8 || v.some(isNaN)) return;
+        if (v.length < 8 || v.some(isNaN))
+            return;
         const idle = v[3] + v[4];
         const total = v.reduce((a, b) => a + b, 0);
         if (previous !== null && total > previous.total) {
             cpu = Math.max(0, Math.min(1, 1 - (idle - previous.idle) / (total - previous.total)));
         }
-        previous = { idle, total };
+        previous = {
+            idle,
+            total
+        };
     }
 
     /**
@@ -74,7 +78,8 @@ Singleton {
         const values = {};
         for (const line of text.split("\n")) {
             const m = line.match(/^(\w+):\s+(\d+)/);
-            if (m) values[m[1]] = Number(m[2]) * 1024;
+            if (m)
+                values[m[1]] = Number(m[2]) * 1024;
         }
         memTotal = values.MemTotal ?? 0;
         memUsed = memTotal - (values.MemAvailable ?? values.MemFree ?? 0);
@@ -126,7 +131,15 @@ Singleton {
         target: "systemstats"
 
         function describe(): string {
-            return JSON.stringify({ active: root.active, consumers: root.consumers, cpu: root.cpu, memory: root.memory, memUsed: root.memUsed, memTotal: root.memTotal, swap: root.swap });
+            return JSON.stringify({
+                active: root.active,
+                consumers: root.consumers,
+                cpu: root.cpu,
+                memory: root.memory,
+                memUsed: root.memUsed,
+                memTotal: root.memTotal,
+                swap: root.swap
+            });
         }
     }
 }

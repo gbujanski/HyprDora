@@ -7,7 +7,7 @@ import qs.services
 Column {
     id: page
 
-    signal scrollToTop()
+    signal scrollToTop
 
     spacing: 12
 
@@ -37,7 +37,8 @@ Column {
     }
 
     function submitForm() {
-        if (!canSubmit) return;
+        if (!canSubmit)
+            return;
         const ssid = Network.hiddenPrompt ? ssidField.text.trim() : Network.promptSsid;
         const password = passwordField.text;
         const hidden = Network.hiddenPrompt;
@@ -48,11 +49,11 @@ Column {
     // WPA requires 8 to 63 characters. A hidden network may have no password.
     readonly property bool passwordValid: {
         const length = passwordField.text.length;
-        if (Network.hiddenPrompt && length === 0) return true;
+        if (Network.hiddenPrompt && length === 0)
+            return true;
         return length >= 8 && length <= 63;
     }
-    readonly property bool canSubmit: passwordValid
-        && (!Network.hiddenPrompt || ssidField.text.trim() !== "")
+    readonly property bool canSubmit: passwordValid && (!Network.hiddenPrompt || ssidField.text.trim() !== "")
 
     Item {
         width: parent.width
@@ -78,8 +79,7 @@ Column {
 
     ErrorBanner {
         width: parent.width
-        text: Network.errorMessage === "" ? ""
-            : Network.errorSsid !== "" ? `${Network.errorSsid}: ${Network.errorMessage}` : Network.errorMessage
+        text: Network.errorMessage === "" ? "" : Network.errorSsid !== "" ? `${Network.errorSsid}: ${Network.errorMessage}` : Network.errorMessage
     }
 
     // Kept outside the list so a scan refresh cannot erase a password being typed.
@@ -106,7 +106,9 @@ Column {
                 width: parent.width
                 elide: Text.ElideRight
                 font.weight: Font.Medium
-                text: Network.hiddenPrompt ? I18n.t("wifi.hiddenNetwork") : I18n.t("wifi.passwordFor", { ssid: Network.promptSsid })
+                text: Network.hiddenPrompt ? I18n.t("wifi.hiddenNetwork") : I18n.t("wifi.passwordFor", {
+                    ssid: Network.promptSsid
+                })
             }
 
             TextField {
@@ -151,7 +153,9 @@ Column {
         spacing: 2
         visible: Network.wifiEnabled
 
-        SectionTitle { text: I18n.t("section.networks") }
+        SectionTitle {
+            text: I18n.t("section.networks")
+        }
 
         Label {
             visible: Network.networks.length === 0

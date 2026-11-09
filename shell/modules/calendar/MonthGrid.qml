@@ -20,7 +20,8 @@ Column {
         const first = new Date(year, month, 1);
         const offset = (first.getDay() + 6) % 7;
         const result = [];
-        for (let i = 0; i < 42; i++) result.push(new Date(year, month, 1 - offset + i));
+        for (let i = 0; i < 42; i++)
+            result.push(new Date(year, month, 1 - offset + i));
         return result;
     }
 
@@ -81,7 +82,9 @@ Column {
                 text: String(root.isoWeek(week.weekDays[0]))
                 color: Theme.dim
                 font.pixelSize: Theme.fontSizeSmall - 1
-                font.features: { "tnum": 1 }
+                font.features: {
+                    "tnum": 1
+                }
             }
 
             Repeater {
@@ -110,12 +113,11 @@ Column {
                         anchors.fill: parent
                         horizontalAlignment: Text.AlignHCenter
                         text: String(cell.modelData.getDate())
-                        font.features: { "tnum": 1 }
+                        font.features: {
+                            "tnum": 1
+                        }
                         font.weight: cell.isToday ? Font.DemiBold : Font.Normal
-                        color: cell.isToday ? Theme.accentText
-                            : !cell.inMonth ? Theme.dim
-                            : cell.index >= 5 ? Theme.muted
-                            : Theme.foreground
+                        color: cell.isToday ? Theme.accentText : !cell.inMonth ? Theme.dim : cell.index >= 5 ? Theme.muted : Theme.foreground
                     }
                 }
             }

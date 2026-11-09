@@ -51,7 +51,8 @@ Singleton {
     function parsed(text) {
         try {
             const value = JSON.parse(text);
-            if (value !== null && typeof value === "object" && !Array.isArray(value)) return value;
+            if (value !== null && typeof value === "object" && !Array.isArray(value))
+                return value;
         } catch (e) {}
         console.warn("settings: invalid settings.json, using defaults");
         return {};

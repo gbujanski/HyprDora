@@ -24,16 +24,38 @@ Singleton {
 
         function describe(): string {
             return JSON.stringify({
-                display: { device: root.display.device, raw: root.display.raw, max: root.display.maxRaw, level: root.display.level },
-                keyboard: { device: root.keyboard.device, raw: root.keyboard.raw, max: root.keyboard.maxRaw, level: root.keyboard.level }
+                display: {
+                    device: root.display.device,
+                    raw: root.display.raw,
+                    max: root.display.maxRaw,
+                    level: root.display.level
+                },
+                keyboard: {
+                    device: root.keyboard.device,
+                    raw: root.keyboard.raw,
+                    max: root.keyboard.maxRaw,
+                    level: root.keyboard.level
+                }
             });
         }
         // For brightness keys: step 0.05 / step -0.05.
-        function step(delta: real): void { root.display.step(delta); }
-        function set(value: real): void { root.display.setLevel(value); }
-        function get(): real { return root.display.level; }
-        function stepKeyboard(delta: real): void { root.keyboard.step(delta); }
-        function setDisplay(value: real): void { root.display.setLevel(value); }
-        function setKeyboard(value: real): void { root.keyboard.setLevel(value); }
+        function step(delta: real): void {
+            root.display.step(delta);
+        }
+        function set(value: real): void {
+            root.display.setLevel(value);
+        }
+        function get(): real {
+            return root.display.level;
+        }
+        function stepKeyboard(delta: real): void {
+            root.keyboard.step(delta);
+        }
+        function setDisplay(value: real): void {
+            root.display.setLevel(value);
+        }
+        function setKeyboard(value: real): void {
+            root.keyboard.setLevel(value);
+        }
     }
 }

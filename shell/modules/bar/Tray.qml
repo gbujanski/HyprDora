@@ -38,8 +38,7 @@ Row {
                 hoverEnabled: true
                 acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
                 onClicked: mouse => {
-                    const showMenu = mouse.button === Qt.RightButton
-                        || (mouse.button === Qt.LeftButton && item.modelData.onlyMenu);
+                    const showMenu = mouse.button === Qt.RightButton || (mouse.button === Qt.LeftButton && item.modelData.onlyMenu);
                     if (showMenu && item.modelData.hasMenu) {
                         const pos = item.mapToItem(null, 0, item.height);
                         item.modelData.display(root.barWindow, pos.x, pos.y);

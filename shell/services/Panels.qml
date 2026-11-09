@@ -35,7 +35,8 @@ Singleton {
         actionCenterPage = page || "main";
         actionCenterOpen = actionCenterScreen !== null;
         // Both panels take the keyboard, so at most one is open.
-        if (actionCenterOpen) calendarOpen = false;
+        if (actionCenterOpen)
+            calendarOpen = false;
     }
 
     /** Closes the action center. */
@@ -51,8 +52,10 @@ Singleton {
     function toggleActionCenter(screen, page) {
         const target = screen ?? focusedScreen();
         const samePlace = target === actionCenterScreen && (page || "main") === actionCenterPage;
-        if (actionCenterOpen && samePlace) closeActionCenter();
-        else openActionCenter(target, page);
+        if (actionCenterOpen && samePlace)
+            closeActionCenter();
+        else
+            openActionCenter(target, page);
     }
 
     /**
@@ -62,7 +65,8 @@ Singleton {
     function openCalendar(screen) {
         calendarScreen = screen ?? focusedScreen();
         calendarOpen = calendarScreen !== null;
-        if (calendarOpen) actionCenterOpen = false;
+        if (calendarOpen)
+            actionCenterOpen = false;
     }
 
     /** Closes the calendar. */
@@ -76,8 +80,10 @@ Singleton {
      */
     function toggleCalendar(screen) {
         const target = screen ?? focusedScreen();
-        if (calendarOpen && target === calendarScreen) closeCalendar();
-        else openCalendar(target);
+        if (calendarOpen && target === calendarScreen)
+            closeCalendar();
+        else
+            openCalendar(target);
     }
 
     // The screen holding an open panel may have just been unplugged.
@@ -98,26 +104,46 @@ Singleton {
     IpcHandler {
         target: "actioncenter"
 
-        function toggle(): void { root.toggleActionCenter(null, "main"); }
-        function open(page: string): void { root.openActionCenter(null, page); }
-        function close(): void { root.closeActionCenter(); }
-        function isOpen(): bool { return root.actionCenterOpen; }
-        function page(): string { return root.actionCenterOpen ? root.actionCenterPage : ""; }
+        function toggle(): void {
+            root.toggleActionCenter(null, "main");
+        }
+        function open(page: string): void {
+            root.openActionCenter(null, page);
+        }
+        function close(): void {
+            root.closeActionCenter();
+        }
+        function isOpen(): bool {
+            return root.actionCenterOpen;
+        }
+        function page(): string {
+            return root.actionCenterOpen ? root.actionCenterPage : "";
+        }
     }
 
     IpcHandler {
         target: "calendar"
 
-        function toggle(): void { root.toggleCalendar(null); }
-        function open(): void { root.openCalendar(null); }
-        function close(): void { root.closeCalendar(); }
-        function isOpen(): bool { return root.calendarOpen; }
+        function toggle(): void {
+            root.toggleCalendar(null);
+        }
+        function open(): void {
+            root.openCalendar(null);
+        }
+        function close(): void {
+            root.closeCalendar();
+        }
+        function isOpen(): bool {
+            return root.calendarOpen;
+        }
     }
 
     // Here rather than in Session: this singleton exists from startup, so the shortcut works at once.
     IpcHandler {
         target: "powermenu"
 
-        function toggle(): void { root.toggleActionCenter(null, "power"); }
+        function toggle(): void {
+            root.toggleActionCenter(null, "power");
+        }
     }
 }

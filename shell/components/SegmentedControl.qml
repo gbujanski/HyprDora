@@ -36,7 +36,11 @@ Rectangle {
                 radius: Theme.radius - 1
                 color: isCurrent ? Theme.accent : segmentArea.containsMouse && isEnabled ? Theme.surfaceHover : "transparent"
 
-                Behavior on color { ColorAnimation { duration: Theme.animFast } }
+                Behavior on color {
+                    ColorAnimation {
+                        duration: Theme.animFast
+                    }
+                }
 
                 Row {
                     anchors.centerIn: parent

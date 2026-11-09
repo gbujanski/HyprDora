@@ -12,7 +12,7 @@ Rectangle {
     readonly property bool hovered: hover.hovered
     readonly property bool critical: notification.urgency === 2
 
-    signal activated()
+    signal activated
 
     implicitHeight: Math.max(content.implicitHeight, 36) + 20
     radius: Theme.panelRadius - 2
@@ -29,7 +29,8 @@ Rectangle {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
         onClicked: {
-            if (Notifications.invokeDefault(root.notification)) root.activated();
+            if (Notifications.invokeDefault(root.notification))
+                root.activated();
         }
     }
 

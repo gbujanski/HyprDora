@@ -9,14 +9,18 @@ Rectangle {
     property string tooltip: ""
     property bool active: true
 
-    signal clicked()
+    signal clicked
 
     implicitWidth: 30
     implicitHeight: 30
     radius: Theme.radius
     color: area.containsMouse && active ? Theme.surfaceHover : "transparent"
 
-    Behavior on color { ColorAnimation { duration: Theme.animFast } }
+    Behavior on color {
+        ColorAnimation {
+            duration: Theme.animFast
+        }
+    }
 
     Icon {
         anchors.centerIn: parent

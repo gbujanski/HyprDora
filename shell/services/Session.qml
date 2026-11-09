@@ -10,16 +10,46 @@ Singleton {
     id: root
 
     readonly property var actions: [
-        { id: "lock", label: I18n.t("session.lock"), icon: Icons.lock, key: "l", confirm: false,
-          command: ["loginctl", "lock-session"] },
-        { id: "suspend", label: I18n.t("session.suspend"), icon: Icons.sleep, key: "u", confirm: false,
-          command: ["systemctl", "suspend"] },
-        { id: "logout", label: I18n.t("session.logout"), icon: Icons.logout, key: "e", confirm: true,
-          command: ["hyprctl", "dispatch", "hl.dsp.exit()"] },
-        { id: "reboot", label: I18n.t("session.reboot"), icon: Icons.restart, key: "r", confirm: true,
-          command: ["systemctl", "reboot"] },
-        { id: "poweroff", label: I18n.t("session.poweroff"), icon: Icons.power, key: "s", confirm: true,
-          command: ["systemctl", "poweroff"] }
+        {
+            id: "lock",
+            label: I18n.t("session.lock"),
+            icon: Icons.lock,
+            key: "l",
+            confirm: false,
+            command: ["loginctl", "lock-session"]
+        },
+        {
+            id: "suspend",
+            label: I18n.t("session.suspend"),
+            icon: Icons.sleep,
+            key: "u",
+            confirm: false,
+            command: ["systemctl", "suspend"]
+        },
+        {
+            id: "logout",
+            label: I18n.t("session.logout"),
+            icon: Icons.logout,
+            key: "e",
+            confirm: true,
+            command: ["hyprctl", "dispatch", "hl.dsp.exit()"]
+        },
+        {
+            id: "reboot",
+            label: I18n.t("session.reboot"),
+            icon: Icons.restart,
+            key: "r",
+            confirm: true,
+            command: ["systemctl", "reboot"]
+        },
+        {
+            id: "poweroff",
+            label: I18n.t("session.poweroff"),
+            icon: Icons.power,
+            key: "s",
+            confirm: true,
+            command: ["systemctl", "poweroff"]
+        }
     ]
 
     property int selectedIndex: 0
@@ -40,8 +70,10 @@ Singleton {
      * @param {int} delta  direction
      */
     function move(delta) {
-        if (confirmAction) confirmSelected = !confirmSelected;
-        else selectedIndex = (selectedIndex + delta + actions.length) % actions.length;
+        if (confirmAction)
+            confirmSelected = !confirmSelected;
+        else
+            selectedIndex = (selectedIndex + delta + actions.length) % actions.length;
     }
 
     /** Closes the confirmation. */
@@ -80,9 +112,11 @@ Singleton {
      * @returns {bool} whether an action matched
      */
     function pressKey(key) {
-        if (confirmAction) return false;
+        if (confirmAction)
+            return false;
         const action = actions.find(a => a.key === key);
-        if (action) choose(action);
+        if (action)
+            choose(action);
         return action !== undefined;
     }
 
@@ -103,7 +137,8 @@ Singleton {
      */
     function runById(id) {
         const action = actions.find(a => a.id === id);
-        if (action) run(action);
+        if (action)
+            run(action);
     }
 
     Timer {
@@ -118,10 +153,18 @@ Singleton {
     IpcHandler {
         target: "session"
 
-        function move(delta: int): void { root.move(delta); }
-        function activate(): void { root.activate(); }
-        function press(key: string): bool { return root.pressKey(key); }
-        function cancel(): void { root.cancelConfirm(); }
+        function move(delta: int): void {
+            root.move(delta);
+        }
+        function activate(): void {
+            root.activate();
+        }
+        function press(key: string): bool {
+            return root.pressKey(key);
+        }
+        function cancel(): void {
+            root.cancelConfirm();
+        }
         function describe(): string {
             return JSON.stringify({
                 open: Panels.actionCenterOpen && Panels.actionCenterPage === "power",

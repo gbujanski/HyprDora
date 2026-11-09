@@ -50,7 +50,9 @@ Scope {
                     }
 
                     Label {
-                        text: I18n.t("displays.revertIn", { seconds: Displays.secondsLeft })
+                        text: I18n.t("displays.revertIn", {
+                            seconds: Displays.secondsLeft
+                        })
                         color: Theme.muted
                         bottomPadding: 8
                     }

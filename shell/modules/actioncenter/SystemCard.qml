@@ -49,13 +49,9 @@ Column {
         icon: Icons.memory
         title: I18n.t("system.memory")
         value: SystemStats.memory
-        valueText: SystemStats.memTotal > 0
-            ? `${SystemStats.formatBytes(SystemStats.memUsed)} / ${SystemStats.formatBytes(SystemStats.memTotal)}`
-            : "…"
+        valueText: SystemStats.memTotal > 0 ? `${SystemStats.formatBytes(SystemStats.memUsed)} / ${SystemStats.formatBytes(SystemStats.memTotal)}` : "…"
         // Swap (zram on Fedora) only when in use.
-        detail: SystemStats.swapUsed >= 64 * 1048576
-            ? `Swap: ${SystemStats.formatBytes(SystemStats.swapUsed)} / ${SystemStats.formatBytes(SystemStats.swapTotal)}`
-            : ""
+        detail: SystemStats.swapUsed >= 64 * 1048576 ? `Swap: ${SystemStats.formatBytes(SystemStats.swapUsed)} / ${SystemStats.formatBytes(SystemStats.swapTotal)}` : ""
     }
 
     StatRow {
@@ -66,21 +62,30 @@ Column {
         value: Power.level
         valueText: `${Math.round(Power.level * 100)}%`
         // Same thresholds as the bar.
-        fillColor: Power.charging || Power.full ? Theme.accent
-            : Power.level <= 0.15 ? Theme.error
-            : Power.level <= 0.30 ? Theme.warning
-            : Theme.accent
+        fillColor: Power.charging || Power.full ? Theme.accent : Power.level <= 0.15 ? Theme.error : Power.level <= 0.30 ? Theme.warning : Theme.accent
         // Two short lines, so neither wraps mid-way: state with time, then clock, power and health.
         detail: {
             const known = !Power.full && Power.secondsLeft > 0;
-            const first = Power.stateText + (!known ? ""
-                : Power.charging ? " · " + I18n.t("battery.untilFull", { time: Power.formatTime(Power.secondsLeft) })
-                : " · " + I18n.t("battery.remaining", { time: Power.formatTime(Power.secondsLeft) }));
+            const first = Power.stateText + (!known ? "" : Power.charging ? " · " + I18n.t("battery.untilFull", {
+                    time: Power.formatTime(Power.secondsLeft)
+                }) : " · " + I18n.t("battery.remaining", {
+                    time: Power.formatTime(Power.secondsLeft)
+                }));
             const second = [];
-            if (known) second.push(I18n.t(Power.charging ? "battery.fullAt" : "battery.emptyAt", { time: Power.endClock(Power.secondsLeft) }));
-            if (Power.rate > 0.05) second.push(I18n.t(Power.charging ? "battery.chargeRate" : "battery.drawRate", { watts: Power.rate.toLocaleString(I18n.locale, "f", 1) }));
-            if (Power.health > 0) second.push(I18n.t("battery.health", { percent: Math.round(Power.health * 100) }));
-            if (second.length === 0) return first;
+            if (known)
+                second.push(I18n.t(Power.charging ? "battery.fullAt" : "battery.emptyAt", {
+                    time: Power.endClock(Power.secondsLeft)
+                }));
+            if (Power.rate > 0.05)
+                second.push(I18n.t(Power.charging ? "battery.chargeRate" : "battery.drawRate", {
+                    watts: Power.rate.toLocaleString(I18n.locale, "f", 1)
+                }));
+            if (Power.health > 0)
+                second.push(I18n.t("battery.health", {
+                    percent: Math.round(Power.health * 100)
+                }));
+            if (second.length === 0)
+                return first;
             const rest = second.join(" · ");
             return `${first}\n${rest[0].toUpperCase()}${rest.slice(1)}`;
         }

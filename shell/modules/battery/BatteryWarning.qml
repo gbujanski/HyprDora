@@ -17,19 +17,18 @@ Scope {
     // The level is 0 until UPower data loads, which would be a false alarm.
     readonly property bool ready: Power.hasBattery && (Power.battery?.ready ?? false)
     readonly property bool discharging: ready && UPower.onBattery && !Power.charging
-    readonly property int severity: !discharging ? 0
-        : Power.level <= Settings.batteryCritical ? 2
-        : Power.level <= Settings.batteryLow ? 1
-        : 0
+    readonly property int severity: !discharging ? 0 : Power.level <= Settings.batteryCritical ? 2 : Power.level <= Settings.batteryLow ? 1 : 0
 
     onSeverityChanged: evaluate()
     onDischargingChanged: evaluate()
     Component.onCompleted: evaluate()
 
     function evaluate() {
-        if (!ready) return;
+        if (!ready)
+            return;
         if (!discharging) {
-            if (warned > 0) close();
+            if (warned > 0)
+                close();
             warned = 0;
             return;
         }
@@ -43,27 +42,28 @@ Scope {
     function send(level) {
         const critical = level >= 2;
         const percent = Math.round(Power.level * 100);
-        const time = Power.secondsLeft > 0 ? I18n.t("battery.warning.timeLeft", { time: Power.formatTime(Power.secondsLeft) }) : "";
+        const time = Power.secondsLeft > 0 ? I18n.t("battery.warning.timeLeft", {
+            time: Power.formatTime(Power.secondsLeft)
+        }) : "";
         const summary = critical ? I18n.t("battery.warning.criticalTitle") : I18n.t("battery.warning.lowTitle");
-        const body = I18n.t("battery.warning.level", { percent, time }) + " "
-            + (critical ? I18n.t("battery.warning.criticalBody") : I18n.t("battery.warning.lowBody"));
+        const body = I18n.t("battery.warning.level", {
+            percent,
+            time
+        }) + " " + (critical ? I18n.t("battery.warning.criticalBody") : I18n.t("battery.warning.lowBody"));
         // Neither level expires on its own, so it cannot be missed. Critical also bypasses Do Not Disturb.
-        const command = ["notify-send", "--print-id", `--app-name=${I18n.t("battery.appName")}`,
-            `--icon=${critical ? "battery-empty" : "battery-caution"}`,
-            `--urgency=${critical ? "critical" : "normal"}`, "--expire-time=0"];
+        const command = ["notify-send", "--print-id", `--app-name=${I18n.t("battery.appName")}`, `--icon=${critical ? "battery-empty" : "battery-caution"}`, `--urgency=${critical ? "critical" : "normal"}`, "--expire-time=0"];
         // Critical replaces the low warning instead of adding a second one.
-        if (notificationId > 0) command.push(`--replace-id=${notificationId}`);
+        if (notificationId > 0)
+            command.push(`--replace-id=${notificationId}`);
         command.push(summary, body);
         sender.command = command;
         sender.running = true;
     }
 
     function close() {
-        if (notificationId <= 0) return;
-        Quickshell.execDetached(["gdbus", "call", "--session",
-            "--dest", "org.freedesktop.Notifications",
-            "--object-path", "/org/freedesktop/Notifications",
-            "--method", "org.freedesktop.Notifications.CloseNotification", String(notificationId)]);
+        if (notificationId <= 0)
+            return;
+        Quickshell.execDetached(["gdbus", "call", "--session", "--dest", "org.freedesktop.Notifications", "--object-path", "/org/freedesktop/Notifications", "--method", "org.freedesktop.Notifications.CloseNotification", String(notificationId)]);
         notificationId = 0;
     }
 
@@ -72,7 +72,8 @@ Scope {
         stdout: StdioCollector {
             onStreamFinished: {
                 const id = parseInt(text.trim());
-                if (!isNaN(id)) root.notificationId = id;
+                if (!isNaN(id))
+                    root.notificationId = id;
             }
         }
     }
@@ -81,7 +82,14 @@ Scope {
         target: "batterywarning"
 
         function describe(): string {
-            return JSON.stringify({ ready: root.ready, discharging: root.discharging, level: Power.level, severity: root.severity, warned: root.warned, notificationId: root.notificationId });
+            return JSON.stringify({
+                ready: root.ready,
+                discharging: root.discharging,
+                level: Power.level,
+                severity: root.severity,
+                warned: root.warned,
+                notificationId: root.notificationId
+            });
         }
     }
 }

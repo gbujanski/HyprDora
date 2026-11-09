@@ -25,6 +25,11 @@ Rectangle {
         color: root.fillColor.a > 0 ? root.fillColor : root.autoColor
         visible: root.value > 0
 
-        Behavior on width { NumberAnimation { duration: Theme.animPanel; easing.type: Easing.OutCubic } }
+        Behavior on width {
+            NumberAnimation {
+                duration: Theme.animPanel
+                easing.type: Easing.OutCubic
+            }
+        }
     }
 }

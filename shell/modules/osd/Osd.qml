@@ -25,7 +25,8 @@ Scope {
     property real lastKeyboard: -1
 
     function show(kindName, iconText, titleText, level, bar) {
-        if (!armed || Panels.actionCenterOpen) return;
+        if (!armed || Panels.actionCenterOpen)
+            return;
         kind = kindName;
         icon = iconText;
         title = titleText;
@@ -41,9 +42,7 @@ Scope {
     }
 
     function showVolume() {
-        root.show("volume", Icons.volume(Audio.volume, Audio.muted),
-            Audio.muted ? I18n.t("osd.muted") : `${Math.round(Audio.volume * 100)}%`,
-            Audio.muted ? 0 : Audio.volume, true);
+        root.show("volume", Icons.volume(Audio.volume, Audio.muted), Audio.muted ? I18n.t("osd.muted") : `${Math.round(Audio.volume * 100)}%`, Audio.muted ? 0 : Audio.volume, true);
     }
 
     Timer {
@@ -69,23 +68,30 @@ Scope {
         interval: Theme.animFast + 20
     }
 
-    onShownChanged: if (!shown) fadeDelay.restart()
+    onShownChanged: if (!shown)
+        fadeDelay.restart()
 
     Connections {
         target: Audio
 
-        function onSinkChanged() { root.suspendBriefly(); }
-        function onSourceChanged() { root.suspendBriefly(); }
+        function onSinkChanged() {
+            root.suspendBriefly();
+        }
+        function onSourceChanged() {
+            root.suspendBriefly();
+        }
 
         function onVolumeChanged() {
-            if (Math.abs(Audio.volume - root.lastVolume) < 0.001) return;
+            if (Math.abs(Audio.volume - root.lastVolume) < 0.001)
+                return;
             root.lastVolume = Audio.volume;
             root.showVolume();
         }
-        function onMutedChanged() { root.showVolume(); }
+        function onMutedChanged() {
+            root.showVolume();
+        }
         function onSourceMutedChanged() {
-            root.show("microphone", Icons.microphone(Audio.sourceMuted),
-                Audio.sourceMuted ? I18n.t("osd.micMuted") : I18n.t("osd.micOn"), 0, false);
+            root.show("microphone", Icons.microphone(Audio.sourceMuted), Audio.sourceMuted ? I18n.t("osd.micMuted") : I18n.t("osd.micOn"), 0, false);
         }
     }
 
@@ -93,7 +99,8 @@ Scope {
         target: Brightness.display
         function onLevelChanged() {
             const level = Brightness.display.level;
-            if (Math.abs(level - root.lastDisplay) < 0.001) return;
+            if (Math.abs(level - root.lastDisplay) < 0.001)
+                return;
             root.lastDisplay = level;
             root.show("display", Icons.brightness, `${Math.round(level * 100)}%`, level, true);
         }
@@ -103,7 +110,8 @@ Scope {
         target: Brightness.keyboard
         function onLevelChanged() {
             const level = Brightness.keyboard.level;
-            if (Math.abs(level - root.lastKeyboard) < 0.001) return;
+            if (Math.abs(level - root.lastKeyboard) < 0.001)
+                return;
             root.lastKeyboard = level;
             root.show("keyboard", Icons.keyboard, `${Math.round(level * 100)}%`, level, true);
         }
@@ -134,7 +142,11 @@ Scope {
                 border.color: Theme.surface
                 opacity: visibleState.on ? 1 : 0
 
-                Behavior on opacity { NumberAnimation { duration: Theme.animFast } }
+                Behavior on opacity {
+                    NumberAnimation {
+                        duration: Theme.animFast
+                    }
+                }
 
                 QtObject {
                     id: visibleState
@@ -173,7 +185,11 @@ Scope {
                         radius: parent.radius
                         color: Theme.accent
 
-                        Behavior on width { NumberAnimation { duration: Theme.animFast } }
+                        Behavior on width {
+                            NumberAnimation {
+                                duration: Theme.animFast
+                            }
+                        }
                     }
                 }
 
@@ -197,7 +213,13 @@ Scope {
         target: "osd"
 
         function describe(): string {
-            return JSON.stringify({ shown: root.shown, armed: root.armed, kind: root.kind, title: root.title, value: root.value });
+            return JSON.stringify({
+                shown: root.shown,
+                armed: root.armed,
+                kind: root.kind,
+                title: root.title,
+                value: root.value
+            });
         }
     }
 }

@@ -15,9 +15,11 @@ Row {
     // Always 1-5, plus any higher workspace that exists. Negative ids are special workspaces.
     readonly property var ids: {
         const result = [];
-        for (let i = 1; i <= persistentCount; i++) result.push(i);
+        for (let i = 1; i <= persistentCount; i++)
+            result.push(i);
         for (const ws of Hyprland.workspaces.values) {
-            if (ws.id > persistentCount) result.push(ws.id);
+            if (ws.id > persistentCount)
+                result.push(ws.id);
         }
         return result.sort((a, b) => a - b);
     }
@@ -41,18 +43,19 @@ Row {
             implicitWidth: 26
             implicitHeight: Theme.barHeight - 8
             radius: Theme.radius
-            color: urgent ? Theme.warning
-                : current ? Theme.accent
-                : area.containsMouse ? Theme.surface : "transparent"
+            color: urgent ? Theme.warning : current ? Theme.accent : area.containsMouse ? Theme.surface : "transparent"
 
-            Behavior on color { ColorAnimation { duration: Theme.animFast } }
+            Behavior on color {
+                ColorAnimation {
+                    duration: Theme.animFast
+                }
+            }
 
             Label {
                 anchors.centerIn: parent
                 text: button.modelData
                 font.weight: button.current ? Font.DemiBold : Font.Normal
-                color: button.current || button.urgent ? Theme.accentText
-                    : button.occupied ? Theme.foreground : Theme.dim
+                color: button.current || button.urgent ? Theme.accentText : button.occupied ? Theme.foreground : Theme.dim
             }
 
             MouseArea {

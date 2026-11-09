@@ -14,7 +14,7 @@ Item {
     property bool isMicrophone: false
     property bool showChevron: false
 
-    signal chevronClicked()
+    signal chevronClicked
 
     readonly property bool available: node?.audio !== undefined && node?.audio !== null
     readonly property bool muted: node?.audio?.muted ?? false

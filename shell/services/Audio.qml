@@ -26,9 +26,7 @@ Singleton {
      * @returns {list}
      */
     function audioNodes(predicate) {
-        return Pipewire.nodes.values
-            .filter(n => n.audio && predicate(n))
-            .sort((a, b) => displayName(a).localeCompare(displayName(b)));
+        return Pipewire.nodes.values.filter(n => n.audio && predicate(n)).sort((a, b) => displayName(a).localeCompare(displayName(b)));
     }
 
     /**
@@ -37,8 +35,10 @@ Singleton {
      * @returns {string}
      */
     function displayName(node) {
-        if (!node) return "";
-        if (node.isStream) return node.properties?.["application.name"] || node.nickname || node.name;
+        if (!node)
+            return "";
+        if (node.isStream)
+            return node.properties?.["application.name"] || node.nickname || node.name;
         return node.description || node.nickname || node.name;
     }
 
@@ -48,7 +48,8 @@ Singleton {
      * @param {real} value  new volume
      */
     function setNodeVolume(node, value) {
-        if (node?.audio) node.audio.volume = Math.max(0, Math.min(1, value));
+        if (node?.audio)
+            node.audio.volume = Math.max(0, Math.min(1, value));
     }
 
     /**
@@ -56,7 +57,8 @@ Singleton {
      * @param {PwNode} node  target node
      */
     function toggleNodeMute(node) {
-        if (node?.audio) node.audio.muted = !node.audio.muted;
+        if (node?.audio)
+            node.audio.muted = !node.audio.muted;
     }
 
     /**
@@ -101,16 +103,23 @@ Singleton {
 
         function selectSink(name: string): bool {
             const node = root.sinks.find(n => n.name === name);
-            if (node) root.selectSink(node);
+            if (node)
+                root.selectSink(node);
             return node !== undefined;
         }
         function selectSource(name: string): bool {
             const node = root.sources.find(n => n.name === name);
-            if (node) root.selectSource(node);
+            if (node)
+                root.selectSource(node);
             return node !== undefined;
         }
         function describe(): string {
-            const nodeInfo = n => ({ name: n.name, label: root.displayName(n), volume: n.audio?.volume, muted: n.audio?.muted });
+            const nodeInfo = n => ({
+                        name: n.name,
+                        label: root.displayName(n),
+                        volume: n.audio?.volume,
+                        muted: n.audio?.muted
+                    });
             return JSON.stringify({
                 sink: root.sink?.name,
                 source: root.source?.name,

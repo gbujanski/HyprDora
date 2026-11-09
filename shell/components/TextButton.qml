@@ -8,14 +8,12 @@ Rectangle {
     property bool primary: false
     property bool active: true
 
-    signal clicked()
+    signal clicked
 
     implicitWidth: label.implicitWidth + 24
     implicitHeight: 30
     radius: Theme.radius
-    color: !active ? Theme.surface
-        : primary ? Theme.accent
-        : area.containsMouse ? Theme.surfaceHover : Theme.surface
+    color: !active ? Theme.surface : primary ? Theme.accent : area.containsMouse ? Theme.surfaceHover : Theme.surface
 
     Label {
         id: label

@@ -26,9 +26,7 @@ Row {
         visible: Bluetooth.enabled
         icon: Bluetooth.connectedDevices.length > 0 ? Icons.bluetoothConnected : Icons.bluetooth
         contentColor: Bluetooth.connectedDevices.length > 0 ? Theme.foreground : Theme.muted
-        tooltip: Bluetooth.connectedDevices.length > 0
-            ? Bluetooth.connectedDevices.map(d => d.name).join(", ")
-            : I18n.t("bluetooth.on")
+        tooltip: Bluetooth.connectedDevices.length > 0 ? Bluetooth.connectedDevices.map(d => d.name).join(", ") : I18n.t("bluetooth.on")
         onClicked: Panels.toggleActionCenter(root.screen, "bluetooth")
     }
 
@@ -36,9 +34,9 @@ Row {
         anchors.verticalCenter: parent.verticalCenter
         icon: Network.connected ? Icons.wifi(Network.signal) : Icons.wifiOff
         contentColor: Network.connected ? Theme.foreground : Theme.muted
-        tooltip: Network.busySsid !== "" ? I18n.t("wifi.connectingTo", { ssid: Network.busySsid })
-            : Network.connected ? `${Network.ssid} (${Math.round(Network.signal * 100)}%)`
-            : Network.wifiEnabled ? I18n.t("wifi.notConnected") : I18n.t("wifi.off")
+        tooltip: Network.busySsid !== "" ? I18n.t("wifi.connectingTo", {
+            ssid: Network.busySsid
+        }) : Network.connected ? `${Network.ssid} (${Math.round(Network.signal * 100)}%)` : Network.wifiEnabled ? I18n.t("wifi.notConnected") : I18n.t("wifi.off")
         onClicked: Panels.toggleActionCenter(root.screen, "wifi")
     }
 
@@ -57,14 +55,12 @@ Row {
         visible: Power.hasBattery
         icon: Icons.battery(Power.level, Power.charging)
         label: `${Math.round(Power.level * 100)}%`
-        contentColor: Power.charging || Power.full ? Theme.accent
-            : Power.level <= 0.15 ? Theme.error
-            : Power.level <= 0.30 ? Theme.warning
-            : Theme.foreground
-        tooltip: Power.full ? I18n.t("battery.full")
-            : Power.secondsLeft <= 0 ? ""
-            : Power.charging ? I18n.t("battery.timeToFull", { time: Power.formatTime(Power.secondsLeft) })
-            : I18n.t("battery.timeLeft", { time: Power.formatTime(Power.secondsLeft) })
+        contentColor: Power.charging || Power.full ? Theme.accent : Power.level <= 0.15 ? Theme.error : Power.level <= 0.30 ? Theme.warning : Theme.foreground
+        tooltip: Power.full ? I18n.t("battery.full") : Power.secondsLeft <= 0 ? "" : Power.charging ? I18n.t("battery.timeToFull", {
+            time: Power.formatTime(Power.secondsLeft)
+        }) : I18n.t("battery.timeLeft", {
+            time: Power.formatTime(Power.secondsLeft)
+        })
         onClicked: Panels.toggleActionCenter(root.screen, "main")
     }
 
@@ -73,7 +69,9 @@ Row {
         icon: Notifications.dnd ? Icons.bellOff : Notifications.count > 0 ? Icons.bellBadge : Icons.bell
         label: Notifications.count > 0 ? String(Notifications.count) : ""
         contentColor: Panels.actionCenterOpen || Notifications.count > 0 ? Theme.accent : Theme.foreground
-        tooltip: Notifications.dnd ? I18n.t("notifications.dnd") : Notifications.count > 0 ? I18n.t("notifications.count", { count: Notifications.count }) : I18n.t("actionCenter.title")
+        tooltip: Notifications.dnd ? I18n.t("notifications.dnd") : Notifications.count > 0 ? I18n.t("notifications.count", {
+            count: Notifications.count
+        }) : I18n.t("actionCenter.title")
         onClicked: Panels.toggleActionCenter(root.screen, "main")
     }
 }

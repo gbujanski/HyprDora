@@ -12,20 +12,16 @@ Singleton {
 
     // A manual choice wins, then a playing player, then the first one listed.
     property var chosenPlayer: null
-    readonly property var player: (chosenPlayer && players.includes(chosenPlayer) ? chosenPlayer : null)
-        ?? players.find(p => p.isPlaying)
-        ?? players[0]
-        ?? null
+    readonly property var player: (chosenPlayer && players.includes(chosenPlayer) ? chosenPlayer : null) ?? players.find(p => p.isPlaying) ?? players[0] ?? null
 
     readonly property bool hasPlayer: player !== null
-    readonly property bool canShowPosition: (player?.positionSupported ?? false)
-        && (player?.lengthSupported ?? false)
-        && (player?.length ?? 0) > 0
+    readonly property bool canShowPosition: (player?.positionSupported ?? false) && (player?.lengthSupported ?? false) && (player?.length ?? 0) > 0
     readonly property real progress: canShowPosition ? player.position / player.length : 0
 
     /** Switches to the next media player. */
     function cyclePlayer() {
-        if (players.length < 2) return;
+        if (players.length < 2)
+            return;
         chosenPlayer = players[(players.indexOf(player) + 1) % players.length];
     }
 
@@ -34,7 +30,8 @@ Singleton {
      * @param {real} fraction  position, 0..1
      */
     function seek(fraction) {
-        if (player?.canSeek && canShowPosition) player.position = fraction * player.length;
+        if (player?.canSeek && canShowPosition)
+            player.position = fraction * player.length;
     }
 
     /**
@@ -71,9 +68,17 @@ Singleton {
                 progress: root.progress
             });
         }
-        function toggle(): void { root.player?.togglePlaying(); }
-        function next(): void { root.player?.next(); }
-        function previous(): void { root.player?.previous(); }
-        function cycle(): void { root.cyclePlayer(); }
+        function toggle(): void {
+            root.player?.togglePlaying();
+        }
+        function next(): void {
+            root.player?.next();
+        }
+        function previous(): void {
+            root.player?.previous();
+        }
+        function cycle(): void {
+            root.cyclePlayer();
+        }
     }
 }

@@ -78,7 +78,8 @@ Rectangle {
                     const name = screenRect.modelData.name;
                     screenRect.dragX = 0;
                     screenRect.dragY = 0;
-                    if (moved) Displays.placeDraft(name, logicalX, logicalY);
+                    if (moved)
+                        Displays.placeDraft(name, logicalX, logicalY);
                 }
             }
         }

@@ -24,12 +24,15 @@ Column {
         codeField.clear();
         // Read directly from the request, since dependent bindings may still be stale here.
         const kind = request?.kind;
-        if (kind === "pin" || kind === "passkey") Qt.callLater(() => codeField.focusInput());
-        else page.forceActiveFocus();
+        if (kind === "pin" || kind === "passkey")
+            Qt.callLater(() => codeField.focusInput());
+        else
+            page.forceActiveFocus();
     }
 
     function submitCode() {
-        if (codeField.text !== "") Bluetooth.answer(true, codeField.text);
+        if (codeField.text !== "")
+            Bluetooth.answer(true, codeField.text);
     }
 
     Item {
@@ -39,8 +42,7 @@ Column {
         Label {
             anchors.verticalCenter: parent.verticalCenter
             font.weight: Font.Medium
-            text: !Bluetooth.hasAdapter ? I18n.t("bluetooth.noAdapterLong")
-                : Bluetooth.blocked ? I18n.t("bluetooth.blocked") : "Bluetooth"
+            text: !Bluetooth.hasAdapter ? I18n.t("bluetooth.noAdapterLong") : Bluetooth.blocked ? I18n.t("bluetooth.blocked") : "Bluetooth"
             color: Bluetooth.hasAdapter && !Bluetooth.blocked ? Theme.foreground : Theme.warning
         }
 
@@ -84,7 +86,9 @@ Column {
                 width: parent.width
                 elide: Text.ElideRight
                 font.weight: Font.Medium
-                text: I18n.t("bluetooth.pairing", { device: page.request?.device ?? "" })
+                text: I18n.t("bluetooth.pairing", {
+                    device: page.request?.device ?? ""
+                })
             }
 
             Label {
@@ -93,13 +97,20 @@ Column {
                 color: Theme.muted
                 text: {
                     switch (page.requestKind) {
-                    case "confirm": return I18n.t("bluetooth.prompt.confirm");
-                    case "display": return I18n.t("bluetooth.prompt.display");
-                    case "pin": return I18n.t("bluetooth.prompt.pin");
-                    case "passkey": return I18n.t("bluetooth.prompt.passkey");
-                    case "authorize": return I18n.t("bluetooth.prompt.authorize");
-                    case "authorize-service": return I18n.t("bluetooth.prompt.authorizeService");
-                    default: return "";
+                    case "confirm":
+                        return I18n.t("bluetooth.prompt.confirm");
+                    case "display":
+                        return I18n.t("bluetooth.prompt.display");
+                    case "pin":
+                        return I18n.t("bluetooth.prompt.pin");
+                    case "passkey":
+                        return I18n.t("bluetooth.prompt.passkey");
+                    case "authorize":
+                        return I18n.t("bluetooth.prompt.authorize");
+                    case "authorize-service":
+                        return I18n.t("bluetooth.prompt.authorizeService");
+                    default:
+                        return "";
                     }
                 }
             }
@@ -136,8 +147,10 @@ Column {
                     active: !page.needsInput || codeField.text !== ""
                     text: page.needsInput ? "OK" : page.requestKind === "confirm" ? I18n.t("bluetooth.confirm") : I18n.t("bluetooth.allow")
                     onClicked: {
-                        if (page.needsInput) page.submitCode();
-                        else Bluetooth.answer(true, "");
+                        if (page.needsInput)
+                            page.submitCode();
+                        else
+                            Bluetooth.answer(true, "");
                     }
                 }
             }
@@ -149,7 +162,9 @@ Column {
         spacing: 2
         visible: Bluetooth.enabled && Bluetooth.pairedDevices.length > 0
 
-        SectionTitle { text: I18n.t("section.paired") }
+        SectionTitle {
+            text: I18n.t("section.paired")
+        }
 
         Repeater {
             model: ScriptModel {
@@ -169,7 +184,9 @@ Column {
         spacing: 2
         visible: Bluetooth.enabled
 
-        SectionTitle { text: I18n.t("section.available") }
+        SectionTitle {
+            text: I18n.t("section.available")
+        }
 
         Label {
             visible: Bluetooth.discoveredDevices.length === 0

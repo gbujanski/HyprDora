@@ -11,7 +11,7 @@ Rectangle {
     property string tooltip: ""
     property bool interactive: true
 
-    signal clicked()
+    signal clicked
     signal scrolled(int direction)
 
     implicitWidth: content.implicitWidth + 12
@@ -19,7 +19,11 @@ Rectangle {
     radius: Theme.radius
     color: mouse.containsMouse && interactive ? Theme.surface : "transparent"
 
-    Behavior on color { ColorAnimation { duration: Theme.animFast } }
+    Behavior on color {
+        ColorAnimation {
+            duration: Theme.animFast
+        }
+    }
 
     Row {
         id: content
@@ -46,7 +50,8 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: root.interactive ? Qt.PointingHandCursor : Qt.ArrowCursor
-        onClicked: if (root.interactive) root.clicked()
+        onClicked: if (root.interactive)
+            root.clicked()
         onWheel: wheel => root.scrolled(wheel.angleDelta.y > 0 ? 1 : -1)
     }
 

@@ -102,7 +102,9 @@ Rectangle {
                 visible: Media.players.length > 1
                 icon: Icons.swap
                 iconColor: Theme.muted
-                tooltip: I18n.t("media.switchPlayer", { player: root.player?.identity ?? "" })
+                tooltip: I18n.t("media.switchPlayer", {
+                    player: root.player?.identity ?? ""
+                })
                 onClicked: Media.cyclePlayer()
             }
         }

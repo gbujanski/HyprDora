@@ -15,7 +15,11 @@ Rectangle {
     radius: Theme.radius
     color: device.connected || area.containsMouse ? Theme.surface : "transparent"
 
-    Behavior on color { ColorAnimation { duration: Theme.animFast } }
+    Behavior on color {
+        ColorAnimation {
+            duration: Theme.animFast
+        }
+    }
 
     MouseArea {
         id: area

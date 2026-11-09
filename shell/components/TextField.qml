@@ -9,11 +9,16 @@ Rectangle {
     property bool secret: false
     property bool revealed: false
 
-    signal accepted()
-    signal cancelled()
+    signal accepted
+    signal cancelled
 
-    function focusInput() { input.forceActiveFocus(); }
-    function clear() { input.text = ""; revealed = false; }
+    function focusInput() {
+        input.forceActiveFocus();
+    }
+    function clear() {
+        input.text = "";
+        revealed = false;
+    }
 
     implicitHeight: 34
     radius: Theme.radius

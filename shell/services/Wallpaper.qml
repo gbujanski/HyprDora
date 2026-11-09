@@ -41,6 +41,8 @@ Singleton {
     IpcHandler {
         target: "wallpaper"
 
-        function set(path: string): bool { return root.set(path); }
+        function set(path: string): bool {
+            return root.set(path);
+        }
     }
 }

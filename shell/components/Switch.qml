@@ -7,14 +7,18 @@ Rectangle {
     property bool checked: false
     property bool active: true
 
-    signal toggled()
+    signal toggled
 
     implicitWidth: 38
     implicitHeight: 22
     radius: height / 2
     color: !active ? Theme.surface : checked ? Theme.accent : Theme.dim
 
-    Behavior on color { ColorAnimation { duration: Theme.animFast } }
+    Behavior on color {
+        ColorAnimation {
+            duration: Theme.animFast
+        }
+    }
 
     Rectangle {
         anchors.verticalCenter: parent.verticalCenter
@@ -24,7 +28,12 @@ Rectangle {
         radius: 8
         color: root.active ? Theme.foreground : Theme.muted
 
-        Behavior on x { NumberAnimation { duration: Theme.animFast; easing.type: Easing.OutCubic } }
+        Behavior on x {
+            NumberAnimation {
+                duration: Theme.animFast
+                easing.type: Easing.OutCubic
+            }
+        }
     }
 
     MouseArea {

@@ -23,9 +23,7 @@ Scope {
     readonly property bool available: device !== "" && maxRaw > 0
     readonly property real floorPerceived: Math.pow(minimumFraction, 1 / exponent)
     // A value below the minimum, for example set outside the shell, shows as 0.
-    readonly property real level: available
-        ? Math.max(0, Math.min(1, (Math.pow(raw / maxRaw, 1 / exponent) - floorPerceived) / (1 - floorPerceived)))
-        : 0
+    readonly property real level: available ? Math.max(0, Math.min(1, (Math.pow(raw / maxRaw, 1 / exponent) - floorPerceived) / (1 - floorPerceived))) : 0
 
     /**
      * Converts a level to a raw device value, never below the floor.
@@ -44,7 +42,8 @@ Scope {
      * @param {real} value  level, 0..1
      */
     function setLevel(value) {
-        if (!available) return;
+        if (!available)
+            return;
         pendingRaw = rawFor(value);
         raw = pendingRaw;
         flush();
@@ -55,21 +54,21 @@ Scope {
      * @param {real} delta  signed step size
      */
     function step(delta) {
-        if (!available || delta === 0) return;
+        if (!available || delta === 0)
+            return;
         const size = Math.abs(delta);
         // A level read from hardware can land just off a step (59.996% instead of 60%),
         // so nearby values snap to the closest step.
         const steps = level / size;
         const near = Math.abs(steps - Math.round(steps)) < 0.1;
-        const base = delta > 0
-            ? (near ? Math.round(steps) : Math.floor(steps))
-            : (near ? Math.round(steps) : Math.ceil(steps));
+        const base = delta > 0 ? (near ? Math.round(steps) : Math.floor(steps)) : (near ? Math.round(steps) : Math.ceil(steps));
         setLevel((base + (delta > 0 ? 1 : -1)) * size);
     }
 
     /** Writes the latest pending value. Slider drags outrun brightnessctl, so only one write runs at a time and the last value always wins. */
     function flush() {
-        if (writer.running || pendingRaw < 0) return;
+        if (writer.running || pendingRaw < 0)
+            return;
         writer.command = ["brightnessctl", "-q", "-d", device, "set", String(pendingRaw)];
         pendingRaw = -1;
         writer.running = true;
@@ -107,7 +106,8 @@ Scope {
         onFileChanged: reload()
         onLoaded: {
             const value = parseInt(text());
-            if (!isNaN(value) && !writer.running && root.pendingRaw < 0) root.raw = value;
+            if (!isNaN(value) && !writer.running && root.pendingRaw < 0)
+                root.raw = value;
         }
     }
 }

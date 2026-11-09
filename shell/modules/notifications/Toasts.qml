@@ -49,7 +49,11 @@ Scope {
                         Component.onCompleted: opacity = 1
                         onActivated: Notifications.endPopup(modelData)
 
-                        Behavior on opacity { NumberAnimation { duration: Theme.animPanel } }
+                        Behavior on opacity {
+                            NumberAnimation {
+                                duration: Theme.animPanel
+                            }
+                        }
 
                         Timer {
                             id: lifetime
@@ -61,8 +65,12 @@ Scope {
                         // Replacing the content (replaces_id) extends the toast's lifetime.
                         Connections {
                             target: card.modelData
-                            function onSummaryChanged() { lifetime.restart(); }
-                            function onBodyChanged() { lifetime.restart(); }
+                            function onSummaryChanged() {
+                                lifetime.restart();
+                            }
+                            function onBodyChanged() {
+                                lifetime.restart();
+                            }
                         }
                     }
                 }

@@ -10,12 +10,13 @@ import qs.services
 Scope {
     id: root
 
-
     Connections {
         target: Panels
         function onCalendarOpenChanged() {
-            if (Panels.calendarOpen) Weather.refreshIfStale();
-            else closeDelay.restart();
+            if (Panels.calendarOpen)
+                Weather.refreshIfStale();
+            else
+                closeDelay.restart();
         }
     }
 
@@ -102,17 +103,30 @@ Scope {
 
                 transform: Translate {
                     y: window.shown ? 0 : -12
-                    Behavior on y { NumberAnimation { duration: Theme.animPanel; easing.type: Easing.OutCubic } }
+                    Behavior on y {
+                        NumberAnimation {
+                            duration: Theme.animPanel
+                            easing.type: Easing.OutCubic
+                        }
+                    }
                 }
 
-                Behavior on opacity { NumberAnimation { duration: Theme.animPanel } }
+                Behavior on opacity {
+                    NumberAnimation {
+                        duration: Theme.animPanel
+                    }
+                }
 
                 Keys.onEscapePressed: Panels.closeCalendar()
                 Keys.onPressed: event => {
-                    if (event.key === Qt.Key_Left || event.key === Qt.Key_PageUp) panel.shiftMonth(-1);
-                    else if (event.key === Qt.Key_Right || event.key === Qt.Key_PageDown) panel.shiftMonth(1);
-                    else if (event.key === Qt.Key_Home) panel.showToday();
-                    else return;
+                    if (event.key === Qt.Key_Left || event.key === Qt.Key_PageUp)
+                        panel.shiftMonth(-1);
+                    else if (event.key === Qt.Key_Right || event.key === Qt.Key_PageDown)
+                        panel.shiftMonth(1);
+                    else if (event.key === Qt.Key_Home)
+                        panel.showToday();
+                    else
+                        return;
                     event.accepted = true;
                 }
 
@@ -127,9 +141,11 @@ Scope {
 
                     onWheel: wheel => {
                         const delta = wheel.angleDelta.y;
-                        if (delta === 0) return;
+                        if (delta === 0)
+                            return;
                         const now = Date.now();
-                        if (now - lastStep < Settings.calendarScrollDelay) return;
+                        if (now - lastStep < Settings.calendarScrollDelay)
+                            return;
                         lastStep = now;
                         panel.shiftMonth(delta > 0 ? -1 : 1);
                     }

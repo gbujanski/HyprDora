@@ -19,12 +19,13 @@ Singleton {
 
     // Forms not listed here use "one" for 1 and "other" for everything else.
     readonly property var pluralRules: ({
-        pl: n => {
-            if (n === 1) return "one";
-            const tens = n % 100;
-            return n % 10 >= 2 && n % 10 <= 4 && (tens < 12 || tens > 14) ? "few" : "many";
-        }
-    })
+            pl: n => {
+                if (n === 1)
+                    return "one";
+                const tens = n % 100;
+                return n % 10 >= 2 && n % 10 <= 4 && (tens < 12 || tens > 14) ? "few" : "many";
+            }
+        })
 
     /**
      * Returns a translated string, falling back to English and then to the key.
@@ -35,7 +36,8 @@ Singleton {
     function t(key, values) {
         const entry = strings[key] ?? english?.[key];
         if (entry === undefined) {
-            if (english === null) return "";
+            if (english === null)
+                return "";
             console.warn("i18n: missing key:", key);
             return key;
         }

@@ -42,7 +42,8 @@ Singleton {
         const silenced = dnd && notification.urgency !== NotificationUrgency.Critical;
         if (silenced) {
             popupIds = active;
-            if (notification.transient) notification.expire();
+            if (notification.transient)
+                notification.expire();
         } else {
             popupIds = active.includes(notification.id) ? active : [...active, notification.id];
         }
@@ -52,7 +53,8 @@ Singleton {
     /** Expires notifications beyond the history limit. */
     function trimHistory() {
         const excess = history.slice(maxHistory);
-        for (const notification of excess) notification.expire();
+        for (const notification of excess)
+            notification.expire();
     }
 
     /**
@@ -61,7 +63,8 @@ Singleton {
      */
     function endPopup(notification) {
         popupIds = popupIds.filter(id => id !== notification.id);
-        if (notification.transient) notification.expire();
+        if (notification.transient)
+            notification.expire();
     }
 
     /**
@@ -70,16 +73,19 @@ Singleton {
      * @returns {int} milliseconds, 0 for no timeout
      */
     function popupTimeout(notification) {
-        if (notification.urgency === NotificationUrgency.Critical) return 0;
+        if (notification.urgency === NotificationUrgency.Critical)
+            return 0;
         // expireTimeout is in milliseconds, and -1 means default.
         const timeout = notification.expireTimeout;
-        if (timeout >= 0) return timeout;
+        if (timeout >= 0)
+            return timeout;
         return notification.urgency === NotificationUrgency.Low ? 3000 : 5000;
     }
 
     /** Dismisses every notification in history. */
     function clearAll() {
-        for (const notification of history.slice()) notification.dismiss();
+        for (const notification of history.slice())
+            notification.dismiss();
     }
 
     /**
@@ -89,7 +95,8 @@ Singleton {
      */
     function invokeDefault(notification) {
         const action = notification.actions.find(a => a.identifier === "default");
-        if (action) action.invoke();
+        if (action)
+            action.invoke();
         return action !== undefined;
     }
 
@@ -108,13 +115,7 @@ Singleton {
      * @returns {string}
      */
     function plainBody(text) {
-        return (text ?? "")
-            .replace(/<\/?(b|i|u|a|img)(\s[^>]*)?\/?>/gi, "")
-            .replace(/&lt;/g, "<")
-            .replace(/&gt;/g, ">")
-            .replace(/&quot;/g, "\"")
-            .replace(/&apos;/g, "'")
-            .replace(/&amp;/g, "&");
+        return (text ?? "").replace(/<\/?(b|i|u|a|img)(\s[^>]*)?\/?>/gi, "").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&amp;/g, "&");
     }
 
     /**
@@ -124,10 +125,15 @@ Singleton {
      */
     function relativeTime(notification) {
         const received = receivedAt[notification.id];
-        if (!received) return "";
+        if (!received)
+            return "";
         const minutes = Math.floor((now - received) / 60000);
-        if (minutes < 1) return I18n.t("time.now");
-        if (minutes < 60) return I18n.t("time.minutesAgo", { minutes });
+        if (minutes < 1)
+            return I18n.t("time.now");
+        if (minutes < 60)
+            return I18n.t("time.minutesAgo", {
+                minutes
+            });
         return received.toLocaleString(I18n.locale, "HH:mm");
     }
 
@@ -137,13 +143,18 @@ Singleton {
      * @returns {string} empty when none
      */
     function iconSource(notification) {
-        if (notification.image) return notification.image;
+        if (notification.image)
+            return notification.image;
         for (const name of [notification.appIcon, notification.desktopEntry]) {
-            if (!name) continue;
-            if (name.startsWith("/")) return `file://${name}`;
-            if (name.includes("://")) return name;
+            if (!name)
+                continue;
+            if (name.startsWith("/"))
+                return `file://${name}`;
+            if (name.includes("://"))
+                return name;
             const path = Quickshell.iconPath(name, true);
-            if (path) return path;
+            if (path)
+                return path;
         }
         return "";
     }
@@ -178,23 +189,29 @@ Singleton {
                 dnd: root.dnd,
                 popups: root.popups.map(n => n.id),
                 history: root.history.map(n => ({
-                    id: n.id,
-                    app: n.appName,
-                    summary: n.summary,
-                    body: n.body,
-                    urgency: NotificationUrgency.toString(n.urgency),
-                    timeout: n.expireTimeout,
-                    transient: n.transient,
-                    resident: n.resident,
-                    image: String(n.image),
-                    icon: root.iconSource(n),
-                    actions: n.actions.map(a => a.identifier)
-                }))
+                            id: n.id,
+                            app: n.appName,
+                            summary: n.summary,
+                            body: n.body,
+                            urgency: NotificationUrgency.toString(n.urgency),
+                            timeout: n.expireTimeout,
+                            transient: n.transient,
+                            resident: n.resident,
+                            image: String(n.image),
+                            icon: root.iconSource(n),
+                            actions: n.actions.map(a => a.identifier)
+                        }))
             });
         }
-        function setDnd(value: bool): void { root.dnd = value; }
-        function clear(): void { root.clearAll(); }
-        function dismiss(id: int): void { root.tracked.find(n => n.id === id)?.dismiss(); }
+        function setDnd(value: bool): void {
+            root.dnd = value;
+        }
+        function clear(): void {
+            root.clearAll();
+        }
+        function dismiss(id: int): void {
+            root.tracked.find(n => n.id === id)?.dismiss();
+        }
         function invoke(id: int, identifier: string): bool {
             const action = root.tracked.find(n => n.id === id)?.actions.find(a => a.identifier === identifier);
             action?.invoke();

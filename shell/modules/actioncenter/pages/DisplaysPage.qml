@@ -17,22 +17,35 @@ Column {
             const value = `${mode.width}x${mode.height}`;
             if (!seen.includes(value)) {
                 seen.push(value);
-                result.push({ value: value, label: `${mode.width} × ${mode.height}`, width: mode.width, height: mode.height });
+                result.push({
+                    value: value,
+                    label: `${mode.width} × ${mode.height}`,
+                    width: mode.width,
+                    height: mode.height
+                });
             }
         }
         const current = monitor ? `${monitor.width}x${monitor.height}` : "";
         if (monitor && !seen.includes(current))
-            result.unshift({ value: current, label: `${monitor.width} × ${monitor.height}`, width: monitor.width, height: monitor.height });
+            result.unshift({
+                value: current,
+                label: `${monitor.width} × ${monitor.height}`,
+                width: monitor.width,
+                height: monitor.height
+            });
         return result;
     }
 
     readonly property var refreshRates: {
-        if (!monitor) return [];
-        const rates = monitor.modes
-            .filter(m => m.width === monitor.width && m.height === monitor.height)
-            .map(m => m.refresh);
-        if (!rates.some(r => Math.abs(r - monitor.refresh) < 0.01)) rates.unshift(monitor.refresh);
-        return rates.map(r => ({ value: r, label: `${r.toFixed(2)} Hz` }));
+        if (!monitor)
+            return [];
+        const rates = monitor.modes.filter(m => m.width === monitor.width && m.height === monitor.height).map(m => m.refresh);
+        if (!rates.some(r => Math.abs(r - monitor.refresh) < 0.01))
+            rates.unshift(monitor.refresh);
+        return rates.map(r => ({
+                    value: r,
+                    label: `${r.toFixed(2)} Hz`
+                }));
     }
 
     function closestRefresh(width, height) {
@@ -43,7 +56,8 @@ Column {
     spacing: 12
 
     Component.onCompleted: Displays.refresh()
-    Component.onDestruction: if (!Displays.pending) Displays.resetDraft()
+    Component.onDestruction: if (!Displays.pending)
+        Displays.resetDraft()
 
     ErrorBanner {
         width: parent.width
@@ -55,7 +69,9 @@ Column {
         spacing: 6
         visible: page.multiple
 
-        SectionTitle { text: I18n.t("section.mode") }
+        SectionTitle {
+            text: I18n.t("section.mode")
+        }
 
         Grid {
             width: parent.width
@@ -64,10 +80,22 @@ Column {
 
             Repeater {
                 model: [
-                    { id: "extend", label: I18n.t("displays.extend") },
-                    { id: "mirror", label: I18n.t("displays.mirror") },
-                    { id: "internal", label: I18n.t("displays.internalOnly") },
-                    { id: "external", label: I18n.t("displays.externalOnly") }
+                    {
+                        id: "extend",
+                        label: I18n.t("displays.extend")
+                    },
+                    {
+                        id: "mirror",
+                        label: I18n.t("displays.mirror")
+                    },
+                    {
+                        id: "internal",
+                        label: I18n.t("displays.internalOnly")
+                    },
+                    {
+                        id: "external",
+                        label: I18n.t("displays.externalOnly")
+                    }
                 ]
 
                 TextButton {
@@ -86,7 +114,9 @@ Column {
         spacing: 6
         visible: page.multiple && Displays.activeDraft.length > 0
 
-        SectionTitle { text: I18n.t("section.layout") }
+        SectionTitle {
+            text: I18n.t("section.layout")
+        }
 
         DisplayLayout {
             width: parent.width
@@ -105,7 +135,9 @@ Column {
         spacing: 2
         visible: page.multiple
 
-        SectionTitle { text: I18n.t("section.screens") }
+        SectionTitle {
+            text: I18n.t("section.screens")
+        }
 
         Repeater {
             model: Displays.draft
@@ -141,7 +173,9 @@ Column {
                     leftMargin: 8
                     verticalCenter: parent.verticalCenter
                 }
-                text: page.monitor?.mirrorOf ? I18n.t("displays.mirrorOf", { screen: page.monitor.mirrorOf }) : I18n.t("displays.enabled")
+                text: page.monitor?.mirrorOf ? I18n.t("displays.mirrorOf", {
+                    screen: page.monitor.mirrorOf
+                }) : I18n.t("displays.enabled")
                 color: Theme.muted
             }
 
@@ -202,7 +236,10 @@ Column {
                 width: 230
                 implicitHeight: 30
                 currentValue: page.monitor?.scale
-                options: [1, 1.25, 1.5, 2].map(s => ({ value: s, label: `${s}` }))
+                options: [1, 1.25, 1.5, 2].map(s => ({
+                            value: s,
+                            label: `${s}`
+                        }))
                 onSelected: value => Displays.setScale(page.monitor.name, value)
             }
         }

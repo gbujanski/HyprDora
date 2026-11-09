@@ -18,7 +18,11 @@ Rectangle {
     radius: Theme.radius
     color: network.connected || area.containsMouse ? Theme.surface : "transparent"
 
-    Behavior on color { ColorAnimation { duration: Theme.animFast } }
+    Behavior on color {
+        ColorAnimation {
+            duration: Theme.animFast
+        }
+    }
 
     MouseArea {
         id: area
@@ -61,9 +65,16 @@ Rectangle {
             color: root.hasError ? Theme.error : Theme.muted
             font.pixelSize: Theme.fontSizeSmall
             text: {
-                if (root.busy) return I18n.t("status.connecting");
-                if (root.network.connected) return I18n.t("wifi.connectedWith", { security: Network.securityLabel(root.network) });
-                if (root.network.known) return I18n.t("wifi.savedWith", { security: Network.securityLabel(root.network) });
+                if (root.busy)
+                    return I18n.t("status.connecting");
+                if (root.network.connected)
+                    return I18n.t("wifi.connectedWith", {
+                        security: Network.securityLabel(root.network)
+                    });
+                if (root.network.known)
+                    return I18n.t("wifi.savedWith", {
+                        security: Network.securityLabel(root.network)
+                    });
                 return Network.securityLabel(root.network);
             }
         }

@@ -18,7 +18,8 @@ Column {
     Keys.onPressed: event => {
         switch (event.key) {
         case Qt.Key_Escape:
-            if (!Session.confirmAction) return;
+            if (!Session.confirmAction)
+                return;
             Session.cancelConfirm();
             break;
         case Qt.Key_Up:
@@ -37,7 +38,8 @@ Column {
             Session.activate();
             break;
         default:
-            if (!Session.pressKey(event.text.toLowerCase())) return;
+            if (!Session.pressKey(event.text.toLowerCase()))
+                return;
         }
         event.accepted = true;
     }
@@ -59,7 +61,11 @@ Column {
             radius: Theme.radius
             color: selected || confirming ? Theme.surface : "transparent"
 
-            Behavior on color { ColorAnimation { duration: Theme.animFast } }
+            Behavior on color {
+                ColorAnimation {
+                    duration: Theme.animFast
+                }
+            }
 
             Icon {
                 id: rowIcon
@@ -102,7 +108,8 @@ Column {
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
-                onEntered: if (!Session.confirmAction) Session.selectedIndex = row.index
+                onEntered: if (!Session.confirmAction)
+                    Session.selectedIndex = row.index
                 onClicked: Session.choose(row.modelData)
             }
         }

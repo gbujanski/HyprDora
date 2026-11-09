@@ -51,7 +51,9 @@ Item {
                 text: root.valueText
                 color: Theme.muted
                 font.pixelSize: Theme.fontSizeSmall
-                font.features: { "tnum": 1 }
+                font.features: {
+                    "tnum": 1
+                }
             }
         }
 

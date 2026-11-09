@@ -12,8 +12,7 @@ Singleton {
     readonly property var battery: UPower.displayDevice
     readonly property bool hasBattery: battery?.isLaptopBattery ?? false
     readonly property real level: battery?.percentage ?? 0
-    readonly property bool charging: battery?.state === UPowerDeviceState.Charging
-        || battery?.state === UPowerDeviceState.PendingCharge
+    readonly property bool charging: battery?.state === UPowerDeviceState.Charging || battery?.state === UPowerDeviceState.PendingCharge
     readonly property bool full: battery?.state === UPowerDeviceState.FullyCharged
 
     // Seconds until empty or full; 0 when unknown.
@@ -26,10 +25,7 @@ Singleton {
     readonly property var physicalBattery: UPower.devices.values.find(d => d.isLaptopBattery) ?? null
     readonly property real health: physicalBattery?.healthSupported ? physicalBattery.healthPercentage / 100 : 0
 
-    readonly property string stateText: full ? I18n.t("battery.full")
-        : charging ? I18n.t("battery.state.charging")
-        : !UPower.onBattery ? I18n.t("battery.state.notCharging")
-        : I18n.t("battery.state.discharging")
+    readonly property string stateText: full ? I18n.t("battery.full") : charging ? I18n.t("battery.state.charging") : !UPower.onBattery ? I18n.t("battery.state.notCharging") : I18n.t("battery.state.discharging")
 
     readonly property int profile: PowerProfiles.profile
     readonly property bool hasPerformance: PowerProfiles.hasPerformanceProfile
@@ -48,7 +44,8 @@ Singleton {
      * @returns {string} empty when unknown
      */
     function endClock(seconds) {
-        if (!(seconds > 0)) return "";
+        if (!(seconds > 0))
+            return "";
         return new Date(Date.now() + seconds * 1000).toLocaleTimeString(I18n.locale, "HH:mm");
     }
 
@@ -61,19 +58,37 @@ Singleton {
         const minutes = Math.round(seconds / 60);
         const h = Math.floor(minutes / 60);
         const m = minutes % 60;
-        return h > 0 ? I18n.t("time.hoursMinutes", { hours: h, minutes: m }) : I18n.t("time.minutes", { minutes: m });
+        return h > 0 ? I18n.t("time.hoursMinutes", {
+            hours: h,
+            minutes: m
+        }) : I18n.t("time.minutes", {
+            minutes: m
+        });
     }
 
     IpcHandler {
         target: "power"
 
         function describe(): string {
-            return JSON.stringify({ level: root.level, state: root.stateText, secondsLeft: root.secondsLeft, rate: root.rate, health: root.health });
+            return JSON.stringify({
+                level: root.level,
+                state: root.stateText,
+                secondsLeft: root.secondsLeft,
+                rate: root.rate,
+                health: root.health
+            });
         }
-        function profile(): string { return PowerProfile.toString(root.profile); }
+        function profile(): string {
+            return PowerProfile.toString(root.profile);
+        }
         function setProfile(name: string): bool {
-            const values = { saver: PowerProfile.PowerSaver, balanced: PowerProfile.Balanced, performance: PowerProfile.Performance };
-            if (values[name] === undefined) return false;
+            const values = {
+                saver: PowerProfile.PowerSaver,
+                balanced: PowerProfile.Balanced,
+                performance: PowerProfile.Performance
+            };
+            if (values[name] === undefined)
+                return false;
             root.setProfile(values[name]);
             return true;
         }

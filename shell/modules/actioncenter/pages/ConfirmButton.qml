@@ -9,14 +9,18 @@ Rectangle {
     property bool selected: false
     property bool danger: false
 
-    signal clicked()
+    signal clicked
 
     implicitWidth: label.implicitWidth + 28
     implicitHeight: 34
     radius: Theme.radius
     color: !selected ? Theme.surfaceHover : danger ? Theme.error : Theme.foreground
 
-    Behavior on color { ColorAnimation { duration: Theme.animFast } }
+    Behavior on color {
+        ColorAnimation {
+            duration: Theme.animFast
+        }
+    }
 
     Label {
         id: label

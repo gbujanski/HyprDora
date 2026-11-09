@@ -9,13 +9,20 @@ import qs.modules.actioncenter.pages
 Scope {
     id: root
 
-    readonly property var pageTitles: ({ audio: I18n.t("page.audio"), wifi: "Wi-Fi", bluetooth: "Bluetooth", power: I18n.t("page.power"), displays: I18n.t("page.displays") })
+    readonly property var pageTitles: ({
+            audio: I18n.t("page.audio"),
+            wifi: "Wi-Fi",
+            bluetooth: "Bluetooth",
+            power: I18n.t("page.power"),
+            displays: I18n.t("page.displays")
+        })
 
     // The window outlives closing briefly so the animation can finish.
     Connections {
         target: Panels
         function onActionCenterOpenChanged() {
-            if (!Panels.actionCenterOpen) closeDelay.restart();
+            if (!Panels.actionCenterOpen)
+                closeDelay.restart();
         }
     }
 
@@ -78,15 +85,26 @@ Scope {
 
                 transform: Translate {
                     x: window.shown ? 0 : 16
-                    Behavior on x { NumberAnimation { duration: Theme.animPanel; easing.type: Easing.OutCubic } }
+                    Behavior on x {
+                        NumberAnimation {
+                            duration: Theme.animPanel
+                            easing.type: Easing.OutCubic
+                        }
+                    }
                 }
 
-                Behavior on opacity { NumberAnimation { duration: Theme.animPanel } }
+                Behavior on opacity {
+                    NumberAnimation {
+                        duration: Theme.animPanel
+                    }
+                }
 
                 // Esc returns from a subpage to the main view, and closes the panel from there.
                 Keys.onEscapePressed: {
-                    if (Panels.actionCenterPage !== "main") Panels.actionCenterPage = "main";
-                    else Panels.closeActionCenter();
+                    if (Panels.actionCenterPage !== "main")
+                        Panels.actionCenterPage = "main";
+                    else
+                        Panels.closeActionCenter();
                 }
 
                 // Absorbs clicks so they do not reach the closing area.
@@ -144,12 +162,18 @@ Scope {
                             width: flick.width - (flick.contentHeight > flick.height ? 8 : 0)
                             sourceComponent: {
                                 switch (Panels.actionCenterPage) {
-                                case "audio": return audioPage;
-                                case "wifi": return wifiPage;
-                                case "bluetooth": return bluetoothPage;
-                                case "power": return powerPage;
-                                case "displays": return displaysPage;
-                                default: return mainPage;
+                                case "audio":
+                                    return audioPage;
+                                case "wifi":
+                                    return wifiPage;
+                                case "bluetooth":
+                                    return bluetoothPage;
+                                case "power":
+                                    return powerPage;
+                                case "displays":
+                                    return displaysPage;
+                                default:
+                                    return mainPage;
                                 }
                             }
                             onSourceComponentChanged: flick.contentY = 0
@@ -160,7 +184,9 @@ Scope {
                         Connections {
                             target: pageLoader.item
                             ignoreUnknownSignals: true
-                            function onScrollToTop() { flick.contentY = 0; }
+                            function onScrollToTop() {
+                                flick.contentY = 0;
+                            }
                         }
 
                         Rectangle {

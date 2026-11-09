@@ -11,14 +11,18 @@ Rectangle {
     property bool active: false
     property bool enabledTile: true
 
-    signal toggled()
-    signal opened()
+    signal toggled
+    signal opened
 
     implicitHeight: 56
     radius: Theme.radius + 4
     color: active ? Theme.accentSoft : Theme.surface
 
-    Behavior on color { ColorAnimation { duration: Theme.animFast } }
+    Behavior on color {
+        ColorAnimation {
+            duration: Theme.animFast
+        }
+    }
 
     MouseArea {
         anchors.fill: parent

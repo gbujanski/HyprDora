@@ -18,7 +18,9 @@ Column {
         width: parent.width
         spacing: 2
 
-        SectionTitle { text: I18n.t("section.output") }
+        SectionTitle {
+            text: I18n.t("section.output")
+        }
 
         VolumeRow {
             width: parent.width
@@ -27,7 +29,9 @@ Column {
         }
 
         Repeater {
-            model: ScriptModel { values: Audio.sinks }
+            model: ScriptModel {
+                values: Audio.sinks
+            }
 
             ListRow {
                 required property var modelData
@@ -43,7 +47,9 @@ Column {
         width: parent.width
         spacing: 2
 
-        SectionTitle { text: I18n.t("section.input") }
+        SectionTitle {
+            text: I18n.t("section.input")
+        }
 
         VolumeRow {
             width: parent.width
@@ -53,7 +59,9 @@ Column {
         }
 
         Repeater {
-            model: ScriptModel { values: Audio.sources }
+            model: ScriptModel {
+                values: Audio.sources
+            }
 
             ListRow {
                 required property var modelData
@@ -69,7 +77,9 @@ Column {
         width: parent.width
         spacing: 2
 
-        SectionTitle { text: I18n.t("section.applications") }
+        SectionTitle {
+            text: I18n.t("section.applications")
+        }
 
         Label {
             visible: Audio.playbackStreams.length === 0
@@ -80,7 +90,9 @@ Column {
         }
 
         Repeater {
-            model: ScriptModel { values: Audio.playbackStreams }
+            model: ScriptModel {
+                values: Audio.playbackStreams
+            }
 
             VolumeRow {
                 required property var modelData

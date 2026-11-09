@@ -10,7 +10,9 @@ Singleton {
      * @param {int} code  code point
      * @returns {string}
      */
-    function glyph(code) { return String.fromCodePoint(code); }
+    function glyph(code) {
+        return String.fromCodePoint(code);
+    }
 
     /**
      * Returns the Wi-Fi icon for a signal level.
@@ -18,9 +20,12 @@ Singleton {
      * @returns {string}
      */
     function wifi(strength) {
-        if (strength > 0.75) return glyph(0xF0928);
-        if (strength > 0.5) return glyph(0xF0925);
-        if (strength > 0.25) return glyph(0xF0922);
+        if (strength > 0.75)
+            return glyph(0xF0928);
+        if (strength > 0.5)
+            return glyph(0xF0925);
+        if (strength > 0.25)
+            return glyph(0xF0922);
         return glyph(0xF091F);
     }
     readonly property string wifiOff: glyph(0xF092E)
@@ -34,7 +39,9 @@ Singleton {
      * @param {bool} visible  whether the text is shown
      * @returns {string}
      */
-    function eye(visible) { return glyph(visible ? 0xF0208 : 0xF0209); }
+    function eye(visible) {
+        return glyph(visible ? 0xF0208 : 0xF0209);
+    }
 
     /**
      * Returns the volume icon.
@@ -43,9 +50,12 @@ Singleton {
      * @returns {string}
      */
     function volume(level, muted) {
-        if (muted || level <= 0) return glyph(0xF0581);
-        if (level < 0.34) return glyph(0xF057F);
-        if (level < 0.67) return glyph(0xF0580);
+        if (muted || level <= 0)
+            return glyph(0xF0581);
+        if (level < 0.34)
+            return glyph(0xF057F);
+        if (level < 0.67)
+            return glyph(0xF0580);
         return glyph(0xF057E);
     }
 
@@ -54,7 +64,9 @@ Singleton {
      * @param {bool} muted  whether muted
      * @returns {string}
      */
-    function microphone(muted) { return glyph(muted ? 0xF036D : 0xF036C); }
+    function microphone(muted) {
+        return glyph(muted ? 0xF036D : 0xF036C);
+    }
     readonly property string chevronLeft: glyph(0xF0141)
     readonly property string chevronRight: glyph(0xF0142)
     readonly property string chevronDown: glyph(0xF0140)
@@ -78,13 +90,20 @@ Singleton {
      */
     function bluetoothDevice(icon) {
         const name = icon ?? "";
-        if (name.includes("headset") || name.includes("headphone")) return glyph(0xF02CB);
-        if (name.includes("audio")) return glyph(0xF04C3);
-        if (name.includes("mouse")) return glyph(0xF037D);
-        if (name.includes("keyboard")) return glyph(0xF030C);
-        if (name.includes("phone")) return glyph(0xF011C);
-        if (name.includes("computer")) return glyph(0xF0322);
-        if (name.includes("gaming")) return glyph(0xF0297);
+        if (name.includes("headset") || name.includes("headphone"))
+            return glyph(0xF02CB);
+        if (name.includes("audio"))
+            return glyph(0xF04C3);
+        if (name.includes("mouse"))
+            return glyph(0xF037D);
+        if (name.includes("keyboard"))
+            return glyph(0xF030C);
+        if (name.includes("phone"))
+            return glyph(0xF011C);
+        if (name.includes("computer"))
+            return glyph(0xF0322);
+        if (name.includes("gaming"))
+            return glyph(0xF0297);
         return bluetooth;
     }
     readonly property string bluetoothConnected: glyph(0xF00B1)
@@ -96,9 +115,12 @@ Singleton {
      * @returns {string}
      */
     function battery(level, charging) {
-        if (charging) return glyph(0xF0084);
-        if (level >= 0.95) return glyph(0xF0079);
-        if (level < 0.05) return glyph(0xF0083);
+        if (charging)
+            return glyph(0xF0084);
+        if (level >= 0.95)
+            return glyph(0xF0079);
+        if (level < 0.05)
+            return glyph(0xF0083);
         return glyph(0xF007A + Math.max(0, Math.min(8, Math.floor(level * 10) - 1)));
     }
 
@@ -144,18 +166,47 @@ Singleton {
     function weather(code, isDay) {
         const day = isDay ?? true;
         switch (code) {
-        case 0: return glyph(day ? 0xF0599 : 0xF0594);
-        case 1: case 2: return glyph(day ? 0xF0595 : 0xF0F31);
-        case 3: return glyph(0xF0590);
-        case 45: case 48: return glyph(0xF0591);
-        case 51: case 53: case 55: case 61: case 63: return glyph(0xF0597);
-        case 65: case 80: case 81: case 82: return glyph(0xF0596);
-        case 56: case 57: case 66: case 67: return glyph(0xF067F);
-        case 71: case 73: case 77: case 85: return glyph(0xF0598);
-        case 75: case 86: return glyph(0xF0F36);
-        case 95: return glyph(0xF067E);
-        case 96: case 99: return glyph(0xF0592);
-        default: return glyph(0xF0590);
+        case 0:
+            return glyph(day ? 0xF0599 : 0xF0594);
+        case 1:
+        case 2:
+            return glyph(day ? 0xF0595 : 0xF0F31);
+        case 3:
+            return glyph(0xF0590);
+        case 45:
+        case 48:
+            return glyph(0xF0591);
+        case 51:
+        case 53:
+        case 55:
+        case 61:
+        case 63:
+            return glyph(0xF0597);
+        case 65:
+        case 80:
+        case 81:
+        case 82:
+            return glyph(0xF0596);
+        case 56:
+        case 57:
+        case 66:
+        case 67:
+            return glyph(0xF067F);
+        case 71:
+        case 73:
+        case 77:
+        case 85:
+            return glyph(0xF0598);
+        case 75:
+        case 86:
+            return glyph(0xF0F36);
+        case 95:
+            return glyph(0xF067E);
+        case 96:
+        case 99:
+            return glyph(0xF0592);
+        default:
+            return glyph(0xF0590);
         }
     }
 }

@@ -20,7 +20,8 @@ Scope {
     Connections {
         target: root
         function onHoveredChanged() {
-            if (!root.hovered) loader.active = false;
+            if (!root.hovered)
+                loader.active = false;
         }
     }
 

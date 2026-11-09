@@ -17,10 +17,7 @@ Column {
             width: (parent.width - parent.spacing) / 2
             icon: Network.connected ? Icons.wifi(Network.signal) : Icons.wifiOff
             title: "Wi-Fi"
-            subtitle: Network.busySsid !== "" ? I18n.t("status.connecting")
-                : !Network.hardwareEnabled ? I18n.t("wifi.tile.blocked")
-                : !Network.wifiEnabled ? I18n.t("wifi.tile.off")
-                : Network.connected ? Network.ssid : I18n.t("wifi.notConnected")
+            subtitle: Network.busySsid !== "" ? I18n.t("status.connecting") : !Network.hardwareEnabled ? I18n.t("wifi.tile.blocked") : !Network.wifiEnabled ? I18n.t("wifi.tile.off") : Network.connected ? Network.ssid : I18n.t("wifi.notConnected")
             active: Network.wifiEnabled
             enabledTile: Network.hardwareEnabled
             onToggled: Network.setWifiEnabled(!Network.wifiEnabled)
@@ -29,15 +26,11 @@ Column {
 
         Tile {
             width: (parent.width - parent.spacing) / 2
-            icon: !Bluetooth.enabled ? Icons.bluetoothOff
-                : Bluetooth.connectedDevices.length > 0 ? Icons.bluetoothConnected : Icons.bluetooth
+            icon: !Bluetooth.enabled ? Icons.bluetoothOff : Bluetooth.connectedDevices.length > 0 ? Icons.bluetoothConnected : Icons.bluetooth
             title: "Bluetooth"
-            subtitle: !Bluetooth.hasAdapter ? I18n.t("bluetooth.noAdapter")
-                : Bluetooth.blocked ? I18n.t("bluetooth.tile.blocked")
-                : !Bluetooth.enabled ? I18n.t("bluetooth.tile.off")
-                : Bluetooth.connectedDevices.length === 1 ? Bluetooth.connectedDevices[0].name
-                : Bluetooth.connectedDevices.length > 1 ? I18n.t("bluetooth.tile.connectedCount", { count: Bluetooth.connectedDevices.length })
-                : I18n.t("bluetooth.tile.on")
+            subtitle: !Bluetooth.hasAdapter ? I18n.t("bluetooth.noAdapter") : Bluetooth.blocked ? I18n.t("bluetooth.tile.blocked") : !Bluetooth.enabled ? I18n.t("bluetooth.tile.off") : Bluetooth.connectedDevices.length === 1 ? Bluetooth.connectedDevices[0].name : Bluetooth.connectedDevices.length > 1 ? I18n.t("bluetooth.tile.connectedCount", {
+                count: Bluetooth.connectedDevices.length
+            }) : I18n.t("bluetooth.tile.on")
             active: Bluetooth.enabled
             enabledTile: Bluetooth.hasAdapter && !Bluetooth.blocked
             onToggled: Bluetooth.setEnabled(!Bluetooth.enabled)
@@ -97,9 +90,22 @@ Column {
         width: parent.width
         currentValue: Power.profile
         options: [
-            { value: PowerProfile.PowerSaver, label: I18n.t("power.saver"), icon: Icons.powerSaver },
-            { value: PowerProfile.Balanced, label: I18n.t("power.balanced"), icon: Icons.balanced },
-            { value: PowerProfile.Performance, label: I18n.t("power.performance"), icon: Icons.performance, enabled: Power.hasPerformance }
+            {
+                value: PowerProfile.PowerSaver,
+                label: I18n.t("power.saver"),
+                icon: Icons.powerSaver
+            },
+            {
+                value: PowerProfile.Balanced,
+                label: I18n.t("power.balanced"),
+                icon: Icons.balanced
+            },
+            {
+                value: PowerProfile.Performance,
+                label: I18n.t("power.performance"),
+                icon: Icons.performance,
+                enabled: Power.hasPerformance
+            }
         ]
         onSelected: value => Power.setProfile(value)
     }
@@ -161,7 +167,9 @@ Column {
 
     ListRow {
         width: parent.width
-        text: Displays.monitors.length > 1 ? I18n.t("displays.buttonWithCount", { count: Displays.monitors.length }) : I18n.t("page.displays")
+        text: Displays.monitors.length > 1 ? I18n.t("displays.buttonWithCount", {
+            count: Displays.monitors.length
+        }) : I18n.t("page.displays")
         trailingIcon: Icons.chevronRight
         onClicked: Panels.actionCenterPage = "displays"
     }
@@ -186,7 +194,9 @@ Column {
 
         SectionTitle {
             anchors.verticalCenter: parent.verticalCenter
-            text: Notifications.count > 0 ? I18n.t("section.notificationsWithCount", { count: Notifications.count }) : I18n.t("section.notifications")
+            text: Notifications.count > 0 ? I18n.t("section.notificationsWithCount", {
+                count: Notifications.count
+            }) : I18n.t("section.notifications")
         }
 
         Row {

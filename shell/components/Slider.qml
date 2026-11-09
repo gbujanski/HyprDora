@@ -14,7 +14,8 @@ Item {
     property real dragValue: 0
 
     function emitValue(newValue) {
-        if (active) moved(Math.max(0, Math.min(1, newValue)));
+        if (active)
+            moved(Math.max(0, Math.min(1, newValue)));
     }
 
     function valueAt(x) {

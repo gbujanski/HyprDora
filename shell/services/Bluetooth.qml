@@ -16,14 +16,9 @@ Singleton {
     readonly property bool discovering: adapter?.discovering ?? false
 
     // Unnamed devices are usually anonymous BLE beacons that only clutter the list.
-    readonly property var devices: (adapter?.devices.values ?? [])
-        .filter(d => d.paired || d.deviceName !== "")
-    readonly property var pairedDevices: devices
-        .filter(d => d.paired)
-        .sort((a, b) => Number(b.connected) - Number(a.connected) || a.name.localeCompare(b.name))
-    readonly property var discoveredDevices: devices
-        .filter(d => !d.paired)
-        .sort((a, b) => a.name.localeCompare(b.name))
+    readonly property var devices: (adapter?.devices.values ?? []).filter(d => d.paired || d.deviceName !== "")
+    readonly property var pairedDevices: devices.filter(d => d.paired).sort((a, b) => Number(b.connected) - Number(a.connected) || a.name.localeCompare(b.name))
+    readonly property var discoveredDevices: devices.filter(d => !d.paired).sort((a, b) => a.name.localeCompare(b.name))
     readonly property var connectedDevices: pairedDevices.filter(d => d.connected)
 
     property string errorMessage: ""
@@ -44,9 +39,11 @@ Singleton {
 
     /** Applies pairable and discovery state from the page state. */
     function applyPageState() {
-        if (!adapter || !poweredOn) return;
+        if (!adapter || !poweredOn)
+            return;
         adapter.pairable = pageOpen;
-        if (adapter.discovering !== pageOpen) adapter.discovering = pageOpen;
+        if (adapter.discovering !== pageOpen)
+            adapter.discovering = pageOpen;
     }
 
     // Right after power-on, BlueZ can reject discovery ("Resource Not Ready") and later end it
@@ -63,7 +60,8 @@ Singleton {
      * @param {bool} value  new state
      */
     function setEnabled(value) {
-        if (adapter) adapter.enabled = value;
+        if (adapter)
+            adapter.enabled = value;
     }
 
     /**
@@ -72,7 +70,8 @@ Singleton {
      */
     function activate(device) {
         errorMessage = "";
-        if (connector.device === device || pairingDevice === device) return;
+        if (connector.device === device || pairingDevice === device)
+            return;
         if (device.connected) {
             device.disconnect();
         } else if (device.paired) {
@@ -92,7 +91,8 @@ Singleton {
      * @param {BluetoothDevice} device  device to connect
      */
     function connectDevice(device) {
-        if (connector.running) return;
+        if (connector.running)
+            return;
         connector.device = device;
         connector.retriesLeft = 3;
         connector.attempt();
@@ -107,10 +107,16 @@ Singleton {
     function connectErrorMessage(device, detail) {
         const text = detail ?? "";
         if (text.includes("key-missing") || text.includes("AuthenticationFailed") || text.includes("AuthenticationRejected"))
-            return I18n.t("bluetooth.error.keyRejected", { device: device.name });
+            return I18n.t("bluetooth.error.keyRejected", {
+                device: device.name
+            });
         if (text.includes("page-timeout") || text.includes("Host is down") || text.includes("profile-unavailable"))
-            return I18n.t("bluetooth.error.noResponse", { device: device.name });
-        return I18n.t("bluetooth.error.connectFailed", { device: device.name });
+            return I18n.t("bluetooth.error.noResponse", {
+                device: device.name
+            });
+        return I18n.t("bluetooth.error.connectFailed", {
+            device: device.name
+        });
     }
 
     /**
@@ -128,14 +134,20 @@ Singleton {
      * @returns {string}
      */
     function statusText(device) {
-        if (pairingDevice === device || device.pairing) return I18n.t("bluetooth.status.pairing");
+        if (pairingDevice === device || device.pairing)
+            return I18n.t("bluetooth.status.pairing");
         // After pairing, BlueZ reports Connected for the bare link, before profiles are up.
-        if (connector.device === device) return I18n.t("status.connecting");
+        if (connector.device === device)
+            return I18n.t("status.connecting");
         switch (device.state) {
-        case QsBt.BluetoothDeviceState.Connecting: return I18n.t("status.connecting");
-        case QsBt.BluetoothDeviceState.Disconnecting: return I18n.t("bluetooth.status.disconnecting");
+        case QsBt.BluetoothDeviceState.Connecting:
+            return I18n.t("status.connecting");
+        case QsBt.BluetoothDeviceState.Disconnecting:
+            return I18n.t("bluetooth.status.disconnecting");
         case QsBt.BluetoothDeviceState.Connected:
-            return device.batteryAvailable ? I18n.t("bluetooth.status.connectedBattery", { percent: Math.round(device.battery * 100) }) : I18n.t("bluetooth.status.connected");
+            return device.batteryAvailable ? I18n.t("bluetooth.status.connectedBattery", {
+                percent: Math.round(device.battery * 100)
+            }) : I18n.t("bluetooth.status.connected");
         }
         return device.paired ? I18n.t("bluetooth.status.paired") : I18n.t("bluetooth.status.available");
     }
@@ -146,14 +158,20 @@ Singleton {
      * @param {string} value  PIN or passkey, if requested
      */
     function answer(accept, value) {
-        if (!request) return;
-        agent.write(JSON.stringify({ id: request.id, accept: accept, value: value ?? "" }) + "\n");
+        if (!request)
+            return;
+        agent.write(JSON.stringify({
+            id: request.id,
+            accept: accept,
+            value: value ?? ""
+        }) + "\n");
         request = null;
     }
 
     /** Cancels pairing, including when only a code is displayed. */
     function cancelPairing() {
-        if (request?.kind !== "display") answer(false, "");
+        if (request?.kind !== "display")
+            answer(false, "");
         request = null;
         pairingDevice?.cancelPair();
     }
@@ -165,14 +183,17 @@ Singleton {
 
         function onPairingChanged() {
             const device = root.pairingDevice;
-            if (device.pairing) return;
+            if (device.pairing)
+                return;
             root.pairingDevice = null;
             root.request = null;
             if (device.paired) {
                 device.trusted = true;
                 root.connectDevice(device);
             } else {
-                root.errorMessage = I18n.t("bluetooth.error.pairFailed", { device: device.name });
+                root.errorMessage = I18n.t("bluetooth.error.pairFailed", {
+                    device: device.name
+                });
             }
         }
     }
@@ -187,9 +208,7 @@ Singleton {
         property int retriesLeft: 0
 
         function attempt() {
-            command = ["gdbus", "call", "--system", "--dest", "org.bluez",
-                "--object-path", device.dbusPath,
-                "--method", "org.bluez.Device1.Connect", "--timeout", "30"];
+            command = ["gdbus", "call", "--system", "--dest", "org.bluez", "--object-path", device.dbusPath, "--method", "org.bluez.Device1.Connect", "--timeout", "30"];
             running = true;
         }
 
@@ -199,7 +218,8 @@ Singleton {
 
         onExited: exitCode => {
             const current = device;
-            if (!current) return;
+            if (!current)
+                return;
             const detail = connectorErrors.text;
             const transient = detail.includes("InProgress") || detail.includes("busy");
             if (exitCode !== 0 && transient && retriesLeft > 0) {
@@ -218,7 +238,8 @@ Singleton {
     Timer {
         id: retryTimer
         interval: 2000
-        onTriggered: if (connector.device) connector.attempt()
+        onTriggered: if (connector.device)
+            connector.attempt()
     }
 
     Process {
@@ -252,7 +273,11 @@ Singleton {
                     root.request = message;
                     break;
                 case "display":
-                    root.request = { kind: "display", device: message.device, value: message.value };
+                    root.request = {
+                        kind: "display",
+                        device: message.device,
+                        value: message.value
+                    };
                     break;
                 case "cancel":
                     root.request = null;
@@ -283,12 +308,17 @@ Singleton {
                 discovered: root.discoveredDevices.length
             });
         }
-        function setEnabled(value: bool): void { root.setEnabled(value); }
+        function setEnabled(value: bool): void {
+            root.setEnabled(value);
+        }
         function connectDevice(address: string): bool {
             const device = root.devices.find(d => d.address === address);
-            if (device) root.connectDevice(device);
+            if (device)
+                root.connectDevice(device);
             return device !== undefined;
         }
-        function answer(accept: bool, value: string): void { root.answer(accept, value); }
+        function answer(accept: bool, value: string): void {
+            root.answer(accept, value);
+        }
     }
 }

@@ -11,7 +11,8 @@ Column {
     readonly property var current: Weather.current
 
     function dayLabel(iso, index) {
-        if (index === 0) return I18n.t("calendar.today");
+        if (index === 0)
+            return I18n.t("calendar.today");
         const [y, m, d] = iso.split("-").map(Number);
         return I18n.shortDayName(new Date(y, m - 1, d).getDay());
     }
@@ -28,7 +29,9 @@ Column {
 
         SectionTitle {
             anchors.verticalCenter: parent.verticalCenter
-            text: I18n.t("section.weather", { place: Settings.weatherPlace.toUpperCase() })
+            text: I18n.t("section.weather", {
+                place: Settings.weatherPlace.toUpperCase()
+            })
         }
 
         Row {
@@ -41,8 +44,7 @@ Column {
             Label {
                 anchors.verticalCenter: parent.verticalCenter
                 visible: Weather.fetchedAt > 0
-                text: Weather.loading ? I18n.t("weather.refreshing")
-                    : new Date(Weather.fetchedAt).toLocaleTimeString(I18n.locale, "HH:mm")
+                text: Weather.loading ? I18n.t("weather.refreshing") : new Date(Weather.fetchedAt).toLocaleTimeString(I18n.locale, "HH:mm")
                 color: Theme.dim
                 font.pixelSize: Theme.fontSizeSmall
             }
@@ -97,7 +99,9 @@ Column {
             }
 
             Label {
-                text: root.current ? I18n.t("weather.feelsLike", { temp: Weather.formatTemp(root.current.feels) }) : ""
+                text: root.current ? I18n.t("weather.feelsLike", {
+                    temp: Weather.formatTemp(root.current.feels)
+                }) : ""
                 color: Theme.muted
                 font.pixelSize: Theme.fontSizeSmall
             }
@@ -110,10 +114,26 @@ Column {
 
         Repeater {
             model: root.current ? [
-                { icon: Icons.wind, text: `${root.formatNumber(root.current.wind)} km/h`, tip: I18n.t("weather.wind") },
-                { icon: Icons.humidity, text: `${root.formatNumber(root.current.humidity)}%`, tip: I18n.t("weather.humidity") },
-                { icon: Icons.sunrise, text: Weather.sunrise, tip: I18n.t("weather.sunrise") },
-                { icon: Icons.sunset, text: Weather.sunset, tip: I18n.t("weather.sunset") }
+                {
+                    icon: Icons.wind,
+                    text: `${root.formatNumber(root.current.wind)} km/h`,
+                    tip: I18n.t("weather.wind")
+                },
+                {
+                    icon: Icons.humidity,
+                    text: `${root.formatNumber(root.current.humidity)}%`,
+                    tip: I18n.t("weather.humidity")
+                },
+                {
+                    icon: Icons.sunrise,
+                    text: Weather.sunrise,
+                    tip: I18n.t("weather.sunrise")
+                },
+                {
+                    icon: Icons.sunset,
+                    text: Weather.sunset,
+                    tip: I18n.t("weather.sunset")
+                }
             ].filter(item => item.text !== "") : []
 
             Row {
@@ -195,7 +215,9 @@ Column {
     Label {
         width: parent.width
         visible: Weather.available && Weather.error !== ""
-        text: I18n.t("weather.showingLast", { error: Weather.error })
+        text: I18n.t("weather.showingLast", {
+            error: Weather.error
+        })
         color: Theme.warning
         font.pixelSize: Theme.fontSizeSmall
         wrapMode: Text.WordWrap
