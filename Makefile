@@ -1,5 +1,7 @@
 QT_BIN ?= /usr/lib64/qt6/bin
 DEV_DIR := $(CURDIR)/build/dev/config
+RPM_DIR := $(CURDIR)/build/rpm
+VERSION := $(shell sed -n 's/^Version: *//p' packaging/hyprdora.spec)
 
 # qmllint cannot see Quickshell's types or the qs.* modules, so these categories only report noise.
 QMLLINT_FLAGS := --import disable --unqualified disable --unresolved-type disable --missing-type disable \
@@ -17,7 +19,7 @@ LUA_FILES := $(shell find hypr -name '*.lua' 2>/dev/null)
 help:
 	@echo "make dev    run the shell in a nested Hyprland"
 	@echo "make lint   run all linters on existing files"
-	@echo "make rpm    build RPM packages (stage 4)"
+	@echo "make rpm    build RPM packages"
 	@echo "make iso    build the install ISO (stage 5)"
 
 lint: lint-qml lint-shell lint-python lint-lua
@@ -51,6 +53,13 @@ dev:
 	@cp -n $(HOME)/.config/hypr/settings.lua $(DEV_DIR)/hypr/ 2>/dev/null || true
 	XDG_CONFIG_HOME=$(DEV_DIR) HYPRDORA_SHELL=$(CURDIR)/shell Hyprland --config $(CURDIR)/hypr/init.lua
 
-rpm iso:
+rpm:
+	@mkdir -p $(RPM_DIR)/SOURCES
+	git ls-files -co --exclude-standard | xargs -d '\n' ls -d 2>/dev/null | \
+		tar -czf $(RPM_DIR)/SOURCES/hyprdora-$(VERSION).tar.gz --transform 's,^,hyprdora-$(VERSION)/,' -T -
+	rpmbuild -bb --define "_topdir $(RPM_DIR)" packaging/hyprdora.spec
+	@echo "Packages are in $(RPM_DIR)/RPMS/noarch"
+
+iso:
 	@echo "make $@ is not implemented yet, see docs/roadmap.md" >&2
 	@exit 1

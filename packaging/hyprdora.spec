@@ -1,0 +1,187 @@
+Name:           hyprdora
+Version:        0.1.0
+Release:        1%{?dist}
+Summary:        Hyprland desktop with a custom Quickshell shell
+License:        MIT AND OFL-1.1
+URL:            https://github.com/gbujanski/HyprDora
+Source0:        %{name}-%{version}.tar.gz
+BuildArch:      noarch
+
+# Hyprland
+Requires:       hyprland
+Requires:       hyprpaper
+Requires:       hyprlock
+Requires:       hypridle
+Requires:       hyprpolkitagent
+Requires:       xdg-desktop-portal-hyprland
+Requires:       xdg-desktop-portal-gtk
+Requires:       xdg-utils
+Requires:       qt5-qtwayland
+Requires:       qt6-qtwayland
+
+# Shell
+Requires:       quickshell
+Requires:       brightnessctl
+Requires:       playerctl
+Requires:       adwaita-sans-fonts
+Requires:       python3-gobject
+Requires:       libnotify
+Requires:       glib2
+
+# System
+Requires:       pipewire
+Requires:       pipewire-pulseaudio
+Requires:       wireplumber
+Requires:       bluez
+Requires:       NetworkManager-wifi
+Requires:       wpa_supplicant
+Requires:       iw
+Requires:       NetworkManager-tui
+Requires:       power-profiles-daemon
+Requires:       gnome-keyring
+Requires:       gnome-keyring-pam
+Requires:       gvfs
+Requires:       xdg-user-dirs
+Requires:       cups
+Requires:       system-config-printer
+
+# Desktop tools
+Requires:       rofi
+Requires:       cliphist
+Requires:       wl-clipboard
+Requires:       grim
+Requires:       swappy
+Requires:       wf-recorder
+# The only H.264 encoder without RPM Fusion; it comes from a repository that may be disabled.
+Recommends:     openh264
+
+# Applications
+Requires:       alacritty
+Requires:       btop
+Requires:       Thunar
+Requires:       thunar-archive-plugin
+Requires:       thunar-volman
+Requires:       file-roller
+Requires:       tumbler
+Requires:       ffmpegthumbnailer
+Requires:       loupe
+Requires:       showtime
+Requires:       papers
+Requires:       gnome-calculator
+Requires:       gnome-text-editor
+Requires:       gnome-disk-utility
+
+# Base tools
+Requires:       git
+Requires:       curl
+Requires:       wget
+Requires:       tar
+Requires:       unzip
+Requires:       p7zip
+Requires:       pciutils
+
+# Look and login
+Requires:       papirus-icon-theme
+Requires:       bibata-cursor-themes
+Requires:       sddm
+Requires(post): sddm
+
+# Snapshots
+Requires:       snapper
+Requires:       python3-dnf-plugin-snapper
+Requires:       btrfs-assistant
+
+%description
+HyprDora is a Hyprland desktop on Fedora with a custom Quickshell shell. This
+package holds the shell, default configuration and the programs the desktop
+needs. Files in the user's config directory override the packaged defaults.
+
+%package repos
+Summary:        Repositories that provide Hyprland and the cursor theme for HyprDora
+
+%description repos
+Enables the COPR repositories that hold Hyprland and the Bibata cursor theme,
+so the hyprdora package can be installed on an existing Fedora system.
+
+%package extras
+Summary:        Personal applications and development tools for HyprDora
+Requires:       neovim
+Requires:       code
+Requires:       discord
+Requires:       filezilla
+Requires:       gimp
+Requires:       onlyoffice-desktopeditors
+Requires:       virt-manager
+Requires:       docker-ce
+Requires:       docker-ce-cli
+Requires:       containerd.io
+Requires:       docker-buildx-plugin
+Requires:       docker-compose-plugin
+Requires:       python3
+Requires:       nodejs
+Requires:       java-25-openjdk
+Requires:       dotnet-sdk-10.0
+Requires:       zsh
+Requires:       flatpak
+
+%description extras
+Applications kept separate from the desktop. The kickstart enables the
+repositories they come from.
+
+%prep
+%autosetup
+
+%build
+
+%install
+install -d %{buildroot}%{_datadir}/%{name}/assets
+cp -a shell hypr configs %{buildroot}%{_datadir}/%{name}/
+install -pm 644 assets/*.jpg %{buildroot}%{_datadir}/%{name}/assets/
+
+install -d %{buildroot}%{_datadir}/fonts/%{name}
+install -pm 644 assets/fonts/*.ttf %{buildroot}%{_datadir}/fonts/%{name}/
+
+install -d %{buildroot}%{_sysconfdir}/xdg/quickshell
+ln -s ../../..%{_datadir}/%{name}/shell %{buildroot}%{_sysconfdir}/xdg/quickshell/%{name}
+
+install -Dpm 644 configs/alacritty/alacritty.toml %{buildroot}%{_sysconfdir}/alacritty/alacritty.toml
+install -Dpm 644 configs/sddm/hyprdora.conf %{buildroot}%{_sysconfdir}/sddm.conf.d/hyprdora.conf
+install -Dpm 644 configs/session/hyprdora.desktop %{buildroot}%{_datadir}/wayland-sessions/hyprdora.desktop
+install -Dpm 644 configs/gtk/90_hyprdora.gschema.override %{buildroot}%{_datadir}/glib-2.0/schemas/90_hyprdora.gschema.override
+install -Dpm 644 configs/systemd/hyprdora-session.target %{buildroot}%{_prefix}/lib/systemd/user/hyprdora-session.target
+install -d %{buildroot}%{_datadir}/sddm/themes
+cp -a configs/sddm/theme/Hyprdora %{buildroot}%{_datadir}/sddm/themes/
+
+install -Dpm 644 packaging/hyprdora-copr.repo %{buildroot}%{_sysconfdir}/yum.repos.d/hyprdora-copr.repo
+
+%post
+# The login theme uses the last session, so the first login needs one to be set.
+if [ ! -e %{_localstatedir}/lib/sddm/state.conf ]; then
+    install -d -o sddm -g sddm %{_localstatedir}/lib/sddm
+    printf '[Last]\nSession=hyprdora.desktop\n' > %{_localstatedir}/lib/sddm/state.conf
+    chown sddm:sddm %{_localstatedir}/lib/sddm/state.conf
+fi
+
+%files
+%license LICENSE assets/fonts/OFL.txt
+%doc README.md
+%{_datadir}/%{name}
+%{_datadir}/fonts/%{name}
+%{_datadir}/wayland-sessions/hyprdora.desktop
+%{_prefix}/lib/systemd/user/hyprdora-session.target
+%{_datadir}/glib-2.0/schemas/90_hyprdora.gschema.override
+%{_datadir}/sddm/themes/Hyprdora
+%dir %{_sysconfdir}/xdg/quickshell
+%{_sysconfdir}/xdg/quickshell/%{name}
+%dir %{_sysconfdir}/alacritty
+%config(noreplace) %{_sysconfdir}/alacritty/alacritty.toml
+%config(noreplace) %{_sysconfdir}/sddm.conf.d/hyprdora.conf
+
+%files repos
+%config(noreplace) %{_sysconfdir}/yum.repos.d/hyprdora-copr.repo
+
+%files extras
+
+%changelog
+* Mon Nov 09 2026 Grzegorz Bujański <grzegorz.bujanski@gmail.com> - 0.1.0-1
+- First package

@@ -1,0 +1,6 @@
+[org.gnome.desktop.interface]
+color-scheme='prefer-dark'
+gtk-theme='Adwaita-dark'
+icon-theme='Papirus'
+cursor-theme='Bibata-Modern-Ice'
+cursor-size=24

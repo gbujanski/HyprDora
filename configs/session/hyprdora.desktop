@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=HyprDora
+Comment=Hyprland desktop with the HyprDora shell
+Exec=/usr/bin/start-hyprland -- --config /usr/share/hyprdora/hypr/init.lua
+Type=Application
+DesktopNames=Hyprland

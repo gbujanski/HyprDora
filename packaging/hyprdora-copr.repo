@@ -1,0 +1,19 @@
+[hyprdora-hyprland]
+name=Hyprland (COPR sdegler/hyprland)
+baseurl=https://download.copr.fedorainfracloud.org/results/sdegler/hyprland/fedora-$releasever-$basearch/
+type=rpm-md
+skip_if_unavailable=True
+gpgcheck=1
+gpgkey=https://download.copr.fedorainfracloud.org/results/sdegler/hyprland/pubkey.gpg
+repo_gpgcheck=0
+enabled=1
+
+[hyprdora-rendezvous]
+name=Bibata cursors (COPR peterwu/rendezvous)
+baseurl=https://download.copr.fedorainfracloud.org/results/peterwu/rendezvous/fedora-$releasever-$basearch/
+type=rpm-md
+skip_if_unavailable=True
+gpgcheck=1
+gpgkey=https://download.copr.fedorainfracloud.org/results/peterwu/rendezvous/pubkey.gpg
+repo_gpgcheck=0
+enabled=1

@@ -2,7 +2,7 @@
 
 A Hyprland desktop on Fedora with a custom [Quickshell](https://quickshell.org) shell, packaged as RPMs and installed from a kickstart ISO.
 
-**Status: early development.** Nothing is installable yet. See the [roadmap](docs/roadmap.md).
+**Status: early development.** Packages can be built with `make rpm`; the ISO is not ready yet. See the [roadmap](docs/roadmap.md) and [installation](docs/installation.md).
 
 ## Layout
 
