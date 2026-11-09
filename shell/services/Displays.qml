@@ -333,7 +333,8 @@ Singleton {
     }
 
     /**
-     * Snaps a dropped screen to the nearest free edge of another screen.
+     * Snaps a dropped screen to the nearest free spot along another screen's edge:
+     * either corner or the center of that edge.
      * @param {string} name  connector name
      * @param {int} x  drop position
      * @param {int} y  drop position
@@ -351,7 +352,9 @@ Singleton {
         for (const o of others) {
             const ow = logicalWidth(o);
             const oh = logicalHeight(o);
-            const candidates = [[o.x - w, o.y], [o.x + ow, o.y], [o.x, o.y - h], [o.x, o.y + oh], [o.x - w, o.y + oh - h], [o.x + ow, o.y + oh - h], [o.x + ow - w, o.y - h], [o.x + ow - w, o.y + oh]];
+            const centerX = o.x + Math.round((ow - w) / 2);
+            const centerY = o.y + Math.round((oh - h) / 2);
+            const candidates = [[o.x - w, o.y], [o.x - w, centerY], [o.x - w, o.y + oh - h], [o.x + ow, o.y], [o.x + ow, centerY], [o.x + ow, o.y + oh - h], [o.x, o.y - h], [centerX, o.y - h], [o.x + ow - w, o.y - h], [o.x, o.y + oh], [centerX, o.y + oh], [o.x + ow - w, o.y + oh]];
             for (const [cx, cy] of candidates) {
                 const distance = Math.hypot(cx - x, cy - y);
                 if (distance < bestDistance && clear(cx, cy)) {
