@@ -40,6 +40,19 @@ Column {
 
     Item {
         width: parent.width
+        height: 30
+
+        IconButton {
+            anchors.right: parent.right
+            icon: Icons.camera
+            iconColor: Theme.muted
+            tooltip: I18n.t("capture.title")
+            onClicked: Capture.open()
+        }
+    }
+
+    Item {
+        width: parent.width
         height: 6
     }
 

@@ -1,4 +1,4 @@
--- Window rules.
+-- Window and layer rules.
 
 hl.window_rule({
     name = "suppress-maximize-events",
@@ -33,4 +33,11 @@ hl.window_rule({
     size = "900 600",
     center = true,
     animation = "none",
+})
+
+-- An animated fade-out would appear in the capture.
+hl.layer_rule({
+    name = "capture-no-animation",
+    match = { namespace = "^hyprdora-capture$" },
+    no_anim = true,
 })

@@ -16,6 +16,8 @@ return {
     -- Panels
     { "SUPER + A",              act.action_center,    "Action center" },
     { "SUPER + Escape",         act.power_menu,       "Power" },
+    { "Print",                  act.capture,          "Screenshot and recording" },
+    { "SUPER + minus",          act.capture,          "Screenshot and recording" },
 
     -- Windows
     { "SUPER + Q",              act.close,            "Close window" },

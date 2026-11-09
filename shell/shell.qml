@@ -8,6 +8,7 @@ import qs.modules.osd
 import qs.modules.displays
 import qs.modules.calendar
 import qs.modules.battery
+import qs.modules.capture
 import qs.services
 
 ShellRoot {
@@ -31,4 +32,6 @@ ShellRoot {
     DisplayConfirm {}
 
     BatteryWarning {}
+
+    CaptureOverlay {}
 }

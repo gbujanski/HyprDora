@@ -16,6 +16,7 @@ Singleton {
     readonly property color accentSoft: "#1d3a26"
     readonly property color warning: "#ff9900"
     readonly property color error: "#fb4b4b"
+    readonly property color captureDim: "#80000000"
 
     // Fonts
     readonly property string fontFamily: "Adwaita Sans"

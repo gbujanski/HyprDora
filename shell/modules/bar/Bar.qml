@@ -2,6 +2,8 @@ import QtQuick
 import Quickshell
 import Quickshell.Wayland
 import qs.config
+import qs.services
+import qs.components
 
 PanelWindow {
     id: bar
@@ -49,6 +51,16 @@ PanelWindow {
             verticalCenter: parent.verticalCenter
         }
         spacing: Theme.spacing
+
+        BarButton {
+            anchors.verticalCenter: parent.verticalCenter
+            visible: Capture.recording
+            icon: Icons.record
+            label: Capture.elapsedText
+            contentColor: Theme.error
+            tooltip: I18n.t("capture.stop")
+            onClicked: Capture.stopRecording()
+        }
 
         Tray {
             anchors.verticalCenter: parent.verticalCenter

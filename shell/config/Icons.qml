@@ -32,6 +32,12 @@ Singleton {
     readonly property string lock: glyph(0xF033E)
     readonly property string trash: glyph(0xF0A7A)
     readonly property string close: glyph(0xF0156)
+    readonly property string camera: glyph(0xF0100)
+    readonly property string video: glyph(0xF0567)
+    readonly property string record: glyph(0xF044A)
+    readonly property string captureArea: glyph(0xF0A73)
+    readonly property string captureScreen: glyph(0xF0379)
+    readonly property string captureWindow: glyph(0xF05AF)
     readonly property string alert: glyph(0xF0026)
     readonly property string plus: glyph(0xF0415)
     /**

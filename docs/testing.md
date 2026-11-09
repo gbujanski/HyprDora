@@ -22,9 +22,11 @@ Run through the sections related to a change.
 
 **OSD and power:** volume, brightness and microphone indicators; lock, suspend; confirmations for logout, restart and power off.
 
-**Displays (external monitor needed):** presets, drag to arrange, 15-second automatic revert, Keep and Revert, unplugging the active screen, layout survives a new session.
+**Displays (external monitor needed):** presets, drag to a corner and to the center of an edge, 15-second automatic revert, Keep and Revert, unplugging the active screen, layout survives a new session.
 
 **Battery and brightness:** low and critical warnings; 0% stays readable; keys and slider agree.
+
+**Capture:** `Print`, the `SUPER` shortcut and the action center button open it; area, full screen and window; the overlay is not in the result; the screenshot reaches the clipboard; Edit opens `swappy`; recording shows the bar indicator, stops cleanly and the file plays; hardware encoding is used where available.
 
 **Weather and calendar:** hidden without a location; appears after setting one; month scrolling on a touchpad.
 

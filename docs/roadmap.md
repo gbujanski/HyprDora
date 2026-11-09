@@ -149,7 +149,7 @@ return {
 }
 ```
 
-`lib/binds.lua` merges both lists, reports duplicate keys, then calls `hl.bind`. Descriptions allow a keybinding cheat sheet in the action center later and a generated table in the README. Brightness keys use the shell IPC with `brightnessctl` as a fallback when the shell is not running. The MacBook has no `Print` key, so capture also gets a `SUPER` shortcut. Capture keybindings arrive with the tool in stage 3.
+`lib/binds.lua` merges both lists, reports duplicate keys, then calls `hl.bind`. Descriptions allow a keybinding cheat sheet in the action center later and a generated table in the README. Brightness keys use the shell IPC with `brightnessctl` as a fallback when the shell is not running. The MacBook has no `Print` key, so capture also gets a `SUPER` shortcut.
 
 **What Lua mode breaks.** Old `hyprctl` syntax returns errors (verified). The shell must be ported in the same stage:
 
