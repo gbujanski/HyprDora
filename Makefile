@@ -43,7 +43,8 @@ endif
 dev:
 	@mkdir -p $(DEV_DIR)/hypr $(DEV_DIR)/hyprdora
 	@cp -n $(HOME)/.config/hyprdora/settings.json $(DEV_DIR)/hyprdora/ 2>/dev/null || true
-	XDG_CONFIG_HOME=$(DEV_DIR) HYPRDORA_SHELL=$(CURDIR)/shell Hyprland --config $(CURDIR)/hypr/dev.conf
+	@cp -n $(HOME)/.config/hypr/settings.lua $(DEV_DIR)/hypr/ 2>/dev/null || true
+	XDG_CONFIG_HOME=$(DEV_DIR) HYPRDORA_SHELL=$(CURDIR)/shell Hyprland --config $(CURDIR)/hypr/init.lua
 
 rpm iso:
 	@echo "make $@ is not implemented yet, see docs/roadmap.md" >&2
