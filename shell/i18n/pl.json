@@ -1,4 +1,5 @@
 {
+  "language.name": "Polski",
   "common.none": "Brak",
   "common.cancel": "Anuluj",
   "password.hide": "Ukryj hasło",
@@ -237,5 +238,22 @@
   "capture.recordingBody": "Zapisano w folderze Recordings.",
   "capture.open": "Otwórz",
   "capture.failed": "Nie udało się przechwycić ekranu",
-  "capture.failedBody": "Nie znaleziono działającego narzędzia ani kodera wideo."
+  "capture.failedBody": "Nie znaleziono działającego narzędzia ani kodera wideo.",
+  "settings.title": "Ustawienia",
+  "settings.idle": "Bezczynność i blokada",
+  "settings.language": "Język",
+  "settings.weather": "Pogoda",
+  "idle.dim": "Przyciemnij ekran po",
+  "idle.lock": "Zablokuj po",
+  "idle.suspend": "Uśpij na baterii po",
+  "idle.never": "Nigdy",
+  "idle.minutes": "{count} min",
+  "idle.seconds": "{count} s",
+  "language.auto": "Język systemu",
+  "weather.notSet": "Brak lokalizacji, pogoda jest ukryta",
+  "weather.search": "Wyszukaj miejscowość",
+  "weather.searching": "Szukam…",
+  "weather.noPlaces": "Nie znaleziono miejscowości",
+  "weather.searchFailed": "Nie udało się wyszukać. Sprawdź połączenie",
+  "weather.clearPlace": "Usuń lokalizację"
 }

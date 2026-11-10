@@ -1,4 +1,5 @@
 {
+  "language.name": "English",
   "common.none": "None",
   "common.cancel": "Cancel",
   "password.hide": "Hide password",
@@ -235,5 +236,22 @@
   "capture.recordingBody": "Saved to Recordings.",
   "capture.open": "Open",
   "capture.failed": "Capture failed",
-  "capture.failedBody": "No working capture tool or video encoder was found."
+  "capture.failedBody": "No working capture tool or video encoder was found.",
+  "settings.title": "Settings",
+  "settings.idle": "Idle and lock",
+  "settings.language": "Language",
+  "settings.weather": "Weather",
+  "idle.dim": "Dim the screen after",
+  "idle.lock": "Lock after",
+  "idle.suspend": "Suspend on battery after",
+  "idle.never": "Never",
+  "idle.minutes": "{count} min",
+  "idle.seconds": "{count} s",
+  "language.auto": "System language",
+  "weather.notSet": "No location, the weather is hidden",
+  "weather.search": "Search for a place",
+  "weather.searching": "Searching…",
+  "weather.noPlaces": "No places found",
+  "weather.searchFailed": "Search failed. Check the connection",
+  "weather.clearPlace": "Remove location"
 }

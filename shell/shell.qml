@@ -12,8 +12,9 @@ import qs.modules.capture
 import qs.services
 
 ShellRoot {
-    // Singletons are created on first use, and this one has no UI that would use it.
+    // Singletons are created on first use, and these have no UI that would use them.
     readonly property var wallpaper: Wallpaper
+    readonly property var idle: Idle
 
     Variants {
         model: Quickshell.screens

@@ -51,6 +51,7 @@ Findings from testing on real hardware. Each one explains code that may otherwis
 - `FileView` with `preload: false` does not load the file after `reload()`.
 - A QML property cannot start with `on` followed by a capital letter, because it is treated as a signal handler.
 - Icons from a theme require `//@ pragma IconTheme`.
+- In Quickshell 0.2.1, changing `timeout` on a running `IdleMonitor` has no effect until `enabled` is turned off and on again, so `services/Idle.qml` does that whenever a timeout changes. Verified in a nested Hyprland.
 
 ## Input
 

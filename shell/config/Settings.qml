@@ -39,6 +39,11 @@ Singleton {
 
     readonly property int statsInterval: 2000
 
+    // Idle steps in seconds; 0 turns a step off. Suspend applies only on battery.
+    readonly property int idleDim: overrides.idle?.dim ?? 240
+    readonly property int idleLock: overrides.idle?.lock ?? 300
+    readonly property int idleSuspend: overrides.idle?.suspend ?? 900
+
     // Command that runs a program in a terminal; the program is appended.
     readonly property var terminalCommand: overrides.terminalCommand ?? ["alacritty", "--class", "systui", "-e"]
     readonly property var btopCommand: [...terminalCommand, "btop"]
@@ -58,8 +63,37 @@ Singleton {
         return {};
     }
 
+    /**
+     * Saves a top-level setting to settings.json and applies it.
+     * @param {string} key  top-level key
+     * @param {var} value  new value, or undefined to remove the key
+     */
+    function set(key, value) {
+        const next = Object.assign({}, overrides);
+        if (value === undefined)
+            delete next[key];
+        else
+            next[key] = value;
+        overrides = next;
+        file.setText(JSON.stringify(next, null, 2) + "\n");
+    }
+
+    /**
+     * Saves one value inside an object setting, keeping its other values.
+     * @param {string} key  top-level key of the object
+     * @param {string} name  value inside it
+     * @param {var} value  new value
+     */
+    function setIn(key, name, value) {
+        const next = Object.assign({}, overrides[key] ?? {});
+        next[name] = value;
+        set(key, next);
+    }
+
     FileView {
+        id: file
         path: `${root.configDir}/hyprdora/settings.json`
+        atomicWrites: true
         blockLoading: true
         printErrors: false
         watchChanges: true

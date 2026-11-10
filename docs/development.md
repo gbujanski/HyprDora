@@ -32,19 +32,22 @@ An error in a user file appears as a notification, and the defaults still load. 
 
 ## Settings
 
-`~/.config/hyprdora/settings.json` overrides the defaults in `shell/config/Settings.qml`. Every key is optional, and saving the file applies it.
+`~/.config/hyprdora/settings.json` overrides the defaults in `shell/config/Settings.qml`. Every key is optional, and saving the file applies it. The settings button in the action center writes the same file, so everyday settings need no editing.
 
 ```json
 {
   "language": "auto",
   "weather": { "place": "Warsaw", "latitude": 52.23, "longitude": 21.01 },
+  "idle": { "dim": 240, "lock": 300, "suspend": 900 },
   "terminalCommand": ["alacritty", "--class", "systui", "-e"],
   "brightnessMinimum": 0.016,
   "calendarScrollDelay": 100
 }
 ```
 
-Weather stays hidden until `weather` has coordinates.
+Weather stays hidden until `weather` has coordinates. `idle` times are in seconds, and 0 turns a step off; suspend applies only on battery.
+
+To add a settings category, add an entry to `categories` in `modules/actioncenter/settings/SettingsMenu.qml` and a component that reads `Settings` and saves with `Settings.set` or `Settings.setIn`.
 
 ## Adding a language
 

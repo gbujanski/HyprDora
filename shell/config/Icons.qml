@@ -30,6 +30,12 @@ Singleton {
     }
     readonly property string wifiOff: glyph(0xF092E)
     readonly property string lock: glyph(0xF033E)
+    readonly property string settings: glyph(0xF0493)
+    readonly property string idle: glyph(0xF04B2)
+    readonly property string language: glyph(0xF05CA)
+    readonly property string place: glyph(0xF034E)
+    readonly property string search: glyph(0xF0349)
+    readonly property string loading: glyph(0xF0772)
     readonly property string trash: glyph(0xF0A7A)
     readonly property string close: glyph(0xF0156)
     readonly property string camera: glyph(0xF0100)

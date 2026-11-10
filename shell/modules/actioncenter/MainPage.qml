@@ -42,12 +42,25 @@ Column {
         width: parent.width
         height: 30
 
-        IconButton {
+        Row {
             anchors.right: parent.right
-            icon: Icons.camera
-            iconColor: Theme.muted
-            tooltip: I18n.t("capture.title")
-            onClicked: Capture.open()
+            spacing: 2
+
+            IconButton {
+                icon: Icons.camera
+                iconColor: Theme.muted
+                tooltip: I18n.t("capture.title")
+                onClicked: Capture.open()
+            }
+
+            IconButton {
+                id: settingsButton
+                icon: Icons.settings
+                iconColor: Panels.settingsMenuOpen ? Theme.accent : Theme.muted
+                tooltip: I18n.t("settings.title")
+                Component.onCompleted: Panels.settingsButton = settingsButton
+                onClicked: Panels.settingsMenuOpen = !Panels.settingsMenuOpen
+            }
         }
     }
 

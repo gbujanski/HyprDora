@@ -5,6 +5,7 @@ import qs.config
 import qs.components
 import qs.services
 import qs.modules.actioncenter.pages
+import qs.modules.actioncenter.settings
 
 Scope {
     id: root
@@ -99,9 +100,11 @@ Scope {
                     }
                 }
 
-                // Esc returns from a subpage to the main view, and closes the panel from there.
+                // Esc closes the settings menu, returns from a subpage to the main view, and closes the panel from there.
                 Keys.onEscapePressed: {
-                    if (Panels.actionCenterPage !== "main")
+                    if (Panels.settingsMenuOpen)
+                        Panels.settingsMenuOpen = false;
+                    else if (Panels.actionCenterPage !== "main")
                         Panels.actionCenterPage = "main";
                     else
                         Panels.closeActionCenter();
@@ -111,6 +114,7 @@ Scope {
                 MouseArea {
                     anchors.fill: parent
                     acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
+                    onClicked: Panels.settingsMenuOpen = false
                 }
 
                 Item {
@@ -156,6 +160,8 @@ Scope {
                         contentHeight: pageLoader.item?.implicitHeight ?? 0
                         clip: true
                         boundsBehavior: Flickable.StopAtBounds
+                        // The settings menu is placed by the button, so it would be left behind by scrolling.
+                        onContentYChanged: Panels.settingsMenuOpen = false
 
                         Loader {
                             id: pageLoader
@@ -231,6 +237,11 @@ Scope {
                     id: displaysPage
                     DisplaysPage {}
                 }
+            }
+
+            SettingsMenu {
+                anchors.fill: parent
+                opacity: panel.opacity
             }
         }
     }

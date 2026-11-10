@@ -8,6 +8,7 @@ Rectangle {
     property string text: ""
     property string trailingIcon: ""
     property bool selected: false
+    readonly property bool hovered: area.containsMouse
 
     signal clicked
 

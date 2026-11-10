@@ -13,6 +13,15 @@ Singleton {
     property var actionCenterScreen: null
     property string actionCenterPage: "main"
 
+    // Settings menu inside the action center, opened under its button.
+    property bool settingsMenuOpen: false
+    property Item settingsButton: null
+    property string settingsCategory: ""
+
+    onActionCenterOpenChanged: settingsMenuOpen = false
+    onActionCenterPageChanged: settingsMenuOpen = false
+    onSettingsMenuOpenChanged: settingsCategory = ""
+
     property bool calendarOpen: false
     property var calendarScreen: null
 
@@ -135,6 +144,19 @@ Singleton {
         }
         function isOpen(): bool {
             return root.calendarOpen;
+        }
+    }
+
+    IpcHandler {
+        target: "settings"
+
+        function open(category: string): void {
+            root.openActionCenter(null, "main");
+            root.settingsMenuOpen = true;
+            root.settingsCategory = category;
+        }
+        function close(): void {
+            root.settingsMenuOpen = false;
         }
     }
 
