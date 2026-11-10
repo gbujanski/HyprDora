@@ -121,9 +121,11 @@ Rectangle {
                 TextButton {
                     required property var modelData
                     text: modelData.text
+                    // The action can close the notification and destroy this card, so it runs last.
                     onClicked: {
-                        modelData.invoke();
+                        const action = modelData;
                         root.activated();
+                        action.invoke();
                     }
                 }
             }
