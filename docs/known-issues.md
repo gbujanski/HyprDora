@@ -10,6 +10,10 @@
 
 **Priority: low.** Default applications are set during installation, and changing them later needs a terminal and `xdg-mime`. The shell should offer a picker for links, video, images, PDF and text files.
 
+### Installer looks stuck during post-install setup
+
+**Priority: low, nice to have.** The setup script runs for several minutes on the "post-installation scripts" step, with no sign of what is happening, so the installer looks frozen. To be decided after more important work. One option is to show the script's progress on a text console with `chvt`, which is untested with the Wayland-based installer. Another is to move large packages to `%packages`, so they appear on the progress bar.
+
 ### Laptop wakes up after suspend on command
 
 **Priority: low. Cause unknown.** On the MacBook, suspending by command woke the laptop after 5-7 seconds, while suspending by closing the lid worked for hours. The keyboard and touchpad have wakeup enabled, so the main hypothesis is touch.
