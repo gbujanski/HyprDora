@@ -18,12 +18,13 @@ PYTHON_FILES := $(shell find shell/scripts -name '*.py' 2>/dev/null)
 LUA_FILES := $(shell find hypr -name '*.lua' 2>/dev/null)
 
 .DEFAULT_GOAL := help
-.PHONY: help dev lint lint-qml lint-shell lint-python lint-lua rpm iso
+.PHONY: help dev lint lint-qml lint-shell lint-python lint-lua rpm install iso
 
 help:
 	@echo "make dev    run the shell in a nested Hyprland"
 	@echo "make lint   run all linters on existing files"
 	@echo "make rpm    build RPM packages"
+	@echo "make install  build and install the hyprdora package on this system"
 	@echo "make iso    build the install ISO"
 
 lint: lint-qml lint-shell lint-python lint-lua
@@ -63,6 +64,11 @@ rpm:
 		tar -czf $(RPM_DIR)/SOURCES/hyprdora-$(VERSION).tar.gz --transform 's,^,hyprdora-$(VERSION)/,' -T -
 	rpmbuild -bb --define "_topdir $(RPM_DIR)" packaging/hyprdora.spec
 	@echo "Packages are in $(RPM_DIR)/RPMS/noarch"
+
+# The running shell and Hyprland reload changed files by themselves.
+install: rpm
+	sudo dnf reinstall -y $(RPM_DIR)/RPMS/noarch/hyprdora-$(VERSION)-*.noarch.rpm || \
+		sudo dnf install -y $(RPM_DIR)/RPMS/noarch/hyprdora-$(VERSION)-*.noarch.rpm
 
 iso: rpm
 	rm -rf $(ISO_DIR)/content
