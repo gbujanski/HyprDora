@@ -222,12 +222,53 @@ Stages 0 to 5 are done. Each stage ends with something that can be run and judge
 | 3 | Displays: snap to the center of a neighbor's edge, as a third option next to the two corners, so an ultrawide lines up with the laptop. Then the capture tool (section 6) | a screen can be centered on an edge; screenshot and recording work from the panel and shortcuts |
 | 4 | RPM packages (`hyprdora`, personal layer) built locally | package installs on clean Fedora in a VM |
 | 5 | Kickstart and ISO (`mkksiso`), first-login step, tests in virt-manager | ISO produces a working desktop in a VM |
-| 6 | Real hardware: MacBook, then the AMD desktop, then the Legion (NVIDIA, Secure Boot) | all three work |
-| 7 | Later shell work: notification history across restarts, idle inhibitor (after adding idle rules), default-application picker, automatic shell restart | as needed |
+| 6 | Real hardware: MacBook, then the AMD desktop, then the Legion (NVIDIA, Secure Boot) | MacBook done; the AMD desktop and the Legion are postponed |
+| 7 | The backlog below | as needed |
 
 The MacBook is reinstalled only after the ISO passes VM tests and a backup is made.
 
 `qs -c hyprdora` finds the packaged shell through `/etc/xdg/quickshell/hyprdora`. The login session starts Hyprland with `--config /usr/share/hyprdora/hypr/init.lua`, so the desktop works before any user file exists.
+
+### Backlog
+
+Agreed on 2026-11-11, in this order. Items marked *plan first* start with a short design to approve.
+
+Safety and stability:
+
+- [x] Automatic shell restart, since the idle lock lives in the shell
+- [ ] Power button: a short press does nothing, holding it for 2 seconds powers off
+- [ ] Test a rollback to a snapper snapshot
+
+Quick fixes:
+
+- [ ] `SUPER + B` opens the browser
+- [ ] Function keys: check the key codes of media keys, add keyboard backlight, F3 (Mission Control) and F4 (Launchpad)
+- [ ] Center the capture and settings icons in the action center
+- [ ] Spinner while scanning for Wi-Fi networks and Bluetooth devices
+- [ ] Fedora Media Writer installed by default
+
+Medium:
+
+- [ ] Resize and move a capture selection by its edges instead of drawing it again
+- [ ] Easier switching of the audio output and microphone (*plan first*)
+- [ ] Ethernet icon, shown only while a cable is connected (built without hardware to test)
+- [ ] VPN connections set up in the settings, with an icon shown only while a VPN is active
+- [ ] Bluetooth headset options: profile, codec, noise reduction where the headset allows it (research)
+- [ ] Icons while an application uses the microphone or the camera
+- [ ] Icon while an application records or shares the screen
+- [ ] Idle pause ("coffee"): a toggle that stops dimming, locking and suspending for a while
+- [ ] Notice on the bar when system updates are available
+- [ ] Keyboard shortcut cheat sheet built from the descriptions in `binds.lua` (*plan first*)
+
+Large:
+
+- [ ] New application launcher (*plan first*)
+- [ ] Light and dark theme in the settings, under Appearance
+- [ ] Calendar events from Nextcloud first, then Google and Microsoft: preview on hover, adding events if possible. The Nextcloud server is reachable only from the home network or over VPN. Options first, then a decision whether it is worth it (research)
+- [ ] Encrypted home directory unlocked by the login password, with no second password at boot (research)
+- [ ] Default applications in the settings (*plan first*)
+
+Later: computer name, an installer that does not look stuck, notification history across restarts.
 
 ## 12. Resolved decisions
 
