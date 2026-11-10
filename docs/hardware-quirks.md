@@ -30,6 +30,10 @@ Findings from testing on real hardware. Each one explains code that may otherwis
 - The laptop screen is always saved as enabled, so booting without an external monitor cannot give a black screen. "External only" therefore lasts until the session ends.
 - A watchdog outside the shell reverts a monitor change if the shell dies before it is confirmed.
 
+## Camera
+
+- The FaceTime HD camera in the MacBook Air 7,2 (`14e4:1570`) has no driver in Fedora. `akmod-facetimehd` from the `mulderje/facetimehd-kmod` COPR builds one, and `facetimehd-firmware` downloads the firmware from Apple's driver package during installation. Verified on the MacBook: `/dev/video0` at 1280x720 streams frames.
+
 ## Power and backlight
 
 - UPower's aggregate device has no health data. It comes from the physical battery.

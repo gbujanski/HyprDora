@@ -68,6 +68,11 @@ install_drivers() {
     if grep -i 'network controller' <<<"$devices" | grep -qi broadcom; then
         dnf install -y broadcom-wl akmod-wl kernel-devel || return 1
     fi
+    # FaceTime HD camera in MacBooks from 2013 to 2017. Its driver and firmware tool come from a COPR.
+    if grep -q '14e4:1570' <<<"$devices"; then
+        dnf copr enable -y mulderje/facetimehd-kmod &&
+            dnf install -y akmod-facetimehd facetimehd-firmware kernel-devel || return 1
+    fi
 }
 
 # Nested in the root subvolume, so system snapshots leave containers out.
