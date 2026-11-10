@@ -26,6 +26,8 @@ Singleton {
     property string watchdogToken: ""
     property int changeCounter: 0
     property bool saveAfterFetch: false
+    // Connector names seen by the last refresh, to notice a monitor being plugged in.
+    property var knownNames: []
 
     readonly property var selected: draft.find(m => m.name === selectedName) ?? draft[0] ?? null
     readonly property var activeDraft: draft.filter(m => m.enabled && !m.mirrorOf)
@@ -292,9 +294,90 @@ Singleton {
      * @returns {list}
      */
     function layoutWithoutOverlap(list) {
+        return hasOverlap(list) ? arrangeInRow(list) : normalized(list);
+    }
+
+    /**
+     * Tells whether any two active screens overlap.
+     * @param {list} list  monitor entries
+     * @returns {bool}
+     */
+    function hasOverlap(list) {
         const active = list.filter(m => m.enabled && !m.mirrorOf);
-        const overlaps = active.some((a, i) => active.slice(i + 1).some(b => a.x < b.x + logicalWidth(b) && b.x < a.x + logicalWidth(a) && a.y < b.y + logicalHeight(b) && b.y < a.y + logicalHeight(a)));
-        return overlaps ? arrangeInRow(list) : normalized(list);
+        return active.some((a, i) => active.slice(i + 1).some(b => a.x < b.x + logicalWidth(b) && b.x < a.x + logicalWidth(a) && a.y < b.y + logicalHeight(b) && b.y < a.y + logicalHeight(a)));
+    }
+
+    /**
+     * Reads the layout saved in monitors.lua.
+     * @returns {object} entries keyed by the rule's output, such as "desc:..." or a connector name
+     */
+    function savedLayout() {
+        const layout = {};
+        for (const line of savedFile.text().split("\n")) {
+            const output = /output = "([^"]+)", disabled = (true|false)/.exec(line);
+            if (!output)
+                continue;
+            if (output[2] === "true") {
+                layout[output[1]] = {
+                    enabled: false
+                };
+                continue;
+            }
+            const mode = /mode = "(\d+)x(\d+)@([\d.]+)"/.exec(line);
+            const position = /position = "(-?\d+)x(-?\d+)"/.exec(line);
+            const scale = /scale = ([\d.]+)/.exec(line);
+            const mirror = /mirror = "([^"]*)"/.exec(line);
+            const transform = /transform = (\d+)/.exec(line);
+            layout[output[1]] = {
+                enabled: true,
+                width: mode ? Number(mode[1]) : 0,
+                height: mode ? Number(mode[2]) : 0,
+                refresh: mode ? Number(mode[3]) : 0,
+                // null for "auto", which the file uses for a laptop screen forced back on.
+                x: position ? Number(position[1]) : null,
+                y: position ? Number(position[2]) : null,
+                scale: scale ? Number(scale[1]) : 1,
+                mirrorOf: mirror ? mirror[1] : "",
+                transform: transform ? Number(transform[1]) : 0
+            };
+        }
+        return layout;
+    }
+
+    /**
+     * Applies the saved layout to the connected monitors.
+     * @returns {list or null when a monitor has no saved entry or no exact position}
+     */
+    function savedTargets() {
+        const layout = savedLayout();
+        const targets = [];
+        for (const m of monitors) {
+            const entry = layout[`desc:${m.description}`] ?? layout[m.name];
+            if (!entry || (entry.enabled && !entry.mirrorOf && entry.x === null))
+                return null;
+            const target = Object.assign({}, m, entry);
+            if (!(target.width > 0)) {
+                target.width = m.width;
+                target.height = m.height;
+                target.refresh = m.refresh;
+            }
+            targets.push(target);
+        }
+        return targets.length > 0 ? targets : null;
+    }
+
+    /**
+     * Restores the saved layout after a monitor is plugged in. Rules applied at runtime, such as the
+     * one moving a lone laptop screen to 0x0, would otherwise outrank the saved ones.
+     */
+    function restoreSavedLayout() {
+        const targets = savedTargets();
+        if (!targets || validationError(targets) !== "")
+            return;
+        if (JSON.stringify(targets.map(rule)) === JSON.stringify(monitors.map(rule)))
+            return;
+        applier.command = applyCommand(orderedRules(targets));
+        applier.running = true;
     }
 
     /**
@@ -415,6 +498,12 @@ Singleton {
             }
         case "extend":
             {
+                // An extended layout stays as arranged, and coming from another mode restores the saved one.
+                if (copy.every(m => m.enabled) && monitors.every(m => !m.mirrorOf) && !hasOverlap(copy))
+                    return copy;
+                const saved = savedTargets();
+                if (saved && saved.every(m => m.enabled && !m.mirrorOf) && !hasOverlap(saved))
+                    return saved;
                 let x = 0;
                 for (const m of [internal, ...externals]) {
                     enable(m);
@@ -581,6 +670,8 @@ Singleton {
                     console.warn("displays: unreadable hyprctl response");
                     return;
                 }
+                const plugged = root.knownNames.length > 0 && parsed.some(m => !root.knownNames.includes(m.name));
+                root.knownNames = parsed.map(m => m.name);
                 root.monitors = parsed;
                 if (!root.pending)
                     root.resetDraft();
@@ -590,6 +681,8 @@ Singleton {
                     root.saveAfterFetch = false;
                     root.save(parsed.map(root.savedRule));
                 }
+                if (plugged && !root.pending && !applier.running)
+                    root.restoreSavedLayout();
                 root.rescueIfNoActiveScreen();
                 root.normalizeSingleScreen();
             }
@@ -626,6 +719,8 @@ Singleton {
         path: root.configPath
         blockLoading: true
         printErrors: false
+        watchChanges: true
+        onFileChanged: reload()
         onSaveFailed: error => root.reportSaveError(error)
     }
 
