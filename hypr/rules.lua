@@ -35,6 +35,13 @@ hl.window_rule({
     animation = "none",
 })
 
+-- OnlyOffice opens its file dialogs at 0,0, under the bar.
+hl.window_rule({
+    name = "center-onlyoffice-dialogs",
+    match = { class = "^DesktopEditors$" },
+    center = true,
+})
+
 -- An animated fade-out would appear in the capture.
 hl.layer_rule({
     name = "capture-no-animation",
