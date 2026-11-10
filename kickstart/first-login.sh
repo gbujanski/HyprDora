@@ -23,24 +23,6 @@ set_keyboard_layout() {
     hyprctl reload >/dev/null
 }
 
-# Adds the wallpaper action to a copy of Thunar's default actions.
-add_wallpaper_action() {
-    local file=$CONFIG/Thunar/uca.xml
-    [ -e "$file" ] && return 0
-
-    mkdir -p "$CONFIG/Thunar"
-    sed 's|</actions>|  <action>\
-    <icon>preferences-desktop-wallpaper</icon>\
-    <name>Set as wallpaper</name>\
-    <unique-id>hyprdora-set-wallpaper</unique-id>\
-    <command>qs -c hyprdora ipc call wallpaper set %f</command>\
-    <description>Use this image as the wallpaper</description>\
-    <patterns>*</patterns>\
-    <image-files/>\
-  </action>\
-</actions>|' /etc/xdg/Thunar/uca.xml > "$file"
-}
-
 # Makes VS Code keep its secrets in GNOME Keyring.
 configure_code() {
     command -v code >/dev/null || return 0
@@ -64,7 +46,6 @@ install_oh_my_zsh() {
 status=0
 xdg-user-dirs-update || status=1
 set_keyboard_layout || status=1
-add_wallpaper_action || status=1
 configure_code || status=1
 install_oh_my_zsh || status=1
 

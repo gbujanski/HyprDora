@@ -56,6 +56,8 @@ Then choose the **HyprDora** session on the login screen.
 | `/usr/lib/systemd/user/hyprdora-session.target` | activates `graphical-session.target`, which portals depend on |
 | `/usr/libexec/hyprdora` | system setup run by the kickstart, and the first-login step |
 | `/etc/xdg/mimeapps.list` | default applications |
+| `/usr/libexec/hyprdora/hyprdora-portal`, `/etc/xdg/xdg-desktop-portal/hyprland-portals.conf` | wallpaper portal backend and the portal choice that enables it |
+| `/usr/share/nautilus-python/extensions/hyprdora.py` | "Open in Terminal" in Nautilus |
 | `/etc/dnf/libdnf5-plugins/actions.d/hyprdora-snapper.actions` | a snapshot before and after every `dnf` transaction |
 | `/etc/alacritty/alacritty.toml`, `/etc/sddm.conf.d/hyprdora.conf` | system-wide defaults |
 
@@ -63,6 +65,6 @@ The session needs no files in the home directory. User files in `~/.config/hypr`
 
 ## First login
 
-The first session prepares the home directory: user folders, the keyboard layout chosen in the installer, the Thunar wallpaper action, VS Code's keyring setting, and Oh My Zsh. Existing files are left alone. If a step fails, for example without a network connection, the step runs again at the next login.
+The first session prepares the home directory: user folders, the keyboard layout chosen in the installer, VS Code's keyring setting, and Oh My Zsh. Existing files are left alone. If a step fails, for example without a network connection, the step runs again at the next login.
 
 The git identity is not set, because this step has no way to ask for it.

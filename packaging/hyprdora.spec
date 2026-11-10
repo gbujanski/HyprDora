@@ -58,12 +58,11 @@ Recommends:     openh264
 # Applications
 Requires:       alacritty
 Requires:       btop
-Requires:       Thunar
-Requires:       thunar-archive-plugin
-Requires:       thunar-volman
-Requires:       file-roller
-Requires:       tumbler
-Requires:       ffmpegthumbnailer
+Requires:       nautilus
+Requires:       nautilus-python
+Requires:       gst-thumbnailers
+Requires:       gvfs-mtp
+Requires:       gvfs-smb
 Requires:       loupe
 Requires:       showtime
 Requires:       papers
@@ -149,6 +148,11 @@ install -Dpm 644 configs/sddm/hyprdora.conf %{buildroot}%{_sysconfdir}/sddm.conf
 install -Dpm 644 configs/session/hyprdora.desktop %{buildroot}%{_datadir}/wayland-sessions/hyprdora.desktop
 install -Dpm 644 configs/gtk/90_hyprdora.gschema.override %{buildroot}%{_datadir}/glib-2.0/schemas/90_hyprdora.gschema.override
 install -Dpm 644 configs/dnf/hyprdora-snapper.actions %{buildroot}%{_sysconfdir}/dnf/libdnf5-plugins/actions.d/hyprdora-snapper.actions
+install -Dpm 755 configs/portal/hyprdora-portal.py %{buildroot}%{_libexecdir}/%{name}/hyprdora-portal
+install -Dpm 644 configs/portal/hyprdora.portal %{buildroot}%{_datadir}/xdg-desktop-portal/portals/hyprdora.portal
+install -Dpm 644 configs/portal/org.freedesktop.impl.portal.desktop.hyprdora.service %{buildroot}%{_datadir}/dbus-1/services/org.freedesktop.impl.portal.desktop.hyprdora.service
+install -Dpm 644 configs/portal/hyprland-portals.conf %{buildroot}%{_sysconfdir}/xdg/xdg-desktop-portal/hyprland-portals.conf
+install -Dpm 644 configs/nautilus/hyprdora.py %{buildroot}%{_datadir}/nautilus-python/extensions/hyprdora.py
 install -Dpm 644 configs/mimeapps.list %{buildroot}%{_sysconfdir}/xdg/mimeapps.list
 install -Dpm 755 kickstart/system-setup.sh %{buildroot}%{_libexecdir}/%{name}/system-setup.sh
 install -Dpm 755 kickstart/first-login.sh %{buildroot}%{_libexecdir}/%{name}/first-login.sh
@@ -171,6 +175,11 @@ fi
 %doc README.md
 %{_datadir}/%{name}
 %{_libexecdir}/%{name}
+%{_datadir}/nautilus-python/extensions/hyprdora.py
+%{_datadir}/xdg-desktop-portal/portals/hyprdora.portal
+%{_datadir}/dbus-1/services/org.freedesktop.impl.portal.desktop.hyprdora.service
+%dir %{_sysconfdir}/xdg/xdg-desktop-portal
+%config(noreplace) %{_sysconfdir}/xdg/xdg-desktop-portal/hyprland-portals.conf
 %config(noreplace) %{_sysconfdir}/xdg/mimeapps.list
 %config(noreplace) %{_sysconfdir}/dnf/libdnf5-plugins/actions.d/hyprdora-snapper.actions
 %{_datadir}/fonts/%{name}

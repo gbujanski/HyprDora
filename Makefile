@@ -14,7 +14,7 @@ QMLLINT_FLAGS := --import disable --unqualified disable --unresolved-type disabl
 
 QML_FILES := $(shell find shell -name '*.qml' 2>/dev/null)
 SHELL_FILES := $(shell find kickstart -name '*.sh' 2>/dev/null)
-PYTHON_FILES := $(shell find shell/scripts -name '*.py' 2>/dev/null)
+PYTHON_FILES := $(shell find shell/scripts configs/nautilus configs/portal -name '*.py' 2>/dev/null)
 LUA_FILES := $(shell find hypr -name '*.lua' 2>/dev/null)
 
 .DEFAULT_GOAL := help

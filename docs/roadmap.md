@@ -37,7 +37,7 @@ Shell name: `qs -c hyprdora`. User settings: `~/.config/hyprdora/settings.json`.
 - Shell and its dependencies: `quickshell`, `brightnessctl`, `playerctl`, `adwaita-sans-fonts`, `python3-gobject`, `libnotify`, JetBrainsMono Nerd Font (pinned version, OFL text included)
 - System: PipeWire, WirePlumber, BlueZ, NetworkManager with Wi-Fi, `wpa_supplicant`, `iw`, `nmtui`, `power-profiles-daemon`, `gnome-keyring`, `gvfs`, `xdg-user-dirs`, CUPS, `system-config-printer`
 - Desktop tools: `rofi`, `cliphist`, `wl-clipboard`, `grim`, `swappy`, `wf-recorder`
-- Applications: `alacritty`, `btop`, Thunar with plugins, `file-roller`, `tumbler`, `ffmpegthumbnailer`, Loupe, Showtime, Papers, `gnome-calculator`, `gnome-text-editor`, `gnome-disk-utility`
+- Applications: `alacritty`, `btop`, Nautilus with a small extension (Set as Wallpaper, Open in Terminal), `gvfs-mtp`, `gvfs-smb`, Loupe, Showtime, Papers, `gnome-calculator`, `gnome-text-editor`, `gnome-disk-utility`
 - Base tools: `git`, `curl`, `wget`, `tar`, `unzip`, `p7zip`, `pciutils`
 - Look and login: Papirus, Bibata Modern Ice (24), dark GTK theme, wallpaper, SDDM with the Hyprdora theme
 - Snapshots: `snapper`, a `dnf5` action that takes a snapshot around each transaction, `btrfs-assistant`
@@ -59,7 +59,7 @@ Shell name: `qs -c hyprdora`. User settings: `~/.config/hyprdora/settings.json`.
 |---|---|
 | kickstart | repositories, drivers, system services, snapper, `/var/lib/docker` subvolume, keyring PAM |
 | package | applications, shell, default configs, default applications, themes |
-| first login | keyboard layout, Thunar action, Oh My Zsh, `xdg-user-dirs-update` |
+| first login | keyboard layout, Oh My Zsh, `xdg-user-dirs-update` |
 
 ## 4. Shell
 
@@ -79,7 +79,7 @@ Anything that needs logic and can run in QML is written in QML. External program
 | Today | After the move |
 |---|---|
 | `screenshot.sh` | capture service in QML (section 6) |
-| `set-wallpaper.sh` | `Wallpaper` service: `hyprctl hyprpaper` plus writing `hyprpaper.conf`. The Thunar action calls `qs -c hyprdora ipc call wallpaper set %f` |
+| `set-wallpaper.sh` | `Wallpaper` service: `hyprctl hyprpaper` plus writing `hyprpaper.conf`. The Nautilus extension calls `qs -c hyprdora ipc call wallpaper set %f` |
 | `save-monitors.py` | stage 2, with the move to Lua: `FileView` writes all of `monitors.lua` atomically and keeps the previous version as `.bak`. The block merging is no longer needed, because the file is fully generated |
 | `dev-*.sh`, `install.sh`, `uninstall.sh` | removed, replaced by `make dev` and the RPM |
 
@@ -88,6 +88,8 @@ Verified on 2026-11-08 under `qs`: atomic `FileView` writes and XDG paths from `
 **Two Python helpers stay, because QML cannot do their job:**
 
 - `bt-agent.py` exports a pairing agent object on D-Bus, and QML cannot export D-Bus objects.
+- `hyprdora-portal` is the wallpaper portal backend, so "Set as Background" in Nautilus, Loupe and other apps changes the HyprDora wallpaper. It exports a D-Bus object too.
+- The Nautilus extension adds "Open in Terminal"; Nautilus loads extensions only in Python or C.
 - `nm-connect.py` sends the Wi-Fi password over D-Bus. `Quickshell.Networking` does not accept a password, and passing it to `nmcli` as an argument would expose it in the process list.
 
 **Shell stays only where the shell is not running:** kickstart `%post` and the first-login step.
@@ -236,4 +238,4 @@ The MacBook is reinstalled only after the ISO passes VM tests and a backup is ma
 | Interface language | English by default in code; `auto` setting; `pl.json` ships |
 | License | MIT; wallpaper and SDDM theme are the author's own work; Nerd Font under OFL with its license included |
 | Automated tests | none; linters and a manual checklist |
-| Scripts | logic in QML; Python only for the two D-Bus helpers; shell only outside the running desktop |
+| Scripts | logic in QML; Python only where QML cannot reach (D-Bus objects, the Nautilus extension); shell only outside the running desktop |
