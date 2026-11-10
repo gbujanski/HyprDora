@@ -5,8 +5,8 @@ import Quickshell.Services.UPower
 import qs.config
 import qs.services
 
-// Low-battery warnings sent as regular notifications, so they reach toasts and history.
-// Each threshold warns once per discharge; plugging in closes the warning and resets the state.
+// Low-battery warnings shown as toasts that stay until closed. They stay out of the history, so an old
+// warning never lingers there. Each threshold warns once per discharge; plugging in closes the warning.
 Scope {
     id: root
 
@@ -14,11 +14,13 @@ Scope {
     property int warned: 0
     property int notificationId: 0
 
-    // The level is 0 until UPower data loads, which would be a false alarm.
-    readonly property bool ready: Power.hasBattery && (Power.battery?.ready ?? false)
+    // The level is 0 until UPower data loads, which would be a false alarm. Translations load after
+    // startup too, and a warning sent before them would have no text.
+    readonly property bool ready: I18n.loaded && Power.hasBattery && (Power.battery?.ready ?? false)
     readonly property bool discharging: ready && UPower.onBattery && !Power.charging
     readonly property int severity: !discharging ? 0 : Power.level <= Settings.batteryCritical ? 2 : Power.level <= Settings.batteryLow ? 1 : 0
 
+    onReadyChanged: evaluate()
     onSeverityChanged: evaluate()
     onDischargingChanged: evaluate()
     Component.onCompleted: evaluate()
@@ -50,8 +52,8 @@ Scope {
             percent,
             time
         }) + " " + (critical ? I18n.t("battery.warning.criticalBody") : I18n.t("battery.warning.lowBody"));
-        // Neither level expires on its own, so it cannot be missed. Critical also bypasses Do Not Disturb.
-        const command = ["notify-send", "--print-id", `--app-name=${I18n.t("battery.appName")}`, `--icon=${critical ? "battery-empty" : "battery-caution"}`, `--urgency=${critical ? "critical" : "normal"}`, "--expire-time=0"];
+        // Neither level expires on its own, so it cannot be missed, and both show during Do Not Disturb.
+        const command = ["notify-send", "--print-id", "--transient", `--hint=boolean:${Notifications.ignoreDndHint}:true`, `--app-name=${I18n.t("battery.appName")}`, `--icon=${critical ? "battery-empty" : "battery-caution"}`, `--urgency=${critical ? "critical" : "normal"}`, "--expire-time=0"];
         // Critical replaces the low warning instead of adding a second one.
         if (notificationId > 0)
             command.push(`--replace-id=${notificationId}`);

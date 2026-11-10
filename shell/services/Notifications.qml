@@ -21,6 +21,9 @@ Singleton {
     // For relative times; updated only while the panel is open.
     property date now: new Date()
 
+    // Hint set by the shell's own warnings that must show during Do Not Disturb.
+    readonly property string ignoreDndHint: "x-hyprdora-ignore-dnd"
+
     readonly property var tracked: server.trackedNotifications.values
     readonly property var history: tracked.filter(n => !n.transient).reverse()
     readonly property int count: history.length
@@ -39,7 +42,7 @@ Singleton {
 
         const known = tracked.map(n => n.id);
         const active = popupIds.filter(id => known.includes(id));
-        const silenced = dnd && notification.urgency !== NotificationUrgency.Critical;
+        const silenced = dnd && notification.urgency !== NotificationUrgency.Critical && notification.hints[ignoreDndHint] !== true;
         if (silenced) {
             popupIds = active;
             if (notification.transient)
