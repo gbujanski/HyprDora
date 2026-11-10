@@ -39,6 +39,7 @@ An error in a user file appears as a notification, and the defaults still load. 
   "language": "auto",
   "weather": { "place": "Warsaw", "latitude": 52.23, "longitude": 21.01 },
   "idle": { "dim": 240, "lock": 300, "suspend": 900 },
+  "capture": { "systemAudio": false, "microphone": false },
   "terminalCommand": ["alacritty", "--class", "systui", "-e"],
   "brightnessMinimum": 0.016,
   "calendarScrollDelay": 100

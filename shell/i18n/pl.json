@@ -255,5 +255,9 @@
   "weather.searching": "Szukam…",
   "weather.noPlaces": "Nie znaleziono miejscowości",
   "weather.searchFailed": "Nie udało się wyszukać. Sprawdź połączenie",
-  "weather.clearPlace": "Usuń lokalizację"
+  "weather.clearPlace": "Usuń lokalizację",
+  "capture.systemAudioOn": "Dźwięk systemu jest nagrywany",
+  "capture.systemAudioOff": "Nagrywaj dźwięk systemu",
+  "capture.microphoneOn": "Mikrofon jest nagrywany",
+  "capture.microphoneOff": "Nagrywaj mikrofon"
 }

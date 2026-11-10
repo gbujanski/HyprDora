@@ -192,6 +192,24 @@ Variants {
 
                     IconButton {
                         anchors.verticalCenter: parent.verticalCenter
+                        visible: Capture.kind === "record"
+                        icon: Icons.volume(Settings.captureSystemAudio ? 1 : 0, !Settings.captureSystemAudio)
+                        iconColor: Settings.captureSystemAudio ? Theme.accent : Theme.muted
+                        tooltip: I18n.t(Settings.captureSystemAudio ? "capture.systemAudioOn" : "capture.systemAudioOff")
+                        onClicked: Settings.setIn("capture", "systemAudio", !Settings.captureSystemAudio)
+                    }
+
+                    IconButton {
+                        anchors.verticalCenter: parent.verticalCenter
+                        visible: Capture.kind === "record"
+                        icon: Icons.microphone(!Settings.captureMicrophone)
+                        iconColor: Settings.captureMicrophone ? Theme.accent : Theme.muted
+                        tooltip: I18n.t(Settings.captureMicrophone ? "capture.microphoneOn" : "capture.microphoneOff")
+                        onClicked: Settings.setIn("capture", "microphone", !Settings.captureMicrophone)
+                    }
+
+                    IconButton {
+                        anchors.verticalCenter: parent.verticalCenter
                         icon: Capture.kind === "record" ? Icons.video : Icons.camera
                         iconColor: !Capture.canCapture ? Theme.dim : Capture.kind === "record" ? Theme.error : Theme.accent
                         active: Capture.canCapture

@@ -253,5 +253,9 @@
   "weather.searching": "Searching…",
   "weather.noPlaces": "No places found",
   "weather.searchFailed": "Search failed. Check the connection",
-  "weather.clearPlace": "Remove location"
+  "weather.clearPlace": "Remove location",
+  "capture.systemAudioOn": "System sound is recorded",
+  "capture.systemAudioOff": "Record system sound",
+  "capture.microphoneOn": "Microphone is recorded",
+  "capture.microphoneOff": "Record the microphone"
 }

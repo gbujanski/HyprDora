@@ -1,6 +1,6 @@
 pragma Singleton
 
-import QtCore
+import QtCore as Core
 import QtQuick
 import Quickshell
 import Quickshell.Io
@@ -36,6 +36,12 @@ Singleton {
     property string recordingFile: ""
     property string pendingGeometry: ""
     property string pendingKind: ""
+    // wf-recorder options for sound, and the PipeWire modules loaded to mix two sources.
+    property var audioArgs: []
+    property var audioModules: []
+    readonly property string mixSink: "hyprdora_capture_mix"
+    // AAC rather than wf-recorder's default Opus, which many phones and chat apps do not play from MP4.
+    readonly property var audioCodec: ["-C", "aac"]
 
     readonly property bool canCapture: {
         switch (mode) {
@@ -214,7 +220,7 @@ Singleton {
      * @returns {string}
      */
     function directory(location, folder) {
-        return `${decodeURIComponent(String(StandardPaths.writableLocation(location)).replace("file://", ""))}/${folder}`;
+        return `${decodeURIComponent(String(Core.StandardPaths.writableLocation(location)).replace("file://", ""))}/${folder}`;
     }
 
     /**
@@ -228,7 +234,7 @@ Singleton {
 
     /** Takes the pending screenshot. */
     function startScreenshot() {
-        const folder = directory(StandardPaths.PicturesLocation, "Screenshots");
+        const folder = directory(Core.StandardPaths.PicturesLocation, "Screenshots");
         shooter.file = `${folder}/${timestamped("png")}`;
         shooter.command = ["grim", "-g", pendingGeometry, shooter.file];
         folderMaker.after = () => shooter.running = true;
@@ -243,7 +249,7 @@ Singleton {
     function launchRecorder(encoder) {
         recorder.encoder = encoder;
         recorder.stopping = false;
-        recorder.command = ["wf-recorder", "-y", "-g", pendingGeometry, "-f", recordingFile, ...encoders[encoder]];
+        recorder.command = ["wf-recorder", "-y", "-g", pendingGeometry, "-f", recordingFile, ...encoders[encoder], ...audioArgs];
         recorder.running = true;
         recordingStart = Date.now();
         elapsedSeconds = 0;
@@ -252,11 +258,47 @@ Singleton {
 
     /** Starts the pending recording. */
     function startRecording() {
-        const folder = directory(StandardPaths.MoviesLocation, "Recordings");
+        const folder = directory(Core.StandardPaths.MoviesLocation, "Recordings");
         recordingFile = `${folder}/${timestamped("mp4")}`;
-        folderMaker.after = () => launchRecorder(0);
+        folderMaker.after = () => prepareAudio(() => launchRecorder(0));
         folderMaker.command = ["mkdir", "-p", folder];
         folderMaker.running = true;
+    }
+
+    /**
+     * Picks the sound source for the recording. wf-recorder takes one source, so recording both the
+     * system sound and the microphone first mixes them into a temporary sink.
+     * @param {function} done  called when the source is ready
+     */
+    function prepareAudio(done) {
+        const output = Audio.sink?.name ?? "";
+        const input = Audio.source?.name ?? "";
+        const wantOutput = Settings.captureSystemAudio && output !== "";
+        const wantInput = Settings.captureMicrophone && input !== "";
+        audioModules = [];
+        if (!wantOutput && !wantInput) {
+            audioArgs = [];
+            done();
+            return;
+        }
+        if (!(wantOutput && wantInput)) {
+            audioArgs = [`--audio=${wantOutput ? `${output}.monitor` : input}`, ...audioCodec];
+            done();
+            return;
+        }
+        audioArgs = [`--audio=${mixSink}.monitor`, ...audioCodec];
+        audioSetup.after = done;
+        audioSetup.steps = [["pactl", "load-module", "module-null-sink", `sink_name=${mixSink}`, `sink_properties=device.description=${mixSink}`], ["pactl", "load-module", "module-loopback", `source=${output}.monitor`, `sink=${mixSink}`, "latency_msec=20"], ["pactl", "load-module", "module-loopback", `source=${input}`, `sink=${mixSink}`, "latency_msec=20"],
+            // A new sink may become the default output, which would silence the speakers.
+            ["pactl", "set-default-sink", output]];
+        audioSetup.next();
+    }
+
+    /** Unloads the modules that mixed the sound. */
+    function releaseAudio() {
+        for (const id of [...audioModules].reverse())
+            Quickshell.execDetached(["pactl", "unload-module", id]);
+        audioModules = [];
     }
 
     /** Stops the recording with SIGINT, so wf-recorder finalizes the file. */
@@ -391,6 +433,43 @@ Singleton {
         }
     }
 
+    // Runs pactl commands one after another and remembers the module ids they print.
+    Process {
+        id: audioSetup
+
+        property var steps: []
+        property var after: null
+
+        /** Runs the next command, or finishes when none are left. */
+        function next() {
+            if (steps.length === 0) {
+                after();
+                return;
+            }
+            command = steps[0];
+            steps = steps.slice(1);
+            running = true;
+        }
+
+        stdout: StdioCollector {
+            id: setupOutput
+        }
+
+        onExited: exitCode => {
+            const id = setupOutput.text.trim();
+            if (/^\d+$/.test(id))
+                root.audioModules = [...root.audioModules, id];
+            if (exitCode !== 0 && command[1] === "load-module") {
+                // Without the mix, the microphone alone is better than no sound at all.
+                console.warn("capture: audio mix failed:", command.join(" "));
+                root.releaseAudio();
+                root.audioArgs = [`--audio=${Audio.source?.name ?? ""}`, ...root.audioCodec];
+                steps = [];
+            }
+            next();
+        }
+    }
+
     Process {
         id: recorder
 
@@ -411,6 +490,7 @@ Singleton {
                 return;
             }
             root.recording = false;
+            root.releaseAudio();
             if (stopping || exitCode === 0) {
                 root.notify(I18n.t("capture.recordingSaved"), I18n.t("capture.recordingBody"), "", I18n.t("capture.open"), ["xdg-open", root.recordingFile]);
             } else {
@@ -436,7 +516,9 @@ Singleton {
                 canCapture: root.canCapture,
                 geometry: root.geometry(),
                 recording: root.recording,
-                elapsed: root.elapsedSeconds
+                elapsed: root.elapsedSeconds,
+                audioArgs: root.audioArgs,
+                audioModules: root.audioModules
             });
         }
         function setMode(value: string): void {

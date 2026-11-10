@@ -44,7 +44,7 @@ Shell name: `qs -c hyprdora`. User settings: `~/.config/hyprdora/settings.json`.
 
 **Personal layer (separate from the desktop):** `neovim`, VS Code, Zen + Flatseal (flatpak), Discord, FileZilla, GIMP, OnlyOffice (official repository), virt-manager, `docker-ce`, Python 3, Node.js, Java 25, .NET 10, zsh + Oh My Zsh (agnoster). Zen is set as the default browser in this layer.
 
-**Hardware-dependent (detected):** `wl` (Broadcom), full codecs and VA-API from RPM Fusion (`intel-media-driver` or `mesa-va-drivers-freeworld`), NVIDIA.
+**Hardware-dependent (detected):** `wl` (Broadcom), the FaceTime HD camera driver (`akmod-facetimehd` from the `mulderje/facetimehd-kmod` COPR), full codecs and VA-API from RPM Fusion (`intel-media-driver` or `mesa-va-drivers-freeworld`), NVIDIA.
 
 - Hybrid laptop: desktop on the Intel GPU, NVIDIA on demand (`prime-run`). NVIDIA as the only GPU: environment variables included in the config.
 - Secure Boot: a signing key is prepared only when Secure Boot is on and a module is built (NVIDIA, `wl`). In practice this means the Legion.
@@ -170,7 +170,7 @@ One tool for screenshots and screen recording, GNOME style. One icon-only button
 - The overlay and the action center hide before capture, so they never appear in the result.
 - `grim -g` and `wf-recorder -g` receive the coordinates. Window geometry comes from `hyprctl -j clients`.
 - **Screenshot:** saved to `Screenshots` in the XDG Pictures directory and copied to the clipboard. A notification offers editing in `swappy`. All of it is a QML service. The only inline shell is a one-line `sh -c` that redirects the file into `wl-copy`, because `Process` cannot send binary data to stdin.
-- **Recording:** saved to `Recordings` in the XDG Videos directory. No audio at first. A red indicator with elapsed time on the bar stops it without opening a panel. Stopped with SIGINT so the file is finalized. A notification opens the result. Hardware encoding through VA-API when available, because software encoding is heavy on the i5-5350U.
+- **Recording:** saved to `Recordings` in the XDG Videos directory. System sound and the microphone can be switched on in the toolbar, both off by default; recording both mixes them in a temporary PipeWire sink, because `wf-recorder` takes one source. A red indicator with elapsed time on the bar stops it without opening a panel. Stopped with SIGINT so the file is finalized. A notification opens the result. Hardware encoding through VA-API when available, because software encoding is heavy on the i5-5350U.
 
 ## 7. Code conventions
 

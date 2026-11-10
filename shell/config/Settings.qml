@@ -44,6 +44,10 @@ Singleton {
     readonly property int idleLock: overrides.idle?.lock ?? 300
     readonly property int idleSuspend: overrides.idle?.suspend ?? 900
 
+    // Sound recorded with the screen; both off by default.
+    readonly property bool captureSystemAudio: overrides.capture?.systemAudio ?? false
+    readonly property bool captureMicrophone: overrides.capture?.microphone ?? false
+
     // Command that runs a program in a terminal; the program is appended.
     readonly property var terminalCommand: overrides.terminalCommand ?? ["alacritty", "--class", "systui", "-e"]
     readonly property var btopCommand: [...terminalCommand, "btop"]
