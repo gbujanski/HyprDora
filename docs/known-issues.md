@@ -14,10 +14,6 @@
 
 **Priority: low, nice to have.** The setup script runs for several minutes on the "post-installation scripts" step, with no sign of what is happening, so the installer looks frozen. To be decided after more important work. One option is to show the script's progress on a text console with `chvt`, which is untested with the Wayland-based installer. Another is to move large packages to `%packages`, so they appear on the progress bar.
 
-### MacBook does not wake when the lid opens
-
-**Priority: medium. Cause unknown.** Closing the lid suspends to S3, but opening it does not wake the MacBook; a key or the power button does. `LID0` is enabled as a wakeup source in `/proc/acpi/wakeup` and in sysfs. Next step: check whether it woke on the previous system, then try one suspend cycle per change.
-
 ### Laptop wakes up after suspend on command
 
 **Priority: low. Cause unknown.** On the MacBook, suspending by command woke the laptop after 5-7 seconds, while suspending by closing the lid worked for hours. The keyboard and touchpad have wakeup enabled, so the main hypothesis is touch.
