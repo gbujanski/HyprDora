@@ -1,0 +1,14 @@
+[Unit]
+Description=HyprDora shell
+Documentation=https://github.com/gbujanski/HyprDora
+PartOf=graphical-session.target
+After=graphical-session.target
+Requisite=graphical-session.target
+
+[Service]
+ExecStart=/usr/bin/qs -c hyprdora
+# A crash brings the bar, notifications and the idle lock back within seconds.
+Restart=on-failure
+RestartSec=2
+# Programs opened from the shell, such as a recording from a notification, outlive a restart.
+KillMode=process

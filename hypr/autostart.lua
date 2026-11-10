@@ -16,8 +16,9 @@ end
 
 -- A nested session must not start a second copy of these, because they act on the real one.
 local session_only = {
-    -- Portals and the polkit agent need the environment set before graphical-session.target starts.
-    "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
+    -- Portals, the polkit agent and the shell service need the environment set before
+    -- graphical-session.target starts. The session target also starts the shell.
+    "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE"
         .. " && systemctl --user start hyprdora-session.target"
         .. " ; systemctl --user start hyprpolkitagent",
     "gnome-keyring-daemon --start --components=secrets",
@@ -29,10 +30,12 @@ local session_only = {
 }
 
 hl.on("hyprland.start", function()
-    hl.exec_cmd(paths.shell)
-    if not paths.dev then
-        for _, command in ipairs(session_only) do
-            hl.exec_cmd(command)
-        end
+    -- In a real session the shell runs as a service that restarts it after a crash.
+    if paths.dev then
+        hl.exec_cmd(paths.shell)
+        return
+    end
+    for _, command in ipairs(session_only) do
+        hl.exec_cmd(command)
     end
 end)

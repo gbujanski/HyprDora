@@ -54,6 +54,7 @@ Then choose the **HyprDora** session on the login screen.
 | `/etc/xdg/quickshell/hyprdora` | link that lets `qs -c hyprdora` find the shell |
 | `/usr/share/wayland-sessions/hyprdora.desktop` | login session, which starts Hyprland with the packaged config |
 | `/usr/lib/systemd/user/hyprdora-session.target` | activates `graphical-session.target`, which portals depend on |
+| `/usr/lib/systemd/user/hyprdora-shell.service` | runs the shell and restarts it after a crash |
 | `/usr/libexec/hyprdora` | system setup run by the kickstart, and the first-login step |
 | `/etc/xdg/mimeapps.list` | default applications |
 | `/usr/libexec/hyprdora/hyprdora-portal`, `/etc/xdg/xdg-desktop-portal/hyprland-portals.conf` | wallpaper portal backend and the portal choice that enables it |

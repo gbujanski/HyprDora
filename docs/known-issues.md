@@ -2,10 +2,6 @@
 
 ## Open
 
-### No automatic shell restart
-
-**Priority: medium.** The shell starts once with the session. If it crashes, the bar, notifications and OSD disappear. A possible fix is a systemd user service with `Restart=on-failure`. Until then, a terminal keybinding still works and `qs -c hyprdora -d` starts the shell again.
-
 ### No place to change default applications
 
 **Priority: low.** Default applications are set during installation, and changing them later needs a terminal and `xdg-mime`. The shell should offer a picker for links, video, images, PDF and text files.

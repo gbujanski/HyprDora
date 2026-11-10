@@ -156,6 +156,7 @@ install -Dpm 644 configs/nautilus/hyprdora.py %{buildroot}%{_datadir}/nautilus-p
 install -Dpm 644 configs/mimeapps.list %{buildroot}%{_sysconfdir}/xdg/mimeapps.list
 install -Dpm 755 kickstart/system-setup.sh %{buildroot}%{_libexecdir}/%{name}/system-setup.sh
 install -Dpm 755 kickstart/first-login.sh %{buildroot}%{_libexecdir}/%{name}/first-login.sh
+install -Dpm 644 configs/systemd/hyprdora-shell.service %{buildroot}%{_prefix}/lib/systemd/user/hyprdora-shell.service
 install -Dpm 644 configs/systemd/hyprdora-session.target %{buildroot}%{_prefix}/lib/systemd/user/hyprdora-session.target
 install -d %{buildroot}%{_datadir}/sddm/themes
 cp -a configs/sddm/theme/Hyprdora %{buildroot}%{_datadir}/sddm/themes/
@@ -185,6 +186,7 @@ fi
 %{_datadir}/fonts/%{name}
 %{_datadir}/wayland-sessions/hyprdora.desktop
 %{_prefix}/lib/systemd/user/hyprdora-session.target
+%{_prefix}/lib/systemd/user/hyprdora-shell.service
 %{_datadir}/glib-2.0/schemas/90_hyprdora.gschema.override
 %{_datadir}/sddm/themes/Hyprdora
 %dir %{_sysconfdir}/xdg/quickshell
