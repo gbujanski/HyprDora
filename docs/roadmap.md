@@ -245,7 +245,7 @@ Safety and stability:
 Quick fixes:
 
 - [x] `SUPER + B` opens the browser
-- [ ] Function keys: media keys verified (F7 to F9 send the expected codes), keyboard backlight (F5, F6) and F4 (Launchpad) opens the launcher; F3 (Mission Control, `XF86LaunchA`) still has no action
+- [x] Function keys: media keys verified (F7 to F9 send the expected codes), keyboard backlight (F5, F6) and F4 (Launchpad) opens the launcher
 - [x] Center the capture and settings icons in the action center: moved to known issues, low priority
 - [ ] Spinner while scanning for Wi-Fi networks and Bluetooth devices
 - [ ] Fedora Media Writer installed by default
@@ -271,7 +271,7 @@ Large:
 - [ ] Encrypted home directory unlocked by the login password, with no second password at boot (research)
 - [ ] Default applications in the settings (*plan first*)
 
-Later: computer name, an installer that does not look stuck, notification history across restarts.
+Later: computer name, an installer that does not look stuck, notification history across restarts, an action for F3 (Mission Control, `XF86LaunchA`). For F3, the Hyprspace overview plugin worked in a nested Hyprland 0.57.1, but a plugin must be rebuilt for every Hyprland release, which would tie Hyprland updates to it, so it was dropped.
 
 ## 12. Resolved decisions
 
