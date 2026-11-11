@@ -156,6 +156,11 @@ install -Dpm 644 configs/nautilus/hyprdora.py %{buildroot}%{_datadir}/nautilus-p
 install -Dpm 644 configs/mimeapps.list %{buildroot}%{_sysconfdir}/xdg/mimeapps.list
 install -Dpm 755 kickstart/system-setup.sh %{buildroot}%{_libexecdir}/%{name}/system-setup.sh
 install -Dpm 755 kickstart/first-login.sh %{buildroot}%{_libexecdir}/%{name}/first-login.sh
+install -Dpm 755 bin/hyprdora %{buildroot}%{_bindir}/hyprdora
+install -Dpm 644 configs/dnf/protected.d/hyprdora.conf %{buildroot}%{_sysconfdir}/dnf/protected.d/hyprdora.conf
+install -Dpm 644 configs/motd/hyprdora %{buildroot}%{_prefix}/lib/motd.d/hyprdora
+install -Dpm 644 configs/issue/50-hyprdora.issue %{buildroot}%{_prefix}/lib/issue.d/50-hyprdora.issue
+install -Dpm 644 configs/logind/50-hyprdora.conf %{buildroot}%{_prefix}/lib/systemd/logind.conf.d/50-hyprdora.conf
 install -Dpm 644 configs/systemd/hyprdora-shell.service %{buildroot}%{_prefix}/lib/systemd/user/hyprdora-shell.service
 install -Dpm 644 configs/systemd/hyprdora-session.target %{buildroot}%{_prefix}/lib/systemd/user/hyprdora-session.target
 install -d %{buildroot}%{_datadir}/sddm/themes
@@ -187,6 +192,11 @@ fi
 %{_datadir}/wayland-sessions/hyprdora.desktop
 %{_prefix}/lib/systemd/user/hyprdora-session.target
 %{_prefix}/lib/systemd/user/hyprdora-shell.service
+%{_prefix}/lib/systemd/logind.conf.d/50-hyprdora.conf
+%{_bindir}/hyprdora
+%{_prefix}/lib/motd.d/hyprdora
+%{_prefix}/lib/issue.d/50-hyprdora.issue
+%config(noreplace) %{_sysconfdir}/dnf/protected.d/hyprdora.conf
 %{_datadir}/glib-2.0/schemas/90_hyprdora.gschema.override
 %{_datadir}/sddm/themes/Hyprdora
 %dir %{_sysconfdir}/xdg/quickshell

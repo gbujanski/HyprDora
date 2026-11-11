@@ -12,7 +12,7 @@ make iso
 
 The result is `build/iso/hyprdora-<version>.iso`. The installer needs a network connection and asks only for the language, keyboard, disk layout and user account. It never wipes a disk on its own. Everything else is set up automatically, and the log is in `/root/hyprdora-setup.log`.
 
-Snapshots and the Docker subvolume need a Btrfs root and are skipped on other file systems.
+Snapshots and the subvolumes kept out of them need a Btrfs root and are skipped on other file systems. Recovery is described in [recovery.md](recovery.md).
 
 ## Build packages
 
@@ -55,6 +55,10 @@ Then choose the **HyprDora** session on the login screen.
 | `/usr/share/wayland-sessions/hyprdora.desktop` | login session, which starts Hyprland with the packaged config |
 | `/usr/lib/systemd/user/hyprdora-session.target` | activates `graphical-session.target`, which portals depend on |
 | `/usr/lib/systemd/user/hyprdora-shell.service` | runs the shell and restarts it after a crash |
+| `/usr/lib/systemd/logind.conf.d/50-hyprdora.conf` | stops logind from powering off on a press of the power button |
+| `/usr/bin/hyprdora` | recovery tool: `hyprdora rollback`, `hyprdora --help` (see [recovery](recovery.md)) |
+| `/etc/dnf/protected.d/hyprdora.conf` | stops `dnf` from removing HyprDora, snapper or `btrfs-progs` |
+| `/usr/lib/issue.d/50-hyprdora.issue`, `/usr/lib/motd.d/hyprdora` | reminder of `hyprdora --help` on the console and over SSH |
 | `/usr/libexec/hyprdora` | system setup run by the kickstart, and the first-login step |
 | `/etc/xdg/mimeapps.list` | default applications |
 | `/usr/libexec/hyprdora/hyprdora-portal`, `/etc/xdg/xdg-desktop-portal/hyprland-portals.conf` | wallpaper portal backend and the portal choice that enables it |

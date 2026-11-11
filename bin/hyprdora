@@ -1,0 +1,234 @@
+#!/bin/bash
+# HyprDora system tool for when things go wrong: lists system snapshots and rolls the system back to one.
+# Works from a text console, without the desktop and without snapper, using only btrfs.
+
+set -uo pipefail
+
+SNAPSHOTS=/.snapshots
+ROOT_SUBVOLUME=root
+# Subvolume name prefix for the system replaced by a rollback; the latest one is kept so the rollback can be undone.
+REPLACED_PREFIX=root.replaced-
+
+# Prints a message in the system language.
+# Arguments: message key, then values for %s placeholders.
+say() {
+    local key=$1
+    shift
+    local text
+    case "${LANG:-en}" in
+    pl*) text=$(pl "$key") ;;
+    *) text=$(en "$key") ;;
+    esac
+    # shellcheck disable=SC2059
+    printf "$text\n" "$@"
+}
+
+en() {
+    case "$1" in
+    help) cat <<'EOF'
+HyprDora system tool
+
+Usage:
+  hyprdora snapshots     list system snapshots
+  hyprdora rollback      return the whole system to a snapshot and restart
+  hyprdora --help        show this help
+
+The system takes a snapshot before and after every dnf transaction and once a day.
+A rollback keeps the replaced system, so the previous rollback can be undone with another one.
+Files in your home directory are never changed.
+
+If the desktop does not start, press Ctrl+Alt+F3, log in and run: hyprdora rollback
+EOF
+        ;;
+    unknown) echo "Unknown command: %s. Run: hyprdora --help" ;;
+    no_snapshots) echo "No snapshots found in %s." ;;
+    before) echo "before:" ;;
+    after) echo "after:" ;;
+    timeline) echo "daily snapshot" ;;
+    manual) echo "snapshot" ;;
+    list_header) echo "Number  Date                 Description" ;;
+    pick) echo "Number of the snapshot to return to (empty cancels): " ;;
+    cancelled) echo "Cancelled, nothing changed." ;;
+    bad_number) echo "There is no snapshot number %s." ;;
+    confirm) echo "The whole system returns to snapshot %s (%s). Your home directory stays as it is. Continue? [y/N] " ;;
+    kernel) echo "The newest kernel %s has no modules in this snapshot, so the computer will start with kernel %s." ;;
+    not_btrfs) echo "The system is not on Btrfs, so it has no snapshots." ;;
+    unexpected_root) echo "The system runs from subvolume %s instead of %s. Restart it normally first." ;;
+    finished) echo "Done. The system returns to snapshot %s after a restart." ;;
+    restart) echo "Restart now? [Y/n] " ;;
+    later) echo "Restart when ready to finish the rollback." ;;
+    failed) echo "Rollback failed: %s. The system was not changed." ;;
+    esac
+}
+
+pl() {
+    case "$1" in
+    help) cat <<'EOF'
+Narzędzie systemowe HyprDory
+
+Użycie:
+  hyprdora snapshots     lista migawek systemu
+  hyprdora rollback      przywrócenie całego systemu z migawki i restart
+  hyprdora --help        ta pomoc
+
+System robi migawkę przed i po każdej operacji dnf oraz raz dziennie.
+Przywrócenie zachowuje zastąpiony system, więc poprzednie przywrócenie można cofnąć kolejnym.
+Pliki w katalogu domowym nigdy nie są zmieniane.
+
+Jeśli pulpit się nie uruchamia, naciśnij Ctrl+Alt+F3, zaloguj się i wpisz: hyprdora rollback
+EOF
+        ;;
+    unknown) echo "Nieznane polecenie: %s. Wpisz: hyprdora --help" ;;
+    no_snapshots) echo "Brak migawek w %s." ;;
+    before) echo "przed:" ;;
+    after) echo "po:" ;;
+    timeline) echo "migawka codzienna" ;;
+    manual) echo "migawka" ;;
+    list_header) echo "Numer   Data                 Opis" ;;
+    pick) echo "Numer migawki, do której wrócić (puste anuluje): " ;;
+    cancelled) echo "Anulowano, nic nie zostało zmienione." ;;
+    bad_number) echo "Nie ma migawki o numerze %s." ;;
+    confirm) echo "Cały system wróci do migawki %s (%s). Katalog domowy zostanie bez zmian. Kontynuować? [t/N] " ;;
+    kernel) echo "Najnowsze jądro %s nie ma modułów w tej migawce, więc komputer uruchomi się z jądrem %s." ;;
+    not_btrfs) echo "System nie jest na Btrfs, więc nie ma migawek." ;;
+    unexpected_root) echo "System działa z subwoluminu %s zamiast %s. Najpierw uruchom go normalnie." ;;
+    finished) echo "Gotowe. Po restarcie system wróci do migawki %s." ;;
+    restart) echo "Uruchomić ponownie teraz? [T/n] " ;;
+    later) echo "Uruchom komputer ponownie, aby zakończyć przywracanie." ;;
+    failed) echo "Przywracanie nie powiodło się: %s. System nie został zmieniony." ;;
+    esac
+}
+
+# Prints "number<TAB>date<TAB>description" for every snapshot, oldest first.
+# A dnf snapshot says whether it was taken before or after the command.
+snapshot_rows() {
+    local info number date type description
+    for info in "$SNAPSHOTS"/*/info.xml; do
+        [ -e "$info" ] || continue
+        number=$(basename "$(dirname "$info")")
+        date=$(sed -n 's:.*<date>\(.*\)</date>.*:\1:p' "$info")
+        type=$(sed -n 's:.*<type>\(.*\)</type>.*:\1:p' "$info")
+        description=$(sed -n 's:.*<description>\(.*\)</description>.*:\1:p' "$info")
+        case "$description" in
+        timeline) description=$(say timeline) ;;
+        "") description=$(say manual) ;;
+        esac
+        case "$type" in
+        pre) description="$(say before) $description" ;;
+        post) description="$(say after) $description" ;;
+        esac
+        printf '%s\t%s\t%s\n' "$number" "${date%:*}" "$description"
+    done | sort -n
+}
+
+list_snapshots() {
+    local rows
+    rows=$(snapshot_rows)
+    if [ -z "$rows" ]; then
+        say no_snapshots "$SNAPSHOTS"
+        return 1
+    fi
+    say list_header
+    # Dates are stored in UTC.
+    while IFS=$'\t' read -r number date description; do
+        printf '%-7s %-20s %s\n' "$number" "$(date -d "$date UTC" '+%Y-%m-%d %H:%M' 2>/dev/null || echo "$date")" "$description"
+    done <<<"$rows"
+}
+
+# Runs this script again as root when needed.
+need_root() {
+    if [ "$(id -u)" -ne 0 ]; then
+        exec sudo "$0" "$@"
+    fi
+}
+
+# Points the boot loader at the newest kernel that has modules in the new system.
+pick_kernel() {
+    local new_root=$1 newest usable kernel version
+    newest=$(printf '%s\n' /boot/vmlinuz-* | grep -v rescue | sed 's:/boot/vmlinuz-::' | sort -V | tail -1)
+    [ -n "$newest" ] || return 0
+    [ -d "$new_root/usr/lib/modules/$newest" ] && return 0
+    usable=""
+    for kernel in $(printf '%s\n' /boot/vmlinuz-* | grep -v rescue | sort -V -r); do
+        version=${kernel#/boot/vmlinuz-}
+        if [ -d "$new_root/usr/lib/modules/$version" ]; then
+            usable=$version
+            break
+        fi
+    done
+    [ -n "$usable" ] || return 0
+    say kernel "$newest" "$usable"
+    grubby --set-default "/boot/vmlinuz-$usable" >/dev/null
+}
+
+rollback() {
+    need_root rollback
+    [ "$(findmnt -no FSTYPE /)" = btrfs ] || { say not_btrfs; return 1; }
+    local current
+    current=$(findmnt -no OPTIONS / | tr ',' '\n' | sed -n 's:^subvol=/\{0,1\}::p')
+    [ "$current" = "$ROOT_SUBVOLUME" ] || { say unexpected_root "$current" "$ROOT_SUBVOLUME"; return 1; }
+
+    list_snapshots || return 1
+    local number answer description
+    read -r -p "$(say pick)" number
+    [ -n "$number" ] || { say cancelled; return 0; }
+    if [[ ! "$number" =~ ^[0-9]+$ ]] || [ ! -d "$SNAPSHOTS/$number/snapshot" ]; then
+        say bad_number "$number"
+        return 1
+    fi
+    description=$(snapshot_rows | awk -F'\t' -v n="$number" '$1 == n {print $3}')
+    read -r -p "$(say confirm "$number" "$description")" answer
+    [[ "$answer" =~ ^[yYtT]$ ]] || { say cancelled; return 0; }
+
+    local device top stamp replaced child
+    device=$(findmnt -no SOURCE / | sed 's/\[.*//')
+    top=$(mktemp -d)
+    mount -o subvolid=5 "$device" "$top" || { say failed "mount"; return 1; }
+    stamp=$(date +%Y%m%d-%H%M%S)
+    replaced="$REPLACED_PREFIX$stamp"
+
+    # Only the newest replaced system is kept, so rollbacks do not pile up on the disk.
+    for child in "$top/$REPLACED_PREFIX"*; do
+        [ -d "$child" ] && btrfs subvolume delete -R "$child" >/dev/null 2>&1
+    done
+
+    if ! btrfs subvolume snapshot "$top/$ROOT_SUBVOLUME/.snapshots/$number/snapshot" "$top/$ROOT_SUBVOLUME.new" >/dev/null; then
+        umount "$top"
+        say failed "snapshot"
+        return 1
+    fi
+    # Subvolumes nested in the system, such as the snapshots themselves and Docker data, move into the new system.
+    while read -r child; do
+        [ -n "$child" ] || continue
+        rmdir "$top/$ROOT_SUBVOLUME.new/$child" 2>/dev/null
+        mkdir -p "$(dirname "$top/$ROOT_SUBVOLUME.new/$child")"
+        mv "$top/$ROOT_SUBVOLUME/$child" "$top/$ROOT_SUBVOLUME.new/$child"
+    done < <(btrfs subvolume list -o "$top/$ROOT_SUBVOLUME" | sed "s:.* path $ROOT_SUBVOLUME/::")
+    mv "$top/$ROOT_SUBVOLUME" "$top/$replaced"
+    mv "$top/$ROOT_SUBVOLUME.new" "$top/$ROOT_SUBVOLUME"
+
+    pick_kernel "$top/$ROOT_SUBVOLUME"
+    umount "$top"
+    rmdir "$top"
+
+    say finished "$number"
+    read -r -p "$(say restart)" answer
+    if [[ "$answer" =~ ^[nN]$ ]]; then
+        say later
+    else
+        systemctl reboot
+    fi
+}
+
+case "${1:-}" in
+"" | -h | --help | help) say help ;;
+snapshots)
+    need_root snapshots
+    list_snapshots
+    ;;
+rollback) rollback ;;
+*)
+    say unknown "$1"
+    exit 1
+    ;;
+esac

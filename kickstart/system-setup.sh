@@ -75,11 +75,16 @@ install_drivers() {
     fi
 }
 
-# Nested in the root subvolume, so system snapshots leave containers out.
-create_docker_subvolume() {
+# Nested in the root subvolume, so system snapshots leave out containers, virtual machine images and
+# Flatpaks: they are large, change often, and rolling them back fixes nothing.
+create_excluded_subvolumes() {
     [ "$(findmnt -no FSTYPE /)" = btrfs ] || return 0
-    [ -e /var/lib/docker ] && return 0
-    btrfs subvolume create /var/lib/docker && restorecon -R /var/lib/docker
+    local path
+    for path in /var/lib/docker /var/lib/libvirt/images /var/lib/flatpak; do
+        [ -e "$path" ] && continue
+        mkdir -p "$(dirname "$path")"
+        btrfs subvolume create "$path" && restorecon -R "$path" || return 1
+    done
 }
 
 install_extras() {
@@ -97,10 +102,14 @@ install_flatpaks() {
 configure_snapshots() {
     [ "$(findmnt -no FSTYPE /)" = btrfs ] || return 0
     snapper --no-dbus -c root create-config / || return 1
+    # Quota lets snapper measure snapshots, so the space limits below can be enforced.
+    snapper --no-dbus -c root setup-quota || return 1
+    # Snapshots use at most 10% of the disk and leave at least 20% free; ranges let the cleanup go down to 2.
     snapper --no-dbus -c root set-config \
-        TIMELINE_LIMIT_HOURLY=0 TIMELINE_LIMIT_DAILY=7 TIMELINE_LIMIT_WEEKLY=1 \
+        TIMELINE_LIMIT_HOURLY=0 TIMELINE_LIMIT_DAILY=3 TIMELINE_LIMIT_WEEKLY=2 \
         TIMELINE_LIMIT_MONTHLY=0 TIMELINE_LIMIT_YEARLY=0 \
-        NUMBER_LIMIT=10 NUMBER_LIMIT_IMPORTANT=3 || return 1
+        NUMBER_LIMIT=2-10 NUMBER_LIMIT_IMPORTANT=2-4 \
+        SPACE_LIMIT=0.1 FREE_LIMIT=0.2 || return 1
     systemctl enable snapper-timeline.timer snapper-cleanup.timer
 }
 
@@ -126,7 +135,7 @@ step enable_rpmfusion
 step enable_vendor_repositories
 step install_codecs
 step install_drivers
-step create_docker_subvolume
+step create_excluded_subvolumes
 step install_extras
 step install_flatpaks
 step configure_snapshots

@@ -236,8 +236,10 @@ Agreed on 2026-11-11, in this order. Items marked *plan first* start with a shor
 Safety and stability:
 
 - [x] Automatic shell restart, since the idle lock lives in the shell
-- [ ] Power button: a short press does nothing, holding it for 2 seconds powers off
-- [ ] Test a rollback to a snapper snapshot
+- [x] Power button: a short press does nothing, holding it for 2 seconds powers off
+- [x] Test a rollback to a snapper snapshot: `hyprdora rollback`, package protection and a space limit for snapshots (see recovery.md)
+- [ ] Restore the system from a snapshot in the settings, for when the desktop still works
+- [ ] Snapshot entries in the boot menu, for when the system does not start (research)
 
 Quick fixes:
 
