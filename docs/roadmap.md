@@ -255,7 +255,7 @@ Medium:
 - [x] Resize and move a capture selection by its edges instead of drawing it again
 - [x] Reorganize the action center: notifications and the media player open next to the clock, devices and application volumes unfold under each volume row, display settings moved to the settings menu
 - [x] Ethernet icon, shown only while a cable is connected (built without hardware to test)
-- [ ] VPN connections set up in the settings, with an icon shown only while a VPN is active
+- [x] VPN: a tile and a page in the action center to import WireGuard and OpenVPN files, connect, disconnect and delete, with an icon shown only while a VPN is active
 - [ ] Bluetooth headset options: profile, codec, noise reduction where the headset allows it (research)
 - [x] Icons while an application uses the microphone or the camera
 - [x] Icon while an application records or shares the screen

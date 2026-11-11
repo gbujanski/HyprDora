@@ -29,5 +29,6 @@ To check, run `sleep 5; systemctl suspend` and keep your hands off the laptop fo
 - **Wired connections:** `Quickshell.Networking` knows only Wi-Fi, so the bar shows a wired link from `nmcli` and only as an icon, without settings. It has not been tested with a cable.
 - **Headset profiles:** the panel does not switch between A2DP and HFP, so a headset microphone can need a manual profile change.
 - **Enterprise and WEP networks:** the panel points to `nmcli` or `nmtui`.
+- **OpenVPN with a login:** the shell cannot ask for a VPN password yet, so such a connection shows an error. Certificate-only OpenVPN and WireGuard work. OpenVPN has been tested only up to importing a file.
 - **Notifications:** inline replies are not supported. History and Do Not Disturb do not survive a shell restart.
 - **`make dev`:** only one program can own the notification service, so notifications go to the session's own shell. Wi-Fi, Bluetooth, audio and brightness act on the real hardware.

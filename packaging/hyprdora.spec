@@ -37,6 +37,8 @@ Requires:       NetworkManager-wifi
 Requires:       wpa_supplicant
 Requires:       iw
 Requires:       NetworkManager-tui
+Requires:       NetworkManager-openvpn
+Requires:       zenity
 Requires:       power-profiles-daemon
 Requires:       gnome-keyring
 Requires:       gnome-keyring-pam

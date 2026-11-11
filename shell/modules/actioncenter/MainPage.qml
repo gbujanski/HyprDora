@@ -52,6 +52,17 @@ Column {
             showChevron: false
             onToggled: Idle.paused = !Idle.paused
         }
+
+        // Always shown, because its page is where the first VPN is added.
+        Tile {
+            width: tiles.tileWidth
+            icon: Icons.vpn
+            title: "VPN"
+            subtitle: Vpn.busy !== "" || Vpn.activating ? I18n.t("status.connecting") : Vpn.active ? Vpn.active.name : Vpn.connections.length === 0 ? I18n.t("vpn.none") : I18n.t("vpn.disconnected")
+            active: Vpn.connected
+            onToggled: Vpn.connections.length === 0 ? Panels.actionCenterPage = "vpn" : Vpn.toggle()
+            onOpened: Panels.actionCenterPage = "vpn"
+        }
     }
 
     SegmentedControl {

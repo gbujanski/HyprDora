@@ -279,5 +279,16 @@
   "privacy.screenApps": "Ekran nagrywa lub udostępnia: {apps}",
   "coffee.barTooltip": "Kawa włączona, ekran nie zgaśnie. Kliknij, aby wyłączyć",
   "updates.tooltip": "Dostępne aktualizacje: {count}. Kliknij, aby zainstalować",
-  "updates.done": "Gotowe. Naciśnij Enter, aby zamknąć."
+  "updates.done": "Gotowe. Naciśnij Enter, aby zamknąć.",
+  "vpn.empty": "Brak połączeń VPN. Zaimportuj plik .conf WireGuarda albo .ovpn OpenVPN.",
+  "vpn.none": "Brak połączeń",
+  "vpn.connected": "Połączono",
+  "vpn.disconnected": "Rozłączono",
+  "vpn.disconnect": "Rozłącz",
+  "vpn.delete": "Usuń",
+  "vpn.import": "Importuj plik",
+  "vpn.fileFilter": "Konfiguracja VPN",
+  "vpn.barTooltip": "VPN: {name}",
+  "vpn.error.password": "To połączenie wymaga hasła, o które HyprDora nie umie jeszcze zapytać.",
+  "vpn.error.failed": "Błąd VPN: {message}"
 }

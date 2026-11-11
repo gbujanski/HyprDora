@@ -71,6 +71,16 @@ Row {
 
     BarButton {
         anchors.verticalCenter: parent.verticalCenter
+        visible: Vpn.connected
+        icon: Icons.vpn
+        tooltip: I18n.t("vpn.barTooltip", {
+            name: Vpn.active?.name ?? ""
+        })
+        onClicked: Panels.toggleActionCenter(root.screen, "vpn")
+    }
+
+    BarButton {
+        anchors.verticalCenter: parent.verticalCenter
         visible: Network.wiredConnected
         interactive: false
         icon: Icons.ethernet

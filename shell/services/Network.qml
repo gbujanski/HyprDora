@@ -346,7 +346,8 @@ Singleton {
     }
 
     Process {
-        command: ["env", "LC_ALL=C", "nmcli", "monitor"]
+        // setpriv ends the monitor together with the shell, so a restart leaves no stray process.
+        command: ["setpriv", "--pdeathsig", "TERM", "env", "LC_ALL=C", "nmcli", "monitor"]
         running: true
         stdout: SplitParser {
             onRead: wiredDelay.restart()

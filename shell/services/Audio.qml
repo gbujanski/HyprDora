@@ -184,7 +184,8 @@ Singleton {
 
     // Plugging headphones into the jack switches the port, so changes are followed as they happen.
     Process {
-        command: ["env", "LC_ALL=C", "pactl", "subscribe"]
+        // setpriv ends pactl together with the shell, so a restart leaves no stray process.
+        command: ["setpriv", "--pdeathsig", "TERM", "env", "LC_ALL=C", "pactl", "subscribe"]
         running: true
 
         stdout: SplitParser {

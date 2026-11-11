@@ -14,7 +14,8 @@ Scope {
             wifi: "Wi-Fi",
             bluetooth: "Bluetooth",
             power: I18n.t("page.power"),
-            displays: I18n.t("page.displays")
+            displays: I18n.t("page.displays"),
+            vpn: "VPN"
         })
 
     // The window outlives closing briefly so the animation can finish.
@@ -175,6 +176,8 @@ Scope {
                                     return powerPage;
                                 case "displays":
                                     return displaysPage;
+                                case "vpn":
+                                    return vpnPage;
                                 default:
                                     return mainPage;
                                 }
@@ -228,6 +231,11 @@ Scope {
                 Component {
                     id: displaysPage
                     DisplaysPage {}
+                }
+
+                Component {
+                    id: vpnPage
+                    VpnPage {}
                 }
             }
 

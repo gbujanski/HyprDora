@@ -277,5 +277,16 @@
   "privacy.screenApps": "Recording or sharing the screen: {apps}",
   "coffee.barTooltip": "Coffee is on, the screen stays awake. Click to turn it off",
   "updates.tooltip": "Updates available: {count}. Click to install",
-  "updates.done": "Done. Press Enter to close."
+  "updates.done": "Done. Press Enter to close.",
+  "vpn.empty": "No VPN connections yet. Import a WireGuard .conf or an OpenVPN .ovpn file.",
+  "vpn.none": "No connections",
+  "vpn.connected": "Connected",
+  "vpn.disconnected": "Disconnected",
+  "vpn.disconnect": "Disconnect",
+  "vpn.delete": "Delete",
+  "vpn.import": "Import a file",
+  "vpn.fileFilter": "VPN configuration",
+  "vpn.barTooltip": "VPN: {name}",
+  "vpn.error.password": "This connection needs a password, which HyprDora cannot ask for yet.",
+  "vpn.error.failed": "VPN error: {message}"
 }
