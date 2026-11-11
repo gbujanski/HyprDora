@@ -37,7 +37,6 @@
   "osd.muted": "Wyciszono",
   "osd.micMuted": "Mikrofon wyciszony",
   "osd.micOn": "Mikrofon włączony",
-  "page.audio": "Dźwięk",
   "page.power": "Zasilanie",
   "page.displays": "Monitory",
   "nav.back": "Wróć",
@@ -259,5 +258,15 @@
   "capture.systemAudioOn": "Dźwięk systemu jest nagrywany",
   "capture.systemAudioOff": "Nagrywaj dźwięk systemu",
   "capture.microphoneOn": "Mikrofon jest nagrywany",
-  "capture.microphoneOff": "Nagrywaj mikrofon"
+  "capture.microphoneOff": "Nagrywaj mikrofon",
+  "notifications.title": "Powiadomienia",
+  "audio.port.speakers": "Głośniki",
+  "audio.port.headphones": "Słuchawki",
+  "audio.port.lineOut": "Wyjście liniowe",
+  "audio.port.internalMic": "Mikrofon wbudowany",
+  "audio.port.mic": "Mikrofon",
+  "audio.port.headsetMic": "Mikrofon zestawu słuchawkowego",
+  "audio.port.lineIn": "Wejście liniowe",
+  "audio.port.hdmi": "HDMI",
+  "settings.displays": "Ekran"
 }

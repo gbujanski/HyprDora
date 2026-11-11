@@ -45,8 +45,8 @@ Row {
         icon: Icons.volume(Audio.volume, Audio.muted)
         label: `${Math.round(Audio.volume * 100)}%`
         contentColor: Audio.muted ? Theme.muted : Theme.foreground
-        tooltip: Audio.sink?.description ?? ""
-        onClicked: Panels.toggleActionCenter(root.screen, "audio")
+        tooltip: Audio.displayName(Audio.sink)
+        onClicked: Panels.toggleAudio(root.screen, "output")
         onScrolled: direction => Audio.changeVolume(direction * 0.05)
     }
 
@@ -61,17 +61,14 @@ Row {
         }) : I18n.t("battery.timeLeft", {
             time: Power.formatTime(Power.secondsLeft)
         })
-        onClicked: Panels.toggleActionCenter(root.screen, "main")
+        interactive: false
     }
 
     BarButton {
         anchors.verticalCenter: parent.verticalCenter
-        icon: Notifications.dnd ? Icons.bellOff : Notifications.count > 0 ? Icons.bellBadge : Icons.bell
-        label: Notifications.count > 0 ? String(Notifications.count) : ""
-        contentColor: Panels.actionCenterOpen || Notifications.count > 0 ? Theme.accent : Theme.foreground
-        tooltip: Notifications.dnd ? I18n.t("notifications.dnd") : Notifications.count > 0 ? I18n.t("notifications.count", {
-            count: Notifications.count
-        }) : I18n.t("actionCenter.title")
+        icon: Icons.tune
+        contentColor: Panels.actionCenterOpen ? Theme.accent : Theme.foreground
+        tooltip: I18n.t("actionCenter.title")
         onClicked: Panels.toggleActionCenter(root.screen, "main")
     }
 }

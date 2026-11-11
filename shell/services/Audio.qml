@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Pipewire
+import qs.config
 
 Singleton {
     id: root
@@ -19,6 +20,20 @@ Singleton {
     readonly property var sources: audioNodes(n => n.type === PwNodeType.AudioSource)
     // Playback streams also have isSink == true, so they are recognized by type.
     readonly property var playbackStreams: audioNodes(n => n.type === PwNodeType.AudioOutStream)
+    readonly property var recordingStreams: audioNodes(n => n.type === PwNodeType.AudioInStream)
+
+    // Active port of each device, by node name. PipeWire nodes do not carry it, so pactl provides it.
+    property var activePorts: ({})
+    // Translation keys for ports of built-in sound cards; other devices keep their own names.
+    readonly property var portNames: ({
+            "analog-output-speaker": "audio.port.speakers",
+            "analog-output-headphones": "audio.port.headphones",
+            "analog-output-lineout": "audio.port.lineOut",
+            "analog-input-internal-mic": "audio.port.internalMic",
+            "analog-input-mic": "audio.port.mic",
+            "analog-input-headset-mic": "audio.port.headsetMic",
+            "analog-input-linein": "audio.port.lineIn"
+        })
 
     /**
      * Returns audio nodes accepted by a predicate, sorted by name.
@@ -39,7 +54,18 @@ Singleton {
             return "";
         if (node.isStream)
             return node.properties?.["application.name"] || node.nickname || node.name;
+        const port = activePorts[node.name] ?? "";
+        if (portNames[port])
+            return I18n.t(portNames[port]);
+        if (port.startsWith("hdmi-output") || port.startsWith("iec958"))
+            return I18n.t("audio.port.hdmi");
         return node.description || node.nickname || node.name;
+    }
+
+    /** Reads the active port of every sound device. */
+    function refreshPorts() {
+        if (!portReader.running)
+            portReader.running = true;
     }
 
     /**
@@ -128,5 +154,50 @@ Singleton {
                 streams: root.playbackStreams.map(nodeInfo)
             });
         }
+    }
+
+    Process {
+        id: portReader
+
+        // The C locale keeps descriptions out of the way: pactl writes translated ones as invalid JSON.
+        command: ["sh", "-c", "LC_ALL=C pactl -f json list sinks; echo; LC_ALL=C pactl -f json list sources"]
+        running: true
+
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const ports = {};
+                for (const line of text.split("\n")) {
+                    if (line.trim() === "")
+                        continue;
+                    try {
+                        for (const device of JSON.parse(line))
+                            if (device.active_port)
+                                ports[device.name] = device.active_port;
+                    } catch (e) {
+                        console.warn("audio: unreadable pactl output");
+                    }
+                }
+                root.activePorts = ports;
+            }
+        }
+    }
+
+    // Plugging headphones into the jack switches the port, so changes are followed as they happen.
+    Process {
+        command: ["env", "LC_ALL=C", "pactl", "subscribe"]
+        running: true
+
+        stdout: SplitParser {
+            onRead: line => {
+                if (/ on (sink|source|card) /.test(line))
+                    portDelay.restart();
+            }
+        }
+    }
+
+    Timer {
+        id: portDelay
+        interval: 300
+        onTriggered: root.refreshPorts()
     }
 }

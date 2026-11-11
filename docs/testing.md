@@ -10,15 +10,15 @@ Run through the sections related to a change.
 
 **Bar:** workspaces switch on click and scroll; the tray works; a bar appears and disappears with each monitor.
 
-**Action center and calendar:** the bar icon, shortcut, Esc and a click outside all close the panel; bar icons stay clickable while it is open.
+**Action center, notification, media and calendar panels:** the bar icon, shortcut, Esc and a click outside all close a panel; bar icons stay clickable while one is open; the bell and the media button sit next to the clock, the action center icon on the right.
 
-**Audio:** volume, mute, default output and input, per-application volume.
+**Audio:** volume, mute, readable device names (speakers, headphones after plugging into the jack, Bluetooth name), the arrow on a volume row unfolds its devices and the volume of each application.
 
 **Wi-Fi:** on/off, connect to saved and new networks, wrong password message, forget, hidden network.
 
 **Bluetooth:** on/off, pair with a code, connect, audio output appears, forget.
 
-**Notifications:** toasts with actions and images, history, Do Not Disturb with a critical notification.
+**Notifications:** toasts with actions and images, history in the panel under the bell, Do Not Disturb with a critical notification.
 
 **OSD and power:** volume, brightness and microphone indicators; lock, suspend; confirmations for logout, restart and power off.
 

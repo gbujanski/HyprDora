@@ -13,6 +13,7 @@ Item {
     property string emptyTitle: I18n.t("audio.noDevice")
     property bool isMicrophone: false
     property bool showChevron: false
+    property string chevronIcon: Icons.chevronRight
 
     signal chevronClicked
 
@@ -86,7 +87,7 @@ Item {
             verticalCenter: parent.verticalCenter
         }
         visible: root.showChevron
-        icon: Icons.chevronRight
+        icon: root.chevronIcon
         iconColor: Theme.muted
         tooltip: I18n.t("audio.devicesAndApps")
         onClicked: root.chevronClicked()

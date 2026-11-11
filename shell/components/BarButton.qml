@@ -7,6 +7,8 @@ Rectangle {
 
     property string icon: ""
     property string label: ""
+    // Longer text is cut with an ellipsis; 0 keeps it whole.
+    property real labelMaxWidth: 0
     property color contentColor: Theme.foreground
     property string tooltip: ""
     property bool interactive: true
@@ -39,8 +41,10 @@ Rectangle {
 
         Label {
             anchors.verticalCenter: parent.verticalCenter
+            width: root.labelMaxWidth > 0 ? Math.min(implicitWidth, root.labelMaxWidth) : implicitWidth
             text: root.label
             color: root.contentColor
+            elide: Text.ElideRight
             visible: text !== ""
         }
     }

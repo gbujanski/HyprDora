@@ -11,7 +11,6 @@ Scope {
     id: root
 
     readonly property var pageTitles: ({
-            audio: I18n.t("page.audio"),
             wifi: "Wi-Fi",
             bluetooth: "Bluetooth",
             power: I18n.t("page.power"),
@@ -160,7 +159,7 @@ Scope {
                         contentHeight: pageLoader.item?.implicitHeight ?? 0
                         clip: true
                         boundsBehavior: Flickable.StopAtBounds
-                        // The settings menu is placed by the button, so it would be left behind by scrolling.
+                        // Menus are placed by what opened them, so they would be left behind by scrolling.
                         onContentYChanged: Panels.settingsMenuOpen = false
 
                         Loader {
@@ -168,8 +167,6 @@ Scope {
                             width: flick.width - (flick.contentHeight > flick.height ? 8 : 0)
                             sourceComponent: {
                                 switch (Panels.actionCenterPage) {
-                                case "audio":
-                                    return audioPage;
                                 case "wifi":
                                     return wifiPage;
                                 case "bluetooth":
@@ -211,11 +208,6 @@ Scope {
                 Component {
                     id: mainPage
                     MainPage {}
-                }
-
-                Component {
-                    id: audioPage
-                    AudioPage {}
                 }
 
                 Component {

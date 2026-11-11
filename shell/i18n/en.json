@@ -35,7 +35,6 @@
   "osd.muted": "Muted",
   "osd.micMuted": "Microphone muted",
   "osd.micOn": "Microphone on",
-  "page.audio": "Sound",
   "page.power": "Power",
   "page.displays": "Displays",
   "nav.back": "Back",
@@ -257,5 +256,15 @@
   "capture.systemAudioOn": "System sound is recorded",
   "capture.systemAudioOff": "Record system sound",
   "capture.microphoneOn": "Microphone is recorded",
-  "capture.microphoneOff": "Record the microphone"
+  "capture.microphoneOff": "Record the microphone",
+  "notifications.title": "Notifications",
+  "audio.port.speakers": "Speakers",
+  "audio.port.headphones": "Headphones",
+  "audio.port.lineOut": "Line out",
+  "audio.port.internalMic": "Built-in microphone",
+  "audio.port.mic": "Microphone",
+  "audio.port.headsetMic": "Headset microphone",
+  "audio.port.lineIn": "Line in",
+  "audio.port.hdmi": "HDMI",
+  "settings.displays": "Display"
 }

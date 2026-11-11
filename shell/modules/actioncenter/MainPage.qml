@@ -4,17 +4,23 @@ import Quickshell.Services.UPower
 import qs.config
 import qs.components
 import qs.services
-import qs.modules.notifications
 
+// Quick settings: toggles, sliders and shortcuts. Notifications and the media player have their own panels
+// next to the clock, and display settings live in the settings menu.
 Column {
     spacing: 6
 
-    Row {
+    Grid {
+        id: tiles
+
         width: parent.width
+        columns: 2
         spacing: 6
 
+        readonly property real tileWidth: (width - spacing) / 2
+
         Tile {
-            width: (parent.width - parent.spacing) / 2
+            width: tiles.tileWidth
             icon: Network.connected ? Icons.wifi(Network.signal) : Icons.wifiOff
             title: "Wi-Fi"
             subtitle: Network.busySsid !== "" ? I18n.t("status.connecting") : !Network.hardwareEnabled ? I18n.t("wifi.tile.blocked") : !Network.wifiEnabled ? I18n.t("wifi.tile.off") : Network.connected ? Network.ssid : I18n.t("wifi.notConnected")
@@ -25,7 +31,7 @@ Column {
         }
 
         Tile {
-            width: (parent.width - parent.spacing) / 2
+            width: tiles.tileWidth
             icon: !Bluetooth.enabled ? Icons.bluetoothOff : Bluetooth.connectedDevices.length > 0 ? Icons.bluetoothConnected : Icons.bluetooth
             title: "Bluetooth"
             subtitle: !Bluetooth.hasAdapter ? I18n.t("bluetooth.noAdapter") : Bluetooth.blocked ? I18n.t("bluetooth.tile.blocked") : !Bluetooth.enabled ? I18n.t("bluetooth.tile.off") : Bluetooth.connectedDevices.length === 1 ? Bluetooth.connectedDevices[0].name : Bluetooth.connectedDevices.length > 1 ? I18n.t("bluetooth.tile.connectedCount", {
@@ -35,80 +41,6 @@ Column {
             enabledTile: Bluetooth.hasAdapter && !Bluetooth.blocked
             onToggled: Bluetooth.setEnabled(!Bluetooth.enabled)
             onOpened: Panels.actionCenterPage = "bluetooth"
-        }
-    }
-
-    Item {
-        width: parent.width
-        height: 30
-
-        Row {
-            anchors.right: parent.right
-            spacing: 2
-
-            IconButton {
-                icon: Icons.camera
-                iconColor: Theme.muted
-                tooltip: I18n.t("capture.title")
-                onClicked: Capture.open()
-            }
-
-            IconButton {
-                id: settingsButton
-                icon: Icons.settings
-                iconColor: Panels.settingsMenuOpen ? Theme.accent : Theme.muted
-                tooltip: I18n.t("settings.title")
-                Component.onCompleted: Panels.settingsButton = settingsButton
-                onClicked: Panels.settingsMenuOpen = !Panels.settingsMenuOpen
-            }
-        }
-    }
-
-    Item {
-        width: parent.width
-        height: 6
-    }
-
-    MediaCard {
-        width: parent.width
-        visible: Media.hasPlayer
-    }
-
-    Item {
-        width: parent.width
-        height: 6
-        visible: Media.hasPlayer
-    }
-
-    Item {
-        width: parent.width
-        height: 30
-
-        SectionTitle {
-            anchors.verticalCenter: parent.verticalCenter
-            text: I18n.t("section.power")
-        }
-
-        Row {
-            anchors {
-                right: parent.right
-                verticalCenter: parent.verticalCenter
-            }
-            spacing: 2
-
-            IconButton {
-                icon: Icons.lock
-                iconColor: Theme.muted
-                tooltip: I18n.t("session.lock")
-                onClicked: Session.runById("lock")
-            }
-
-            IconButton {
-                icon: Icons.power
-                iconColor: Theme.muted
-                tooltip: I18n.t("power.pageTooltip")
-                onClicked: Panels.actionCenterPage = "power"
-            }
         }
     }
 
@@ -138,39 +70,16 @@ Column {
 
     Item {
         width: parent.width
-        height: 6
+        height: 2
     }
 
-    SectionTitle {
-        text: I18n.t("section.audio")
-    }
-
-    VolumeRow {
+    AudioSection {
         width: parent.width
-        node: Audio.sink
-        emptyTitle: I18n.t("audio.noOutput")
-        showChevron: true
-        onChevronClicked: Panels.actionCenterPage = "audio"
     }
 
-    VolumeRow {
+    AudioSection {
         width: parent.width
-        node: Audio.source
-        emptyTitle: I18n.t("audio.noMicrophone")
         isMicrophone: true
-        showChevron: true
-        onChevronClicked: Panels.actionCenterPage = "audio"
-    }
-
-    Item {
-        width: parent.width
-        height: 6
-        visible: Brightness.display.available || Brightness.keyboard.available
-    }
-
-    SectionTitle {
-        visible: Brightness.display.available || Brightness.keyboard.available
-        text: I18n.t("section.backlight")
     }
 
     LevelRow {
@@ -191,18 +100,9 @@ Column {
         onMoved: value => Brightness.keyboard.setLevel(value)
     }
 
-    ListRow {
-        width: parent.width
-        text: Displays.monitors.length > 1 ? I18n.t("displays.buttonWithCount", {
-            count: Displays.monitors.length
-        }) : I18n.t("page.displays")
-        trailingIcon: Icons.chevronRight
-        onClicked: Panels.actionCenterPage = "displays"
-    }
-
     Item {
         width: parent.width
-        height: 6
+        height: 4
     }
 
     SystemCard {
@@ -211,18 +111,30 @@ Column {
 
     Item {
         width: parent.width
-        height: 6
-    }
+        height: 30
 
-    Item {
-        width: parent.width
-        height: 26
+        Row {
+            anchors {
+                left: parent.left
+                verticalCenter: parent.verticalCenter
+            }
+            spacing: 2
 
-        SectionTitle {
-            anchors.verticalCenter: parent.verticalCenter
-            text: Notifications.count > 0 ? I18n.t("section.notificationsWithCount", {
-                count: Notifications.count
-            }) : I18n.t("section.notifications")
+            IconButton {
+                icon: Icons.camera
+                iconColor: Theme.muted
+                tooltip: I18n.t("capture.title")
+                onClicked: Capture.open()
+            }
+
+            IconButton {
+                id: settingsButton
+                icon: Icons.settings
+                iconColor: Panels.settingsMenuOpen ? Theme.accent : Theme.muted
+                tooltip: I18n.t("settings.title")
+                Component.onCompleted: Panels.settingsButton = settingsButton
+                onClicked: Panels.settingsMenuOpen = !Panels.settingsMenuOpen
+            }
         }
 
         Row {
@@ -230,50 +142,21 @@ Column {
                 right: parent.right
                 verticalCenter: parent.verticalCenter
             }
-            spacing: 8
+            spacing: 2
 
-            Label {
-                anchors.verticalCenter: parent.verticalCenter
-                text: I18n.t("notifications.dnd")
-                color: Theme.muted
-                font.pixelSize: Theme.fontSizeSmall
-            }
-
-            Switch {
-                anchors.verticalCenter: parent.verticalCenter
-                checked: Notifications.dnd
-                onToggled: Notifications.dnd = !Notifications.dnd
+            IconButton {
+                icon: Icons.lock
+                iconColor: Theme.muted
+                tooltip: I18n.t("session.lock")
+                onClicked: Session.runById("lock")
             }
 
             IconButton {
-                anchors.verticalCenter: parent.verticalCenter
-                visible: Notifications.count > 0
-                icon: Icons.trash
+                icon: Icons.power
                 iconColor: Theme.muted
-                tooltip: I18n.t("notifications.clearAll")
-                onClicked: Notifications.clearAll()
+                tooltip: I18n.t("power.pageTooltip")
+                onClicked: Panels.actionCenterPage = "power"
             }
-        }
-    }
-
-    Label {
-        visible: Notifications.count === 0
-        text: I18n.t("notifications.empty")
-        color: Theme.muted
-        topPadding: 2
-        bottomPadding: 4
-    }
-
-    Repeater {
-        model: ScriptModel {
-            values: Notifications.history
-        }
-
-        NotificationCard {
-            required property var modelData
-            width: parent.width
-            notification: modelData
-            onActivated: Panels.closeActionCenter()
         }
     }
 }

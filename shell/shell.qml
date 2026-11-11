@@ -9,6 +9,7 @@ import qs.modules.displays
 import qs.modules.calendar
 import qs.modules.battery
 import qs.modules.capture
+import qs.modules.media
 import qs.services
 
 ShellRoot {
@@ -27,6 +28,10 @@ ShellRoot {
     CalendarPanel {}
 
     Toasts {}
+
+    NotificationPanel {}
+
+    MediaPanel {}
 
     Osd {}
 

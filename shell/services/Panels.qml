@@ -18,12 +18,25 @@ Singleton {
     property Item settingsButton: null
     property string settingsCategory: ""
 
-    onActionCenterOpenChanged: settingsMenuOpen = false
+    // Audio section unfolded on the main page: "output", "input" or "".
+    property string audioExpanded: ""
+
+    onActionCenterOpenChanged: {
+        settingsMenuOpen = false;
+        if (!actionCenterOpen)
+            audioExpanded = "";
+    }
     onActionCenterPageChanged: settingsMenuOpen = false
     onSettingsMenuOpenChanged: settingsCategory = ""
 
     property bool calendarOpen: false
     property var calendarScreen: null
+
+    property bool notificationsOpen: false
+    property var notificationsScreen: null
+
+    property bool mediaOpen: false
+    property var mediaScreen: null
 
     /**
      * Returns the screen with Hyprland's focused monitor.
@@ -43,9 +56,9 @@ Singleton {
         actionCenterScreen = screen ?? focusedScreen();
         actionCenterPage = page || "main";
         actionCenterOpen = actionCenterScreen !== null;
-        // Both panels take the keyboard, so at most one is open.
+        // Every panel takes the keyboard, so at most one is open.
         if (actionCenterOpen)
-            calendarOpen = false;
+            closeOthers("actionCenter");
     }
 
     /** Closes the action center. */
@@ -75,7 +88,7 @@ Singleton {
         calendarScreen = screen ?? focusedScreen();
         calendarOpen = calendarScreen !== null;
         if (calendarOpen)
-            actionCenterOpen = false;
+            closeOthers("calendar");
     }
 
     /** Closes the calendar. */
@@ -95,6 +108,93 @@ Singleton {
             openCalendar(target);
     }
 
+    /**
+     * Closes every panel except one. Each panel takes the keyboard, so at most one is open.
+     * @param {string} keep  panel to leave open
+     */
+    function closeOthers(keep) {
+        if (keep !== "actionCenter")
+            actionCenterOpen = false;
+        if (keep !== "calendar")
+            calendarOpen = false;
+        if (keep !== "notifications")
+            notificationsOpen = false;
+        if (keep !== "media")
+            mediaOpen = false;
+    }
+
+    /**
+     * Opens the media player panel.
+     * @param {ShellScreen} screen  target, or null for the focused screen
+     */
+    function openMedia(screen) {
+        mediaScreen = screen ?? focusedScreen();
+        mediaOpen = mediaScreen !== null;
+        if (mediaOpen)
+            closeOthers("media");
+    }
+
+    /** Closes the media player panel. */
+    function closeMedia() {
+        mediaOpen = false;
+    }
+
+    /**
+     * Closes the media panel if open on this screen, otherwise opens it there.
+     * @param {ShellScreen} screen  target, or null for the focused screen
+     */
+    function toggleMedia(screen) {
+        const target = screen ?? focusedScreen();
+        if (mediaOpen && target === mediaScreen)
+            closeMedia();
+        else
+            openMedia(target);
+    }
+
+    /**
+     * Opens the action center with the sound output or microphone section unfolded, or closes it when
+     * that is already shown on this screen.
+     * @param {ShellScreen} screen  target, or null for the focused screen
+     * @param {string} section  "output" or "input"
+     */
+    function toggleAudio(screen, section) {
+        const target = screen ?? focusedScreen();
+        if (actionCenterOpen && target === actionCenterScreen && actionCenterPage === "main" && audioExpanded === section) {
+            closeActionCenter();
+            return;
+        }
+        openActionCenter(target, "main");
+        audioExpanded = section;
+    }
+
+    /**
+     * Opens the notification panel.
+     * @param {ShellScreen} screen  target, or null for the focused screen
+     */
+    function openNotifications(screen) {
+        notificationsScreen = screen ?? focusedScreen();
+        notificationsOpen = notificationsScreen !== null;
+        if (notificationsOpen)
+            closeOthers("notifications");
+    }
+
+    /** Closes the notification panel. */
+    function closeNotifications() {
+        notificationsOpen = false;
+    }
+
+    /**
+     * Closes the notification panel if open on this screen, otherwise opens it there.
+     * @param {ShellScreen} screen  target, or null for the focused screen
+     */
+    function toggleNotifications(screen) {
+        const target = screen ?? focusedScreen();
+        if (notificationsOpen && target === notificationsScreen)
+            closeNotifications();
+        else
+            openNotifications(target);
+    }
+
     // The screen holding an open panel may have just been unplugged.
     Connections {
         target: Quickshell
@@ -106,6 +206,14 @@ Singleton {
             if (root.calendarOpen && !Quickshell.screens.includes(root.calendarScreen)) {
                 root.closeCalendar();
                 root.calendarScreen = null;
+            }
+            if (root.notificationsOpen && !Quickshell.screens.includes(root.notificationsScreen)) {
+                root.closeNotifications();
+                root.notificationsScreen = null;
+            }
+            if (root.mediaOpen && !Quickshell.screens.includes(root.mediaScreen)) {
+                root.closeMedia();
+                root.mediaScreen = null;
             }
         }
     }
@@ -127,6 +235,40 @@ Singleton {
         }
         function page(): string {
             return root.actionCenterOpen ? root.actionCenterPage : "";
+        }
+    }
+
+    IpcHandler {
+        target: "mediapanel"
+
+        function toggle(): void {
+            root.toggleMedia(null);
+        }
+        function open(): void {
+            root.openMedia(null);
+        }
+        function close(): void {
+            root.closeMedia();
+        }
+        function isOpen(): bool {
+            return root.mediaOpen;
+        }
+    }
+
+    IpcHandler {
+        target: "notificationcenter"
+
+        function toggle(): void {
+            root.toggleNotifications(null);
+        }
+        function open(): void {
+            root.openNotifications(null);
+        }
+        function close(): void {
+            root.closeNotifications();
+        }
+        function isOpen(): bool {
+            return root.notificationsOpen;
         }
     }
 

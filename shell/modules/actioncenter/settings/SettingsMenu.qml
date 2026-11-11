@@ -2,6 +2,7 @@ import QtQuick
 import qs.config
 import qs.components
 import qs.services
+import qs.modules.actioncenter.pages
 
 // Category list under the action center's settings button. Hovering a category opens its settings beside the list.
 Item {
@@ -22,6 +23,11 @@ Item {
             id: "weather",
             label: I18n.t("settings.weather"),
             icon: Icons.place
+        },
+        {
+            id: "displays",
+            label: I18n.t("settings.displays"),
+            icon: Icons.monitor
         }
     ]
     readonly property int currentIndex: categories.findIndex(c => c.id === Panels.settingsCategory)
@@ -188,10 +194,12 @@ Item {
         id: flyout
 
         visible: root.current !== null
-        x: menu.x - width - 6
+        // Beside the list, but never past the left edge of the screen.
+        x: Math.max(Theme.panelMargin, menu.x - width - 6)
         // Level with the category's row, but always on screen.
         y: Math.max(Theme.panelMargin, Math.min(menu.y + root.currentIndex * (root.rowHeight + root.rowSpacing), root.height - height - Theme.panelMargin))
-        width: 320
+        // The display layout needs the width of the panel.
+        width: Panels.settingsCategory === "displays" ? Theme.panelWidth : 320
         height: Math.min(content.implicitHeight + Theme.panelPadding * 2, root.height - Theme.panelMargin * 2)
         radius: Theme.panelRadius
         color: Theme.background
@@ -204,39 +212,48 @@ Item {
             acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
         }
 
-        Column {
-            id: content
-
+        // Scrolls when the settings are taller than the screen.
+        Flickable {
             anchors {
-                left: parent.left
-                right: parent.right
-                top: parent.top
+                fill: parent
                 margins: Theme.panelPadding
             }
-            spacing: 10
+            contentWidth: width
+            contentHeight: content.implicitHeight
+            clip: true
+            boundsBehavior: Flickable.StopAtBounds
 
-            Label {
-                text: root.current?.label ?? ""
-                font.pixelSize: Theme.fontSizeTitle
-                font.weight: Font.DemiBold
-            }
+            Column {
+                id: content
 
-            Loader {
                 width: parent.width
-                onLoaded: {
-                    if ("menu" in item)
-                        item.menu = root;
+                spacing: 10
+
+                Label {
+                    text: root.current?.label ?? ""
+                    font.pixelSize: Theme.fontSizeTitle
+                    font.weight: Font.DemiBold
                 }
-                sourceComponent: {
-                    switch (Panels.settingsCategory) {
-                    case "idle":
-                        return idleSettings;
-                    case "language":
-                        return languageSettings;
-                    case "weather":
-                        return weatherSettings;
-                    default:
-                        return null;
+
+                Loader {
+                    width: parent.width
+                    onLoaded: {
+                        if ("menu" in item)
+                            item.menu = root;
+                    }
+                    sourceComponent: {
+                        switch (Panels.settingsCategory) {
+                        case "idle":
+                            return idleSettings;
+                        case "language":
+                            return languageSettings;
+                        case "weather":
+                            return weatherSettings;
+                        case "displays":
+                            return displaySettings;
+                        default:
+                            return null;
+                        }
                     }
                 }
             }
@@ -295,6 +312,11 @@ Item {
     Component {
         id: languageSettings
         LanguageSettings {}
+    }
+
+    Component {
+        id: displaySettings
+        DisplaysPage {}
     }
 
     Component {
