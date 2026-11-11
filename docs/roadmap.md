@@ -256,12 +256,12 @@ Medium:
 - [x] Reorganize the action center: notifications and the media player open next to the clock, devices and application volumes unfold under each volume row, display settings moved to the settings menu
 - [x] Ethernet icon, shown only while a cable is connected (built without hardware to test)
 - [x] VPN: a tile and a page in the action center to import WireGuard and OpenVPN files, connect, disconnect and delete, with an icon shown only while a VPN is active
-- [ ] Bluetooth headset options: profile, codec, noise reduction where the headset allows it (research)
+- [x] Bluetooth headset options (research): dropped. WirePlumber switches between the playback (A2DP) and headset (HFP) profiles by itself and picks the best codec; noise cancelling of the headsets is controlled only by their makers' software. Software noise suppression for the microphone (RNNoise, in Fedora) remains possible if wanted later
 - [x] Icons while an application uses the microphone or the camera
 - [x] Icon while an application records or shares the screen
 - [x] Idle pause ("coffee"): a toggle that stops dimming, locking and suspending for a while
 - [x] Notice on the bar when system updates are available, installed in a terminal on click
-- [ ] Keyboard shortcut cheat sheet built from the descriptions in `binds.lua` (*plan first*)
+- [x] Keyboard shortcut cheat sheet in the settings, read from Hyprland so the user's own bindings show too
 
 Large:
 

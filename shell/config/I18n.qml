@@ -46,6 +46,18 @@ Singleton {
     }
 
     /**
+     * Returns a translated string, or the fallback without a warning when there is no translation,
+     * for text that may come from the user, such as their own shortcut descriptions.
+     * @param {string} key  flat translation key
+     * @param {string} fallback  text shown untranslated
+     * @returns {string}
+     */
+    function tOr(key, fallback) {
+        const entry = strings[key] ?? english?.[key];
+        return typeof entry === "string" ? entry : fallback;
+    }
+
+    /**
      * Picks the plural form for a number in the active language.
      * @param {object} forms  plural forms such as { one, few, many, other }
      * @param {int} count  number being described

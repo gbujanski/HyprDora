@@ -28,6 +28,11 @@ Item {
             id: "displays",
             label: I18n.t("settings.displays"),
             icon: Icons.monitor
+        },
+        {
+            id: "shortcuts",
+            label: I18n.t("settings.shortcuts"),
+            icon: Icons.keyboard
         }
     ]
     readonly property int currentIndex: categories.findIndex(c => c.id === Panels.settingsCategory)
@@ -199,7 +204,7 @@ Item {
         // Level with the category's row, but always on screen.
         y: Math.max(Theme.panelMargin, Math.min(menu.y + root.currentIndex * (root.rowHeight + root.rowSpacing), root.height - height - Theme.panelMargin))
         // The display layout needs the width of the panel.
-        width: Panels.settingsCategory === "displays" ? Theme.panelWidth : 320
+        width: Panels.settingsCategory === "displays" || Panels.settingsCategory === "shortcuts" ? Theme.panelWidth : 320
         height: Math.min(content.implicitHeight + Theme.panelPadding * 2, root.height - Theme.panelMargin * 2)
         radius: Theme.panelRadius
         color: Theme.background
@@ -251,6 +256,8 @@ Item {
                             return weatherSettings;
                         case "displays":
                             return displaySettings;
+                        case "shortcuts":
+                            return shortcutsSettings;
                         default:
                             return null;
                         }
@@ -312,6 +319,11 @@ Item {
     Component {
         id: languageSettings
         LanguageSettings {}
+    }
+
+    Component {
+        id: shortcutsSettings
+        ShortcutsSettings {}
     }
 
     Component {
