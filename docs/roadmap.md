@@ -253,7 +253,7 @@ Quick fixes:
 Medium:
 
 - [ ] Resize and move a capture selection by its edges instead of drawing it again
-- [ ] Reorganize the action center (*plan first*): it holds too much, notifications end up below the screen. The new layout must also give compact, intuitive switching of the audio output and microphone, with readable device names
+- [x] Reorganize the action center: notifications and the media player open next to the clock, devices and application volumes unfold under each volume row, display settings moved to the settings menu
 - [ ] Ethernet icon, shown only while a cable is connected (built without hardware to test)
 - [ ] VPN connections set up in the settings, with an icon shown only while a VPN is active
 - [ ] Bluetooth headset options: profile, codec, noise reduction where the headset allows it (research)
