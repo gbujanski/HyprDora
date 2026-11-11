@@ -9,7 +9,7 @@ The system part of HyprDora can be returned to an earlier state in one command. 
 3. Pick a snapshot from the list, usually the one marked *before* the `dnf` command that broke things, and confirm.
 4. Let the computer restart.
 
-`hyprdora --help` lists every command, and `hyprdora snapshots` only shows the list. Both speak the system language.
+`hyprdora --help` (or `-h`) lists every command, `hyprdora snapshots` only shows the list, and `hyprdora --version` (or `-v`) shows the installed version. Messages follow the system language: Polish or English, and English for any other language.
 
 ## How it works
 

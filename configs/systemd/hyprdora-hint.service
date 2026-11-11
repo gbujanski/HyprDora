@@ -1,0 +1,11 @@
+[Unit]
+Description=HyprDora recovery reminder for the console login screen
+Before=getty@tty1.service systemd-user-sessions.service
+
+[Service]
+Type=oneshot
+EnvironmentFile=-/etc/locale.conf
+ExecStart=/usr/bin/hyprdora write-hint
+
+[Install]
+WantedBy=multi-user.target

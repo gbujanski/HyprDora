@@ -58,7 +58,7 @@ Then choose the **HyprDora** session on the login screen.
 | `/usr/lib/systemd/logind.conf.d/50-hyprdora.conf` | stops logind from powering off on a press of the power button |
 | `/usr/bin/hyprdora` | recovery tool: `hyprdora rollback`, `hyprdora --help` (see [recovery](recovery.md)) |
 | `/etc/dnf/protected.d/hyprdora.conf` | stops `dnf` from removing HyprDora, snapper or `btrfs-progs` |
-| `/usr/lib/issue.d/50-hyprdora.issue`, `/usr/lib/motd.d/hyprdora` | reminder of `hyprdora --help` on the console and over SSH |
+| `/usr/lib/systemd/system/hyprdora-hint.service` | writes the reminder of `hyprdora --help` for the console login screen and SSH at boot, in the system language |
 | `/usr/libexec/hyprdora` | system setup run by the kickstart, and the first-login step |
 | `/etc/xdg/mimeapps.list` | default applications |
 | `/usr/libexec/hyprdora/hyprdora-portal`, `/etc/xdg/xdg-desktop-portal/hyprland-portals.conf` | wallpaper portal backend and the portal choice that enables it |

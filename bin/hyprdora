@@ -31,16 +31,13 @@ HyprDora system tool
 Usage:
   hyprdora snapshots     list system snapshots
   hyprdora rollback      return the whole system to a snapshot and restart
-  hyprdora --help        show this help
-
-The system takes a snapshot before and after every dnf transaction and once a day.
-A rollback keeps the replaced system, so the previous rollback can be undone with another one.
-Files in your home directory are never changed.
-
-If the desktop does not start, press Ctrl+Alt+F3, log in and run: hyprdora rollback
+  hyprdora -h, --help    show this help
+  hyprdora -v, --version show the installed version
 EOF
         ;;
     unknown) echo "Unknown command: %s. Run: hyprdora --help" ;;
+    hint) echo "Something not working? Run: hyprdora --help" ;;
+    no_version) echo "unknown, HyprDora is not installed from a package" ;;
     no_snapshots) echo "No snapshots found in %s." ;;
     before) echo "before:" ;;
     after) echo "after:" ;;
@@ -69,16 +66,13 @@ Narzędzie systemowe HyprDory
 Użycie:
   hyprdora snapshots     lista migawek systemu
   hyprdora rollback      przywrócenie całego systemu z migawki i restart
-  hyprdora --help        ta pomoc
-
-System robi migawkę przed i po każdej operacji dnf oraz raz dziennie.
-Przywrócenie zachowuje zastąpiony system, więc poprzednie przywrócenie można cofnąć kolejnym.
-Pliki w katalogu domowym nigdy nie są zmieniane.
-
-Jeśli pulpit się nie uruchamia, naciśnij Ctrl+Alt+F3, zaloguj się i wpisz: hyprdora rollback
+  hyprdora -h, --help    ta pomoc
+  hyprdora -v, --version zainstalowana wersja
 EOF
         ;;
     unknown) echo "Nieznane polecenie: %s. Wpisz: hyprdora --help" ;;
+    hint) echo "Coś nie działa? Wpisz: hyprdora --help" ;;
+    no_version) echo "nieznana, HyprDora nie jest zainstalowana z paczki" ;;
     no_snapshots) echo "Brak migawek w %s." ;;
     before) echo "przed:" ;;
     after) echo "po:" ;;
@@ -220,8 +214,20 @@ rollback() {
     fi
 }
 
+# Writes the reminder shown on the console login screen and after an SSH login, in the system language.
+# Run at boot by hyprdora-hint.service, which reads LANG from /etc/locale.conf.
+write_hint() {
+    local text
+    text="$(say hint)"
+    mkdir -p /run/issue.d /run/motd.d
+    printf '%s\n\n' "$text" >/run/issue.d/50-hyprdora.issue
+    printf '%s\n\n' "$text" >/run/motd.d/hyprdora
+}
+
 case "${1:-}" in
 "" | -h | --help | help) say help ;;
+-v | --version | version) rpm -q --queryformat '%{VERSION}-%{RELEASE}\n' hyprdora 2>/dev/null || say no_version ;;
+write-hint) write_hint ;;
 snapshots)
     need_root snapshots
     list_snapshots

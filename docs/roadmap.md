@@ -239,7 +239,8 @@ Safety and stability:
 - [x] Power button: a short press does nothing, holding it for 2 seconds powers off
 - [x] Test a rollback to a snapper snapshot: `hyprdora rollback`, package protection and a space limit for snapshots (see recovery.md)
 - [ ] Restore the system from a snapshot in the settings, for when the desktop still works
-- [ ] Snapshot entries in the boot menu, for when the system does not start (research)
+- [ ] Snapshot entries in the boot menu, for when the system does not start (research): does the menu list only snapshots that still exist, and what happens to the entries and snapshots made after the one restored
+- [ ] `hyprdora update`, once GitHub Actions builds packages into a dnf repository. Probably not needed: packages from a repository update with every `dnf upgrade` (research)
 
 Quick fixes:
 

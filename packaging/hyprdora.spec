@@ -158,8 +158,7 @@ install -Dpm 755 kickstart/system-setup.sh %{buildroot}%{_libexecdir}/%{name}/sy
 install -Dpm 755 kickstart/first-login.sh %{buildroot}%{_libexecdir}/%{name}/first-login.sh
 install -Dpm 755 bin/hyprdora %{buildroot}%{_bindir}/hyprdora
 install -Dpm 644 configs/dnf/protected.d/hyprdora.conf %{buildroot}%{_sysconfdir}/dnf/protected.d/hyprdora.conf
-install -Dpm 644 configs/motd/hyprdora %{buildroot}%{_prefix}/lib/motd.d/hyprdora
-install -Dpm 644 configs/issue/50-hyprdora.issue %{buildroot}%{_prefix}/lib/issue.d/50-hyprdora.issue
+install -Dpm 644 configs/systemd/hyprdora-hint.service %{buildroot}%{_prefix}/lib/systemd/system/hyprdora-hint.service
 install -Dpm 644 configs/logind/50-hyprdora.conf %{buildroot}%{_prefix}/lib/systemd/logind.conf.d/50-hyprdora.conf
 install -Dpm 644 configs/systemd/hyprdora-shell.service %{buildroot}%{_prefix}/lib/systemd/user/hyprdora-shell.service
 install -Dpm 644 configs/systemd/hyprdora-session.target %{buildroot}%{_prefix}/lib/systemd/user/hyprdora-session.target
@@ -174,6 +173,16 @@ if [ ! -e %{_localstatedir}/lib/sddm/state.conf ]; then
     install -d -o sddm -g sddm %{_localstatedir}/lib/sddm
     printf '[Last]\nSession=hyprdora.desktop\n' > %{_localstatedir}/lib/sddm/state.conf
     chown sddm:sddm %{_localstatedir}/lib/sddm/state.conf
+fi
+# The console reminder of hyprdora --help is written at every boot, in the system language.
+systemctl enable hyprdora-hint.service >/dev/null 2>&1 || :
+if [ -d /run/systemd/system ]; then
+    systemctl start hyprdora-hint.service >/dev/null 2>&1 || :
+fi
+
+%preun
+if [ "$1" -eq 0 ]; then
+    systemctl disable hyprdora-hint.service >/dev/null 2>&1 || :
 fi
 
 %files
@@ -194,8 +203,7 @@ fi
 %{_prefix}/lib/systemd/user/hyprdora-shell.service
 %{_prefix}/lib/systemd/logind.conf.d/50-hyprdora.conf
 %{_bindir}/hyprdora
-%{_prefix}/lib/motd.d/hyprdora
-%{_prefix}/lib/issue.d/50-hyprdora.issue
+%{_prefix}/lib/systemd/system/hyprdora-hint.service
 %config(noreplace) %{_sysconfdir}/dnf/protected.d/hyprdora.conf
 %{_datadir}/glib-2.0/schemas/90_hyprdora.gschema.override
 %{_datadir}/sddm/themes/Hyprdora
