@@ -153,8 +153,18 @@ Column {
         spacing: 2
         visible: Network.wifiEnabled
 
-        SectionTitle {
-            text: I18n.t("section.networks")
+        Row {
+            spacing: 6
+
+            SectionTitle {
+                anchors.verticalCenter: parent.verticalCenter
+                text: I18n.t("section.networks")
+            }
+
+            Spinner {
+                anchors.verticalCenter: parent.verticalCenter
+                running: Network.scanning
+            }
         }
 
         Label {

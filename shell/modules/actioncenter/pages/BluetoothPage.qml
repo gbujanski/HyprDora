@@ -184,8 +184,18 @@ Column {
         spacing: 2
         visible: Bluetooth.enabled
 
-        SectionTitle {
-            text: I18n.t("section.available")
+        Row {
+            spacing: 6
+
+            SectionTitle {
+                anchors.verticalCenter: parent.verticalCenter
+                text: I18n.t("section.available")
+            }
+
+            Spinner {
+                anchors.verticalCenter: parent.verticalCenter
+                running: Bluetooth.discovering
+            }
         }
 
         Label {

@@ -162,19 +162,9 @@ Column {
         visible: root.status !== ""
         spacing: 6
 
-        Icon {
+        Spinner {
             anchors.verticalCenter: parent.verticalCenter
-            visible: root.status === "searching"
-            text: Icons.loading
-            color: Theme.muted
-
-            RotationAnimator on rotation {
-                running: root.status === "searching"
-                from: 0
-                to: 360
-                duration: 900
-                loops: Animation.Infinite
-            }
+            running: root.status === "searching"
         }
 
         Label {

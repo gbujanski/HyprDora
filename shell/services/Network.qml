@@ -29,6 +29,7 @@ Singleton {
 
     // Scanning uses power, so it runs only while the Wi-Fi page is open.
     property bool scanRequested: false
+    readonly property bool scanning: wifiDevice?.scannerEnabled ?? false
     onScanRequestedChanged: applyScanner()
     onWifiDeviceChanged: applyScanner()
 
