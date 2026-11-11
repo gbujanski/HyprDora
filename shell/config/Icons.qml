@@ -35,6 +35,7 @@ Singleton {
     readonly property string coffee: glyph(0xF0176)
     readonly property string update: glyph(0xF06B0)
     readonly property string vpn: glyph(0xF099D)
+    readonly property string apps: glyph(0xF003B)
     readonly property string arrowUp: glyph(0xF005D)
     readonly property string arrowDown: glyph(0xF0045)
     readonly property string ethernet: glyph(0xF0200)

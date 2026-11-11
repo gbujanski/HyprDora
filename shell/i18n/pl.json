@@ -318,5 +318,15 @@
   "shortcut.Toggle split": "Zmień podział",
   "shortcut.Workspace": "Obszar roboczy",
   "shortcuts.wheelDown": "kółko w dół",
-  "shortcuts.wheelUp": "kółko w górę"
+  "shortcuts.wheelUp": "kółko w górę",
+  "settings.defaultApps": "Domyślne aplikacje",
+  "defaultApps.browser": "Przeglądarka",
+  "defaultApps.mail": "Poczta",
+  "defaultApps.files": "Pliki",
+  "defaultApps.terminal": "Terminal",
+  "defaultApps.editor": "Edytor tekstu",
+  "defaultApps.images": "Obrazy",
+  "defaultApps.video": "Wideo",
+  "defaultApps.music": "Muzyka",
+  "defaultApps.pdf": "PDF"
 }

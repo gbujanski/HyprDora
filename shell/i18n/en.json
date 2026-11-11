@@ -316,5 +316,15 @@
   "shortcut.Toggle split": "Toggle split",
   "shortcut.Workspace": "Workspace",
   "shortcuts.wheelDown": "wheel down",
-  "shortcuts.wheelUp": "wheel up"
+  "shortcuts.wheelUp": "wheel up",
+  "settings.defaultApps": "Default applications",
+  "defaultApps.browser": "Browser",
+  "defaultApps.mail": "Mail",
+  "defaultApps.files": "Files",
+  "defaultApps.terminal": "Terminal",
+  "defaultApps.editor": "Text editor",
+  "defaultApps.images": "Images",
+  "defaultApps.video": "Video",
+  "defaultApps.music": "Music",
+  "defaultApps.pdf": "PDF"
 }

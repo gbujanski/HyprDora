@@ -30,6 +30,11 @@ Item {
             icon: Icons.monitor
         },
         {
+            id: "defaultApps",
+            label: I18n.t("settings.defaultApps"),
+            icon: Icons.apps
+        },
+        {
             id: "shortcuts",
             label: I18n.t("settings.shortcuts"),
             icon: Icons.keyboard
@@ -258,6 +263,8 @@ Item {
                             return displaySettings;
                         case "shortcuts":
                             return shortcutsSettings;
+                        case "defaultApps":
+                            return defaultAppsSettings;
                         default:
                             return null;
                         }
@@ -273,8 +280,17 @@ Item {
         visible: root.submenu !== null
         x: flyout.x - width - 6
         y: Math.max(Theme.panelMargin, Math.min((root.submenu?.y ?? 0) - 6, root.height - height - Theme.panelMargin))
-        width: 160
+        // As wide as the longest choice, so names such as application names fit, within the screen.
+        width: Math.min(Math.max(160, ...(root.submenu?.options ?? []).map(o => optionMetrics.advanceWidth(o.label))) + 12 + 10 + 8 + 30, flyout.x - Theme.panelMargin - 6)
         height: optionList.implicitHeight + 12
+
+        // Measures a selected label, which is the widest form because it is drawn medium.
+        FontMetrics {
+            id: optionMetrics
+            font.family: Theme.fontFamily
+            font.pixelSize: Theme.fontSize
+            font.weight: Font.Medium
+        }
         radius: Theme.panelRadius
         color: Theme.background
         border.width: 1
@@ -319,6 +335,11 @@ Item {
     Component {
         id: languageSettings
         LanguageSettings {}
+    }
+
+    Component {
+        id: defaultAppsSettings
+        DefaultAppsSettings {}
     }
 
     Component {

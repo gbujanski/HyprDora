@@ -269,7 +269,7 @@ Large:
 - [ ] Light and dark theme in the settings, under Appearance
 - [ ] Calendar events from Nextcloud first, then Google and Microsoft: preview on hover, adding events if possible. The Nextcloud server is reachable only from the home network or over VPN. Options first, then a decision whether it is worth it (research)
 - [ ] Encrypted home directory unlocked by the login password, with no second password at boot (research)
-- [ ] Default applications in the settings (*plan first*)
+- [x] Default applications in the settings: browser, mail, files, terminal, text editor, images, video, music and PDF, written to `mimeapps.list` and `xdg-terminals.list`, which SUPER+E and SUPER+T follow
 
 Later: computer name, an installer that does not look stuck, notification history across restarts, an action for F3 (Mission Control, `XF86LaunchA`). For F3, the Hyprspace overview plugin worked in a nested Hyprland 0.57.1, but a plugin must be rebuilt for every Hyprland release, which would tie Hyprland updates to it, so it was dropped.
 

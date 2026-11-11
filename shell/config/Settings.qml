@@ -48,8 +48,8 @@ Singleton {
     readonly property bool captureSystemAudio: overrides.capture?.systemAudio ?? false
     readonly property bool captureMicrophone: overrides.capture?.microphone ?? false
 
-    // Command that runs a program in a terminal; the program is appended.
-    readonly property var terminalCommand: overrides.terminalCommand ?? ["alacritty", "--class", "systui", "-e"]
+    // Command that runs a program in the default terminal, chosen in the settings; the program is appended.
+    readonly property var terminalCommand: overrides.terminalCommand ?? ["xdg-terminal-exec"]
     readonly property var btopCommand: [...terminalCommand, "btop"]
 
     /**

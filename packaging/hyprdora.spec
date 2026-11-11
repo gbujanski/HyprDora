@@ -39,6 +39,7 @@ Requires:       iw
 Requires:       NetworkManager-tui
 Requires:       NetworkManager-openvpn
 Requires:       zenity
+Requires:       xdg-terminal-exec
 Requires:       power-profiles-daemon
 Requires:       gnome-keyring
 Requires:       gnome-keyring-pam
@@ -157,6 +158,7 @@ install -Dpm 644 configs/portal/org.freedesktop.impl.portal.desktop.hyprdora.ser
 install -Dpm 644 configs/portal/hyprland-portals.conf %{buildroot}%{_sysconfdir}/xdg/xdg-desktop-portal/hyprland-portals.conf
 install -Dpm 644 configs/nautilus/hyprdora.py %{buildroot}%{_datadir}/nautilus-python/extensions/hyprdora.py
 install -Dpm 644 configs/mimeapps.list %{buildroot}%{_sysconfdir}/xdg/mimeapps.list
+install -Dpm 644 configs/xdg-terminals.list %{buildroot}%{_sysconfdir}/xdg/xdg-terminals.list
 install -Dpm 755 kickstart/system-setup.sh %{buildroot}%{_libexecdir}/%{name}/system-setup.sh
 install -Dpm 755 kickstart/first-login.sh %{buildroot}%{_libexecdir}/%{name}/first-login.sh
 install -Dpm 755 bin/hyprdora %{buildroot}%{_bindir}/hyprdora
@@ -199,6 +201,7 @@ fi
 %dir %{_sysconfdir}/xdg/xdg-desktop-portal
 %config(noreplace) %{_sysconfdir}/xdg/xdg-desktop-portal/hyprland-portals.conf
 %config(noreplace) %{_sysconfdir}/xdg/mimeapps.list
+%config(noreplace) %{_sysconfdir}/xdg/xdg-terminals.list
 %config(noreplace) %{_sysconfdir}/dnf/libdnf5-plugins/actions.d/hyprdora-snapper.actions
 %{_datadir}/fonts/%{name}
 %{_datadir}/wayland-sessions/hyprdora.desktop
