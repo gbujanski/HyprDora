@@ -10,6 +10,8 @@ Rectangle {
     property string subtitle: ""
     property bool active: false
     property bool enabledTile: true
+    // A tile without its own page has no arrow.
+    property bool showChevron: true
 
     signal toggled
     signal opened
@@ -46,7 +48,7 @@ Rectangle {
     Column {
         anchors {
             left: tileIcon.right
-            right: chevron.left
+            right: chevron.visible ? chevron.left : parent.right
             leftMargin: 10
             rightMargin: 2
             verticalCenter: parent.verticalCenter
@@ -75,6 +77,7 @@ Rectangle {
             rightMargin: 4
             verticalCenter: parent.verticalCenter
         }
+        visible: root.showChevron
         icon: Icons.chevronRight
         iconColor: Theme.muted
         onClicked: root.opened()

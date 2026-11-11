@@ -268,5 +268,14 @@
   "audio.port.headsetMic": "Mikrofon zestawu słuchawkowego",
   "audio.port.lineIn": "Wejście liniowe",
   "audio.port.hdmi": "HDMI",
-  "settings.displays": "Ekran"
+  "settings.displays": "Ekran",
+  "coffee.title": "Kawa",
+  "coffee.on": "Nie usypia",
+  "coffee.off": "Wyłączona",
+  "privacy.screen": "Aplikacja nagrywa lub udostępnia ekran",
+  "network.wired": "Połączenie przewodowe",
+  "privacy.microphoneApps": "Mikrofonu używa: {apps}",
+  "privacy.cameraApps": "Kamery używa: {apps}",
+  "privacy.screenApps": "Ekran nagrywa lub udostępnia: {apps}",
+  "coffee.barTooltip": "Kawa włączona, ekran nie zgaśnie. Kliknij, aby wyłączyć"
 }

@@ -56,6 +56,12 @@ Findings from testing on real hardware. Each one explains code that may otherwis
 - A QML property cannot start with `on` followed by a capital letter, because it is treated as a signal handler.
 - Icons from a theme require `//@ pragma IconTheme`.
 - In Quickshell 0.2.1, changing `timeout` on a running `IdleMonitor` has no effect until `enabled` is turned off and on again, so `services/Idle.qml` does that whenever a timeout changes. Verified in a nested Hyprland.
+- A live config reload does not pick up a newly added QML file, such as a new singleton: references to it are undefined until the shell restarts. `make install` therefore restarts the shell service.
+
+## Privacy indicators
+
+- Hyprland sends a `screencast` event for every screen capture, including the shell's own recording and a `grim` screenshot. The screen indicator therefore waits a second and ignores the shell's own recording.
+- Browsers open the camera directly rather than through PipeWire, so the camera indicator checks `/dev/video*` with `fuser` every 4 seconds.
 
 ## Input
 

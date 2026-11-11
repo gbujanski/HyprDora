@@ -42,6 +42,16 @@ Column {
             onToggled: Bluetooth.setEnabled(!Bluetooth.enabled)
             onOpened: Panels.actionCenterPage = "bluetooth"
         }
+
+        Tile {
+            width: tiles.tileWidth
+            icon: Icons.coffee
+            title: I18n.t("coffee.title")
+            subtitle: Idle.paused ? I18n.t("coffee.on") : I18n.t("coffee.off")
+            active: Idle.paused
+            showChevron: false
+            onToggled: Idle.paused = !Idle.paused
+        }
     }
 
     SegmentedControl {

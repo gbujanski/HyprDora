@@ -12,6 +12,58 @@ Row {
 
     spacing: 0
 
+    // Shown only while coffee is on; a click turns it off.
+    BarButton {
+        anchors.verticalCenter: parent.verticalCenter
+        visible: Idle.paused
+        icon: Icons.coffee
+        contentColor: Theme.accent
+        tooltip: I18n.t("coffee.barTooltip")
+        onClicked: Idle.paused = false
+    }
+
+    // Privacy indicators: shown only while an application uses the device or captures the screen.
+    BarButton {
+        anchors.verticalCenter: parent.verticalCenter
+        visible: Privacy.microphoneInUse
+        interactive: false
+        icon: Icons.microphoneOn
+        contentColor: Theme.warning
+        tooltip: I18n.t("privacy.microphoneApps", {
+            apps: Privacy.microphoneApps.join(", ")
+        })
+    }
+
+    BarButton {
+        anchors.verticalCenter: parent.verticalCenter
+        visible: Privacy.cameraInUse
+        interactive: false
+        icon: Icons.webcam
+        contentColor: Theme.warning
+        tooltip: I18n.t("privacy.cameraApps", {
+            apps: Privacy.cameraApps.join(", ")
+        })
+    }
+
+    BarButton {
+        anchors.verticalCenter: parent.verticalCenter
+        visible: Privacy.screenCaptured
+        interactive: false
+        icon: Icons.screenShare
+        contentColor: Theme.warning
+        tooltip: Privacy.screenApps.length > 0 ? I18n.t("privacy.screenApps", {
+            apps: Privacy.screenApps.join(", ")
+        }) : I18n.t("privacy.screen")
+    }
+
+    BarButton {
+        anchors.verticalCenter: parent.verticalCenter
+        visible: Network.wiredConnected
+        interactive: false
+        icon: Icons.ethernet
+        tooltip: I18n.t("network.wired")
+    }
+
     BarButton {
         anchors.verticalCenter: parent.verticalCenter
         visible: Power.profile !== PowerProfile.Balanced

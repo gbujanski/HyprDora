@@ -26,7 +26,7 @@ To check, run `sleep 5; systemctl suspend` and keep your hands off the laptop fo
 
 ## Limitations
 
-- **Wired connections:** `Quickshell.Networking` knows only Wi-Fi, so a wired link is not shown on the bar.
+- **Wired connections:** `Quickshell.Networking` knows only Wi-Fi, so the bar shows a wired link from `nmcli` and only as an icon, without settings. It has not been tested with a cable.
 - **Headset profiles:** the panel does not switch between A2DP and HFP, so a headset microphone can need a manual profile change.
 - **Enterprise and WEP networks:** the panel points to `nmcli` or `nmtui`.
 - **Notifications:** inline replies are not supported. History and Do Not Disturb do not survive a shell restart.

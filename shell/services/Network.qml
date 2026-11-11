@@ -30,6 +30,8 @@ Singleton {
     // Scanning uses power, so it runs only while the Wi-Fi page is open.
     property bool scanRequested: false
     readonly property bool scanning: wifiDevice?.scannerEnabled ?? false
+    // Quickshell.Networking knows only Wi-Fi, so a wired connection is read from nmcli.
+    property bool wiredConnected: false
     onScanRequestedChanged: applyScanner()
     onWifiDeviceChanged: applyScanner()
 
@@ -331,6 +333,32 @@ Singleton {
         }
         function connectOpen(ssid: string): void {
             root.connectNew(ssid, "", false);
+        }
+    }
+
+    Process {
+        id: wiredCheck
+        command: ["env", "LC_ALL=C", "nmcli", "-t", "-f", "TYPE,STATE", "device"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: root.wiredConnected = text.split("\n").some(line => line === "ethernet:connected")
+        }
+    }
+
+    Process {
+        command: ["env", "LC_ALL=C", "nmcli", "monitor"]
+        running: true
+        stdout: SplitParser {
+            onRead: wiredDelay.restart()
+        }
+    }
+
+    Timer {
+        id: wiredDelay
+        interval: 500
+        onTriggered: {
+            if (!wiredCheck.running)
+                wiredCheck.running = true;
         }
     }
 }

@@ -266,5 +266,14 @@
   "audio.port.headsetMic": "Headset microphone",
   "audio.port.lineIn": "Line in",
   "audio.port.hdmi": "HDMI",
-  "settings.displays": "Display"
+  "settings.displays": "Display",
+  "coffee.title": "Coffee",
+  "coffee.on": "Stays awake",
+  "coffee.off": "Off",
+  "privacy.screen": "An application is recording or sharing the screen",
+  "network.wired": "Wired connection",
+  "privacy.microphoneApps": "Using the microphone: {apps}",
+  "privacy.cameraApps": "Using the camera: {apps}",
+  "privacy.screenApps": "Recording or sharing the screen: {apps}",
+  "coffee.barTooltip": "Coffee is on, the screen stays awake. Click to turn it off"
 }

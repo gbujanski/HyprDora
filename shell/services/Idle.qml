@@ -11,6 +11,14 @@ import qs.config
 Singleton {
     id: root
 
+    // "Coffee": while true, nothing dims, locks or suspends. It is not saved, so a restart cannot leave the
+    // laptop without its lock for good.
+    property bool paused: false
+    onPausedChanged: {
+        if (paused)
+            undim();
+    }
+
     // Screen level from before dimming, -1 when not dimmed.
     property real dimmedFrom: -1
     readonly property real dimLevel: 0.1
@@ -64,12 +72,14 @@ Singleton {
 
     Step {
         id: dimMonitor
+        wanted: !root.paused
         timeout: Settings.idleDim
         onIsIdleChanged: isIdle ? root.dim() : root.undim()
     }
 
     Step {
         id: lockMonitor
+        wanted: !root.paused
         timeout: Settings.idleLock
         onIsIdleChanged: {
             if (isIdle)
@@ -79,7 +89,7 @@ Singleton {
 
     Step {
         id: suspendMonitor
-        wanted: UPower.onBattery
+        wanted: UPower.onBattery && !root.paused
         timeout: Settings.idleSuspend
         onIsIdleChanged: {
             if (isIdle)
@@ -89,6 +99,10 @@ Singleton {
 
     IpcHandler {
         target: "idle"
+
+        function setPaused(value: bool): void {
+            root.paused = value;
+        }
 
         function describe(): string {
             return JSON.stringify({
@@ -108,6 +122,7 @@ Singleton {
                     idle: suspendMonitor.isIdle
                 },
                 dimmedFrom: root.dimmedFrom,
+                paused: root.paused,
                 dev: root.dev
             });
         }
