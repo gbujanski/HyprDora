@@ -33,6 +33,7 @@ Singleton {
     readonly property string settings: glyph(0xF0493)
     readonly property string idle: glyph(0xF04B2)
     readonly property string coffee: glyph(0xF0176)
+    readonly property string update: glyph(0xF06B0)
     readonly property string ethernet: glyph(0xF0200)
     readonly property string webcam: glyph(0xF05A0)
     readonly property string screenShare: glyph(0xF1483)

@@ -277,5 +277,7 @@
   "privacy.microphoneApps": "Mikrofonu używa: {apps}",
   "privacy.cameraApps": "Kamery używa: {apps}",
   "privacy.screenApps": "Ekran nagrywa lub udostępnia: {apps}",
-  "coffee.barTooltip": "Kawa włączona, ekran nie zgaśnie. Kliknij, aby wyłączyć"
+  "coffee.barTooltip": "Kawa włączona, ekran nie zgaśnie. Kliknij, aby wyłączyć",
+  "updates.tooltip": "Dostępne aktualizacje: {count}. Kliknij, aby zainstalować",
+  "updates.done": "Gotowe. Naciśnij Enter, aby zamknąć."
 }

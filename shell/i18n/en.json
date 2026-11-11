@@ -275,5 +275,7 @@
   "privacy.microphoneApps": "Using the microphone: {apps}",
   "privacy.cameraApps": "Using the camera: {apps}",
   "privacy.screenApps": "Recording or sharing the screen: {apps}",
-  "coffee.barTooltip": "Coffee is on, the screen stays awake. Click to turn it off"
+  "coffee.barTooltip": "Coffee is on, the screen stays awake. Click to turn it off",
+  "updates.tooltip": "Updates available: {count}. Click to install",
+  "updates.done": "Done. Press Enter to close."
 }

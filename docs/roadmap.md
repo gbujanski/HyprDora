@@ -260,7 +260,7 @@ Medium:
 - [x] Icons while an application uses the microphone or the camera
 - [x] Icon while an application records or shares the screen
 - [x] Idle pause ("coffee"): a toggle that stops dimming, locking and suspending for a while
-- [ ] Notice on the bar when system updates are available
+- [x] Notice on the bar when system updates are available, installed in a terminal on click
 - [ ] Keyboard shortcut cheat sheet built from the descriptions in `binds.lua` (*plan first*)
 
 Large:

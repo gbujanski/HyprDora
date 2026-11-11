@@ -12,6 +12,19 @@ Row {
 
     spacing: 0
 
+    // Shown only while updates are waiting; a click installs them in a terminal.
+    BarButton {
+        anchors.verticalCenter: parent.verticalCenter
+        visible: Updates.count > 0
+        icon: Icons.update
+        label: String(Updates.count)
+        contentColor: Theme.accent
+        tooltip: I18n.t("updates.tooltip", {
+            count: Updates.count
+        })
+        onClicked: Updates.install()
+    }
+
     // Shown only while coffee is on; a click turns it off.
     BarButton {
         anchors.verticalCenter: parent.verticalCenter
