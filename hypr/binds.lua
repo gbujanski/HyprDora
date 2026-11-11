@@ -67,6 +67,10 @@ return {
     { "XF86AudioMicMute",       act.mic_mute,         "Mute microphone",  hardware },
     { "XF86MonBrightnessUp",    act.brightness_up,    "Brightness up",    hardware },
     { "XF86MonBrightnessDown",  act.brightness_down,  "Brightness down",  hardware },
+    { "XF86KbdBrightnessUp",    act.keyboard_light_up,   "Keyboard light up",   hardware },
+    { "XF86KbdBrightnessDown",  act.keyboard_light_down, "Keyboard light down", hardware },
+    -- Launchpad key on Apple keyboards
+    { "XF86LaunchB",            act.launcher,         "App launcher" },
     { "XF86PowerOff",           act.power_press,      "Power off when held for 2 seconds", { locked = true } },
     { "XF86PowerOff",           act.power_release,    "Power button released", { locked = true, release = true } },
 

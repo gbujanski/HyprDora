@@ -245,7 +245,7 @@ Safety and stability:
 Quick fixes:
 
 - [x] `SUPER + B` opens the browser
-- [ ] Function keys: check the key codes of media keys, add keyboard backlight, F3 (Mission Control) and F4 (Launchpad)
+- [ ] Function keys: media keys verified (F7 to F9 send the expected codes), keyboard backlight (F5, F6) and F4 (Launchpad) opens the launcher; F3 (Mission Control, `XF86LaunchA`) still has no action
 - [x] Center the capture and settings icons in the action center: moved to known issues, low priority
 - [ ] Spinner while scanning for Wi-Fi networks and Bluetooth devices
 - [ ] Fedora Media Writer installed by default

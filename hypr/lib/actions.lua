@@ -57,6 +57,12 @@ return {
     -- brightnessctl is a fallback for when the shell is not running.
     brightness_up = exec(shell_call("brightness step 0.05") .. " || brightnessctl -e4 -n2 set 5%+"),
     brightness_down = exec(shell_call("brightness step -0.05") .. " || brightnessctl -e4 -n2 set 5%-"),
+    keyboard_light_up = exec(
+        shell_call("brightness stepKeyboard 0.1") .. " || brightnessctl -d '*::kbd_backlight' set 10%+"
+    ),
+    keyboard_light_down = exec(
+        shell_call("brightness stepKeyboard -0.1") .. " || brightnessctl -d '*::kbd_backlight' set 10%-"
+    ),
 
     media_next = exec("playerctl next"),
     media_previous = exec("playerctl previous"),
