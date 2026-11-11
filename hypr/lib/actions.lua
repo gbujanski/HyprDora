@@ -23,6 +23,8 @@ return {
 
     action_center = exec(shell_call("actioncenter toggle")),
     power_menu = exec(shell_call("powermenu toggle")),
+    power_press = exec(shell_call("powerbutton press")),
+    power_release = exec(shell_call("powerbutton release")),
     capture = exec(shell_call("capture toggle")),
 
     close = hl.dsp.window.close(),

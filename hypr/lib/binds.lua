@@ -16,13 +16,21 @@ local function normalized(keys)
     return table.concat(parts, "+")
 end
 
+---Returns what makes an entry unique: its keys, and whether it acts on release.
+---@param entry table keybinding entry
+---@return string
+local function identity(entry)
+    local release = entry[4] ~= nil and entry[4].release
+    return normalized(entry[1]) .. (release and ":release" or "")
+end
+
 ---Reports keys listed more than once in one file.
 ---@param entries table[] keybinding entries
 ---@param source string file name for the message
 local function report_duplicates(entries, source)
     local seen = {}
     for _, entry in ipairs(entries) do
-        local key = normalized(entry[1])
+        local key = identity(entry)
         if seen[key] then
             user.report("duplicate keybinding in " .. source .. ": " .. entry[1])
         end
@@ -38,7 +46,7 @@ local function merged(defaults, overrides)
     local result = {}
     local index = {}
     local function put(entry)
-        local key = normalized(entry[1])
+        local key = identity(entry)
         if index[key] then
             result[index[key]] = entry
         else

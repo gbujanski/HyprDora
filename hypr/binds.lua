@@ -66,6 +66,8 @@ return {
     { "XF86AudioMicMute",       act.mic_mute,         "Mute microphone",  hardware },
     { "XF86MonBrightnessUp",    act.brightness_up,    "Brightness up",    hardware },
     { "XF86MonBrightnessDown",  act.brightness_down,  "Brightness down",  hardware },
+    { "XF86PowerOff",           act.power_press,      "Power off when held for 2 seconds", { locked = true } },
+    { "XF86PowerOff",           act.power_release,    "Power button released", { locked = true, release = true } },
 
     -- Media keys
     { "XF86AudioNext",          act.media_next,       "Next track",       media },

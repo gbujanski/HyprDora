@@ -160,6 +160,24 @@ Singleton {
         }
     }
 
+    // A press only starts the countdown, so brushing the power button does nothing.
+    Timer {
+        id: powerHold
+        interval: 2000
+        onTriggered: Session.runById("poweroff")
+    }
+
+    IpcHandler {
+        target: "powerbutton"
+
+        function press(): void {
+            powerHold.restart();
+        }
+        function release(): void {
+            powerHold.stop();
+        }
+    }
+
     // Here rather than in Session: this singleton exists from startup, so the shortcut works at once.
     IpcHandler {
         target: "powermenu"
