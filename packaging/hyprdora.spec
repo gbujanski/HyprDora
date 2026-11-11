@@ -122,6 +122,7 @@ Requires:       java-25-openjdk
 Requires:       dotnet-sdk-10.0
 Requires:       zsh
 Requires:       flatpak
+Requires:       mediawriter
 
 %description extras
 Applications kept separate from the desktop. The kickstart enables the

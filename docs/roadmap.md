@@ -42,7 +42,7 @@ Shell name: `qs -c hyprdora`. User settings: `~/.config/hyprdora/settings.json`.
 - Look and login: Papirus, Bibata Modern Ice (24), dark GTK theme, wallpaper, SDDM with the Hyprdora theme
 - Snapshots: `snapper`, a `dnf5` action that takes a snapshot around each transaction, `btrfs-assistant`
 
-**Personal layer (separate from the desktop):** `neovim`, VS Code, Zen + Flatseal (flatpak), Discord, FileZilla, GIMP, OnlyOffice (official repository), virt-manager, `docker-ce`, Python 3, Node.js, Java 25, .NET 10, zsh + Oh My Zsh (agnoster). Zen is set as the default browser in this layer.
+**Personal layer (separate from the desktop):** `neovim`, VS Code, Zen + Flatseal (flatpak), Discord, FileZilla, GIMP, Fedora Media Writer, OnlyOffice (official repository), virt-manager, `docker-ce`, Python 3, Node.js, Java 25, .NET 10, zsh + Oh My Zsh (agnoster). Zen is set as the default browser in this layer.
 
 **Hardware-dependent (detected):** `wl` (Broadcom), the FaceTime HD camera driver (`akmod-facetimehd` from the `mulderje/facetimehd-kmod` COPR), full codecs and VA-API from RPM Fusion (`intel-media-driver` or `mesa-va-drivers-freeworld`), NVIDIA.
 
@@ -247,8 +247,8 @@ Quick fixes:
 - [x] `SUPER + B` opens the browser
 - [x] Function keys: media keys verified (F7 to F9 send the expected codes), keyboard backlight (F5, F6) and F4 (Launchpad) opens the launcher
 - [x] Center the capture and settings icons in the action center: moved to known issues, low priority
-- [ ] Spinner while scanning for Wi-Fi networks and Bluetooth devices
-- [ ] Fedora Media Writer installed by default
+- [x] Spinner while scanning for Wi-Fi networks and Bluetooth devices
+- [x] Fedora Media Writer installed by default, in hyprdora-extras
 
 Medium:
 
