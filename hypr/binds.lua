@@ -9,6 +9,7 @@ return {
     -- Applications
     { "SUPER + T",              act.terminal,         "Terminal" },
     { "SUPER + E",              act.files,            "Files" },
+    { "SUPER + B",              act.browser,          "Browser" },
     { "SUPER + SPACE",          act.launcher,         "App launcher" },
     { "SUPER + CTRL + V",       act.clipboard,        "Clipboard history" },
     { "SUPER + L",              act.lock,             "Lock" },

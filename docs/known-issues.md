@@ -6,6 +6,10 @@
 
 **Priority: low.** Default applications are set during installation, and changing them later needs a terminal and `xdg-mime`. The shell should offer a picker for links, video, images, PDF and text files.
 
+### Icons sit slightly off center in their buttons
+
+**Priority: low.** Nerd Font glyphs are wider than their advance and drawn off its center, for example 2.2 px to the right for the camera icon, so the hover background of an icon button looks shifted. Moving each glyph by its measured ink offset did not help visibly and was reverted.
+
 ### Installer looks stuck during post-install setup
 
 **Priority: low, nice to have.** The setup script runs for several minutes on the "post-installation scripts" step, with no sign of what is happening, so the installer looks frozen. To be decided after more important work. One option is to show the script's progress on a text console with `chvt`, which is untested with the Wayland-based installer. Another is to move large packages to `%packages`, so they appear on the progress bar.

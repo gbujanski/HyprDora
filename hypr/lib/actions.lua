@@ -17,6 +17,7 @@ return {
 
     terminal = exec(apps.terminal),
     files = exec(apps.files),
+    browser = exec(apps.browser),
     launcher = exec(apps.launcher),
     clipboard = exec(apps.clipboard),
     lock = exec("loginctl lock-session"),

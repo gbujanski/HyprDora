@@ -244,9 +244,9 @@ Safety and stability:
 
 Quick fixes:
 
-- [ ] `SUPER + B` opens the browser
+- [x] `SUPER + B` opens the browser
 - [ ] Function keys: check the key codes of media keys, add keyboard backlight, F3 (Mission Control) and F4 (Launchpad)
-- [ ] Center the capture and settings icons in the action center
+- [x] Center the capture and settings icons in the action center: moved to known issues, low priority
 - [ ] Spinner while scanning for Wi-Fi networks and Bluetooth devices
 - [ ] Fedora Media Writer installed by default
 

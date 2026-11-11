@@ -65,10 +65,11 @@ rpm:
 	rpmbuild -bb --define "_topdir $(RPM_DIR)" packaging/hyprdora.spec
 	@echo "Packages are in $(RPM_DIR)/RPMS/noarch"
 
-# The running shell and Hyprland reload changed files by themselves.
+# The shell reloads changed files by itself. Hyprland does not notice files replaced by a package, so it is told to.
 install: rpm
 	sudo dnf reinstall -y $(RPM_DIR)/RPMS/noarch/hyprdora-$(VERSION)-*.noarch.rpm || \
 		sudo dnf install -y $(RPM_DIR)/RPMS/noarch/hyprdora-$(VERSION)-*.noarch.rpm
+	-hyprctl reload >/dev/null
 
 iso: rpm
 	rm -rf $(ISO_DIR)/content
