@@ -27,6 +27,33 @@ Singleton {
 
     readonly property string stateText: full ? I18n.t("battery.full") : charging ? I18n.t("battery.state.charging") : !UPower.onBattery ? I18n.t("battery.state.notCharging") : I18n.t("battery.state.discharging")
 
+    // Whether the time to empty or to full is known and worth showing.
+    readonly property bool timeKnown: !full && secondsLeft > 0
+
+    // State with the time left, such as "Discharging · 3 h 20 min left".
+    readonly property string summary: stateText + (!timeKnown ? "" : " · " + I18n.t(charging ? "battery.untilFull" : "battery.remaining", {
+            time: formatTime(secondsLeft)
+        }))
+
+    // Clock time of empty or full, power and health, as one line; empty when none is known.
+    readonly property string details: {
+        const parts = [];
+        if (timeKnown)
+            parts.push(I18n.t(charging ? "battery.fullAt" : "battery.emptyAt", {
+                time: endClock(secondsLeft)
+            }));
+        if (rate > 0.05)
+            parts.push(I18n.t(charging ? "battery.chargeRate" : "battery.drawRate", {
+                watts: rate.toLocaleString(I18n.locale, "f", 1)
+            }));
+        if (health > 0)
+            parts.push(I18n.t("battery.health", {
+                percent: Math.round(health * 100)
+            }));
+        const text = parts.join(" · ");
+        return text === "" ? "" : text[0].toUpperCase() + text.slice(1);
+    }
+
     readonly property int profile: PowerProfiles.profile
     readonly property bool hasPerformance: PowerProfiles.hasPerformanceProfile
 

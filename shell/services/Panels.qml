@@ -37,6 +37,8 @@ Singleton {
 
     property bool mediaOpen: false
     property var mediaScreen: null
+    property bool batteryOpen: false
+    property var batteryScreen: null
 
     /**
      * Returns the screen with Hyprland's focused monitor.
@@ -121,6 +123,8 @@ Singleton {
             notificationsOpen = false;
         if (keep !== "media")
             mediaOpen = false;
+        if (keep !== "battery")
+            batteryOpen = false;
     }
 
     /**
@@ -137,6 +141,34 @@ Singleton {
     /** Closes the media player panel. */
     function closeMedia() {
         mediaOpen = false;
+    }
+
+    /**
+     * Opens the battery panel.
+     * @param {ShellScreen} screen  target, or null for the focused screen
+     */
+    function openBattery(screen) {
+        batteryScreen = screen ?? focusedScreen();
+        batteryOpen = batteryScreen !== null;
+        if (batteryOpen)
+            closeOthers("battery");
+    }
+
+    /** Closes the battery panel. */
+    function closeBattery() {
+        batteryOpen = false;
+    }
+
+    /**
+     * Closes the battery panel if open on this screen, otherwise opens it there.
+     * @param {ShellScreen} screen  target, or null for the focused screen
+     */
+    function toggleBattery(screen) {
+        const target = screen ?? focusedScreen();
+        if (batteryOpen && target === batteryScreen)
+            closeBattery();
+        else
+            openBattery(target);
     }
 
     /**
@@ -215,6 +247,10 @@ Singleton {
                 root.closeMedia();
                 root.mediaScreen = null;
             }
+            if (root.batteryOpen && !Quickshell.screens.includes(root.batteryScreen)) {
+                root.closeBattery();
+                root.batteryScreen = null;
+            }
         }
     }
 
@@ -235,6 +271,23 @@ Singleton {
         }
         function page(): string {
             return root.actionCenterOpen ? root.actionCenterPage : "";
+        }
+    }
+
+    IpcHandler {
+        target: "batterypanel"
+
+        function toggle(): void {
+            root.toggleBattery(null);
+        }
+        function open(): void {
+            root.openBattery(null);
+        }
+        function close(): void {
+            root.closeBattery();
+        }
+        function isOpen(): bool {
+            return root.batteryOpen;
         }
     }
 

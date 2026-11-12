@@ -137,7 +137,7 @@ Row {
         }) : I18n.t("battery.timeLeft", {
             time: Power.formatTime(Power.secondsLeft)
         })
-        interactive: false
+        onClicked: Panels.toggleBattery(root.screen)
     }
 
     BarButton {

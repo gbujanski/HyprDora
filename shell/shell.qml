@@ -37,6 +37,7 @@ ShellRoot {
     NotificationPanel {}
 
     MediaPanel {}
+    BatteryPanel {}
 
     Osd {}
 
