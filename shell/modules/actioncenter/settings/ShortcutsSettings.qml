@@ -96,16 +96,40 @@ Column {
         }
     }
 
+    // Hyprland does not list gestures the way it lists bindings, so these follow hypr/input.lua by hand.
+    readonly property var gestures: [
+        {
+            description: I18n.t("shortcuts.gesture.workspace"),
+            keys: I18n.t("shortcuts.gesture.threeFingers") + " ← →"
+        }
+    ]
+
     Repeater {
-        model: root.binds
+        model: [...root.binds, ...(root.binds.length > 0 ? [
+                    {
+                        title: I18n.t("shortcuts.gestures")
+                    }
+                ] : []), ...(root.binds.length > 0 ? root.gestures : [])]
 
         Item {
             required property var modelData
 
             width: root.width
-            height: 28
+            height: modelData.title ? 40 : 28
+
+            SectionTitle {
+                visible: !!parent.modelData.title
+                anchors {
+                    left: parent.left
+                    leftMargin: 4
+                    bottom: parent.bottom
+                    bottomMargin: 4
+                }
+                text: parent.modelData.title ?? ""
+            }
 
             Label {
+                visible: !parent.modelData.title
                 anchors {
                     left: parent.left
                     right: keys.left
@@ -124,7 +148,7 @@ Column {
                     rightMargin: 4
                     verticalCenter: parent.verticalCenter
                 }
-                text: parent.modelData.keys
+                text: parent.modelData.keys ?? ""
                 color: Theme.muted
                 font.pixelSize: Theme.fontSizeSmall
             }

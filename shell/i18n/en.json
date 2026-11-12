@@ -326,5 +326,8 @@
   "defaultApps.images": "Images",
   "defaultApps.video": "Video",
   "defaultApps.music": "Music",
-  "defaultApps.pdf": "PDF"
+  "defaultApps.pdf": "PDF",
+  "shortcuts.gestures": "TOUCHPAD GESTURES",
+  "shortcuts.gesture.workspace": "Previous or next workspace",
+  "shortcuts.gesture.threeFingers": "3 fingers"
 }

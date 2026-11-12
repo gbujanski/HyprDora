@@ -328,5 +328,8 @@
   "defaultApps.images": "Obrazy",
   "defaultApps.video": "Wideo",
   "defaultApps.music": "Muzyka",
-  "defaultApps.pdf": "PDF"
+  "defaultApps.pdf": "PDF",
+  "shortcuts.gestures": "GESTY GŁADZIKA",
+  "shortcuts.gesture.workspace": "Poprzedni lub następny obszar roboczy",
+  "shortcuts.gesture.threeFingers": "3 palce"
 }

@@ -272,13 +272,13 @@ Second round, agreed on 2026-11-12, done before the large items:
 - [x] Missing folder shortcuts in the Nautilus sidebar: the first login bookmarks the user folders, as xdg-user-dirs-gtk does on GNOME
 - [x] Battery panel on a click on the battery icon: power profiles and time to empty or to full
 - [ ] While updates wait, the power menu offers update and power off, update and restart: Flatpaks first, then `dnf upgrade --offline` downloads the packages and `dnf offline reboot` (with `--poweroff` for the first) installs them at boot
-- [ ] Touchpad gestures in the shortcut list
+- [x] Touchpad gestures in the shortcut list, written by hand because Hyprland does not list them
 - [ ] Automations in the settings (*plan first*): do not disturb, coffee and muted sound on a schedule of hours and weekdays; sound back on when headphones connect; VPN on outside the home network
 - [ ] Review the look of SDDM and hyprlock against the shell, and show where help is: Ctrl+Alt+F3, `hyprdora -h`, `hyprdora rollback` (*plan first*)
 
 Large:
 
-- [ ] New application launcher (*plan first*)
+- [ ] New application launcher (*plan first*), opened also by a three-finger swipe up
 - [ ] Light and dark theme in the settings, under Appearance
 - [ ] Calendar events from Nextcloud first, then Google and Microsoft: preview on hover, adding events if possible. The Nextcloud server is reachable only from the home network or over VPN. Options first, then a decision whether it is worth it (research)
 - [ ] Encrypted home directory unlocked by the login password, with no second password at boot (research)

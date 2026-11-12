@@ -11,6 +11,7 @@ hl.config({
     },
 })
 
+-- Gestures are listed by hand in the shell's shortcut list (ShortcutsSettings.qml); keep the two in step.
 hl.gesture({
     fingers = 3,
     direction = "horizontal",
