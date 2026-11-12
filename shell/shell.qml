@@ -22,6 +22,7 @@ ShellRoot {
     // Singletons are created on first use, and these have no UI that would use them.
     readonly property var wallpaper: Wallpaper
     readonly property var idle: Idle
+    readonly property var automations: Automations
 
     Variants {
         model: Quickshell.screens

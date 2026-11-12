@@ -343,5 +343,22 @@
   "launcher.clipboardEmpty": "The clipboard history is empty",
   "launcher.copyResult": "Enter copies the result",
   "launcher.runCommand": "Run the command",
-  "launcher.searchWeb": "Search the web"
+  "launcher.searchWeb": "Search the web",
+  "settings.automations": "Automations",
+  "automations.dnd": "Do not disturb on a schedule",
+  "automations.coffee": "Coffee on a schedule",
+  "automations.mute": "Mute sound on a schedule",
+  "automations.headphones": "Unmute when headphones connect",
+  "automations.vpn": "VPN outside home",
+  "automations.vpnConnection": "Connection",
+  "automations.vpnHome": "Home networks, which turn the VPN off:",
+  "automations.from": "from",
+  "automations.to": "to",
+  "automations.day.mon": "Mo",
+  "automations.day.tue": "Tu",
+  "automations.day.wed": "We",
+  "automations.day.thu": "Th",
+  "automations.day.fri": "Fr",
+  "automations.day.sat": "Sa",
+  "automations.day.sun": "Su"
 }

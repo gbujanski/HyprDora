@@ -30,6 +30,11 @@ Item {
             icon: Icons.monitor
         },
         {
+            id: "automations",
+            label: I18n.t("settings.automations"),
+            icon: Icons.automation
+        },
+        {
             id: "defaultApps",
             label: I18n.t("settings.defaultApps"),
             icon: Icons.apps
@@ -220,7 +225,7 @@ Item {
         // Level with the category's row, but always on screen.
         y: Math.max(Theme.panelMargin, Math.min(menu.y + root.currentIndex * (root.rowHeight + root.rowSpacing), root.height - height - Theme.panelMargin))
         // The display layout needs the width of the panel.
-        width: Panels.settingsCategory === "displays" || Panels.settingsCategory === "shortcuts" ? Theme.panelWidth : 320
+        width: ["displays", "shortcuts", "automations"].includes(Panels.settingsCategory) ? Theme.panelWidth : 320
         height: Math.min(content.implicitHeight + Theme.panelPadding * 2, root.height - Theme.panelMargin * 2)
         radius: Theme.panelRadius
         color: Theme.background
@@ -276,6 +281,8 @@ Item {
                             return shortcutsSettings;
                         case "defaultApps":
                             return defaultAppsSettings;
+                        case "automations":
+                            return automationsSettings;
                         default:
                             return null;
                         }
@@ -346,6 +353,11 @@ Item {
     Component {
         id: languageSettings
         LanguageSettings {}
+    }
+
+    Component {
+        id: automationsSettings
+        AutomationsSettings {}
     }
 
     Component {

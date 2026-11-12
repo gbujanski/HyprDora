@@ -273,7 +273,7 @@ Second round, agreed on 2026-11-12, done before the large items:
 - [x] Battery panel on a click on the battery icon: power profiles and time to empty or to full
 - [x] While updates wait, the power menu offers update and power off, update and restart: Flatpaks first, then `dnf upgrade --offline` downloads the packages and `dnf offline reboot` (with `--poweroff` for the first) installs them at boot (tested in a VM: 11 updates installed at boot with snapper snapshots before and after; power off without packages just powers off)
 - [x] Touchpad gestures in the shortcut list, written by hand because Hyprland does not list them
-- [ ] Automations in the settings (*plan first*): do not disturb, coffee and muted sound on a schedule of hours and weekdays; sound back on when headphones connect; VPN on outside the home network
+- [x] Automations in the settings: do not disturb, coffee and muted sound on a schedule of hours and weekdays (on when the hours start, off when they end); sound back on when headphones connect; a VPN that connects on any network except listed home Wi-Fi networks, which disconnect it
 - [ ] Review the look of SDDM and hyprlock against the shell, and show where help is: Ctrl+Alt+F3, `hyprdora -h`, `hyprdora rollback` (*plan first*)
 
 Large:

@@ -345,5 +345,22 @@
   "launcher.clipboardEmpty": "Historia schowka jest pusta",
   "launcher.copyResult": "Enter kopiuje wynik",
   "launcher.runCommand": "Uruchom polecenie",
-  "launcher.searchWeb": "Szukaj w internecie"
+  "launcher.searchWeb": "Szukaj w internecie",
+  "settings.automations": "Automatyzacje",
+  "automations.dnd": "Nie przeszkadzać według harmonogramu",
+  "automations.coffee": "Kawa według harmonogramu",
+  "automations.mute": "Wyciszenie według harmonogramu",
+  "automations.headphones": "Włącz dźwięk po podłączeniu słuchawek",
+  "automations.vpn": "VPN poza domem",
+  "automations.vpnConnection": "Połączenie",
+  "automations.vpnHome": "Sieci domowe, które wyłączają VPN:",
+  "automations.from": "od",
+  "automations.to": "do",
+  "automations.day.mon": "Pn",
+  "automations.day.tue": "Wt",
+  "automations.day.wed": "Śr",
+  "automations.day.thu": "Cz",
+  "automations.day.fri": "Pt",
+  "automations.day.sat": "So",
+  "automations.day.sun": "Nd"
 }
