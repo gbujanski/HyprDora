@@ -274,7 +274,7 @@ Second round, agreed on 2026-11-12, done before the large items:
 - [x] While updates wait, the power menu offers update and power off, update and restart: Flatpaks first, then `dnf upgrade --offline` downloads the packages and `dnf offline reboot` (with `--poweroff` for the first) installs them at boot (tested in a VM: 11 updates installed at boot with snapper snapshots before and after; power off without packages just powers off)
 - [x] Touchpad gestures in the shortcut list, written by hand because Hyprland does not list them
 - [x] Automations in the settings: do not disturb, coffee and muted sound on a schedule of hours and weekdays (on when the hours start, off when they end); sound back on when headphones connect; a VPN that connects on any network except listed home Wi-Fi networks, which disconnect it
-- [x] Login and lock screens: SDDM keeps its terminal look, now in the shell's colors, with Caps Lock shown by an amber prompt and recovery help under `/help`. hyprlock is replaced by a lock screen in the shell that looks the same; only a successful PAM check unlocks it, and a shell that stops while locked ends the session
+- [x] Login and lock screens: SDDM keeps its terminal look, now in the shell's colors, with recovery help under `/help`; its Caps Lock state is not available under Wayland (SDDM's Wayland keyboard backend is a stub), so only the lock screen shows Caps Lock. hyprlock is replaced by a lock screen in the shell that looks the same; only a successful PAM check unlocks it, and a shell that stops while locked ends the session
 
 Large:
 

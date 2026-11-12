@@ -132,7 +132,12 @@ Scope {
                             }
                         }
 
+                        // Caps Lock turns on when pressed but off only when released, so both are read.
                         Keys.onPressed: event => {
+                            if (!capsReader.running)
+                                capsReader.running = true;
+                        }
+                        Keys.onReleased: event => {
                             if (!capsReader.running)
                                 capsReader.running = true;
                         }

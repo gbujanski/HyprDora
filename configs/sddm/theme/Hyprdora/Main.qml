@@ -9,10 +9,9 @@ Rectangle {
     color: "black"
 
     property string savedUsername: ""
-    // The shell's accent, error and warning colors.
+    // The shell's accent and error colors.
     property color terminalDefaultColor: "#2fcf5e"
     property color terminalErrorColor: "#fb4b4b"
-    property color capsLockColor: "#ff9900"
     property color terminalColor: root.terminalDefaultColor
     property int fontsize: 16
     property string fontfamily: "monospace"
@@ -41,8 +40,7 @@ Rectangle {
         Column {
             Text {
                 text: ">:"
-                // Caps Lock turns the prompt amber, since the password cannot be seen.
-                color: keyboard.capsLock && root.terminalColor === root.terminalDefaultColor ? root.capsLockColor : root.terminalColor
+                color: root.terminalColor
                 font.family: root.fontfamily
                 font.pixelSize: root.fontsize
                 font.bold: true

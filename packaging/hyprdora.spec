@@ -181,6 +181,9 @@ if [ ! -e %{_localstatedir}/lib/sddm/state.conf ]; then
     printf '[Last]\nSession=hyprdora.desktop\n' > %{_localstatedir}/lib/sddm/state.conf
     chown sddm:sddm %{_localstatedir}/lib/sddm/state.conf
 fi
+# RPM gives every file the same build date, and the greeter's compiled QML cache is checked by file date,
+# so it would keep showing the previous login theme. The cache is rebuilt on the next start.
+rm -rf %{_localstatedir}/lib/sddm/.cache/sddm-greeter* 2>/dev/null || :
 # The console reminder of hyprdora --help is written at every boot, in the system language.
 systemctl enable hyprdora-hint.service >/dev/null 2>&1 || :
 if [ -d /run/systemd/system ]; then
