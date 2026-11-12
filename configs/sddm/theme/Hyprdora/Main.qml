@@ -9,8 +9,10 @@ Rectangle {
     color: "black"
 
     property string savedUsername: ""
-    property color terminalDefaultColor: "#00ee00"
-    property color terminalErrorColor: "#ff0000"
+    // The shell's accent, error and warning colors.
+    property color terminalDefaultColor: "#2fcf5e"
+    property color terminalErrorColor: "#fb4b4b"
+    property color capsLockColor: "#ff9900"
     property color terminalColor: root.terminalDefaultColor
     property int fontsize: 16
     property string fontfamily: "monospace"
@@ -39,7 +41,8 @@ Rectangle {
         Column {
             Text {
                 text: ">:"
-                color: root.terminalColor
+                // Caps Lock turns the prompt amber, since the password cannot be seen.
+                color: keyboard.capsLock && root.terminalColor === root.terminalDefaultColor ? root.capsLockColor : root.terminalColor
                 font.family: root.fontfamily
                 font.pixelSize: root.fontsize
                 font.bold: true
@@ -104,19 +107,29 @@ Rectangle {
         }
     }
 
-    Text {
+    Column {
         id: helpMenu
         visible: false
-        
-        color: root.terminalColor
-        
-        font.family: root.fontfamily 
-        font.pixelSize: root.fontsize
-        
+        spacing: 6
+
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottomMargin: 20
-        
-        text: "SYSTEM CMDS:   /help   |   /poweroff   |   /reboot   |   /suspend"
+
+        Text {
+            anchors.horizontalCenter: parent.horizontalCenter
+            color: root.terminalColor
+            font.family: root.fontfamily
+            font.pixelSize: root.fontsize
+            text: "SYSTEM CMDS:   /help   |   /poweroff   |   /reboot   |   /suspend"
+        }
+
+        Text {
+            anchors.horizontalCenter: parent.horizontalCenter
+            color: root.terminalColor
+            font.family: root.fontfamily
+            font.pixelSize: root.fontsize
+            text: "RECOVERY:   Ctrl+Alt+F3 console   |   hyprdora -h   |   hyprdora rollback"
+        }
     }
 }

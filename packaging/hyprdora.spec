@@ -10,7 +10,6 @@ BuildArch:      noarch
 # Hyprland
 Requires:       hyprland
 Requires:       hyprpaper
-Requires:       hyprlock
 Requires:       hypridle
 Requires:       hyprpolkitagent
 Requires:       xdg-desktop-portal-hyprland
@@ -161,6 +160,8 @@ install -Dpm 644 configs/xdg-terminals.list %{buildroot}%{_sysconfdir}/xdg/xdg-t
 install -Dpm 755 kickstart/system-setup.sh %{buildroot}%{_libexecdir}/%{name}/system-setup.sh
 install -Dpm 755 kickstart/first-login.sh %{buildroot}%{_libexecdir}/%{name}/first-login.sh
 install -Dpm 755 configs/update/offline-update.sh %{buildroot}%{_libexecdir}/%{name}/offline-update
+install -Dpm 755 configs/systemd/shell-stopped.sh %{buildroot}%{_libexecdir}/%{name}/shell-stopped
+install -Dpm 644 configs/pam/hyprdora-lock %{buildroot}%{_sysconfdir}/pam.d/hyprdora-lock
 install -Dpm 644 configs/update/org.hyprdora.offline-update.policy %{buildroot}%{_datadir}/polkit-1/actions/org.hyprdora.offline-update.policy
 install -Dpm 755 bin/hyprdora %{buildroot}%{_bindir}/hyprdora
 install -Dpm 644 configs/dnf/protected.d/hyprdora.conf %{buildroot}%{_sysconfdir}/dnf/protected.d/hyprdora.conf
@@ -212,6 +213,7 @@ fi
 %{_bindir}/hyprdora
 %{_prefix}/lib/systemd/system/hyprdora-hint.service
 %config(noreplace) %{_sysconfdir}/dnf/protected.d/hyprdora.conf
+%config(noreplace) %{_sysconfdir}/pam.d/hyprdora-lock
 %{_datadir}/glib-2.0/schemas/90_hyprdora.gschema.override
 %{_datadir}/polkit-1/actions/org.hyprdora.offline-update.policy
 %{_datadir}/sddm/themes/Hyprdora

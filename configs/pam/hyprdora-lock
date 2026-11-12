@@ -1,0 +1,3 @@
+#%PAM-1.0
+# HyprDora lock screen: the same password check as the console login.
+auth        include     login

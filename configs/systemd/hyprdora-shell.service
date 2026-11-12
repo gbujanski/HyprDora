@@ -6,7 +6,11 @@ After=graphical-session.target
 Requisite=graphical-session.target
 
 [Service]
+# A lock marker left from before belongs to a shell that already ended the locked session.
+ExecStartPre=-/bin/sh -c 'rm -f "$XDG_RUNTIME_DIR/hyprdora/locked-$HYPRLAND_INSTANCE_SIGNATURE"'
 ExecStart=/usr/bin/qs -c hyprdora
+# A shell that stops while the screen is locked ends the session, back to the login screen.
+ExecStopPost=/usr/libexec/hyprdora/shell-stopped
 # A crash brings the bar, notifications and the idle lock back within seconds.
 Restart=on-failure
 RestartSec=2

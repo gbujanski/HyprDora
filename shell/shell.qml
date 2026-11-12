@@ -12,6 +12,7 @@ import qs.modules.battery
 import qs.modules.capture
 import qs.modules.media
 import qs.modules.launcher
+import qs.modules.lock
 import qs.services
 
 ShellRoot {
@@ -41,6 +42,7 @@ ShellRoot {
     MediaPanel {}
     BatteryPanel {}
     LauncherPanel {}
+    LockScreen {}
 
     Osd {}
 

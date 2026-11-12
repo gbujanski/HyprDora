@@ -76,6 +76,7 @@ install: rpm
 		sudo dnf install -y $(RPM_DIR)/RPMS/noarch/hyprdora-$(VERSION)-*.noarch.rpm || \
 		{ hyprctl reload >/dev/null; exit 1; }
 	-hyprctl reload >/dev/null
+	-systemctl --user daemon-reload
 	-systemctl --user try-restart hyprdora-shell.service
 
 iso: rpm
