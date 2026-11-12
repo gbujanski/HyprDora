@@ -128,9 +128,10 @@ Row {
     BarButton {
         anchors.verticalCenter: parent.verticalCenter
         visible: Power.hasBattery
-        icon: Icons.battery(Power.level, Power.charging)
+        // A bolt while on power; color only when low on battery, at the same levels as the warnings.
+        icon: Icons.battery(Power.level, !UPower.onBattery)
         label: `${Math.round(Power.level * 100)}%`
-        contentColor: Power.charging || Power.full ? Theme.accent : Power.level <= 0.15 ? Theme.error : Power.level <= 0.30 ? Theme.warning : Theme.foreground
+        contentColor: !UPower.onBattery ? Theme.foreground : Power.level <= Settings.batteryCritical ? Theme.error : Power.level <= Settings.batteryLow ? Theme.warning : Theme.foreground
         tooltip: Power.full ? I18n.t("battery.full") : Power.secondsLeft <= 0 ? "" : Power.charging ? I18n.t("battery.timeToFull", {
             time: Power.formatTime(Power.secondsLeft)
         }) : I18n.t("battery.timeLeft", {

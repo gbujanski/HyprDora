@@ -241,6 +241,7 @@ Scope {
 
             SettingsMenu {
                 anchors.fill: parent
+                actionCenter: panel
                 opacity: panel.opacity
             }
         }

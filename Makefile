@@ -67,9 +67,14 @@ rpm:
 
 # Neither Hyprland nor the shell takes in a package update by itself: Hyprland misses replaced files, and a
 # live shell reload misses new files. Both are restarted; the shell loses its notification history.
+# Hyprland would reload itself for each config file the package replaces, and every reload makes the
+# screen flash, so autoreload is off during the install and one reload follows; it also turns autoreload
+# back on. The shell does not watch its installed files and is restarted once.
 install: rpm
+	-hyprctl eval 'hl.config({ misc = { disable_autoreload = true } })' >/dev/null
 	sudo dnf reinstall -y $(RPM_DIR)/RPMS/noarch/hyprdora-$(VERSION)-*.noarch.rpm || \
-		sudo dnf install -y $(RPM_DIR)/RPMS/noarch/hyprdora-$(VERSION)-*.noarch.rpm
+		sudo dnf install -y $(RPM_DIR)/RPMS/noarch/hyprdora-$(VERSION)-*.noarch.rpm || \
+		{ hyprctl reload >/dev/null; exit 1; }
 	-hyprctl reload >/dev/null
 	-systemctl --user try-restart hyprdora-shell.service
 

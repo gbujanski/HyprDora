@@ -68,9 +68,31 @@ Item {
             root.emitValue(root.dragValue);
         }
         onPositionChanged: mouse => {
+            // Hover is tracked for the wheel, so moving over the slider without a press must not change it.
+            if (!pressed)
+                return;
             root.dragValue = root.valueAt(mouse.x);
             root.emitValue(root.dragValue);
         }
-        onWheel: wheel => root.emitValue(root.value + (wheel.angleDelta.y > 0 ? root.step : -root.step))
+        hoverEnabled: true
+
+        // When the pointer was brought here by scrolling the page, the wheel keeps scrolling the page: wheel
+        // events right after entering, and every one that follows without a pause, go to the parent.
+        property real enteredAt: 0
+        property real passedAt: 0
+
+        onContainsMouseChanged: {
+            if (containsMouse)
+                enteredAt = Date.now();
+        }
+        onWheel: wheel => {
+            const now = Date.now();
+            if (now - enteredAt < 400 || now - passedAt < 300) {
+                passedAt = now;
+                wheel.accepted = false;
+                return;
+            }
+            root.emitValue(root.value + (wheel.angleDelta.y > 0 ? root.step : -root.step));
+        }
     }
 }

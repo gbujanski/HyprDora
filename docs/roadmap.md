@@ -263,6 +263,19 @@ Medium:
 - [x] Notice on the bar when system updates are available, installed in a terminal on click
 - [x] Keyboard shortcut cheat sheet in the settings, read from Hyprland so the user's own bindings show too
 
+Second round, agreed on 2026-11-12, done before the large items:
+
+- [x] A click outside the settings menu closes the whole action center
+- [x] Scrolling the action center is not caught by a slider under the pointer
+- [x] `make install` makes the shell flash once, not on every replaced file
+- [x] Battery icon white by default, colored only when low, with a charging bolt on power
+- [x] Missing folder shortcuts in the Nautilus sidebar: the first login bookmarks the user folders, as xdg-user-dirs-gtk does on GNOME
+- [ ] Battery panel on a click on the battery icon: power profiles and time to empty or to full
+- [ ] Update notice: install and power off, install and restart
+- [ ] Touchpad gestures in the shortcut list
+- [ ] Automations in the settings (*plan first*): do not disturb, coffee and muted sound on a schedule of hours and weekdays; sound back on when headphones connect; VPN on outside the home network
+- [ ] Review the look of SDDM and hyprlock against the shell, and show where help is: Ctrl+Alt+F3, `hyprdora -h`, `hyprdora rollback` (*plan first*)
+
 Large:
 
 - [ ] New application launcher (*plan first*)
@@ -271,7 +284,7 @@ Large:
 - [ ] Encrypted home directory unlocked by the login password, with no second password at boot (research)
 - [x] Default applications in the settings: browser, mail, files, terminal, text editor, images, video, music and PDF, written to `mimeapps.list` and `xdg-terminals.list`, which SUPER+E and SUPER+T follow
 
-Later: computer name, an installer that does not look stuck, notification history across restarts, an action for F3 (Mission Control, `XF86LaunchA`). For F3, the Hyprspace overview plugin worked in a nested Hyprland 0.57.1, but a plugin must be rebuilt for every Hyprland release, which would tie Hyprland updates to it, so it was dropped.
+Later: battery charge limit to about 80% (this MacBook does not allow it; the Legion has a conservation mode, so it returns with the Legion), a software center chosen from existing ones such as GNOME Software or Bazaar rather than built, computer name, an installer that does not look stuck, notification history across restarts, an action for F3 (Mission Control, `XF86LaunchA`). For F3, the Hyprspace overview plugin worked in a nested Hyprland 0.57.1, but a plugin must be rebuilt for every Hyprland release, which would tie Hyprland updates to it, so it was dropped.
 
 ## 12. Resolved decisions
 

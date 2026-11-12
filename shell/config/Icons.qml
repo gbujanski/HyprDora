@@ -132,12 +132,12 @@ Singleton {
     /**
      * Returns the battery icon.
      * @param {real} level  charge, 0..1
-     * @param {bool} charging  whether charging
+     * @param {bool} plugged  whether on power, which adds a bolt
      * @returns {string}
      */
-    function battery(level, charging) {
-        if (charging)
-            return glyph(0xF0084);
+    function battery(level, plugged) {
+        if (plugged)
+            return glyph([0xF089C, 0xF0086, 0xF0087, 0xF0088, 0xF089D, 0xF0089, 0xF089E, 0xF008A, 0xF008B, 0xF0085][Math.max(0, Math.min(9, Math.round(level * 10) - 1))]);
         if (level >= 0.95)
             return glyph(0xF0079);
         if (level < 0.05)

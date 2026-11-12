@@ -1,5 +1,6 @@
 //@ pragma UseQApplication
 //@ pragma IconTheme Papirus
+import QtQuick
 import Quickshell
 import qs.modules.bar
 import qs.modules.actioncenter
@@ -13,6 +14,10 @@ import qs.modules.media
 import qs.services
 
 ShellRoot {
+    // The installed shell does not reload itself while a package update replaces its files one by one;
+    // make install restarts it once instead. A shell run from the repository keeps reloading on save.
+    Component.onCompleted: Quickshell.watchFiles = !Quickshell.shellDir.startsWith("/etc/")
+
     // Singletons are created on first use, and these have no UI that would use them.
     readonly property var wallpaper: Wallpaper
     readonly property var idle: Idle

@@ -45,6 +45,9 @@ Item {
     readonly property int rowHeight: 34
     readonly property int rowSpacing: 2
 
+    // The action center panel, to tell a click on it from a click outside.
+    property Item actionCenter: null
+
     // Bottom-right corner of the settings button.
     property point anchor: Qt.point(0, 0)
 
@@ -102,11 +105,19 @@ Item {
         }
     }
 
-    // A click anywhere outside the settings windows closes them and goes no further.
+    // A click outside the settings windows closes only them when it lands on the action center, and the
+    // whole action center anywhere else, as a click outside the action center always does.
     MouseArea {
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
-        onClicked: Panels.settingsMenuOpen = false
+        onClicked: mouse => {
+            const panel = root.actionCenter;
+            const inside = panel && panel.contains(panel.mapFromItem(this, mouse.x, mouse.y));
+            if (inside)
+                Panels.settingsMenuOpen = false;
+            else
+                Panels.closeActionCenter();
+        }
     }
 
     Rectangle {
