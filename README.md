@@ -10,7 +10,7 @@ A Hyprland desktop on Fedora with a custom [Quickshell](https://quickshell.org) 
 |---|---|
 | `shell/` | Quickshell shell |
 | `hypr/` | Hyprland config in Lua |
-| `configs/` | rofi, alacritty, hypridle, hyprlock, hyprpaper, SDDM theme |
+| `configs/` | alacritty, hypridle, hyprlock, hyprpaper, SDDM theme |
 | `assets/` | wallpapers, bundled font |
 | `packaging/` | RPM spec files |
 | `kickstart/` | install description, ISO build, first-login step |

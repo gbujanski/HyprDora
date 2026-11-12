@@ -17,3 +17,11 @@ hl.gesture({
     direction = "horizontal",
     action = "workspace",
 })
+
+hl.gesture({
+    fingers = 3,
+    direction = "up",
+    action = function()
+        hl.exec_cmd(require("hypr.lib.paths").shell .. " ipc call launcher toggle")
+    end,
+})

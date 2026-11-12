@@ -39,6 +39,10 @@ Singleton {
     property var mediaScreen: null
     property bool batteryOpen: false
     property var batteryScreen: null
+    property bool launcherOpen: false
+    property var launcherScreen: null
+    // "apps" or "clipboard".
+    property string launcherMode: "apps"
 
     /**
      * Returns the screen with Hyprland's focused monitor.
@@ -125,6 +129,8 @@ Singleton {
             mediaOpen = false;
         if (keep !== "battery")
             batteryOpen = false;
+        if (keep !== "launcher")
+            launcherOpen = false;
     }
 
     /**
@@ -141,6 +147,35 @@ Singleton {
     /** Closes the media player panel. */
     function closeMedia() {
         mediaOpen = false;
+    }
+
+    /**
+     * Opens the launcher.
+     * @param {ShellScreen} screen  target, or null for the focused screen
+     * @param {string} mode  "apps" or "clipboard"
+     */
+    function openLauncher(screen, mode) {
+        launcherMode = mode ?? "apps";
+        launcherScreen = screen ?? focusedScreen();
+        launcherOpen = launcherScreen !== null;
+        if (launcherOpen)
+            closeOthers("launcher");
+    }
+
+    /** Closes the launcher. */
+    function closeLauncher() {
+        launcherOpen = false;
+    }
+
+    /**
+     * Closes the launcher if it shows this mode, otherwise opens it in this mode.
+     * @param {string} mode  "apps" or "clipboard"
+     */
+    function toggleLauncher(mode) {
+        if (launcherOpen && launcherMode === (mode ?? "apps"))
+            closeLauncher();
+        else
+            openLauncher(null, mode);
     }
 
     /**
@@ -247,6 +282,10 @@ Singleton {
                 root.closeMedia();
                 root.mediaScreen = null;
             }
+            if (root.launcherOpen && !Quickshell.screens.includes(root.launcherScreen)) {
+                root.closeLauncher();
+                root.launcherScreen = null;
+            }
             if (root.batteryOpen && !Quickshell.screens.includes(root.batteryScreen)) {
                 root.closeBattery();
                 root.batteryScreen = null;
@@ -271,6 +310,23 @@ Singleton {
         }
         function page(): string {
             return root.actionCenterOpen ? root.actionCenterPage : "";
+        }
+    }
+
+    IpcHandler {
+        target: "launcher"
+
+        function toggle(): void {
+            root.toggleLauncher("apps");
+        }
+        function clipboard(): void {
+            root.toggleLauncher("clipboard");
+        }
+        function close(): void {
+            root.closeLauncher();
+        }
+        function isOpen(): bool {
+            return root.launcherOpen;
         }
     }
 

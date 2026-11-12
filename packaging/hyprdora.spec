@@ -49,7 +49,6 @@ Requires:       cups
 Requires:       system-config-printer
 
 # Desktop tools
-Requires:       rofi
 Requires:       cliphist
 Requires:       wl-clipboard
 Requires:       grim

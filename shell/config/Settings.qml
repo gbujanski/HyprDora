@@ -51,6 +51,8 @@ Singleton {
     // Command that runs a program in the default terminal, chosen in the settings; the program is appended.
     readonly property var terminalCommand: overrides.terminalCommand ?? ["xdg-terminal-exec"]
     readonly property var btopCommand: [...terminalCommand, "btop"]
+    // Address the launcher appends a search to when nothing else matches.
+    readonly property string webSearchUrl: overrides.webSearchUrl ?? "https://duckduckgo.com/?q="
 
     /**
      * Parses the settings file.

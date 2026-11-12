@@ -11,6 +11,7 @@ import qs.modules.calendar
 import qs.modules.battery
 import qs.modules.capture
 import qs.modules.media
+import qs.modules.launcher
 import qs.services
 
 ShellRoot {
@@ -38,6 +39,7 @@ ShellRoot {
 
     MediaPanel {}
     BatteryPanel {}
+    LauncherPanel {}
 
     Osd {}
 

@@ -336,5 +336,12 @@
   "updates.preparingTitle": "Downloading updates",
   "updates.preparingReboot": "The computer restarts when they are ready and installs them before starting.",
   "updates.preparingPoweroff": "The computer restarts when they are ready, installs them and powers off.",
-  "updates.failedTitle": "Updates could not be prepared"
+  "updates.failedTitle": "Updates could not be prepared",
+  "launcher.placeholder": "Search applications, calculate, > run a command",
+  "launcher.clipboardPlaceholder": "Search the clipboard history",
+  "launcher.empty": "Nothing found",
+  "launcher.clipboardEmpty": "The clipboard history is empty",
+  "launcher.copyResult": "Enter copies the result",
+  "launcher.runCommand": "Run the command",
+  "launcher.searchWeb": "Search the web"
 }

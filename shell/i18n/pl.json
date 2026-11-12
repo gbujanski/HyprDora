@@ -338,5 +338,12 @@
   "updates.preparingTitle": "Pobieranie aktualizacji",
   "updates.preparingReboot": "Gdy będą gotowe, komputer uruchomi się ponownie i zainstaluje je przed startem.",
   "updates.preparingPoweroff": "Gdy będą gotowe, komputer uruchomi się ponownie, zainstaluje je i wyłączy się.",
-  "updates.failedTitle": "Nie udało się przygotować aktualizacji"
+  "updates.failedTitle": "Nie udało się przygotować aktualizacji",
+  "launcher.placeholder": "Szukaj aplikacji, licz, > uruchom polecenie",
+  "launcher.clipboardPlaceholder": "Szukaj w historii schowka",
+  "launcher.empty": "Nic nie znaleziono",
+  "launcher.clipboardEmpty": "Historia schowka jest pusta",
+  "launcher.copyResult": "Enter kopiuje wynik",
+  "launcher.runCommand": "Uruchom polecenie",
+  "launcher.searchWeb": "Szukaj w internecie"
 }

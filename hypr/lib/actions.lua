@@ -18,8 +18,8 @@ return {
     terminal = exec(apps.terminal),
     files = exec(apps.files),
     browser = exec(apps.browser),
-    launcher = exec(apps.launcher),
-    clipboard = exec(apps.clipboard),
+    launcher = exec(shell_call("launcher toggle")),
+    clipboard = exec(shell_call("launcher clipboard")),
     lock = exec("loginctl lock-session"),
 
     action_center = exec(shell_call("actioncenter toggle")),

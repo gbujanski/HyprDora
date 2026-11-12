@@ -101,6 +101,10 @@ Column {
         {
             description: I18n.t("shortcuts.gesture.workspace"),
             keys: I18n.t("shortcuts.gesture.threeFingers") + " ← →"
+        },
+        {
+            description: I18n.t("shortcut.App launcher"),
+            keys: I18n.t("shortcuts.gesture.threeFingers") + " ↑"
         }
     ]
 

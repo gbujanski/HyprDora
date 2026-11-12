@@ -18,7 +18,7 @@ hyprdora/
 │   ├── i18n/           # en.json, pl.json
 │   └── scripts/        # nm-connect.py, bt-agent.py (section 4)
 ├── hypr/               # Hyprland Lua config (section 5)
-├── configs/            # rofi, alacritty, hypridle, hyprlock, hyprpaper, SDDM theme
+├── configs/            # alacritty, hypridle, hyprlock, hyprpaper, SDDM theme
 ├── assets/             # wallpapers, bundled font and its license
 ├── packaging/          # RPM .spec files
 ├── kickstart/          # install description, ISO build, first-login step
@@ -36,7 +36,7 @@ Shell name: `qs -c hyprdora`. User settings: `~/.config/hyprdora/settings.json`.
 - Hyprland: `hyprland`, `hyprpaper`, `hyprlock`, `hypridle`, `hyprpolkitagent`, XDG portals, `xdg-utils`, Qt Wayland
 - Shell and its dependencies: `quickshell`, `brightnessctl`, `playerctl`, `adwaita-sans-fonts`, `python3-gobject`, `libnotify`, JetBrainsMono Nerd Font (pinned version, OFL text included)
 - System: PipeWire, WirePlumber, BlueZ, NetworkManager with Wi-Fi, `wpa_supplicant`, `iw`, `nmtui`, `power-profiles-daemon`, `gnome-keyring`, `gvfs`, `xdg-user-dirs`, CUPS, `system-config-printer`
-- Desktop tools: `rofi`, `cliphist`, `wl-clipboard`, `grim`, `swappy`, `wf-recorder`
+- Desktop tools: `cliphist`, `wl-clipboard`, `grim`, `swappy`, `wf-recorder`
 - Applications: `alacritty`, `btop`, Nautilus with a small extension (Set as Wallpaper, Open in Terminal), `gvfs-mtp`, `gvfs-smb`, Loupe, Showtime, Papers, `gnome-calculator`, `gnome-text-editor`, `gnome-disk-utility`
 - Base tools: `git`, `curl`, `wget`, `tar`, `unzip`, `p7zip`, `pciutils`
 - Look and login: Papirus, Bibata Modern Ice (24), dark GTK theme, wallpaper, SDDM with the Hyprdora theme
@@ -278,7 +278,7 @@ Second round, agreed on 2026-11-12, done before the large items:
 
 Large:
 
-- [ ] New application launcher (*plan first*), opened also by a three-finger swipe up
+- [x] New application launcher in the shell instead of rofi: a list near the top of the screen with search that forgives diacritics and typos, most used first, a calculator, `>` to run a command and a web search; clipboard history in the same window. Opened by SUPER + SPACE, F4 and a three-finger swipe up
 - [ ] Light and dark theme in the settings, under Appearance
 - [ ] Calendar events from Nextcloud first, then Google and Microsoft: preview on hover, adding events if possible. The Nextcloud server is reachable only from the home network or over VPN. Options first, then a decision whether it is worth it (research)
 - [ ] Encrypted home directory unlocked by the login password, with no second password at boot (research)
