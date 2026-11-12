@@ -329,5 +329,12 @@
   "defaultApps.pdf": "PDF",
   "shortcuts.gestures": "TOUCHPAD GESTURES",
   "shortcuts.gesture.workspace": "Previous or next workspace",
-  "shortcuts.gesture.threeFingers": "3 fingers"
+  "shortcuts.gesture.threeFingers": "3 fingers",
+  "session.updateReboot": "Update and restart",
+  "session.updatePoweroff": "Update and power off",
+  "updates.appName": "Updates",
+  "updates.preparingTitle": "Downloading updates",
+  "updates.preparingReboot": "The computer restarts when they are ready and installs them before starting.",
+  "updates.preparingPoweroff": "The computer restarts when they are ready, installs them and powers off.",
+  "updates.failedTitle": "Updates could not be prepared"
 }

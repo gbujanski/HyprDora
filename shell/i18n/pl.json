@@ -331,5 +331,12 @@
   "defaultApps.pdf": "PDF",
   "shortcuts.gestures": "GESTY GŁADZIKA",
   "shortcuts.gesture.workspace": "Poprzedni lub następny obszar roboczy",
-  "shortcuts.gesture.threeFingers": "3 palce"
+  "shortcuts.gesture.threeFingers": "3 palce",
+  "session.updateReboot": "Zaktualizuj i uruchom ponownie",
+  "session.updatePoweroff": "Zaktualizuj i wyłącz",
+  "updates.appName": "Aktualizacje",
+  "updates.preparingTitle": "Pobieranie aktualizacji",
+  "updates.preparingReboot": "Gdy będą gotowe, komputer uruchomi się ponownie i zainstaluje je przed startem.",
+  "updates.preparingPoweroff": "Gdy będą gotowe, komputer uruchomi się ponownie, zainstaluje je i wyłączy się.",
+  "updates.failedTitle": "Nie udało się przygotować aktualizacji"
 }

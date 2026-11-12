@@ -161,6 +161,8 @@ install -Dpm 644 configs/mimeapps.list %{buildroot}%{_sysconfdir}/xdg/mimeapps.l
 install -Dpm 644 configs/xdg-terminals.list %{buildroot}%{_sysconfdir}/xdg/xdg-terminals.list
 install -Dpm 755 kickstart/system-setup.sh %{buildroot}%{_libexecdir}/%{name}/system-setup.sh
 install -Dpm 755 kickstart/first-login.sh %{buildroot}%{_libexecdir}/%{name}/first-login.sh
+install -Dpm 755 configs/update/offline-update.sh %{buildroot}%{_libexecdir}/%{name}/offline-update
+install -Dpm 644 configs/update/org.hyprdora.offline-update.policy %{buildroot}%{_datadir}/polkit-1/actions/org.hyprdora.offline-update.policy
 install -Dpm 755 bin/hyprdora %{buildroot}%{_bindir}/hyprdora
 install -Dpm 644 configs/dnf/protected.d/hyprdora.conf %{buildroot}%{_sysconfdir}/dnf/protected.d/hyprdora.conf
 install -Dpm 644 configs/systemd/hyprdora-hint.service %{buildroot}%{_prefix}/lib/systemd/system/hyprdora-hint.service
@@ -212,6 +214,7 @@ fi
 %{_prefix}/lib/systemd/system/hyprdora-hint.service
 %config(noreplace) %{_sysconfdir}/dnf/protected.d/hyprdora.conf
 %{_datadir}/glib-2.0/schemas/90_hyprdora.gschema.override
+%{_datadir}/polkit-1/actions/org.hyprdora.offline-update.policy
 %{_datadir}/sddm/themes/Hyprdora
 %dir %{_sysconfdir}/xdg/quickshell
 %{_sysconfdir}/xdg/quickshell/%{name}

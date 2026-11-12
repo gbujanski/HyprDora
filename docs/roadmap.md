@@ -271,7 +271,7 @@ Second round, agreed on 2026-11-12, done before the large items:
 - [x] Battery icon white by default, colored only when low, with a charging bolt on power
 - [x] Missing folder shortcuts in the Nautilus sidebar: the first login bookmarks the user folders, as xdg-user-dirs-gtk does on GNOME
 - [x] Battery panel on a click on the battery icon: power profiles and time to empty or to full
-- [ ] While updates wait, the power menu offers update and power off, update and restart: Flatpaks first, then `dnf upgrade --offline` downloads the packages and `dnf offline reboot` (with `--poweroff` for the first) installs them at boot
+- [x] While updates wait, the power menu offers update and power off, update and restart: Flatpaks first, then `dnf upgrade --offline` downloads the packages and `dnf offline reboot` (with `--poweroff` for the first) installs them at boot (tested in a VM: 11 updates installed at boot with snapper snapshots before and after; power off without packages just powers off)
 - [x] Touchpad gestures in the shortcut list, written by hand because Hyprland does not list them
 - [ ] Automations in the settings (*plan first*): do not disturb, coffee and muted sound on a schedule of hours and weekdays; sound back on when headphones connect; VPN on outside the home network
 - [ ] Review the look of SDDM and hyprlock against the shell, and show where help is: Ctrl+Alt+F3, `hyprdora -h`, `hyprdora rollback` (*plan first*)

@@ -9,7 +9,29 @@ import qs.config
 Singleton {
     id: root
 
-    readonly property var actions: [
+    // While updates wait, two more actions install them on the way to a restart or power off.
+    readonly property var actions: [...baseActions, ...(Updates.count > 0 ? updateActions : [])]
+
+    readonly property var updateActions: [
+        {
+            id: "updateReboot",
+            label: I18n.t("session.updateReboot"),
+            icon: Icons.update,
+            key: "a",
+            confirm: true,
+            update: "reboot"
+        },
+        {
+            id: "updatePoweroff",
+            label: I18n.t("session.updatePoweroff"),
+            icon: Icons.update,
+            key: "w",
+            confirm: true,
+            update: "poweroff"
+        }
+    ]
+
+    readonly property var baseActions: [
         {
             id: "lock",
             label: I18n.t("session.lock"),
@@ -127,6 +149,10 @@ Singleton {
     function run(action) {
         cancelConfirm();
         Panels.closeActionCenter();
+        if (action.update) {
+            Updates.installOffline(action.update);
+            return;
+        }
         pendingCommand = action.command;
         runDelay.restart();
     }

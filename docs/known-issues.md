@@ -32,3 +32,4 @@ To check, run `sleep 5; systemctl suspend` and keep your hands off the laptop fo
 - **OpenVPN with a login:** the shell cannot ask for a VPN password yet, so such a connection shows an error. Certificate-only OpenVPN and WireGuard work. OpenVPN has been tested only up to importing a file.
 - **Notifications:** inline replies are not supported. History and Do Not Disturb do not survive a shell restart.
 - **`make dev`:** only one program can own the notification service, so notifications go to the session's own shell. Wi-Fi, Bluetooth, audio and brightness act on the real hardware.
+- **"Skipped OpenPGP checks" in the log of an update installed at restart:** expected. `dnf upgrade --offline` checks the signatures when it downloads the packages and stops on any problem; the install at boot then skips the check on purpose, and installs nothing if the system changed in between.

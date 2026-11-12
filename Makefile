@@ -13,7 +13,7 @@ QMLLINT_FLAGS := --import disable --unqualified disable --unresolved-type disabl
 	--signal-handler-parameters disable --incompatible-type disable
 
 QML_FILES := $(shell find shell -name '*.qml' 2>/dev/null)
-SHELL_FILES := $(shell find kickstart -name '*.sh' 2>/dev/null) bin/hyprdora
+SHELL_FILES := $(shell find kickstart configs -name '*.sh' 2>/dev/null) bin/hyprdora
 PYTHON_FILES := $(shell find shell/scripts configs/nautilus configs/portal -name '*.py' 2>/dev/null)
 LUA_FILES := $(shell find hypr -name '*.lua' 2>/dev/null)
 
