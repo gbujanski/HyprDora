@@ -5,7 +5,8 @@ import Quickshell
 import Quickshell.Io
 import qs.config
 
-// Session actions for the action center's Power page. Logout, reboot and power off need confirmation.
+// Session actions for the action center's Power page. Logout, reboot and power off need confirmation when clicked
+// or chosen with Enter; their letter keys run them at once.
 Singleton {
     id: root
 
@@ -137,8 +138,9 @@ Singleton {
         if (confirmAction)
             return false;
         const action = actions.find(a => a.key === key);
+        // A letter key is a deliberate choice, so it runs at once; a click or Enter still asks for confirmation.
         if (action)
-            choose(action);
+            run(action);
         return action !== undefined;
     }
 
