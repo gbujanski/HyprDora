@@ -32,7 +32,8 @@ local session_only = {
 hl.on("hyprland.start", function()
     -- In a real session the shell runs as a service that restarts it after a crash.
     if paths.dev then
-        hl.exec_cmd(paths.shell)
+        -- Same as in the shell service: Qt's touchpad gesture handling crashes the shell.
+        hl.exec_cmd("QT_WAYLAND_DISABLED_INTERFACES=zwp_pointer_gestures_v1 " .. paths.shell)
         return
     end
     for _, command in ipairs(session_only) do

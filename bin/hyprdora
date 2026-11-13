@@ -155,12 +155,17 @@ pick_kernel() {
     grubby --set-default "/boot/vmlinuz-$usable" >/dev/null
 }
 
-rollback() {
-    need_root rollback
+# Checks that the system is a btrfs root subvolume this tool knows how to replace.
+check_root() {
     [ "$(findmnt -no FSTYPE /)" = btrfs ] || { say not_btrfs; return 1; }
     local current
     current=$(findmnt -no OPTIONS / | tr ',' '\n' | sed -n 's:^subvol=/\{0,1\}::p')
     [ "$current" = "$ROOT_SUBVOLUME" ] || { say unexpected_root "$current" "$ROOT_SUBVOLUME"; return 1; }
+}
+
+rollback() {
+    need_root rollback
+    check_root || return 1
 
     list_snapshots || return 1
     local number answer description
@@ -173,6 +178,26 @@ rollback() {
     description=$(snapshot_rows | awk -F'\t' -v n="$number" '$1 == n {print $3}')
     read -r -p "$(say confirm "$number" "$description")" answer
     [[ "$answer" =~ ^[yYtT]$ ]] || { say cancelled; return 0; }
+
+    restore_snapshot "$number" || return 1
+    read -r -p "$(say restart)" answer
+    if [[ "$answer" =~ ^[nN]$ ]]; then
+        say later
+    else
+        systemctl reboot
+    fi
+}
+
+# Replaces the system with a copy of a snapshot, without asking; the change takes effect after a restart.
+# The replaced system is kept as root.replaced-<date>, so the rollback itself can be undone.
+# Arguments: snapshot number.
+restore_snapshot() {
+    local number=$1
+    check_root || return 1
+    if [[ ! "$number" =~ ^[0-9]+$ ]] || [ ! -d "$SNAPSHOTS/$number/snapshot" ]; then
+        say bad_number "$number"
+        return 1
+    fi
 
     local device top stamp replaced child
     device=$(findmnt -no SOURCE / | sed 's/\[.*//')
@@ -206,12 +231,6 @@ rollback() {
     rmdir "$top"
 
     say finished "$number"
-    read -r -p "$(say restart)" answer
-    if [[ "$answer" =~ ^[nN]$ ]]; then
-        say later
-    else
-        systemctl reboot
-    fi
 }
 
 # Writes the reminder shown on the console login screen and after an SSH login, in the system language.
@@ -233,6 +252,11 @@ snapshots)
     list_snapshots
     ;;
 rollback) rollback ;;
+# Used by the shell's system restore window, which asks for confirmation itself.
+restore)
+    need_root restore "${2:-}"
+    restore_snapshot "${2:-}"
+    ;;
 *)
     say unknown "$1"
     exit 1

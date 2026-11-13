@@ -43,6 +43,19 @@ Item {
             id: "shortcuts",
             label: I18n.t("settings.shortcuts"),
             icon: Icons.keyboard
+        },
+        // Actions rather than categories: a click runs them, after the administrator password.
+        {
+            id: "restore",
+            label: I18n.t("settings.restore"),
+            icon: Icons.restore,
+            action: () => SystemRestore.open()
+        },
+        {
+            id: "snapshot",
+            label: I18n.t("settings.snapshot"),
+            icon: Icons.snapshot,
+            action: () => SystemRestore.create()
         }
     ]
     readonly property int currentIndex: categories.findIndex(c => c.id === Panels.settingsCategory)
@@ -53,8 +66,9 @@ Item {
     // The action center panel, to tell a click on it from a click outside.
     property Item actionCenter: null
 
-    // Bottom-right corner of the settings button.
+    // Bottom-right corner of the settings button, and the top of the button.
     property point anchor: Qt.point(0, 0)
+    property real anchorTop: 0
 
     // Choices for one setting, shown beside the category's settings: { owner, y, options, current, select }.
     property var submenu: null
@@ -79,8 +93,10 @@ Item {
     /** Places the menu under the settings button. */
     function place() {
         const button = Panels.settingsButton;
-        if (button)
+        if (button) {
             anchor = button.mapToItem(root, button.width, button.height);
+            anchorTop = anchor.y - button.height;
+        }
     }
 
     // Hidden until placed, so it never flashes in a corner.
@@ -129,7 +145,13 @@ Item {
         id: menu
 
         x: root.anchor.x - width
-        y: root.anchor.y + 4
+        // Under the button when it fits, otherwise above it, and always within the screen.
+        y: {
+            const below = root.anchor.y + 4;
+            const above = root.anchorTop - 4 - height;
+            const preferred = below + height <= root.height - Theme.panelMargin ? below : above;
+            return Math.max(Theme.panelMargin, Math.min(preferred, root.height - height - Theme.panelMargin));
+        }
         width: 220
         height: list.implicitHeight + 12
         radius: Theme.panelRadius
@@ -196,6 +218,7 @@ Item {
                             rightMargin: 8
                             verticalCenter: parent.verticalCenter
                         }
+                        visible: !row.modelData.action
                         text: Icons.chevronRight
                         color: Theme.muted
                     }
@@ -207,9 +230,17 @@ Item {
                         cursorShape: Qt.PointingHandCursor
                         onContainsMouseChanged: {
                             if (containsMouse)
-                                Panels.settingsCategory = row.modelData.id;
+                                Panels.settingsCategory = row.modelData.action ? "" : row.modelData.id;
                         }
-                        onClicked: Panels.settingsCategory = row.modelData.id
+                        onClicked: {
+                            if (!row.modelData.action) {
+                                Panels.settingsCategory = row.modelData.id;
+                                return;
+                            }
+                            // The password prompt is an ordinary window, which the action center would cover.
+                            Panels.closeActionCenter();
+                            row.modelData.action();
+                        }
                     }
                 }
             }

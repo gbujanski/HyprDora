@@ -13,7 +13,7 @@ The system part of HyprDora can be returned to an earlier state in one command. 
 
 ## How it works
 
-- **Snapshots.** snapper takes one before and one after every `dnf` transaction, plus daily and weekly ones. They cover only the system subvolume `root`; `/home` is a separate subvolume and is not included.
+- **Snapshots.** snapper takes one before and one after every `dnf` transaction, and more can be taken by hand from the settings. The daily cleanup keeps the 10 newest (4 for important ones, such as a kernel update) and the first one, of the freshly installed system. They cover only the system subvolume `root`; `/home` is a separate subvolume and is not included.
 - **Space.** Btrfs quota lets snapper measure snapshots. They may use at most 10% of the disk and must leave 20% free; when a limit is hit, snapper deletes the oldest ones, down to 2 per kind. Docker data, virtual machine images and Flatpaks live in their own subvolumes, so snapshots leave them out.
 - **Protection.** `/etc/dnf/protected.d/hyprdora.conf` protects `hyprdora`, `snapper` and `btrfs-progs`. `dnf` refuses any change that would remove them, which also stops changes that would take the login screen, Hyprland or the shell with them.
 - **Rollback.** `hyprdora rollback` needs only `btrfs`, not snapper, because a broken transaction can remove snapper itself. It makes a writable copy of the chosen snapshot, moves the nested subvolumes (the snapshots, Docker data) into it, and puts it in place of `root`. The replaced system is kept as `root.replaced-<date>`, so a rollback can be undone with another one; only the newest replaced system is kept.

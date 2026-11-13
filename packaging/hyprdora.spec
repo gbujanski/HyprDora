@@ -163,6 +163,8 @@ install -Dpm 755 configs/update/offline-update.sh %{buildroot}%{_libexecdir}/%{n
 install -Dpm 755 configs/systemd/shell-stopped.sh %{buildroot}%{_libexecdir}/%{name}/shell-stopped
 install -Dpm 644 configs/pam/hyprdora-lock %{buildroot}%{_sysconfdir}/pam.d/hyprdora-lock
 install -Dpm 644 configs/update/org.hyprdora.offline-update.policy %{buildroot}%{_datadir}/polkit-1/actions/org.hyprdora.offline-update.policy
+install -Dpm 755 configs/restore/system-restore.sh %{buildroot}%{_libexecdir}/%{name}/system-restore
+install -Dpm 644 configs/restore/org.hyprdora.system-restore.policy %{buildroot}%{_datadir}/polkit-1/actions/org.hyprdora.system-restore.policy
 install -Dpm 755 bin/hyprdora %{buildroot}%{_bindir}/hyprdora
 install -Dpm 644 configs/dnf/protected.d/hyprdora.conf %{buildroot}%{_sysconfdir}/dnf/protected.d/hyprdora.conf
 install -Dpm 644 configs/systemd/hyprdora-hint.service %{buildroot}%{_prefix}/lib/systemd/system/hyprdora-hint.service
@@ -219,6 +221,7 @@ fi
 %config(noreplace) %{_sysconfdir}/pam.d/hyprdora-lock
 %{_datadir}/glib-2.0/schemas/90_hyprdora.gschema.override
 %{_datadir}/polkit-1/actions/org.hyprdora.offline-update.policy
+%{_datadir}/polkit-1/actions/org.hyprdora.system-restore.policy
 %{_datadir}/sddm/themes/Hyprdora
 %dir %{_sysconfdir}/xdg/quickshell
 %{_sysconfdir}/xdg/quickshell/%{name}

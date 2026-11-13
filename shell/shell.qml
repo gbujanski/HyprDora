@@ -13,6 +13,7 @@ import qs.modules.capture
 import qs.modules.media
 import qs.modules.launcher
 import qs.modules.lock
+import qs.modules.restore
 import qs.services
 
 ShellRoot {
@@ -43,6 +44,7 @@ ShellRoot {
     BatteryPanel {}
     LauncherPanel {}
     LockScreen {}
+    SystemRestoreWindow {}
 
     Osd {}
 

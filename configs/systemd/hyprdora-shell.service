@@ -8,6 +8,9 @@ Requisite=graphical-session.target
 [Service]
 # A lock marker left from before belongs to a shell that already ended the locked session.
 ExecStartPre=-/bin/sh -c 'rm -f "$XDG_RUNTIME_DIR/hyprdora/locked-$HYPRLAND_INSTANCE_SIGNATURE"'
+# Touchpad gestures are Hyprland's; Qt's own handling of them crashes when a swipe starts over a surface
+# the shell has just closed (seen in Qt 6.11), and the shell uses none, so Qt does not subscribe to them.
+Environment=QT_WAYLAND_DISABLED_INTERFACES=zwp_pointer_gestures_v1
 ExecStart=/usr/bin/qs -c hyprdora
 # A shell that stops while the screen is locked ends the session, back to the login screen.
 ExecStopPost=/usr/libexec/hyprdora/shell-stopped

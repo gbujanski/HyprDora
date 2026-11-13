@@ -104,13 +104,14 @@ configure_snapshots() {
     snapper --no-dbus -c root create-config / || return 1
     # Quota lets snapper measure snapshots, so the space limits below can be enforced.
     snapper --no-dbus -c root setup-quota || return 1
-    # Snapshots use at most 10% of the disk and leave at least 20% free; ranges let the cleanup go down to 2.
+    # Snapshots come only from dnf, before and after each change, and by hand; snapshots on a clock add
+    # little, since the system changes through dnf. They use at most 10% of the disk and leave at least
+    # 20% free; ranges let the cleanup go down to 2.
     snapper --no-dbus -c root set-config \
-        TIMELINE_LIMIT_HOURLY=0 TIMELINE_LIMIT_DAILY=3 TIMELINE_LIMIT_WEEKLY=2 \
-        TIMELINE_LIMIT_MONTHLY=0 TIMELINE_LIMIT_YEARLY=0 \
+        TIMELINE_CREATE=no \
         NUMBER_LIMIT=2-10 NUMBER_LIMIT_IMPORTANT=2-4 \
         SPACE_LIMIT=0.1 FREE_LIMIT=0.2 || return 1
-    systemctl enable snapper-timeline.timer snapper-cleanup.timer
+    systemctl enable snapper-cleanup.timer
 }
 
 enable_keyring_login() {
