@@ -21,6 +21,23 @@ Singleton {
     // Whether each schedule was inside its hours at the last check; missing before the first one.
     property var inside: ({})
 
+    // Mute state still being applied; tries repeat while the sound system starts, such as right after login.
+    property var pendingMute: null
+    property int muteTries: 0
+
+    /**
+     * Mutes or unmutes the default output through WirePlumber, which works as soon as the sound system runs,
+     * unlike changing it through Quickshell before it has read the sound card's routes.
+     * @param {bool} on  muted
+     */
+    function setMuted(on) {
+        pendingMute = on;
+        muteTries = 0;
+        muteRetry.stop();
+        muter.command = ["wpctl", "set-mute", "@DEFAULT_AUDIO_SINK@", on ? "1" : "0"];
+        muter.running = true;
+    }
+
     // Saved Wi-Fi networks for the home list: [{ name, ssid }].
     property var savedNetworks: []
 
@@ -76,8 +93,7 @@ Singleton {
             Idle.paused = on;
             break;
         case "mute":
-            if (Audio.sink?.audio)
-                Audio.sink.audio.muted = on;
+            setMuted(on);
             break;
         }
     }
@@ -122,9 +138,29 @@ Singleton {
         return sink.name.startsWith("bluez_output") || form === "headphone" || form === "headset" || /headphone|headset/.test(port);
     }
 
+    Process {
+        id: muter
+        onExited: exitCode => {
+            if (exitCode === 0) {
+                root.pendingMute = null;
+            } else if (++root.muteTries < 15) {
+                muteRetry.restart();
+            } else {
+                console.warn("automations: could not change muting");
+                root.pendingMute = null;
+            }
+        }
+    }
+
+    Timer {
+        id: muteRetry
+        interval: 2000
+        onTriggered: muter.running = true
+    }
+
     onOnHeadphonesChanged: {
-        if (onHeadphones && rule("headphones").enabled && Audio.sink?.audio?.muted)
-            Audio.sink.audio.muted = false;
+        if (onHeadphones && rule("headphones").enabled && Audio.muted)
+            setMuted(false);
     }
 
     // The network the VPN rule last acted on, so it acts once per change of network.
@@ -198,6 +234,7 @@ Singleton {
         function describe(): string {
             return JSON.stringify({
                 inside: root.inside,
+                pendingMute: root.pendingMute,
                 onHeadphones: root.onHeadphones,
                 network: root.currentNetwork,
                 rules: Settings.automations
