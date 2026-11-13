@@ -37,6 +37,7 @@ Singleton {
     readonly property string vpn: glyph(0xF099D)
     readonly property string apps: glyph(0xF003B)
     readonly property string automation: glyph(0xF00F0)
+    readonly property string palette: glyph(0xF03D8)
     readonly property string restore: glyph(0xF02DA)
     readonly property string snapshot: glyph(0xF0419)
     readonly property string arrowUp: glyph(0xF005D)

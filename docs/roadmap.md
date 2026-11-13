@@ -239,7 +239,7 @@ Safety and stability:
 - [x] Power button: a short press does nothing, holding it for 2 seconds powers off
 - [x] Test a rollback to a snapper snapshot: `hyprdora rollback`, package protection and a space limit for snapshots (see recovery.md)
 - [x] System restore in the settings, for when the desktop still works: after the administrator password, a window lists the snapshots taken before changes, with a confirmation before restoring; a "create snapshot" entry below it
-- [ ] Snapshot entries in the boot menu, for when the system does not start (research): does the menu list only snapshots that still exist, and what happens to the entries and snapshots made after the one restored
+- [x] Snapshot entries in the boot menu (research): dropped for now, since there is no ready solution. grub-btrfs is not in Fedora's repositories and does not check that a snapshot has modules for the kernel in the separate `/boot`. Tested in a VM: Fedora boots a read-only snapshot through a hand-made BLS entry (only auditd fails), so own entries in `/boot/loader/entries`, refreshed after dnf and cleanup, plus `hyprdora rollback` accepting a system run from a snapshot, would work if wanted later
 - [x] `hyprdora update`: dropped. Once packages come from a dnf repository, every `dnf upgrade` updates them, so no separate command is needed
 
 Quick fixes:
@@ -279,7 +279,7 @@ Second round, agreed on 2026-11-12, done before the large items:
 Large:
 
 - [x] New application launcher in the shell instead of rofi: a list near the top of the screen with search that forgives diacritics and typos, most used first, a calculator, `>` to run a command and a web search; clipboard history in the same window. Opened by SUPER + SPACE, F4 and a three-finger swipe up
-- [ ] Light and dark theme in the settings, under Appearance
+- [x] Light and dark theme in the settings, under Appearance: the shell, GTK and libadwaita applications, and through the settings portal Flatpaks and browsers; the terminal, login and lock screens stay dark
 - [ ] Calendar events from Nextcloud first, then Google and Microsoft: preview on hover, adding events if possible. The Nextcloud server is reachable only from the home network or over VPN. Options first, then a decision whether it is worth it (research)
 - [ ] Encrypted home directory unlocked by the login password, with no second password at boot (research)
 - [ ] Backup of personal files in `/home` (snapshots cover only the system): first decide whether to do it at all, and how (research)

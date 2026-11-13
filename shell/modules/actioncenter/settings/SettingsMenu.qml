@@ -30,6 +30,11 @@ Item {
             icon: Icons.monitor
         },
         {
+            id: "appearance",
+            label: I18n.t("settings.appearance"),
+            icon: Icons.palette
+        },
+        {
             id: "automations",
             label: I18n.t("settings.automations"),
             icon: Icons.automation
@@ -314,6 +319,8 @@ Item {
                             return defaultAppsSettings;
                         case "automations":
                             return automationsSettings;
+                        case "appearance":
+                            return appearanceSettings;
                         default:
                             return null;
                         }
@@ -384,6 +391,11 @@ Item {
     Component {
         id: languageSettings
         LanguageSettings {}
+    }
+
+    Component {
+        id: appearanceSettings
+        AppearanceSettings {}
     }
 
     Component {

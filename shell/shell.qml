@@ -26,6 +26,7 @@ ShellRoot {
     readonly property var wallpaper: Wallpaper
     readonly property var idle: Idle
     readonly property var automations: Automations
+    readonly property var appearance: Appearance
 
     Variants {
         model: Quickshell.screens

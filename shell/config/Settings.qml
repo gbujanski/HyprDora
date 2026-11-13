@@ -51,6 +51,9 @@ Singleton {
     // Command that runs a program in the default terminal, chosen in the settings; the program is appended.
     readonly property var terminalCommand: overrides.terminalCommand ?? ["xdg-terminal-exec"]
     readonly property var btopCommand: [...terminalCommand, "btop"]
+    // "dark" or "light", for the shell and GTK applications; the terminal stays dark.
+    readonly property string theme: overrides.theme ?? "dark"
+
     // Automations set in the settings: { dnd, coffee, mute: schedule, headphones: { enabled },
     // vpn: { enabled, homeNetworks, connection } }; a schedule is { enabled, from, to, days }, with times
     // in minutes after midnight and days numbered 1 (Monday) to 7.

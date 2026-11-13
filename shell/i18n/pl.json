@@ -391,5 +391,8 @@
   "polkit.password": "Hasło",
   "polkit.authenticate": "Uwierzytelnij",
   "polkit.wrongPassword": "Niepoprawne hasło, spróbuj ponownie.",
-  "polkit.capsLock": "Caps Lock jest włączony."
+  "polkit.capsLock": "Caps Lock jest włączony.",
+  "settings.appearance": "Wygląd",
+  "appearance.dark": "Ciemny",
+  "appearance.light": "Jasny"
 }
