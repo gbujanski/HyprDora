@@ -19,8 +19,7 @@ local session_only = {
     -- Portals, the polkit agent and the shell service need the environment set before
     -- graphical-session.target starts. The session target also starts the shell.
     "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE"
-        .. " && systemctl --user start hyprdora-session.target"
-        .. " ; systemctl --user start hyprpolkitagent",
+        .. " && systemctl --user start hyprdora-session.target",
     "gnome-keyring-daemon --start --components=secrets",
     "/usr/libexec/hyprdora/first-login.sh",
     "wl-paste --type text --watch cliphist store",

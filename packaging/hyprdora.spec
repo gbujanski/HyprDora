@@ -11,7 +11,7 @@ BuildArch:      noarch
 Requires:       hyprland
 Requires:       hyprpaper
 Requires:       hypridle
-Requires:       hyprpolkitagent
+Requires:       polkit
 Requires:       xdg-desktop-portal-hyprland
 Requires:       xdg-desktop-portal-gtk
 Requires:       xdg-utils

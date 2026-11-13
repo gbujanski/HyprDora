@@ -14,6 +14,7 @@ import qs.modules.media
 import qs.modules.launcher
 import qs.modules.lock
 import qs.modules.restore
+import qs.modules.polkit
 import qs.services
 
 ShellRoot {
@@ -45,6 +46,7 @@ ShellRoot {
     LauncherPanel {}
     LockScreen {}
     SystemRestoreWindow {}
+    PolkitDialog {}
 
     Osd {}
 

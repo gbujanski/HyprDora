@@ -384,5 +384,10 @@
   "restore.failed.list": "Could not read the snapshots",
   "restore.failed.create": "Could not create a snapshot",
   "restore.failed.restore": "Could not restore the system",
-  "restore.kind.installed": "the freshly installed system"
+  "restore.kind.installed": "the freshly installed system",
+  "polkit.title": "Authentication required",
+  "polkit.password": "Password",
+  "polkit.authenticate": "Authenticate",
+  "polkit.wrongPassword": "Wrong password, try again.",
+  "polkit.capsLock": "Caps Lock is on."
 }

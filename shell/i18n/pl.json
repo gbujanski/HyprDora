@@ -386,5 +386,10 @@
   "restore.failed.list": "Nie udało się odczytać migawek",
   "restore.failed.create": "Nie udało się utworzyć migawki",
   "restore.failed.restore": "Nie udało się przywrócić systemu",
-  "restore.kind.installed": "stan po instalacji systemu"
+  "restore.kind.installed": "stan po instalacji systemu",
+  "polkit.title": "Wymagane uwierzytelnienie",
+  "polkit.password": "Hasło",
+  "polkit.authenticate": "Uwierzytelnij",
+  "polkit.wrongPassword": "Niepoprawne hasło, spróbuj ponownie.",
+  "polkit.capsLock": "Caps Lock jest włączony."
 }

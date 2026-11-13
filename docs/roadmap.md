@@ -33,7 +33,7 @@ Shell name: `qs -c hyprdora`. User settings: `~/.config/hyprdora/settings.json`.
 
 **`hyprdora` package (desktop):**
 
-- Hyprland: `hyprland`, `hyprpaper`, `hypridle`, `hyprpolkitagent`, XDG portals, `xdg-utils`, Qt Wayland
+- Hyprland: `hyprland`, `hyprpaper`, `hypridle`, `polkit` (the shell is its agent), XDG portals, `xdg-utils`, Qt Wayland
 - Shell and its dependencies: `quickshell`, `brightnessctl`, `playerctl`, `adwaita-sans-fonts`, `python3-gobject`, `libnotify`, JetBrainsMono Nerd Font (pinned version, OFL text included)
 - System: PipeWire, WirePlumber, BlueZ, NetworkManager with Wi-Fi, `wpa_supplicant`, `iw`, `nmtui`, `power-profiles-daemon`, `gnome-keyring`, `gvfs`, `xdg-user-dirs`, CUPS, `system-config-printer`
 - Desktop tools: `cliphist`, `wl-clipboard`, `grim`, `swappy`, `wf-recorder`
@@ -240,7 +240,7 @@ Safety and stability:
 - [x] Test a rollback to a snapper snapshot: `hyprdora rollback`, package protection and a space limit for snapshots (see recovery.md)
 - [x] System restore in the settings, for when the desktop still works: after the administrator password, a window lists the snapshots taken before changes, with a confirmation before restoring; a "create snapshot" entry below it
 - [ ] Snapshot entries in the boot menu, for when the system does not start (research): does the menu list only snapshots that still exist, and what happens to the entries and snapshots made after the one restored
-- [ ] `hyprdora update`, once GitHub Actions builds packages into a dnf repository. Probably not needed: packages from a repository update with every `dnf upgrade` (research)
+- [x] `hyprdora update`: dropped. Once packages come from a dnf repository, every `dnf upgrade` updates them, so no separate command is needed
 
 Quick fixes:
 
@@ -283,7 +283,7 @@ Large:
 - [ ] Calendar events from Nextcloud first, then Google and Microsoft: preview on hover, adding events if possible. The Nextcloud server is reachable only from the home network or over VPN. Options first, then a decision whether it is worth it (research)
 - [ ] Encrypted home directory unlocked by the login password, with no second password at boot (research)
 - [ ] Backup of personal files in `/home` (snapshots cover only the system): first decide whether to do it at all, and how (research)
-- [ ] Password prompt for administrator actions in the style of the shell instead of hyprpolkitagent (Quickshell has a polkit agent module)
+- [x] Password prompt for administrator actions in the style of the shell, replacing hyprpolkitagent: the shell is the session's polkit agent and shows polkit's message and action id; polkit's own helper checks the password
 - [x] Default applications in the settings: browser, mail, files, terminal, text editor, images, video, music and PDF, written to `mimeapps.list` and `xdg-terminals.list`, which SUPER+E and SUPER+T follow
 
 Later: battery charge limit to about 80% (this MacBook does not allow it; the Legion has a conservation mode, so it returns with the Legion), a software center chosen from existing ones such as GNOME Software or Bazaar rather than built, computer name, an installer that does not look stuck, notification history across restarts, an action for F3 (Mission Control, `XF86LaunchA`). For F3, the Hyprspace overview plugin worked in a nested Hyprland 0.57.1, but a plugin must be rebuilt for every Hyprland release, which would tie Hyprland updates to it, so it was dropped.
