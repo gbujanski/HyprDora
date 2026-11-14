@@ -28,8 +28,9 @@ Rectangle {
     MouseArea {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
+        // The default action, or else the application that sent the notification.
         onClicked: {
-            if (Notifications.invokeDefault(root.notification))
+            if (Notifications.invokeDefault(root.notification) || Notifications.openSender(root.notification))
                 root.activated();
         }
     }

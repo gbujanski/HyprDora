@@ -276,6 +276,16 @@ Second round, agreed on 2026-11-12, done before the large items:
 - [x] Automations in the settings: do not disturb, coffee and muted sound on a schedule of hours and weekdays (on when the hours start, off when they end); sound back on when headphones connect; a VPN that connects on any network except listed home Wi-Fi networks, which disconnect it
 - [x] Login and lock screens: SDDM keeps its terminal look, now in the shell's colors, with recovery help under `/help`; its Caps Lock state is not available under Wayland (SDDM's Wayland keyboard backend is a stub), so only the lock screen shows Caps Lock. hyprlock is replaced by a lock screen in the shell that looks the same; only a successful PAM check unlocks it, and a shell that stops while locked ends the session
 
+Third round, proposed on 2026-11-14, in this order:
+
+- [x] A click on a notification without a default action opens the application that sent it, as GNOME does. Found with the Nextcloud desktop client: it sends one summary such as "3 notifications" with no text and no actions, keeping the details in its own window, and a click did nothing
+- [ ] No flash of the desktop at sign-in, before the wallpaper and the bar appear
+- [ ] Updates: the list of packages to install, and showing the notice less often, like GNOME Software (ordinary updates about once a week, security updates at once) rather than every day, as Fedora publishes them
+- [ ] Network printers and scanners: driverless printing (IPP Everywhere), `sane-airscan` for scanners, and applications to manage printers and to scan
+- [ ] Prefer a known fixed Wi-Fi network over a phone hotspot (a metered connection) when both are in range: NetworkManager does not switch by itself once connected
+- [ ] Icon theme chosen under Appearance, for the shell and GTK applications together
+- [x] Background applications such as Nextcloud in the bar: already shown by the tray
+
 Large:
 
 - [x] New application launcher in the shell instead of rofi: a list near the top of the screen with search that forgives diacritics and typos, most used first, a calculator, `>` to run a command and a web search; clipboard history in the same window. Opened by SUPER + SPACE, F4 and a three-finger swipe up

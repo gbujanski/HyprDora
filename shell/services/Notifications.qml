@@ -104,6 +104,21 @@ Singleton {
     }
 
     /**
+     * Opens the application that sent a notification, as GNOME does when a notification has no default
+     * action: such as the Nextcloud client, whose summary of new notifications carries no text or action,
+     * with the details in its own window. An application that already runs shows its window.
+     * @param {Notification} notification  target notification
+     * @returns {bool} whether the application was found
+     */
+    function openSender(notification) {
+        const id = (notification.desktopEntry || DesktopEntries.heuristicLookup(notification.appName)?.id || "").replace(/\.desktop$/, "");
+        if (id === "" || !DesktopEntries.byId(id))
+            return false;
+        Launcher.exec(`gtk-launch ${Launcher.quoted(id)}`);
+        return true;
+    }
+
+    /**
      * Returns actions to show as buttons. The default action is run by clicking the body.
      * @param {Notification} notification  target notification
      * @returns {list}
