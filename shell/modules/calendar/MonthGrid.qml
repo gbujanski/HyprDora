@@ -1,9 +1,11 @@
 import QtQuick
 import qs.config
 import qs.components
+import qs.services
 
 // Month grid from Monday with ISO week numbers. Always six rows,
-// so the panel keeps its height across months.
+// so the panel keeps its height across months. Days with events have a dot, and a click selects the
+// day whose events show under the grid; today is selected when the calendar opens.
 Column {
     id: root
 
@@ -32,6 +34,19 @@ Column {
         const yearStart = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
         return Math.ceil(((t - yearStart) / 86400000 + 1) / 7);
     }
+
+    // The day whose events show under the grid.
+    property var selectedDay: new Date()
+
+    /** Reads the events for the visible days. */
+    function loadEvents() {
+        const end = new Date(days[41]);
+        end.setDate(end.getDate() + 1);
+        CalendarEvents.load(days[0], end);
+    }
+
+    onDaysChanged: loadEvents()
+    Component.onCompleted: loadEvents()
 
     function sameDay(a, b) {
         return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
@@ -97,9 +112,22 @@ Column {
                     required property int index
                     readonly property bool inMonth: modelData.getMonth() === root.month
                     readonly property bool isToday: root.sameDay(modelData, root.today)
+                    readonly property bool isSelected: root.selectedDay !== null && root.sameDay(modelData, root.selectedDay)
+                    readonly property var events: CalendarEvents.on(modelData)
 
                     width: root.cellWidth
                     height: root.cellHeight
+
+                    Rectangle {
+                        anchors.centerIn: parent
+                        width: 28
+                        height: 28
+                        radius: 14
+                        visible: (dayArea.containsMouse || cell.isSelected) && !cell.isToday
+                        color: Theme.surface
+                        border.width: cell.isSelected ? 1 : 0
+                        border.color: Theme.accent
+                    }
 
                     Rectangle {
                         anchors.centerIn: parent
@@ -118,6 +146,29 @@ Column {
                         }
                         font.weight: cell.isToday ? Font.DemiBold : Font.Normal
                         color: cell.isToday ? Theme.accentText : !cell.inMonth ? Theme.dim : cell.index >= 5 ? Theme.muted : Theme.foreground
+                    }
+
+                    // A dot under the number marks a day with events.
+                    Rectangle {
+                        anchors {
+                            horizontalCenter: parent.horizontalCenter
+                            bottom: parent.bottom
+                            bottomMargin: 4
+                        }
+                        visible: cell.events.length > 0
+                        width: 4
+                        height: 4
+                        radius: 2
+                        color: cell.isToday ? Theme.accentText : Theme.accent
+                    }
+
+                    MouseArea {
+                        id: dayArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        enabled: CalendarEvents.enabled
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: root.selectedDay = cell.modelData
                     }
                 }
             }

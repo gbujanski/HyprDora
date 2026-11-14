@@ -30,6 +30,11 @@ Item {
             icon: Icons.monitor
         },
         {
+            id: "accounts",
+            label: I18n.t("settings.accounts"),
+            icon: Icons.cloud
+        },
+        {
             id: "appearance",
             label: I18n.t("settings.appearance"),
             icon: Icons.palette
@@ -261,7 +266,7 @@ Item {
         // Level with the category's row, but always on screen.
         y: Math.max(Theme.panelMargin, Math.min(menu.y + root.currentIndex * (root.rowHeight + root.rowSpacing), root.height - height - Theme.panelMargin))
         // The display layout needs the width of the panel.
-        width: ["displays", "shortcuts", "automations"].includes(Panels.settingsCategory) ? Theme.panelWidth : 320
+        width: ["displays", "shortcuts", "automations", "accounts"].includes(Panels.settingsCategory) ? Theme.panelWidth : 320
         height: Math.min(content.implicitHeight + Theme.panelPadding * 2, root.height - Theme.panelMargin * 2)
         radius: Theme.panelRadius
         color: Theme.background
@@ -321,6 +326,8 @@ Item {
                             return automationsSettings;
                         case "appearance":
                             return appearanceSettings;
+                        case "accounts":
+                            return accountsSettings;
                         default:
                             return null;
                         }
@@ -391,6 +398,11 @@ Item {
     Component {
         id: languageSettings
         LanguageSettings {}
+    }
+
+    Component {
+        id: accountsSettings
+        AccountsSettings {}
     }
 
     Component {

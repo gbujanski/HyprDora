@@ -65,6 +65,7 @@ Rectangle {
 
                     Icon {
                         anchors.verticalCenter: parent.verticalCenter
+                        visible: !!segment.modelData.icon
                         text: segment.modelData.icon ?? ""
                         font.pixelSize: 14
                         color: segment.isCurrent ? Theme.accentText : segment.isEnabled ? Theme.foreground : Theme.dim
@@ -73,7 +74,8 @@ Rectangle {
                     Label {
                         id: label
                         anchors.verticalCenter: parent.verticalCenter
-                        width: Math.min(implicitWidth, segment.width - 16 - 18)
+                        // Room for the icon only when the option has one.
+                        width: Math.min(implicitWidth, segment.width - 16 - (segment.modelData.icon ? 18 : 0))
                         elide: Text.ElideRight
                         text: segment.modelData.label
                         font.pixelSize: Theme.fontSizeSmall + 1

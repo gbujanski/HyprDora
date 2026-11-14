@@ -12,6 +12,8 @@ Requires:       hyprland
 Requires:       hyprpaper
 Requires:       hypridle
 Requires:       polkit
+# Calendar events of online accounts, over CalDAV.
+Requires:       python3-icalendar
 Requires:       xdg-desktop-portal-hyprland
 Requires:       xdg-desktop-portal-gtk
 Requires:       xdg-utils
@@ -164,6 +166,7 @@ install -Dpm 755 configs/systemd/shell-stopped.sh %{buildroot}%{_libexecdir}/%{n
 install -Dpm 644 configs/pam/hyprdora-lock %{buildroot}%{_sysconfdir}/pam.d/hyprdora-lock
 install -Dpm 644 configs/update/org.hyprdora.offline-update.policy %{buildroot}%{_datadir}/polkit-1/actions/org.hyprdora.offline-update.policy
 install -Dpm 755 configs/restore/system-restore.sh %{buildroot}%{_libexecdir}/%{name}/system-restore
+install -Dpm 755 configs/calendar/hyprdora-calendar.py %{buildroot}%{_libexecdir}/%{name}/calendar
 install -Dpm 644 configs/restore/org.hyprdora.system-restore.policy %{buildroot}%{_datadir}/polkit-1/actions/org.hyprdora.system-restore.policy
 install -Dpm 755 bin/hyprdora %{buildroot}%{_bindir}/hyprdora
 install -Dpm 644 configs/dnf/protected.d/hyprdora.conf %{buildroot}%{_sysconfdir}/dnf/protected.d/hyprdora.conf

@@ -13,10 +13,12 @@ Scope {
     Connections {
         target: Panels
         function onCalendarOpenChanged() {
-            if (Panels.calendarOpen)
+            if (Panels.calendarOpen) {
                 Weather.refreshIfStale();
-            else
+                CalendarEvents.refresh();
+            } else {
                 closeDelay.restart();
+            }
         }
     }
 
@@ -78,6 +80,7 @@ Scope {
                 function showToday() {
                     year = clock.date.getFullYear();
                     month = clock.date.getMonth();
+                    grid.selectedDay = new Date(clock.date);
                 }
 
                 Component.onCompleted: {
@@ -140,6 +143,14 @@ Scope {
                     property real lastStep: 0
 
                     onWheel: wheel => {
+                        // Months change only over the month heading and grid; elsewhere the wheel goes on,
+                        // such as to a long list of events.
+                        const top = monthHeader.mapToItem(this, 0, 0).y;
+                        const bottom = grid.mapToItem(this, 0, grid.height).y;
+                        if (wheel.y < top || wheel.y > bottom) {
+                            wheel.accepted = false;
+                            return;
+                        }
                         const delta = wheel.angleDelta.y;
                         if (delta === 0)
                             return;
@@ -163,6 +174,7 @@ Scope {
                     spacing: 10
 
                     Column {
+                        id: dateHeader
                         spacing: 1
 
                         Label {
@@ -179,6 +191,7 @@ Scope {
                     }
 
                     Item {
+                        id: monthHeader
                         width: parent.width
                         height: 30
 
@@ -221,6 +234,7 @@ Scope {
                     }
 
                     MonthGrid {
+                        id: grid
                         width: parent.width
                         year: panel.year
                         month: panel.month
@@ -230,12 +244,32 @@ Scope {
                     Rectangle {
                         width: parent.width
                         height: 1
+                        visible: dayEvents.visible
                         color: Theme.surface
                     }
 
-                    WeatherDetails {
+                    DayEvents {
+                        id: dayEvents
                         width: parent.width
-                        visible: Settings.hasWeatherLocation
+                        visible: CalendarEvents.enabled
+                        day: grid.selectedDay
+                        // The rest of the panel stays whole on the screen; the list of events scrolls.
+                        maxListHeight: Math.max(120, window.height - 2 * Theme.panelMargin - 2 * Theme.panelPadding - dateHeader.height - monthHeader.height - grid.height - 1 - chromeHeight - (weatherSeparator.visible ? 1 : 0) - (weather.visible ? weather.height : 0) - content.spacing * 6)
+                    }
+
+                    Rectangle {
+                        id: weatherSeparator
+                        width: parent.width
+                        height: 1
+                        visible: weather.visible
+                        color: Theme.surface
+                    }
+
+                    // Hidden while an event is added, so the form has room.
+                    WeatherDetails {
+                        id: weather
+                        width: parent.width
+                        visible: Settings.hasWeatherLocation && !dayEvents.adding
                     }
                 }
             }

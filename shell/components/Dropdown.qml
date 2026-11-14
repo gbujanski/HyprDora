@@ -73,8 +73,9 @@ Column {
             text: modelData.label
             selected: modelData.value === root.currentValue
             onClicked: {
-                root.expanded = false;
+                // Selected first: collapsing removes this row, and its handler with it.
                 root.selected(modelData.value);
+                root.expanded = false;
             }
         }
     }

@@ -27,6 +27,8 @@ ShellRoot {
     readonly property var idle: Idle
     readonly property var automations: Automations
     readonly property var appearance: Appearance
+    // Calendar reminders work without the calendar open.
+    readonly property var calendarEvents: CalendarEvents
 
     Variants {
         model: Quickshell.screens

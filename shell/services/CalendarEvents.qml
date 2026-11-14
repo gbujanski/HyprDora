@@ -1,0 +1,325 @@
+pragma Singleton
+
+import QtQuick
+import Quickshell
+import Quickshell.Io
+import qs.config
+
+// Calendar events of the Nextcloud accounts, for the calendar next to the clock. A helper talks CalDAV and
+// reads the app passwords from the keyring itself. The last results are kept in a cache, so events and
+// reminders work without a connection; adding and deleting need the server.
+Singleton {
+    id: root
+
+    readonly property string helper: "/usr/libexec/hyprdora/calendar"
+    readonly property string cachePath: `${Quickshell.env("XDG_CACHE_HOME") || `${Quickshell.env("HOME")}/.cache`}/hyprdora/calendar.json`
+
+    readonly property var accounts: OnlineAccounts.accounts.filter(a => a.provider === "nextcloud")
+    readonly property bool enabled: accounts.length > 0
+
+    // The visible range and the next days for reminders: { from, to, events }.
+    property var month: null
+    property var upcoming: null
+    // Calendars that accept new events: [{ href, name, color, account }].
+    property var calendars: []
+    // True when the last read could not reach a server, so cached events are shown.
+    property bool offline: false
+    // "" when idle, or "create" / "delete" while a change is sent.
+    property string busy: ""
+    property string error: ""
+
+    readonly property var byDay: {
+        const days = {};
+        for (const event of month?.events ?? []) {
+            // An event belongs to each day it covers; the end of an all-day event is the day after.
+            const first = new Date(`${event.start.slice(0, 10)}T00:00`);
+            const last = new Date(`${event.end.slice(0, 10)}T00:00`);
+            if (event.allDay || event.end.slice(11) === "00:00")
+                last.setDate(last.getDate() - 1);
+            // Every event shows at least on its first day, even one that ends at midnight.
+            const day = first;
+            do {
+                const k = key(day);
+                days[k] = [...(days[k] ?? []), event];
+                day.setDate(day.getDate() + 1);
+            } while (day <= last)
+        }
+        return days;
+    }
+
+    /**
+     * Formats a date as YYYY-MM-DD in local time.
+     * @param {date} day  any time on that day
+     * @returns {string}
+     */
+    function key(day) {
+        return `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, "0")}-${String(day.getDate()).padStart(2, "0")}`;
+    }
+
+    /**
+     * Events on a day.
+     * @param {date} day  any time on that day
+     * @returns {list}
+     */
+    function on(day) {
+        return byDay[key(day)] ?? [];
+    }
+
+    /**
+     * Describes when an event happens on a day, such as 10:00–11:00, or "all day"; an event that started
+     * the day before or ends the day after shows an ellipsis on that side.
+     * @param {object} event  event from on()
+     * @param {date} day  the day it is shown on
+     * @returns {string}
+     */
+    function when(event, day) {
+        if (event.allDay)
+            return I18n.t("calendar.allDay");
+        const k = key(day);
+        const from = event.start.startsWith(k) ? event.start.slice(11, 16) : "…";
+        const to = event.end.startsWith(k) ? event.end.slice(11, 16) : "…";
+        return `${from}–${to}`;
+    }
+
+    /**
+     * Arguments naming every account for the helper.
+     * @returns {list}
+     */
+    function accountArgs() {
+        return [].concat(...accounts.map(a => [a.server, a.login]));
+    }
+
+    /**
+     * Reads the events from one day up to, but not including, another; cached events show meanwhile.
+     * @param {date} from  first day
+     * @param {date} to  day after the last
+     */
+    function load(from, to) {
+        if (!enabled)
+            return;
+        monthReader.range = {
+            from: key(from),
+            to: key(to)
+        };
+        monthReader.command = [helper, "events", key(from), key(to), ...accountArgs()];
+        monthReader.running = false;
+        monthReader.running = true;
+    }
+
+    /** Reads the visible range and the next days again, such as when the calendar opens. */
+    function refresh() {
+        loadUpcoming();
+        if (monthReader.range)
+            load(new Date(`${monthReader.range.from}T00:00`), new Date(`${monthReader.range.to}T00:00`));
+    }
+
+    /**
+     * Adds an event.
+     * @param {string} calendar  calendar href
+     * @param {object} event  { summary, location, start, end, allDay }
+     */
+    function create(calendar, event) {
+        const target = calendars.find(c => c.href === calendar);
+        const account = accounts.find(a => `${a.login}@${a.server}` === target?.account);
+        if (!account || busy !== "")
+            return;
+        error = "";
+        busy = "create";
+        writer.input = JSON.stringify(event);
+        writer.command = [helper, "create", account.server, account.login, calendar];
+        writer.stdinEnabled = true;
+        writer.running = true;
+    }
+
+    /**
+     * Deletes an event; for a repeating one, either this occurrence or the whole series.
+     * @param {object} event  event from on()
+     * @param {bool} wholeSeries  for a repeating event, delete every occurrence
+     */
+    function remove(event, wholeSeries) {
+        const target = calendars.find(c => c.href === event.calendar);
+        const account = accounts.find(a => `${a.login}@${a.server}` === target?.account);
+        if (!account || busy !== "")
+            return;
+        error = "";
+        busy = "delete";
+        writer.input = "";
+        const occurrence = event.recurring && !wholeSeries ? event.occurrence ?? "" : "";
+        writer.command = [helper, "delete", account.server, account.login, event.href, event.etag, ...(occurrence ? [occurrence] : [])];
+        writer.stdinEnabled = false;
+        writer.running = true;
+    }
+
+    /** Opens Nextcloud Calendar in the browser, for what the shell does not edit, such as repeating events. */
+    function openInNextcloud() {
+        const account = accounts[0];
+        if (account)
+            Quickshell.execDetached(["xdg-open", `${account.server}/apps/calendar/`]);
+    }
+
+    /** Writes the cache. */
+    function save() {
+        cacheFile.setText(JSON.stringify({
+            month: month,
+            upcoming: upcoming,
+            calendars: calendars
+        }));
+    }
+
+    /** Reads the next two days for reminders. */
+    function loadUpcoming() {
+        if (!enabled || upcomingReader.running)
+            return;
+        const from = new Date();
+        from.setHours(0, 0, 0, 0);
+        const to = new Date(from);
+        to.setDate(to.getDate() + 3);
+        upcomingReader.command = [helper, "events", key(from), key(to), ...accountArgs()];
+        upcomingReader.running = true;
+    }
+
+    FileView {
+        id: cacheFile
+        path: root.cachePath
+        printErrors: false
+        onLoaded: {
+            try {
+                const cache = JSON.parse(text());
+                root.month = root.month ?? cache.month ?? null;
+                root.upcoming = root.upcoming ?? cache.upcoming ?? null;
+                if (root.calendars.length === 0)
+                    root.calendars = cache.calendars ?? [];
+            } catch (e) {}
+        }
+    }
+
+    Process {
+        id: monthReader
+
+        property var range: null
+
+        stdout: StdioCollector {
+            onStreamFinished: {
+                let reply;
+                try {
+                    reply = JSON.parse(text);
+                } catch (e) {
+                    return;
+                }
+                root.offline = reply.failed.length > 0;
+                // A server that could not be reached keeps its cached events rather than losing them.
+                if (reply.failed.length === root.accounts.length && root.month)
+                    return;
+                root.month = {
+                    from: monthReader.range.from,
+                    to: monthReader.range.to,
+                    events: reply.events
+                };
+                root.calendars = reply.calendars.filter(c => c.writable);
+                root.save();
+            }
+        }
+    }
+
+    Process {
+        id: upcomingReader
+
+        stdout: StdioCollector {
+            onStreamFinished: {
+                try {
+                    const reply = JSON.parse(text);
+                    if (reply.failed.length < root.accounts.length) {
+                        root.upcoming = {
+                            events: reply.events
+                        };
+                        root.save();
+                    }
+                } catch (e) {}
+            }
+        }
+    }
+
+    Process {
+        id: writer
+
+        property string input: ""
+
+        stderr: StdioCollector {
+            id: writerErrors
+        }
+
+        onStarted: {
+            if (input !== "") {
+                write(input);
+                stdinEnabled = false;
+            }
+        }
+
+        onExited: exitCode => {
+            const action = root.busy;
+            root.busy = "";
+            if (exitCode === 0) {
+                root.refresh();
+                root.loadUpcoming();
+                return;
+            }
+            console.warn("calendar:", writerErrors.text.trim());
+            root.error = exitCode === 4 ? I18n.t("calendar.error.offline") : exitCode === 3 ? I18n.t("calendar.error.password") : I18n.t(`calendar.error.${action}`);
+        }
+    }
+
+    // Reminders come from the cache, so they work offline. An alarm fires once, when its time passes.
+    property real lastAlarmCheck: Date.now()
+    property var fired: ({})
+
+    Timer {
+        interval: 30 * 1000
+        repeat: true
+        running: root.enabled
+        onTriggered: {
+            const now = Date.now();
+            const fired = Object.assign({}, root.fired);
+            for (const event of root.upcoming?.events ?? []) {
+                const start = new Date(event.allDay ? `${event.start}T09:00` : event.start).getTime();
+                for (const minutes of event.alarms ?? []) {
+                    const at = start - minutes * 60000;
+                    const id = `${event.uid}|${event.start}|${minutes}`;
+                    if (at > root.lastAlarmCheck && at <= now && !fired[id]) {
+                        fired[id] = true;
+                        const when = event.allDay ? I18n.t("calendar.allDay") : minutes === 0 ? I18n.t("calendar.startsNow") : event.start.slice(11, 16);
+                        Quickshell.execDetached(["notify-send", `--app-name=${I18n.t("calendar.title")}`, "--icon=x-office-calendar", event.summary, [when, event.location].filter(Boolean).join(" · ")]);
+                    }
+                }
+            }
+            root.fired = fired;
+            root.lastAlarmCheck = now;
+        }
+    }
+
+    // The next days are read every five minutes, so a reminder set shortly before is still known in time.
+    Timer {
+        interval: 5 * 60 * 1000
+        repeat: true
+        running: root.enabled
+        triggeredOnStart: true
+        onTriggered: root.loadUpcoming()
+    }
+
+    IpcHandler {
+        target: "calendar-events"
+
+        function describe(): string {
+            return JSON.stringify({
+                enabled: root.enabled,
+                offline: root.offline,
+                calendars: root.calendars,
+                month: root.month ? {
+                    from: root.month.from,
+                    to: root.month.to,
+                    count: root.month.events.length
+                } : null,
+                upcoming: root.upcoming?.events.length ?? 0
+            });
+        }
+    }
+}
