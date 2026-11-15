@@ -12,17 +12,19 @@ Row {
 
     spacing: 0
 
-    // Shown only while updates are waiting; a click installs them in a terminal.
+    // Security updates show at once, others after a week; a click lists them, with the install buttons.
     BarButton {
         anchors.verticalCenter: parent.verticalCenter
-        visible: Updates.count > 0
+        visible: Updates.notify
         icon: Icons.update
         label: String(Updates.count)
-        contentColor: Theme.accent
-        tooltip: I18n.t("updates.tooltip", {
+        contentColor: Updates.securityCount > 0 ? Theme.warning : Theme.accent
+        tooltip: Updates.securityCount > 0 ? I18n.t("updates.tooltipSecurity", {
+            count: Updates.securityCount
+        }) : I18n.t("updates.tooltip", {
             count: Updates.count
         })
-        onClicked: Updates.install()
+        onClicked: Panels.toggleUpdates(root.screen)
     }
 
     // Shown only while coffee is on; a click turns it off.

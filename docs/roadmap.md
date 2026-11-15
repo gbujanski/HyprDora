@@ -280,7 +280,7 @@ Third round, proposed on 2026-11-14, in this order:
 
 - [x] A click on a notification without a default action opens the application that sent it, as GNOME does. Found with the Nextcloud desktop client: it sends one summary such as "3 notifications" with no text and no actions, keeping the details in its own window, and a click did nothing
 - [x] No flash of the desktop at sign-in: Hyprland showed its own wallpaper, logo and splash text before hyprpaper drew HyprDora's wallpaper; it now shows plain black, the color of the login screen. The shell also moved a lone laptop screen from its saved position in the docked layout to 0x0 at sign-in, which reconfigured the screen so it flashed and slid in from a corner; it now does that only after a monitor is unplugged
-- [ ] Updates: the list of packages to install, and showing the notice less often, like GNOME Software (ordinary updates about once a week, security updates at once) rather than every day, as Fedora publishes them
+- [x] Updates: the list of packages to install, and showing the notice less often, like GNOME Software (ordinary updates about once a week, security updates at once) rather than every day, as Fedora publishes them
 - [ ] Network printers and scanners: driverless printing (IPP Everywhere), `sane-airscan` for scanners, and applications to manage printers and to scan
 - [ ] Prefer a known fixed Wi-Fi network over a phone hotspot (a metered connection) when both are in range: NetworkManager does not switch by itself once connected
 - [ ] Icon theme chosen under Appearance, for the shell and GTK applications together

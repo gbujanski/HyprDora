@@ -39,6 +39,8 @@ Singleton {
     property var mediaScreen: null
     property bool batteryOpen: false
     property var batteryScreen: null
+    property bool updatesOpen: false
+    property var updatesScreen: null
     property bool launcherOpen: false
     property var launcherScreen: null
     // "apps" or "clipboard".
@@ -129,6 +131,8 @@ Singleton {
             mediaOpen = false;
         if (keep !== "battery")
             batteryOpen = false;
+        if (keep !== "updates")
+            updatesOpen = false;
         if (keep !== "launcher")
             launcherOpen = false;
     }
@@ -176,6 +180,34 @@ Singleton {
             closeLauncher();
         else
             openLauncher(null, mode);
+    }
+
+    /**
+     * Opens the list of updates.
+     * @param {ShellScreen} screen  target, or null for the focused screen
+     */
+    function openUpdates(screen) {
+        updatesScreen = screen ?? focusedScreen();
+        updatesOpen = updatesScreen !== null;
+        if (updatesOpen)
+            closeOthers("updates");
+    }
+
+    /** Closes the list of updates. */
+    function closeUpdates() {
+        updatesOpen = false;
+    }
+
+    /**
+     * Closes the list of updates if open on this screen, otherwise opens it there.
+     * @param {ShellScreen} screen  target, or null for the focused screen
+     */
+    function toggleUpdates(screen) {
+        const target = screen ?? focusedScreen();
+        if (updatesOpen && target === updatesScreen)
+            closeUpdates();
+        else
+            openUpdates(target);
     }
 
     /**
@@ -286,6 +318,10 @@ Singleton {
                 root.closeLauncher();
                 root.launcherScreen = null;
             }
+            if (root.updatesOpen && !Quickshell.screens.includes(root.updatesScreen)) {
+                root.closeUpdates();
+                root.updatesScreen = null;
+            }
             if (root.batteryOpen && !Quickshell.screens.includes(root.batteryScreen)) {
                 root.closeBattery();
                 root.batteryScreen = null;
@@ -327,6 +363,20 @@ Singleton {
         }
         function isOpen(): bool {
             return root.launcherOpen;
+        }
+    }
+
+    IpcHandler {
+        target: "updatespanel"
+
+        function toggle(): void {
+            root.toggleUpdates(null);
+        }
+        function open(): void {
+            root.openUpdates(null);
+        }
+        function close(): void {
+            root.closeUpdates();
         }
     }
 

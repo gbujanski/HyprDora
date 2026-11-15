@@ -278,7 +278,7 @@
   "privacy.cameraApps": "Kamery używa: {apps}",
   "privacy.screenApps": "Ekran nagrywa lub udostępnia: {apps}",
   "coffee.barTooltip": "Kawa włączona, ekran nie zgaśnie. Kliknij, aby wyłączyć",
-  "updates.tooltip": "Dostępne aktualizacje: {count}. Kliknij, aby zainstalować",
+  "updates.tooltip": "Dostępne aktualizacje: {count}",
   "updates.done": "Gotowe. Naciśnij Enter, aby zamknąć.",
   "vpn.empty": "Brak połączeń VPN. Zaimportuj plik .conf WireGuarda albo .ovpn OpenVPN.",
   "vpn.none": "Brak połączeń",
@@ -456,5 +456,14 @@
   "calendar.unit.minutes": "min",
   "calendar.unit.hours": "godz.",
   "calendar.unit.days": "dni",
-  "calendar.unit.weeks": "tyg."
+  "calendar.unit.weeks": "tyg.",
+  "updates.tooltipSecurity": "Aktualizacje bezpieczeństwa: {count}",
+  "updates.title": "Aktualizacje · {count}",
+  "updates.group.system": "System Fedora",
+  "updates.group.security": "Bezpieczeństwo",
+  "updates.group.other": "Pozostałe",
+  "updates.showAll": "Pokaż wszystkie ({count})",
+  "updates.installNow": "Zainstaluj teraz",
+  "updates.atRestart": "Zaktualizuj i uruchom ponownie",
+  "updates.atPoweroff": "Zaktualizuj i wyłącz"
 }

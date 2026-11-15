@@ -276,7 +276,7 @@
   "privacy.cameraApps": "Using the camera: {apps}",
   "privacy.screenApps": "Recording or sharing the screen: {apps}",
   "coffee.barTooltip": "Coffee is on, the screen stays awake. Click to turn it off",
-  "updates.tooltip": "Updates available: {count}. Click to install",
+  "updates.tooltip": "Updates available: {count}",
   "updates.done": "Done. Press Enter to close.",
   "vpn.empty": "No VPN connections yet. Import a WireGuard .conf or an OpenVPN .ovpn file.",
   "vpn.none": "No connections",
@@ -454,5 +454,14 @@
   "calendar.unit.minutes": "min",
   "calendar.unit.hours": "hours",
   "calendar.unit.days": "days",
-  "calendar.unit.weeks": "weeks"
+  "calendar.unit.weeks": "weeks",
+  "updates.tooltipSecurity": "Security updates: {count}",
+  "updates.title": "Updates · {count}",
+  "updates.group.system": "Fedora",
+  "updates.group.security": "Security",
+  "updates.group.other": "Other",
+  "updates.showAll": "Show all ({count})",
+  "updates.installNow": "Install now",
+  "updates.atRestart": "Update and restart",
+  "updates.atPoweroff": "Update and power off"
 }
