@@ -11,7 +11,8 @@ ExecStartPre=-/bin/sh -c 'rm -f "$XDG_RUNTIME_DIR/hyprdora/locked-$HYPRLAND_INST
 # Touchpad gestures are Hyprland's; Qt's own handling of them crashes when a swipe starts over a surface
 # the shell has just closed (seen in Qt 6.11), and the shell uses none, so Qt does not subscribe to them.
 Environment=QT_WAYLAND_DISABLED_INTERFACES=zwp_pointer_gestures_v1
-ExecStart=/usr/bin/qs -c hyprdora
+# The icon theme chosen in the settings is read at start.
+ExecStart=/usr/libexec/hyprdora/shell-start -c hyprdora
 # A shell that stops while the screen is locked ends the session, back to the login screen.
 ExecStopPost=/usr/libexec/hyprdora/shell-stopped
 # A crash brings the bar, notifications and the idle lock back within seconds.

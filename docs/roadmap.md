@@ -283,7 +283,7 @@ Third round, proposed on 2026-11-14, in this order:
 - [x] Updates: the list of packages to install, and showing the notice less often, like GNOME Software (ordinary updates about once a week, security updates at once) rather than every day, as Fedora publishes them
 - [x] Network printers and scanners: a settings category lists the added printers (default, remove) and the driverless network printers found (add), and the scanners `sane-airscan` finds, which need no adding; Simple Scan and system-config-printer for the rest
 - [x] Prefer a saved fixed Wi-Fi network over a phone hotspot at start and on wake: a hotspot (an Android one is metered, an iPhone one has the gateway 172.20.10.1) gets a lower autoconnect priority in NetworkManager, so a fixed network in range wins, while a hotspot chosen by hand stays
-- [ ] Icon theme chosen under Appearance, for the shell and GTK applications together
+- [x] Icon theme chosen under Appearance, Papirus or Adwaita, for the shell and GTK applications together: Quickshell reads it at start from `QS_ICON_THEME`, which `shell-start` sets from the settings, so a new choice restarts the shell. Tela is not in Fedora, so it is left out
 - [x] Background applications such as Nextcloud in the bar: already shown by the tray
 
 Large:

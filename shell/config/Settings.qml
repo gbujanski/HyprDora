@@ -53,6 +53,9 @@ Singleton {
     readonly property var btopCommand: [...terminalCommand, "btop"]
     // "dark" or "light", for the shell and GTK applications; the terminal stays dark.
     readonly property string theme: overrides.theme ?? "dark"
+    // Icon theme for applications, the launcher and GTK: one of iconThemes. The shell reads it at start.
+    readonly property var iconThemes: ["Papirus", "Adwaita"]
+    readonly property string iconTheme: iconThemes.includes(overrides.iconTheme) ? overrides.iconTheme : "Papirus"
 
     // Automations set in the settings: { dnd, coffee, mute: schedule, headphones: { enabled },
     // vpn: { enabled, homeNetworks, connection } }; a schedule is { enabled, from, to, days }, with times

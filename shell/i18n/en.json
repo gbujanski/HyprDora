@@ -479,5 +479,7 @@
   "printers.noScanners": "No scanners found.",
   "printers.scan": "Scan",
   "printers.more": "More settings",
-  "printers.error": "The printer could not be changed."
+  "printers.error": "The printer could not be changed.",
+  "appearance.theme": "THEME",
+  "appearance.icons": "ICONS"
 }

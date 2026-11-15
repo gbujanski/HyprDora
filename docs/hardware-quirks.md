@@ -54,7 +54,7 @@ Findings from testing on real hardware. Each one explains code that may otherwis
 - Devices and adapters appear asynchronously. The UI must react through bindings rather than read state once at startup.
 - `FileView` with `preload: false` does not load the file after `reload()`.
 - A QML property cannot start with `on` followed by a capital letter, because it is treated as a signal handler.
-- Icons from a theme require `//@ pragma IconTheme`.
+- Icons from a theme require an icon theme at start: `//@ pragma IconTheme` or `QS_ICON_THEME`, which `shell-start` sets from the settings; the pragma would win over the variable.
 - In Quickshell 0.2.1, changing `timeout` on a running `IdleMonitor` has no effect until `enabled` is turned off and on again, so `services/Idle.qml` does that whenever a timeout changes. Verified in a nested Hyprland.
 - A live config reload does not pick up a newly added QML file, such as a new singleton: references to it are undefined until the shell restarts. `make install` therefore restarts the shell service.
 

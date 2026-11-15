@@ -481,5 +481,7 @@
   "printers.noScanners": "Nie znaleziono skanerów.",
   "printers.scan": "Skanuj",
   "printers.more": "Więcej ustawień",
-  "printers.error": "Nie udało się zmienić drukarki."
+  "printers.error": "Nie udało się zmienić drukarki.",
+  "appearance.theme": "MOTYW",
+  "appearance.icons": "IKONY"
 }
