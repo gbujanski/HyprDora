@@ -48,6 +48,9 @@ Requires:       gvfs
 Requires:       xdg-user-dirs
 Requires:       cups
 Requires:       system-config-printer
+# Network scanners without drivers (eSCL/AirScan, WSD), and an application to scan.
+Requires:       sane-airscan
+Requires:       simple-scan
 
 # Desktop tools
 Requires:       cliphist

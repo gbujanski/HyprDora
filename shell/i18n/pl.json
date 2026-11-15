@@ -465,5 +465,21 @@
   "updates.showAll": "Pokaż wszystkie ({count})",
   "updates.installNow": "Zainstaluj teraz",
   "updates.atRestart": "Zaktualizuj i uruchom ponownie",
-  "updates.atPoweroff": "Zaktualizuj i wyłącz"
+  "updates.atPoweroff": "Zaktualizuj i wyłącz",
+  "settings.printers": "Drukarki i skanery",
+  "printers.printers": "DRUKARKI",
+  "printers.scanners": "SKANERY",
+  "printers.default": "domyślna",
+  "printers.state.idle": "gotowa",
+  "printers.state.printing": "drukuje",
+  "printers.state.disabled": "wstrzymana",
+  "printers.setDefault": "Ustaw jako domyślną",
+  "printers.remove": "Usuń",
+  "printers.add": "Dodaj",
+  "printers.foundOnNetwork": "znaleziona w sieci",
+  "printers.none": "Nie znaleziono drukarek.",
+  "printers.noScanners": "Nie znaleziono skanerów.",
+  "printers.scan": "Skanuj",
+  "printers.more": "Więcej ustawień",
+  "printers.error": "Nie udało się zmienić drukarki."
 }

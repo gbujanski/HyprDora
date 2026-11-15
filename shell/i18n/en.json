@@ -463,5 +463,21 @@
   "updates.showAll": "Show all ({count})",
   "updates.installNow": "Install now",
   "updates.atRestart": "Update and restart",
-  "updates.atPoweroff": "Update and power off"
+  "updates.atPoweroff": "Update and power off",
+  "settings.printers": "Printers and scanners",
+  "printers.printers": "PRINTERS",
+  "printers.scanners": "SCANNERS",
+  "printers.default": "default",
+  "printers.state.idle": "ready",
+  "printers.state.printing": "printing",
+  "printers.state.disabled": "paused",
+  "printers.setDefault": "Make default",
+  "printers.remove": "Remove",
+  "printers.add": "Add",
+  "printers.foundOnNetwork": "found on the network",
+  "printers.none": "No printers found.",
+  "printers.noScanners": "No scanners found.",
+  "printers.scan": "Scan",
+  "printers.more": "More settings",
+  "printers.error": "The printer could not be changed."
 }
