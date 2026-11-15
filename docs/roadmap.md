@@ -285,6 +285,7 @@ Third round, proposed on 2026-11-14, in this order:
 - [x] Prefer a saved fixed Wi-Fi network over a phone hotspot at start and on wake: a hotspot (an Android one is metered, an iPhone one has the gateway 172.20.10.1) gets a lower autoconnect priority in NetworkManager, so a fixed network in range wins, while a hotspot chosen by hand stays
 - [x] Icon theme chosen under Appearance, Papirus or Adwaita, for the shell and GTK applications together: Quickshell reads it at start from `QS_ICON_THEME`, which `shell-start` sets from the settings, so a new choice restarts the shell. Tela is not in Fedora, so it is left out
 - [x] Background applications such as Nextcloud in the bar: already shown by the tray
+- [x] About in the settings: the computer's name, changed in place (the pretty name and a network name made from it, through systemd-hostnamed after the administrator password), and the model, processor, memory, graphics, disk, system and its type, windowing, support end and versions, with a button that copies them as text
 
 Large:
 
@@ -297,7 +298,7 @@ Large:
 - [x] Password prompt for administrator actions in the style of the shell, replacing hyprpolkitagent: the shell is the session's polkit agent and shows polkit's message and action id; polkit's own helper checks the password
 - [x] Default applications in the settings: browser, mail, files, terminal, text editor, images, video, music and PDF, written to `mimeapps.list` and `xdg-terminals.list`, which SUPER+E and SUPER+T follow
 
-Later: Google and Microsoft calendars as online accounts (research: OAuth sign-in, Google CalDAV, Microsoft Graph), and a local calendar kept only on this computer, with reminders and no sync; battery charge limit to about 80% (this MacBook does not allow it; the Legion has a conservation mode, so it returns with the Legion), a software center chosen from existing ones such as GNOME Software or Bazaar rather than built, computer name, an installer that does not look stuck, notification history across restarts, an action for F3 (Mission Control, `XF86LaunchA`). For F3, the Hyprspace overview plugin worked in a nested Hyprland 0.57.1, but a plugin must be rebuilt for every Hyprland release, which would tie Hyprland updates to it, so it was dropped.
+Later: Google and Microsoft calendars as online accounts (research: OAuth sign-in, Google CalDAV, Microsoft Graph), and a local calendar kept only on this computer, with reminders and no sync; battery charge limit to about 80% (this MacBook does not allow it; the Legion has a conservation mode, so it returns with the Legion), a software center chosen from existing ones such as GNOME Software or Bazaar rather than built, an installer that does not look stuck, notification history across restarts, an action for F3 (Mission Control, `XF86LaunchA`). For F3, the Hyprspace overview plugin worked in a nested Hyprland 0.57.1, but a plugin must be rebuilt for every Hyprland release, which would tie Hyprland updates to it, so it was dropped.
 
 ## 12. Resolved decisions
 

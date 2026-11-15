@@ -59,6 +59,11 @@ Item {
             label: I18n.t("settings.shortcuts"),
             icon: Icons.keyboard
         },
+        {
+            id: "about",
+            label: I18n.t("settings.about"),
+            icon: Icons.info
+        },
         // Actions rather than categories: a click runs them, after the administrator password.
         {
             id: "restore",
@@ -271,7 +276,7 @@ Item {
         // Level with the category's row, but always on screen.
         y: Math.max(Theme.panelMargin, Math.min(menu.y + root.currentIndex * (root.rowHeight + root.rowSpacing), root.height - height - Theme.panelMargin))
         // The display layout needs the width of the panel.
-        width: ["displays", "shortcuts", "automations", "accounts", "printers"].includes(Panels.settingsCategory) ? Theme.panelWidth : 320
+        width: ["displays", "shortcuts", "automations", "accounts", "printers", "about"].includes(Panels.settingsCategory) ? Theme.panelWidth : 320
         height: Math.min(content.implicitHeight + Theme.panelPadding * 2, root.height - Theme.panelMargin * 2)
         radius: Theme.panelRadius
         color: Theme.background
@@ -335,6 +340,8 @@ Item {
                             return accountsSettings;
                         case "printers":
                             return printersSettings;
+                        case "about":
+                            return aboutSettings;
                         default:
                             return null;
                         }
@@ -405,6 +412,11 @@ Item {
     Component {
         id: languageSettings
         LanguageSettings {}
+    }
+
+    Component {
+        id: aboutSettings
+        AboutSettings {}
     }
 
     Component {

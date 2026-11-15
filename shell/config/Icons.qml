@@ -41,6 +41,8 @@ Singleton {
     readonly property string cloud: glyph(0xF015F)
     readonly property string openExternal: glyph(0xF03CC)
     readonly property string repeat: glyph(0xF0456)
+    readonly property string edit: glyph(0xF03EB)
+    readonly property string info: glyph(0xF02FD)
     readonly property string printer: glyph(0xF042A)
     readonly property string scanner: glyph(0xF06AB)
     readonly property string star: glyph(0xF04CE)
