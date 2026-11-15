@@ -633,7 +633,11 @@ Singleton {
         applier.running = true;
     }
 
-    /** Moves a lone screen to 0x0. After unplugging a monitor it can keep an old position such as 3360x0. */
+    /**
+     * Moves a lone screen to 0x0 after a monitor is unplugged, when it can keep an old position such as
+     * 3360x0. Not at sign-in: a saved position such as 240x1080 is harmless with one screen, and moving
+     * it then reconfigures the screen, which flashes and slides in from the old position.
+     */
     function normalizeSingleScreen() {
         if (pending || applier.running)
             return;
@@ -671,6 +675,7 @@ Singleton {
                     return;
                 }
                 const plugged = root.knownNames.length > 0 && parsed.some(m => !root.knownNames.includes(m.name));
+                const unplugged = root.knownNames.some(name => !parsed.some(m => m.name === name));
                 root.knownNames = parsed.map(m => m.name);
                 root.monitors = parsed;
                 if (!root.pending)
@@ -684,7 +689,9 @@ Singleton {
                 if (plugged && !root.pending && !applier.running)
                     root.restoreSavedLayout();
                 root.rescueIfNoActiveScreen();
-                root.normalizeSingleScreen();
+                // Only after a monitor is unplugged: at sign-in the move made the screen flash and slide in.
+                if (unplugged)
+                    root.normalizeSingleScreen();
             }
         }
     }

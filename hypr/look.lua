@@ -45,9 +45,13 @@ hl.config({
         new_status = "master",
     },
 
+    -- Until hyprpaper draws the wallpaper, Hyprland shows plain black, the color of the login screen,
+    -- rather than its own wallpaper, logo and splash text, which flashed by at sign-in.
     misc = {
-        force_default_wallpaper = -1,
-        disable_hyprland_logo = false,
+        force_default_wallpaper = 0,
+        disable_hyprland_logo = true,
+        disable_splash_rendering = true,
+        background_color = "rgb(000000)",
     },
 
     ecosystem = {
