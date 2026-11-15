@@ -282,7 +282,7 @@ Third round, proposed on 2026-11-14, in this order:
 - [x] No flash of the desktop at sign-in: Hyprland showed its own wallpaper, logo and splash text before hyprpaper drew HyprDora's wallpaper; it now shows plain black, the color of the login screen. The shell also moved a lone laptop screen from its saved position in the docked layout to 0x0 at sign-in, which reconfigured the screen so it flashed and slid in from a corner; it now does that only after a monitor is unplugged
 - [x] Updates: the list of packages to install, and showing the notice less often, like GNOME Software (ordinary updates about once a week, security updates at once) rather than every day, as Fedora publishes them
 - [x] Network printers and scanners: a settings category lists the added printers (default, remove) and the driverless network printers found (add), and the scanners `sane-airscan` finds, which need no adding; Simple Scan and system-config-printer for the rest
-- [ ] Prefer a known fixed Wi-Fi network over a phone hotspot (a metered connection) when both are in range: NetworkManager does not switch by itself once connected
+- [x] Prefer a saved fixed Wi-Fi network over a phone hotspot at start and on wake: a hotspot (an Android one is metered, an iPhone one has the gateway 172.20.10.1) gets a lower autoconnect priority in NetworkManager, so a fixed network in range wins, while a hotspot chosen by hand stays
 - [ ] Icon theme chosen under Appearance, for the shell and GTK applications together
 - [x] Background applications such as Nextcloud in the bar: already shown by the tray
 

@@ -167,7 +167,12 @@ Singleton {
     property string lastNetwork: ""
     readonly property string currentNetwork: Network.connected ? `wifi:${Network.ssid}` : Network.wiredConnected ? "wired" : ""
 
-    onCurrentNetworkChanged: vpnDelay.restart()
+    onCurrentNetworkChanged: {
+        vpnDelay.restart();
+        onHotspot = false;
+        if (currentNetwork.startsWith("wifi:"))
+            hotspotDelay.restart();
+    }
 
     // NetworkManager settles a new connection, and the shell reads it, over a moment.
     Timer {
@@ -237,8 +242,49 @@ Singleton {
                 pendingMute: root.pendingMute,
                 onHeadphones: root.onHeadphones,
                 network: root.currentNetwork,
+                onHotspot: root.onHotspot,
                 rules: Settings.automations
             });
+        }
+    }
+
+    // Phone hotspots: an Android hotspot marks itself as metered, and an iPhone hotspot hands out
+    // addresses from 172.20.10.0/28 with the gateway at 172.20.10.1. A hotspot gets a lower autoconnect
+    // priority in NetworkManager, so at start and on wake a saved fixed network in range wins, while a
+    // hotspot chosen by hand stays as long as wanted.
+    property bool onHotspot: false
+
+    // The address and the metered guess arrive a moment after the connection.
+    Timer {
+        id: hotspotDelay
+        interval: 4000
+        onTriggered: {
+            if (!hotspotCheck.running)
+                hotspotCheck.running = true;
+        }
+    }
+
+    Process {
+        id: hotspotCheck
+
+        // Prints the metered state, the gateway and the connection's id and priority.
+        command: ["sh", "-c", `export LC_ALL=C
+            device=$(nmcli -t -f DEVICE,TYPE,STATE device | awk -F: '$2 == "wifi" && $3 == "connected" {print $1; exit}')
+            [ -n "$device" ] || exit 0
+            nmcli -t -f GENERAL.METERED,IP4.GATEWAY,GENERAL.CON-UUID device show "$device"
+            uuid=$(nmcli -g GENERAL.CON-UUID device show "$device")
+            echo "PRIORITY:$(nmcli -g connection.autoconnect-priority connection show "$uuid")"`]
+
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const metered = /GENERAL\.METERED:yes/.test(text);
+                const iphone = /IP4\.GATEWAY:172\.20\.10\.1\s*$/m.test(text);
+                root.onHotspot = (metered || iphone) && root.currentNetwork.startsWith("wifi:");
+                const uuid = /GENERAL\.CON-UUID:(\S+)/.exec(text)?.[1] ?? "";
+                const priority = Number(/PRIORITY:(-?\d+)/.exec(text)?.[1] ?? 0);
+                if (root.onHotspot && uuid !== "" && priority >= 0)
+                    Quickshell.execDetached(["nmcli", "connection", "modify", uuid, "connection.autoconnect-priority", "-10"]);
+            }
         }
     }
 }
