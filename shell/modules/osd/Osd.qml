@@ -102,6 +102,8 @@ Scope {
             if (Math.abs(level - root.lastDisplay) < 0.001)
                 return;
             root.lastDisplay = level;
+            if (Brightness.display.raw === Brightness.display.quietRaw)
+                return;
             root.show("display", Icons.brightness, `${Math.round(level * 100)}%`, level, true);
         }
     }

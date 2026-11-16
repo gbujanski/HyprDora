@@ -19,6 +19,9 @@ Scope {
     property int maxRaw: 0
     property int raw: 0
     property int pendingRaw: -1
+    // The value last set with quiet, such as by dimming when idle; -1 after any other change. The brightness
+    // indicator does not show for it.
+    property int quietRaw: -1
 
     readonly property bool available: device !== "" && maxRaw > 0
     readonly property real floorPerceived: Math.pow(minimumFraction, 1 / exponent)
@@ -40,11 +43,13 @@ Scope {
     /**
      * Sets the device to a level.
      * @param {real} value  level, 0..1
+     * @param {bool} quiet  without the brightness indicator, for changes the user did not make
      */
-    function setLevel(value) {
+    function setLevel(value, quiet) {
         if (!available)
             return;
         pendingRaw = rawFor(value);
+        quietRaw = quiet ? pendingRaw : -1;
         raw = pendingRaw;
         flush();
     }
