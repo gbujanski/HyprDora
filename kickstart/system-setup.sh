@@ -123,6 +123,11 @@ enable_services() {
     systemctl set-default graphical.target
 }
 
+# The splash, its initramfs for every kernel, and the GRUB menu hidden unless Esc is pressed.
+configure_boot() {
+    /usr/libexec/hyprdora/boot-theme installer
+}
+
 configure_users() {
     useradd -D -s /bin/zsh >/dev/null
     local admins user
@@ -142,4 +147,5 @@ step install_flatpaks
 step configure_snapshots
 step enable_keyring_login
 step enable_services
+step configure_boot
 step configure_users

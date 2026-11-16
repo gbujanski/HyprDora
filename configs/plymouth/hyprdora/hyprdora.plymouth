@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=HyprDora
+Description=Black, with the login screen's ">:" prompt typing hyprdora
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/hyprdora
+ScriptFile=/usr/share/plymouth/themes/hyprdora/hyprdora.script

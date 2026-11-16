@@ -89,6 +89,9 @@ Requires:       pciutils
 Requires:       papirus-icon-theme
 Requires:       bibata-cursor-themes
 Requires:       sddm
+# The boot splash: a script theme that draws text.
+Requires:       plymouth-plugin-script
+Requires:       plymouth-plugin-label
 Requires(post): sddm
 
 # Snapshots
@@ -168,6 +171,9 @@ install -Dpm 755 configs/update/offline-update.sh %{buildroot}%{_libexecdir}/%{n
 install -Dpm 755 configs/systemd/shell-stopped.sh %{buildroot}%{_libexecdir}/%{name}/shell-stopped
 install -Dpm 755 configs/systemd/shell-start.sh %{buildroot}%{_libexecdir}/%{name}/shell-start
 install -Dpm 755 configs/update/not-metered.sh %{buildroot}%{_libexecdir}/%{name}/not-metered
+install -Dpm 755 configs/plymouth/boot-theme.sh %{buildroot}%{_libexecdir}/%{name}/boot-theme
+install -Dpm 644 configs/plymouth/hyprdora/hyprdora.plymouth %{buildroot}%{_datadir}/plymouth/themes/hyprdora/hyprdora.plymouth
+install -Dpm 644 configs/plymouth/hyprdora/hyprdora.script %{buildroot}%{_datadir}/plymouth/themes/hyprdora/hyprdora.script
 install -Dpm 644 configs/pam/hyprdora-lock %{buildroot}%{_sysconfdir}/pam.d/hyprdora-lock
 install -Dpm 644 configs/update/org.hyprdora.offline-update.policy %{buildroot}%{_datadir}/polkit-1/actions/org.hyprdora.offline-update.policy
 install -Dpm 755 configs/restore/system-restore.sh %{buildroot}%{_libexecdir}/%{name}/system-restore
@@ -177,6 +183,7 @@ install -Dpm 755 bin/hyprdora %{buildroot}%{_bindir}/hyprdora
 install -Dpm 644 configs/dnf/protected.d/hyprdora.conf %{buildroot}%{_sysconfdir}/dnf/protected.d/hyprdora.conf
 install -Dpm 644 configs/systemd/hyprdora-hint.service %{buildroot}%{_prefix}/lib/systemd/system/hyprdora-hint.service
 install -Dpm 644 configs/systemd/dnf5-makecache.service.d/hyprdora-metered.conf %{buildroot}%{_prefix}/lib/systemd/system/dnf5-makecache.service.d/hyprdora-metered.conf
+install -Dpm 644 configs/systemd/plymouth-quit.service.d/hyprdora-retain.conf %{buildroot}%{_prefix}/lib/systemd/system/plymouth-quit.service.d/hyprdora-retain.conf
 install -Dpm 644 configs/logind/50-hyprdora.conf %{buildroot}%{_prefix}/lib/systemd/logind.conf.d/50-hyprdora.conf
 install -Dpm 644 configs/systemd/hyprdora-shell.service %{buildroot}%{_prefix}/lib/systemd/user/hyprdora-shell.service
 install -Dpm 644 configs/systemd/hyprdora-session.target %{buildroot}%{_prefix}/lib/systemd/user/hyprdora-session.target
@@ -201,12 +208,26 @@ if [ -d /run/systemd/system ]; then
     systemctl start hyprdora-hint.service >/dev/null 2>&1 || :
 fi
 
+%posttrans
+# The boot splash and the hidden GRUB menu; also rebuilds the initramfs when the splash changed.
+%{_libexecdir}/%{name}/boot-theme >/dev/null 2>&1 || :
+
 %preun
 if [ "$1" -eq 0 ]; then
     systemctl disable hyprdora-hint.service >/dev/null 2>&1 || :
 fi
 
+%postun
+if [ "$1" -eq 0 ]; then
+    # Back to Fedora's splash; the next initramfs build picks it up.
+    plymouth-set-default-theme --reset >/dev/null 2>&1 || :
+fi
+
 %files
+%dir %{_datadir}/plymouth/themes/hyprdora
+%{_datadir}/plymouth/themes/hyprdora/hyprdora.plymouth
+# The version is written into it when the package installs.
+%verify(not md5 size mtime) %{_datadir}/plymouth/themes/hyprdora/hyprdora.script
 %license LICENSE assets/fonts/OFL.txt
 %doc README.md
 %{_datadir}/%{name}
@@ -227,6 +248,7 @@ fi
 %{_bindir}/hyprdora
 %{_prefix}/lib/systemd/system/hyprdora-hint.service
 %{_prefix}/lib/systemd/system/dnf5-makecache.service.d/hyprdora-metered.conf
+%{_prefix}/lib/systemd/system/plymouth-quit.service.d/hyprdora-retain.conf
 %config(noreplace) %{_sysconfdir}/dnf/protected.d/hyprdora.conf
 %config(noreplace) %{_sysconfdir}/pam.d/hyprdora-lock
 %{_datadir}/glib-2.0/schemas/90_hyprdora.gschema.override

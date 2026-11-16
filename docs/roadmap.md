@@ -293,7 +293,7 @@ Fourth round, proposed on 2026-11-16, in this order:
 - [x] Printer settings hidden from the launcher; they open from "more settings" under printers and scanners
 - [x] Metered ("taryfowe") connections, as GNOME, Windows and macOS do: on them nothing downloads in the background (the repository refresh and the Flatpak check wait, installing by hand still works); every saved Wi-Fi network has a switch, since a router with a SIM card does not report it; an Android hotspot reports itself and an iPhone hotspot is marked automatically. The updates panel always shows how much the updates download
 - [x] A full-screen "downloading updates" screen before an update and restart or power off, held as a session lock so shortcuts and applications are out of reach: updates and megabytes downloaded, and only "power off now" while it downloads; after a failure, which changed nothing, also try again or back to the desktop. The download runs as a system service that holds off sleep and the lid switch
-- [ ] HyprDora's own boot theme (Plymouth), including the screen that installs updates
+- [x] HyprDora's own boot theme (Plymouth): black, the login screen's ">:" prompt in the same place typing a short English log, each finished line moving up with "[ ok ]", paced by Plymouth's boot estimate; a text progress bar while updates install. The splash starts on the real graphics driver and stays until the login screen draws, the console clears the firmware's picture (fbcon=nodefer), and the GRUB menu is hidden unless Esc is pressed
 
 Large:
 
