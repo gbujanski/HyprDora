@@ -62,6 +62,10 @@ Singleton {
     // in minutes after midnight and days numbered 1 (Monday) to 7.
     readonly property var automations: overrides.automations ?? {}
 
+    // Desktop entry ids left out of the launcher because the settings cover them: printer settings open from
+    // "more settings" under printers and scanners.
+    readonly property var hiddenApplications: overrides.hiddenApplications ?? ["system-config-printer"]
+
     // Address the launcher appends a search to when nothing else matches.
     readonly property string webSearchUrl: overrides.webSearchUrl ?? "https://duckduckgo.com/?q="
 

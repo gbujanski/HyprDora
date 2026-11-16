@@ -19,7 +19,7 @@ Singleton {
     readonly property string stateDir: `${Quickshell.env("XDG_STATE_HOME") || `${Quickshell.env("HOME")}/.local/state`}/hyprdora`
 
     // Applications shown in menus. Desktop entries load in the background, so this fills in shortly after start.
-    readonly property var applications: DesktopEntries.applications.values.filter(e => !e.noDisplay)
+    readonly property var applications: DesktopEntries.applications.values.filter(e => !e.noDisplay && !Settings.hiddenApplications.includes(e.id))
 
     /**
      * Lowercases text and drops diacritics, so "prze" finds "Przeglądarka" and "zolw" finds "Żółw".
