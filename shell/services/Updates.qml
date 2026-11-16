@@ -58,8 +58,14 @@ Singleton {
         }));
     }
     property bool installing: false
-    // "reboot" or "poweroff" while updates download before an offline update; "" otherwise.
+    // "reboot" or "poweroff" from the click until the download stops; "" otherwise.
     property string preparing: ""
+    // Progress of the download before an offline update, written by the offline-update service:
+    // { mode, state: "preparing" | "downloading" | "restarting" | "failed", done, total, bytes, totalBytes,
+    // message }, or null when none runs. While it is set, the update screen locks the session.
+    property var progress: null
+    readonly property bool updating: progress !== null
+    readonly property string progressPath: "/run/hyprdora/offline-update.json"
 
     /**
      * Reads a size such as 15 MiB, 685.2 MB or 12 kB as bytes.
@@ -112,16 +118,30 @@ Singleton {
 
     /**
      * Updates Flatpaks, downloads the system updates and restarts to install them before the system starts,
-     * then restarts or powers off. Asks for the password through polkit.
+     * then restarts or powers off. Asks for the password through polkit first; the download then runs as a
+     * system service, shown by the update screen, and takes "retry" or "quit" on stdin after a failure.
      * @param {string} mode  "reboot" or "poweroff"
      */
     function installOffline(mode) {
-        if (preparing !== "")
+        if (preparing !== "" || updating)
             return;
         preparing = mode;
-        Quickshell.execDetached(["notify-send", "--transient", `--app-name=${I18n.t("updates.appName")}`, "--icon=system-software-update", I18n.t("updates.preparingTitle"), I18n.t(mode === "poweroff" ? "updates.preparingPoweroff" : "updates.preparingReboot")]);
-        offline.command = ["sh", "-c", 'flatpak update -y --noninteractive >/dev/null 2>&1; exec pkexec /usr/libexec/hyprdora/offline-update "$1"', "hyprdora-offline-update", mode];
+        offline.command = ["pkexec", "/usr/libexec/hyprdora/offline-update", "start", mode];
         offline.running = true;
+    }
+
+    /** After a failed download, tries again. */
+    function retryOffline() {
+        if (offline.running)
+            offline.write("retry\n");
+    }
+
+    /** After a failed download, gives up and returns to the desktop; nothing has changed. */
+    function cancelOffline() {
+        if (offline.running)
+            offline.write("quit\n");
+        else
+            progress = null;
     }
 
     // The check reads only the cache that dnf-makecache.timer keeps fresh, so it downloads nothing.
@@ -220,9 +240,12 @@ Singleton {
         }
     }
 
-    // On success the system restarts, so only a failure comes back here.
+    // On success the system restarts, so this ends only when the password is refused or the user gives up
+    // after a failure; the update screen has shown why.
     Process {
         id: offline
+
+        stdinEnabled: true
 
         stderr: StdioCollector {
             id: offlineErrors
@@ -230,13 +253,34 @@ Singleton {
 
         onExited: exitCode => {
             root.preparing = "";
-            // 126 is a dismissed password prompt, which needs no message.
-            if (exitCode !== 0 && exitCode !== 126) {
-                console.warn("updates: offline update failed:", offlineErrors.text.trim());
-                Quickshell.execDetached(["notify-send", `--app-name=${I18n.t("updates.appName")}`, "--icon=dialog-error", I18n.t("updates.failedTitle"), offlineErrors.text.trim().split("\n").pop() ?? ""]);
-            }
+            if (exitCode !== 0 && exitCode !== 126)
+                console.warn("updates: offline update ended:", exitCode, offlineErrors.text.trim());
+            progressFile.reload();
             root.check();
         }
+    }
+
+    // The service writes the progress as root to a file the shell may read; it is read often while an update
+    // may run, and once at start, so a restarted shell shows the screen of a download still running.
+    FileView {
+        id: progressFile
+        path: root.progressPath
+        printErrors: false
+        onLoaded: {
+            try {
+                root.progress = JSON.parse(text());
+            } catch (e) {
+                // A file being replaced keeps the last progress.
+            }
+        }
+        onLoadFailed: root.progress = null
+    }
+
+    Timer {
+        interval: 400
+        repeat: true
+        running: root.preparing !== "" || root.updating
+        onTriggered: progressFile.reload()
     }
 
     Process {
@@ -262,7 +306,8 @@ Singleton {
                 upToDateSince: new Date(root.upToDateSince).toISOString(),
                 downloadSize: root.downloadSize,
                 installing: root.installing,
-                preparing: root.preparing
+                preparing: root.preparing,
+                progress: root.progress
             });
         }
     }

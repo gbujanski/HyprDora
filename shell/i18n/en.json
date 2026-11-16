@@ -333,10 +333,6 @@
   "session.updateReboot": "Update and restart",
   "session.updatePoweroff": "Update and power off",
   "updates.appName": "Updates",
-  "updates.preparingTitle": "Downloading updates",
-  "updates.preparingReboot": "The computer restarts when they are ready and installs them before starting.",
-  "updates.preparingPoweroff": "The computer restarts when they are ready, installs them and powers off.",
-  "updates.failedTitle": "Updates could not be prepared",
   "launcher.placeholder": "Search applications, calculate, > run a command",
   "launcher.clipboardPlaceholder": "Search the clipboard history",
   "launcher.empty": "Nothing found",
@@ -503,5 +499,14 @@
   "about.renameFailed": "The name could not be changed.",
   "wifi.meteredShort": "metered",
   "wifi.meteredOn": "Metered connection: on",
-  "wifi.meteredOff": "Metered connection: off"
+  "wifi.meteredOff": "Metered connection: off",
+  "updates.screen.preparing": "Preparing updates",
+  "updates.screen.downloading": "Downloading updates",
+  "updates.screen.restarting": "Restarting…",
+  "updates.screen.poweringOff": "Powering off…",
+  "updates.screen.failed": "The updates could not be downloaded",
+  "updates.screen.retry": "Try again",
+  "updates.screen.poweroff": "Power off",
+  "updates.screen.back": "Back to the desktop",
+  "updates.screen.poweroffNow": "Power off now"
 }

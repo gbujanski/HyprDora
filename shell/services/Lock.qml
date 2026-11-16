@@ -25,7 +25,8 @@ Singleton {
 
     /** Locks the session. */
     function lock() {
-        if (active)
+        // The update screen holds the session lock while updates download, with nothing to unlock behind it.
+        if (active || Updates.updating)
             return;
         markerFile.setText("locked\n");
         active = true;

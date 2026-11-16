@@ -51,6 +51,7 @@ ShellRoot {
     SystemRestoreWindow {}
     PolkitDialog {}
     UpdatesPanel {}
+    UpdateScreen {}
 
     Osd {}
 
