@@ -327,7 +327,8 @@ Singleton {
      * @param {list} actionCommand  command run when the button is used, optional
      */
     function notify(summary, body, image, actionLabel, actionCommand) {
-        const command = ["notify-send", `--app-name=${I18n.t("capture.appName")}`];
+        // A screenshot's or recording's notice belongs to this session; the history does not keep it later.
+        const command = ["notify-send", `--app-name=${I18n.t("capture.appName")}`, `--hint=boolean:${Notifications.sessionOnlyHint}:true`];
         if (image)
             command.push(`--hint=string:image-path:${image}`);
         if (actionLabel)

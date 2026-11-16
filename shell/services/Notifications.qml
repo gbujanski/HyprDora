@@ -6,11 +6,25 @@ import Quickshell.Io
 import Quickshell.Services.Notifications
 import qs.config
 
+// Notifications: toasts and the history in the action center. The history is also saved, so it comes back
+// after the shell restarts, after logging out and after a restart of the computer, for 7 days. A saved
+// entry keeps its application's icon, and a click opens the application; actions and pictures belong to
+// the program that sent it and do not come back. The file is in a directory only its owner may open.
 Singleton {
     id: root
 
     readonly property int maxHistory: 100
     readonly property int maxPopups: 4
+    readonly property real keepFor: 7 * 24 * 3600 * 1000
+    readonly property string stateDir: `${Quickshell.env("XDG_STATE_HOME") || `${Quickshell.env("HOME")}/.local/state`}/hyprdora`
+    // Hint on notifications that are not worth keeping past this session, such as a screenshot's preview.
+    readonly property string sessionOnlyHint: "x-hyprdora-session-only"
+
+    // Saved entries, oldest first: { key, time, appName, summary, body, urgency, desktopEntry, appIcon }.
+    property var saved: []
+    // The saved entry of each notification received in this session, by notification id.
+    property var keys: ({})
+    property bool savedLoaded: false
 
     property bool dnd: false
 
@@ -25,7 +39,27 @@ Singleton {
     readonly property string ignoreDndHint: "x-hyprdora-ignore-dnd"
 
     readonly property var tracked: server.trackedNotifications.values
-    readonly property var history: tracked.filter(n => !n.transient).reverse()
+    readonly property var live: tracked.filter(n => !n.transient).reverse()
+    // Entries saved in an earlier session, shown like notifications: no actions, dismissed from the file.
+    readonly property var archived: {
+        const liveKeys = new Set(tracked.map(n => keys[n.id]).filter(Boolean));
+        return saved.filter(e => !liveKeys.has(e.key)).reverse().map(e => ({
+                    archived: true,
+                    key: e.key,
+                    id: -1,
+                    time: e.time,
+                    appName: e.appName,
+                    summary: e.summary,
+                    body: e.body,
+                    urgency: e.urgency,
+                    desktopEntry: e.desktopEntry,
+                    appIcon: e.appIcon,
+                    image: "",
+                    actions: [],
+                    dismiss: () => root.forget(e.key)
+                }));
+    }
+    readonly property var history: [...live, ...archived]
     readonly property int count: history.length
     readonly property var popups: tracked.filter(n => popupIds.includes(n.id)).reverse().slice(0, maxPopups)
 
@@ -39,6 +73,7 @@ Singleton {
         const times = Object.assign({}, receivedAt);
         times[notification.id] = new Date();
         receivedAt = times;
+        remember(notification);
 
         const known = tracked.map(n => n.id);
         const active = popupIds.filter(id => known.includes(id));
@@ -53,11 +88,77 @@ Singleton {
         trimHistory();
     }
 
-    /** Expires notifications beyond the history limit. */
+    /** Expires notifications beyond the history limit, and drops saved entries past it or too old. */
     function trimHistory() {
-        const excess = history.slice(maxHistory);
+        const excess = live.slice(maxHistory);
         for (const notification of excess)
             notification.expire();
+        const oldest = Date.now() - keepFor;
+        const kept = saved.filter(e => e.time >= oldest).slice(-maxHistory);
+        if (kept.length !== saved.length) {
+            saved = kept;
+            writeSaved();
+        }
+    }
+
+    /**
+     * Saves a notification for later sessions and keeps its entry in step with it: changed by its
+     * application, or gone from the history, when its entry goes too.
+     * @param {Notification} notification  incoming notification
+     */
+    function remember(notification) {
+        if (notification.transient || notification.hints[sessionOnlyHint] === true || !savedLoaded)
+            return;
+        const key = `${Date.now()}-${notification.id}`;
+        keys = Object.assign({}, keys, {
+            [notification.id]: key
+        });
+        saved = [...saved, entryOf(notification, key)];
+        writeSaved();
+        const update = () => {
+            saved = saved.map(e => e.key === key ? entryOf(notification, key, e.time) : e);
+            writeSaved();
+        };
+        notification.summaryChanged.connect(update);
+        notification.bodyChanged.connect(update);
+        notification.closed.connect(() => root.forget(key));
+    }
+
+    /**
+     * The saved form of a notification.
+     * @param {Notification} notification  source
+     * @param {string} key  entry key
+     * @param {real} time  when it arrived, in milliseconds; now when left out
+     * @returns {object}
+     */
+    function entryOf(notification, key, time) {
+        return {
+            key: key,
+            time: time ?? Date.now(),
+            appName: notification.appName,
+            summary: notification.summary,
+            body: notification.body,
+            urgency: notification.urgency,
+            desktopEntry: notification.desktopEntry,
+            // A picture sent with the notification itself lives only as long as it does.
+            appIcon: notification.appIcon.startsWith("image://") ? "" : notification.appIcon
+        };
+    }
+
+    /**
+     * Drops a saved entry.
+     * @param {string} key  entry key
+     */
+    function forget(key) {
+        if (!saved.some(e => e.key === key))
+            return;
+        saved = saved.filter(e => e.key !== key);
+        writeSaved();
+    }
+
+    function writeSaved() {
+        if (savedLoaded)
+            savedFile.setText(JSON.stringify(saved));
     }
 
     /**
@@ -85,10 +186,12 @@ Singleton {
         return notification.urgency === NotificationUrgency.Low ? 3000 : 5000;
     }
 
-    /** Dismisses every notification in history. */
+    /** Dismisses every notification in history, saved ones included. */
     function clearAll() {
-        for (const notification of history.slice())
+        for (const notification of live.slice())
             notification.dismiss();
+        saved = [];
+        writeSaved();
     }
 
     /**
@@ -142,7 +245,7 @@ Singleton {
      * @returns {string}
      */
     function relativeTime(notification) {
-        const received = receivedAt[notification.id];
+        const received = notification.archived ? new Date(notification.time) : receivedAt[notification.id];
         if (!received)
             return "";
         const minutes = Math.floor((now - received) / 60000);
@@ -152,6 +255,9 @@ Singleton {
             return I18n.t("time.minutesAgo", {
                 minutes
             });
+        // Earlier days show the day too, such as "pt. 14:05".
+        if (received.toDateString() !== now.toDateString())
+            return received.toLocaleString(I18n.locale, "ddd HH:mm");
         return received.toLocaleString(I18n.locale, "HH:mm");
     }
 
@@ -194,9 +300,41 @@ Singleton {
     Timer {
         interval: 30000
         repeat: true
-        running: Panels.actionCenterOpen
+        running: Panels.actionCenterOpen || Panels.notificationsOpen
         triggeredOnStart: true
         onTriggered: root.now = new Date()
+    }
+
+    // The directory first becomes private, so the history file is never readable by others, even for a moment.
+    Process {
+        running: true
+        command: ["sh", "-c", 'mkdir -p "$1" && chmod 700 "$1"', "hyprdora-state", root.stateDir]
+        onExited: savedFile.path = `${root.stateDir}/notifications.json`
+    }
+
+    FileView {
+        id: savedFile
+
+        printErrors: false
+        onLoaded: {
+            try {
+                const list = JSON.parse(text());
+                root.saved = Array.isArray(list) ? list.filter(e => e && typeof e.key === "string") : [];
+            } catch (e) {
+                root.saved = [];
+            }
+            root.savedLoaded = true;
+            root.trimHistory();
+        }
+        onLoadFailed: root.savedLoaded = true
+    }
+
+    // Saved entries age out while the shell runs, too.
+    Timer {
+        interval: 3600 * 1000
+        repeat: true
+        running: root.savedLoaded
+        onTriggered: root.trimHistory()
     }
 
     IpcHandler {
@@ -207,6 +345,7 @@ Singleton {
                 dnd: root.dnd,
                 popups: root.popups.map(n => n.id),
                 history: root.history.map(n => ({
+                            archived: n.archived === true,
                             id: n.id,
                             app: n.appName,
                             summary: n.summary,
