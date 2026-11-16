@@ -1,14 +1,13 @@
 #!/bin/bash
-# Configures the installed system: repositories, drivers, personal layer, services and snapshots.
-# Runs once as root from the kickstart %post, inside the new system. Takes the hyprdora-extras RPM.
+# Configures the installed system: repositories for later updates, Flatpaks, services and snapshots.
+# Runs once as root from the kickstart %post, inside the new system. Packages, drivers and codecs included,
+# come from the installer's own package step, out of the ISO.
 
 set -uo pipefail
 
 # With the graphical installer's display set, flatpak waits forever on a D-Bus autolaunch.
 unset DISPLAY WAYLAND_DISPLAY XAUTHORITY
 
-EXTRAS_RPM=${1:?usage: system-setup.sh HYPRDORA_EXTRAS_RPM}
-FEDORA=$(rpm -E %fedora)
 
 # Runs one step and carries on after a failure, so a broken mirror cannot abort the rest of the setup.
 step() {
@@ -16,12 +15,9 @@ step() {
     "$1" || echo "!!! step failed: $1"
 }
 
-enable_rpmfusion() {
-    dnf install -y \
-        "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$FEDORA.noarch.rpm" \
-        "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$FEDORA.noarch.rpm"
-}
 
+# Where the packages from outside Fedora that came from the ISO get their updates. RPM Fusion's come with
+# its release packages.
 enable_vendor_repositories() {
     cat > /etc/yum.repos.d/vscode.repo <<'EOF'
 [code]
@@ -47,52 +43,45 @@ enabled=1
 gpgcheck=1
 gpgkey=https://download.onlyoffice.com/GPG-KEY-ONLYOFFICE
 EOF
-}
-
-install_codecs() {
-    dnf install -y --allowerasing ffmpeg &&
-        dnf group install -y --allowerasing multimedia \
-            --setopt=install_weak_deps=False --exclude=PackageKit-gstreamer-plugin,libheif-freeworld
-}
-
-install_drivers() {
-    local devices
-    devices=$(lspci -nn)
-
-    if grep -E 'VGA|3D|Display' <<<"$devices" | grep -qi intel; then
-        dnf install -y intel-media-driver || return 1
-    fi
-    if grep -E 'VGA|3D|Display' <<<"$devices" | grep -qiE 'amd|radeon|advanced micro'; then
-        dnf install -y --allowerasing mesa-va-drivers-freeworld || return 1
-    fi
-    if grep -i 'network controller' <<<"$devices" | grep -qi broadcom; then
-        dnf install -y broadcom-wl akmod-wl kernel-devel || return 1
-    fi
-    # FaceTime HD camera in MacBooks from 2013 to 2017. Its driver and firmware tool come from a COPR.
-    if grep -q '14e4:1570' <<<"$devices"; then
-        dnf copr enable -y mulderje/facetimehd-kmod &&
-            dnf install -y akmod-facetimehd facetimehd-firmware kernel-devel || return 1
+    if rpm -q akmod-facetimehd >/dev/null 2>&1; then
+        cat > /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:mulderje:facetimehd-kmod.repo <<'EOF'
+[copr:copr.fedorainfracloud.org:mulderje:facetimehd-kmod]
+name=Copr repo for facetimehd-kmod owned by mulderje
+baseurl=https://download.copr.fedorainfracloud.org/results/mulderje/facetimehd-kmod/fedora-$releasever-$basearch/
+type=rpm-md
+skip_if_unavailable=True
+gpgcheck=1
+gpgkey=https://download.copr.fedorainfracloud.org/results/mulderje/facetimehd-kmod/pubkey.gpg
+repo_gpgcheck=0
+enabled=1
+EOF
     fi
 }
+
+
 
 # Nested in the root subvolume, so system snapshots leave out containers, virtual machine images and
-# Flatpaks: they are large, change often, and rolling them back fixes nothing.
+# Flatpaks: they are large, change often, and rolling them back fixes nothing. Their packages are installed
+# by now and may have made the directories, still empty; those become subvolumes with the same owner and
+# mode. One that holds anything, or already is a subvolume, stays.
 create_excluded_subvolumes() {
     [ "$(findmnt -no FSTYPE /)" = btrfs ] || return 0
-    local path
+    local path owner mode
     for path in /var/lib/docker /var/lib/libvirt/images /var/lib/flatpak; do
-        [ -e "$path" ] && continue
+        owner=root:root mode=755
+        if [ -e "$path" ]; then
+            btrfs subvolume show "$path" >/dev/null 2>&1 && continue
+            [ -d "$path" ] && [ -z "$(ls -A "$path")" ] || continue
+            owner=$(stat -c %U:%G "$path")
+            mode=$(stat -c %a "$path")
+            rmdir "$path" || return 1
+        fi
         mkdir -p "$(dirname "$path")"
-        btrfs subvolume create "$path" && restorecon -R "$path" || return 1
+        btrfs subvolume create "$path" && chown "$owner" "$path" && chmod "$mode" "$path" &&
+            restorecon -R "$path" || return 1
     done
 }
 
-install_extras() {
-    dnf install -y "$EXTRAS_RPM"
-    local result=$?
-    rm -f "$EXTRAS_RPM"
-    return "$result"
-}
 
 install_flatpaks() {
     flatpak remote-add --system --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo &&
@@ -137,12 +126,8 @@ configure_users() {
     done
 }
 
-step enable_rpmfusion
 step enable_vendor_repositories
-step install_codecs
-step install_drivers
 step create_excluded_subvolumes
-step install_extras
 step install_flatpaks
 step configure_snapshots
 step enable_keyring_login

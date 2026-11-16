@@ -81,9 +81,7 @@ install: rpm
 
 iso: rpm
 	rm -rf $(ISO_DIR)/content
-	mkdir -p $(ISO_DIR)/content/hyprdora
-	cp $(RPM_DIR)/RPMS/noarch/hyprdora*-$(VERSION)-*.rpm $(ISO_DIR)/content/hyprdora/
-	createrepo_c -q $(ISO_DIR)/content/hyprdora
+	packaging/iso/build-repo.sh $(KICKSTART) $(RPM_DIR)/RPMS/noarch $(ISO_DIR)/content/hyprdora
 	rm -f $(ISO_OUT)
 	sudo mkksiso --ks $(KICKSTART) --add $(ISO_DIR)/content/hyprdora -V HyprDora-44 $(ISO_SOURCE) $(ISO_OUT)
 	sudo chown $(shell id -u):$(shell id -g) $(ISO_OUT)

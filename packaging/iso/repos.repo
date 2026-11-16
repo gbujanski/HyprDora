@@ -1,0 +1,51 @@
+# Repositories the ISO build resolves the installation against. Fedora's come through metalinks, which
+# carry checksums of the metadata; every package from the others is checked against keys/ before it goes
+# into the ISO.
+
+[fedora]
+name=Fedora $releasever
+metalink=https://mirrors.fedoraproject.org/metalink?repo=fedora-$releasever&arch=$basearch
+
+[updates]
+name=Fedora $releasever updates
+metalink=https://mirrors.fedoraproject.org/metalink?repo=updates-released-f$releasever&arch=$basearch
+
+[rpmfusion-free]
+name=RPM Fusion free
+metalink=https://mirrors.rpmfusion.org/metalink?repo=free-fedora-$releasever&arch=$basearch
+
+[rpmfusion-free-updates]
+name=RPM Fusion free updates
+metalink=https://mirrors.rpmfusion.org/metalink?repo=free-fedora-updates-released-$releasever&arch=$basearch
+
+[rpmfusion-nonfree]
+name=RPM Fusion nonfree
+metalink=https://mirrors.rpmfusion.org/metalink?repo=nonfree-fedora-$releasever&arch=$basearch
+
+[rpmfusion-nonfree-updates]
+name=RPM Fusion nonfree updates
+metalink=https://mirrors.rpmfusion.org/metalink?repo=nonfree-fedora-updates-released-$releasever&arch=$basearch
+
+[copr-hyprland]
+name=COPR sdegler/hyprland
+baseurl=https://download.copr.fedorainfracloud.org/results/sdegler/hyprland/fedora-$releasever-$basearch/
+
+[copr-rendezvous]
+name=COPR peterwu/rendezvous
+baseurl=https://download.copr.fedorainfracloud.org/results/peterwu/rendezvous/fedora-$releasever-$basearch/
+
+[copr-facetimehd]
+name=COPR mulderje/facetimehd-kmod
+baseurl=https://download.copr.fedorainfracloud.org/results/mulderje/facetimehd-kmod/fedora-$releasever-$basearch/
+
+[code]
+name=Visual Studio Code
+baseurl=https://packages.microsoft.com/yumrepos/vscode
+
+[docker-ce-stable]
+name=Docker CE Stable
+baseurl=https://download.docker.com/linux/fedora/$releasever/$basearch/stable
+
+[onlyoffice]
+name=ONLYOFFICE
+baseurl=https://download.onlyoffice.com/repo/centos/main/noarch/
