@@ -1,0 +1,25 @@
+// Installing and removing software asks for the administrator password again, kept for 5 minutes as sudo
+// does, and importing a repository's signing key asks every time. Fedora's own rules let a member of wheel
+// in an active session do all of this without a password, so any program running as the user could do it
+// silently through D-Bus. This file sorts before Fedora's (org.*), so its answer is the one taken.
+// Updates and catalog refreshes keep asking nothing, as their actions allow by default.
+polkit.addRule(function(action, subject) {
+    var withPassword = [
+        "org.freedesktop.Flatpak.app-install",
+        "org.freedesktop.Flatpak.runtime-install",
+        "org.freedesktop.Flatpak.app-uninstall",
+        "org.freedesktop.Flatpak.runtime-uninstall",
+        "org.rpm.dnf.v0.rpm.execute_trusted_transaction",
+        "org.freedesktop.packagekit.package-install",
+        "org.freedesktop.packagekit.package-remove",
+        "org.freedesktop.packagekit.system-update",
+        "org.freedesktop.packagekit.upgrade-system",
+        "org.freedesktop.packagekit.trigger-offline-update",
+        "org.freedesktop.packagekit.trigger-offline-upgrade"
+    ];
+    if (withPassword.indexOf(action.id) >= 0)
+        return polkit.Result.AUTH_ADMIN_KEEP;
+    if (action.id == "org.rpm.dnf.v0.rpm.Repo.confirm_key")
+        return polkit.Result.AUTH_ADMIN;
+    return polkit.Result.NOT_HANDLED;
+});

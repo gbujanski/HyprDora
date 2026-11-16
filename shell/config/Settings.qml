@@ -66,6 +66,12 @@ Singleton {
     // "more settings" under printers and scanners.
     readonly property var hiddenApplications: overrides.hiddenApplications ?? ["system-config-printer"]
 
+    // Applications quit a few seconds after their last window closes, by Wayland application id: the command
+    // that quits each. GNOME Software otherwise stays in the background as a service of about 400 MB.
+    readonly property var quitWithLastWindow: overrides.quitWithLastWindow ?? {
+        "org.gnome.Software": ["gnome-software", "--quit"]
+    }
+
     // Address the launcher appends a search to when nothing else matches.
     readonly property string webSearchUrl: overrides.webSearchUrl ?? "https://duckduckgo.com/?q="
 

@@ -27,6 +27,7 @@ ShellRoot {
     readonly property var idle: Idle
     readonly property var automations: Automations
     readonly property var appearance: Appearance
+    readonly property var backgroundApps: BackgroundApps
     // Calendar reminders work without the calendar open.
     readonly property var calendarEvents: CalendarEvents
 

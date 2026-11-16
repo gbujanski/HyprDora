@@ -4,3 +4,10 @@ gtk-theme='Adwaita-dark'
 icon-theme='Papirus'
 cursor-theme='Bibata-Modern-Ice'
 cursor-size=24
+
+# GNOME Software is only for finding and installing applications: updates stay with the shell's panel.
+[org.gnome.software]
+allow-updates=false
+download-updates=false
+download-updates-notify=false
+first-run=false
