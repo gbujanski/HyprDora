@@ -284,6 +284,10 @@ Singleton {
                 const priority = Number(/PRIORITY:(-?\d+)/.exec(text)?.[1] ?? 0);
                 if (root.onHotspot && uuid !== "" && priority >= 0)
                     Quickshell.execDetached(["nmcli", "connection", "modify", uuid, "connection.autoconnect-priority", "-10"]);
+                // An iPhone hotspot does not say it is metered, as an Android one does; set by hand, it stays.
+                const active = Network.activeNetwork;
+                if (iphone && active && Network.savedMetered[active.name]?.value === "unknown")
+                    Network.setMetered(active, true);
             }
         }
     }

@@ -127,14 +127,41 @@ Scope {
                     anchors {
                         top: parent.top
                         left: parent.left
-                        right: parent.right
+                        right: size.left
                         margins: Theme.panelPadding
+                        rightMargin: 8
                     }
+                    elide: Text.ElideRight
                     text: I18n.t("updates.title", {
                         count: Updates.count
                     })
                     font.pixelSize: Theme.fontSizeTitle
                     font.weight: Font.DemiBold
+                }
+
+                // How much the updates download, to choose between now and later.
+                Row {
+                    id: size
+                    anchors {
+                        right: parent.right
+                        rightMargin: Theme.panelPadding
+                        verticalCenter: header.verticalCenter
+                    }
+                    spacing: 4
+                    visible: Updates.downloadSize > 0
+
+                    Icon {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: Icons.download
+                        color: Theme.muted
+                        font.pixelSize: 14
+                    }
+
+                    Label {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: Updates.formatSize(Updates.downloadSize)
+                        color: Theme.muted
+                    }
                 }
 
                 Flickable {

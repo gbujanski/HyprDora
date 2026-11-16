@@ -11,9 +11,12 @@ import qs.config
 Singleton {
     id: root
 
-    // [{ name, version, repo }] from dnf, and [{ name, version }] for Flatpaks.
+    // [{ name, version, repo }] from dnf, and [{ name, version, size }] for Flatpaks, size in bytes.
     property var packageList: []
     property var flatpakList: []
+    // Bytes the package updates still need to download; packages already downloaded do not count.
+    property real packageDownload: 0
+    readonly property real downloadSize: packageDownload + flatpakList.reduce((sum, f) => sum + (f.size ?? 0), 0)
     // Names of packages whose update is a security advisory.
     property var securityNames: []
     readonly property int packages: packageList.length
@@ -58,14 +61,43 @@ Singleton {
     // "reboot" or "poweroff" while updates download before an offline update; "" otherwise.
     property string preparing: ""
 
-    /** Reads the available updates again. */
+    /**
+     * Reads a size such as 15 MiB, 685.2 MB or 12 kB as bytes.
+     * @param {string} text  number and unit
+     * @returns {real} bytes, 0 when unreadable
+     */
+    function bytesOf(text) {
+        const m = /([\d.]+)\s*([kKMGT]?)(i?)B/.exec(text ?? "");
+        if (!m)
+            return 0;
+        const power = " KMGT".indexOf(m[2].toUpperCase());
+        return parseFloat(m[1]) * Math.pow(m[3] ? 1024 : 1000, Math.max(0, power));
+    }
+
+    /**
+     * Formats bytes for the update list, such as 450 MB or 1,2 GB.
+     * @param {real} bytes  size
+     * @returns {string}
+     */
+    function formatSize(bytes) {
+        if (bytes >= 1e9)
+            return `${(bytes / 1e9).toLocaleString(I18n.locale, "f", 1)} GB`;
+        if (bytes >= 1e6)
+            return `${Math.round(bytes / 1e6)} MB`;
+        return `${Math.max(1, Math.round(bytes / 1e3))} kB`;
+    }
+
+    /**
+     * Reads the available updates again. On a metered connection nothing is downloaded: the package lists
+     * come from the cache, and Flatpaks, which need the remote's index, wait for another network.
+     */
     function check() {
         now = Date.now();
         if (!packageCheck.running)
             packageCheck.running = true;
         if (!advisoryCheck.running)
             advisoryCheck.running = true;
-        if (!flatpakCheck.running)
+        if (!flatpakCheck.running && !Network.metered)
             flatpakCheck.running = true;
     }
 
@@ -137,8 +169,13 @@ Singleton {
                         });
                 }
                 root.packageList = list;
-                if (list.length === 0 && root.flatpaks === 0)
-                    root.markUpToDate();
+                if (list.length === 0) {
+                    root.packageDownload = 0;
+                    if (root.flatpaks === 0)
+                        root.markUpToDate();
+                } else if (!sizeCheck.running) {
+                    sizeCheck.running = true;
+                }
             }
         }
     }
@@ -158,15 +195,26 @@ Singleton {
         }
     }
 
+    // dnf answers no after showing the transaction, which ends with a line on stderr such as
+    // "Total size of inbound packages is 15 MiB. Need to download 15 MiB."
+    Process {
+        id: sizeCheck
+        command: ["env", "LC_ALL=C", "dnf5", "upgrade", "--assumeno", "--cacheonly"]
+        stderr: StdioCollector {
+            onStreamFinished: root.packageDownload = root.bytesOf(/Need to download ([\d.]+\s*\S*B)/.exec(text)?.[1])
+        }
+    }
+
     Process {
         id: flatpakCheck
-        command: ["flatpak", "remote-ls", "--updates", "--columns=name,version"]
+        command: ["env", "LC_ALL=C", "flatpak", "remote-ls", "--updates", "--columns=name,version,download-size"]
         stdout: StdioCollector {
             onStreamFinished: root.flatpakList = text.split("\n").filter(line => line.trim() !== "").map(line => {
-                const [name, version] = line.split("\t");
+                const [name, version, size] = line.split("\t");
                 return {
                     name: name,
-                    version: version ?? ""
+                    version: version ?? "",
+                    size: root.bytesOf(size)
                 };
             })
         }
@@ -212,6 +260,7 @@ Singleton {
                 security: root.securityCount,
                 notify: root.notify,
                 upToDateSince: new Date(root.upToDateSince).toISOString(),
+                downloadSize: root.downloadSize,
                 installing: root.installing,
                 preparing: root.preparing
             });

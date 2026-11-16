@@ -500,5 +500,8 @@
   "about.kernel": "Kernel",
   "about.copy": "Copy",
   "about.copied": "Copied",
-  "about.renameFailed": "The name could not be changed."
+  "about.renameFailed": "The name could not be changed.",
+  "wifi.meteredShort": "metered",
+  "wifi.meteredOn": "Metered connection: on",
+  "wifi.meteredOff": "Metered connection: off"
 }

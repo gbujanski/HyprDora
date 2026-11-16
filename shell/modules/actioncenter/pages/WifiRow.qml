@@ -10,6 +10,7 @@ Rectangle {
 
     readonly property bool busy: Network.busySsid === network.name
     readonly property bool hasError: Network.errorSsid === network.name
+    readonly property bool metered: Network.isMetered(network)
 
     // The first click arms the button, the second forgets the network and its saved password.
     property bool forgetArmed: false
@@ -67,14 +68,15 @@ Rectangle {
             text: {
                 if (root.busy)
                     return I18n.t("status.connecting");
+                const suffix = root.metered ? ` · ${I18n.t("wifi.meteredShort")}` : "";
                 if (root.network.connected)
                     return I18n.t("wifi.connectedWith", {
                         security: Network.securityLabel(root.network)
-                    });
+                    }) + suffix;
                 if (root.network.known)
                     return I18n.t("wifi.savedWith", {
                         security: Network.securityLabel(root.network)
-                    });
+                    }) + suffix;
                 return Network.securityLabel(root.network);
             }
         }
@@ -88,6 +90,16 @@ Rectangle {
             verticalCenter: parent.verticalCenter
         }
         spacing: 2
+
+        // Metered: nothing downloads in the background on this network.
+        IconButton {
+            anchors.verticalCenter: parent.verticalCenter
+            visible: root.network.known && Network.savedMetered[root.network.name] !== undefined
+            icon: Icons.metered
+            iconColor: root.metered ? Theme.accent : Theme.dim
+            tooltip: I18n.t(root.metered ? "wifi.meteredOn" : "wifi.meteredOff")
+            onClicked: Network.setMetered(root.network, !root.metered)
+        }
 
         IconButton {
             anchors.verticalCenter: parent.verticalCenter

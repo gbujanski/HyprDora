@@ -502,5 +502,8 @@
   "about.kernel": "Jądro",
   "about.copy": "Kopiuj",
   "about.copied": "Skopiowano",
-  "about.renameFailed": "Nie udało się zmienić nazwy."
+  "about.renameFailed": "Nie udało się zmienić nazwy.",
+  "wifi.meteredShort": "taryfowe",
+  "wifi.meteredOn": "Połączenie taryfowe: włączone",
+  "wifi.meteredOff": "Połączenie taryfowe: wyłączone"
 }

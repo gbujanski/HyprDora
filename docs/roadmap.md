@@ -287,6 +287,14 @@ Third round, proposed on 2026-11-14, in this order:
 - [x] Background applications such as Nextcloud in the bar: already shown by the tray
 - [x] About in the settings: the computer's name, changed in place (the pretty name and a network name made from it, through systemd-hostnamed after the administrator password), and the model, processor, memory, graphics, disk, system and its type, windowing, support end and versions, with a button that copies them as text
 
+Fourth round, proposed on 2026-11-16, in this order:
+
+- [x] No brightness indicator when the screen dims or brightens for idleness: the shell sets those levels quietly
+- [x] Printer settings hidden from the launcher; they open from "more settings" under printers and scanners
+- [x] Metered ("taryfowe") connections, as GNOME, Windows and macOS do: on them nothing downloads in the background (the repository refresh and the Flatpak check wait, installing by hand still works); every saved Wi-Fi network has a switch, since a router with a SIM card does not report it; an Android hotspot reports itself and an iPhone hotspot is marked automatically. The updates panel always shows how much the updates download
+- [ ] A full-screen "downloading updates X/Y" screen before an update and restart or power off, with no way back to the desktop and only "power off now" to stop it
+- [ ] HyprDora's own boot theme (Plymouth), including the screen that installs updates
+
 Large:
 
 - [x] New application launcher in the shell instead of rofi: a list near the top of the screen with search that forgives diacritics and typos, most used first, a calculator, `>` to run a command and a web search; clipboard history in the same window. Opened by SUPER + SPACE, F4 and a three-finger swipe up

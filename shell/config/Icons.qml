@@ -42,6 +42,8 @@ Singleton {
     readonly property string openExternal: glyph(0xF03CC)
     readonly property string repeat: glyph(0xF0456)
     readonly property string edit: glyph(0xF03EB)
+    readonly property string metered: glyph(0xF029A)
+    readonly property string download: glyph(0xF01DA)
     readonly property string info: glyph(0xF02FD)
     readonly property string printer: glyph(0xF042A)
     readonly property string scanner: glyph(0xF06AB)

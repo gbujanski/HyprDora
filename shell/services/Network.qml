@@ -32,6 +32,44 @@ Singleton {
     readonly property bool scanning: wifiDevice?.scannerEnabled ?? false
     // Quickshell.Networking knows only Wi-Fi, so a wired connection is read from nmcli.
     property bool wiredConnected: false
+
+    // Metered ("taryfowe") connections: the system downloads nothing in the background on them. NetworkManager
+    // guesses it for an Android hotspot; any saved network can be marked by hand, since a router with a SIM
+    // card does not say so. metered is the current connection's state; savedMetered holds each saved Wi-Fi
+    // network's own setting by SSID: { uuid, value: "yes" | "no" | "unknown" }.
+    property bool metered: false
+    property var savedMetered: ({})
+
+    /**
+     * Whether a network counts as metered: its own setting, or NetworkManager's guess while connected.
+     * @param {object} network  Wi-Fi network
+     * @returns {bool}
+     */
+    function isMetered(network) {
+        const value = savedMetered[network.name]?.value ?? "unknown";
+        if (value !== "unknown")
+            return value === "yes";
+        return network.connected && metered;
+    }
+
+    /**
+     * Marks a saved network as metered or not, for good.
+     * @param {object} network  saved Wi-Fi network
+     * @param {bool} on  metered
+     */
+    function setMetered(network, on) {
+        const saved = savedMetered[network.name];
+        if (!saved)
+            return;
+        savedMetered = Object.assign({}, savedMetered, {
+            [network.name]: {
+                uuid: saved.uuid,
+                value: on ? "yes" : "no"
+            }
+        });
+        meteredWriter.command = ["nmcli", "connection", "modify", saved.uuid, "connection.metered", on ? "yes" : "no"];
+        meteredWriter.running = true;
+    }
     onScanRequestedChanged: applyScanner()
     onWifiDeviceChanged: applyScanner()
 
@@ -313,6 +351,8 @@ Singleton {
                 enabled: root.wifiEnabled,
                 hardware: root.hardwareEnabled,
                 ssid: root.ssid,
+                metered: root.metered,
+                savedMetered: root.savedMetered,
                 scanning: root.wifiDevice?.scannerEnabled ?? false,
                 busy: root.busySsid,
                 prompt: root.promptSsid,
@@ -360,6 +400,45 @@ Singleton {
         onTriggered: {
             if (!wiredCheck.running)
                 wiredCheck.running = true;
+            if (!meteredCheck.running)
+                meteredCheck.running = true;
+        }
+    }
+
+    // NetworkManager's overall state (1 yes and 3 guessed yes are metered), then each saved Wi-Fi network as
+    // "uuid<TAB>metered<TAB>ssid".
+    Process {
+        id: meteredCheck
+        running: true
+        command: ["sh", "-c", `export LC_ALL=C
+            busctl get-property org.freedesktop.NetworkManager /org/freedesktop/NetworkManager org.freedesktop.NetworkManager Metered 2>/dev/null
+            nmcli -t -f UUID,TYPE connection show | while IFS=: read -r uuid type; do
+                [ "$type" = 802-11-wireless ] || continue
+                printf '%s\t%s\t%s\n' "$uuid" "$(nmcli -g connection.metered connection show "$uuid")" "$(nmcli -g 802-11-wireless.ssid connection show "$uuid")"
+            done`]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const lines = text.split("\n");
+                root.metered = /^u [13]$/.test((lines[0] ?? "").trim());
+                const saved = {};
+                for (const line of lines.slice(1)) {
+                    const [uuid, value, ssid] = line.split("\t");
+                    if (uuid && ssid)
+                        saved[ssid] = {
+                            uuid: uuid,
+                            value: value || "unknown"
+                        };
+                }
+                root.savedMetered = saved;
+            }
+        }
+    }
+
+    Process {
+        id: meteredWriter
+        onExited: {
+            if (!meteredCheck.running)
+                meteredCheck.running = true;
         }
     }
 }
