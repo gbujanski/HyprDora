@@ -120,7 +120,13 @@ Scope {
                     }
                 }
 
-                Keys.onEscapePressed: Panels.closeCalendar()
+                // Esc first closes the delete question, then the calendar.
+                Keys.onEscapePressed: {
+                    if (dayEvents.confirming !== "")
+                        dayEvents.confirming = "";
+                    else
+                        Panels.closeCalendar();
+                }
                 Keys.onPressed: event => {
                     if (event.key === Qt.Key_Left || event.key === Qt.Key_PageUp)
                         panel.shiftMonth(-1);
@@ -270,6 +276,106 @@ Scope {
                         id: weather
                         width: parent.width
                         visible: Settings.hasWeatherLocation && !dayEvents.adding
+                    }
+                }
+
+                // While the delete question shows, a click anywhere on the calendar closes just the question.
+                MouseArea {
+                    anchors.fill: parent
+                    visible: dayEvents.confirming !== ""
+                    acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
+                    onClicked: dayEvents.confirming = ""
+                    onWheel: wheel => wheel.accepted = true
+                }
+            }
+
+            // The delete question, beside the panel at the height of its event, so the list neither grows nor
+            // scrolls. It goes to the left, or to the right where the left has no room.
+            Rectangle {
+                id: question
+
+                readonly property var event: dayEvents.confirmEvent
+                readonly property real rowY: {
+                    const row = dayEvents.confirmRow;
+                    // Read again when the list scrolls or the panel moves.
+                    void panel.y;
+                    return row && event ? row.mapToItem(window.contentItem, 0, 0).y : 0;
+                }
+
+                visible: event !== null && window.shown
+                width: 260
+                height: questionContent.implicitHeight + 2 * Theme.panelPadding
+                // On a narrow screen with room on neither side, it stays on the screen over the panel's edge.
+                x: {
+                    const left = panel.x - width - 8;
+                    const right = panel.x + panel.width + 8;
+                    if (left >= Theme.panelMargin)
+                        return left;
+                    return Math.max(Theme.panelMargin, Math.min(right, window.width - width - Theme.panelMargin));
+                }
+                y: Math.max(Theme.panelMargin, Math.min(rowY, window.height - height - Theme.panelMargin))
+                radius: Theme.panelRadius
+                color: Theme.background
+                border.width: 1
+                border.color: Theme.surface
+
+                // Clicks on the question stay on it.
+                MouseArea {
+                    anchors.fill: parent
+                    acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
+                }
+
+                Column {
+                    id: questionContent
+
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                        top: parent.top
+                        margins: Theme.panelPadding
+                    }
+                    spacing: 8
+
+                    Label {
+                        width: parent.width
+                        text: question.event?.recurring ? I18n.t("calendar.deleteRepeating") : I18n.t("calendar.deleteQuestion", {
+                            summary: question.event?.summary ?? ""
+                        })
+                        wrapMode: Text.WordWrap
+                        font.weight: Font.Medium
+                    }
+
+                    TextButton {
+                        width: parent.width
+                        primary: true
+                        text: question.event?.recurring ? I18n.t("calendar.deleteSeries") : I18n.t("calendar.delete")
+                        active: CalendarEvents.busy === ""
+                        onClicked: CalendarEvents.remove(question.event, true)
+                    }
+
+                    TextButton {
+                        width: parent.width
+                        visible: (question.event?.recurring ?? false) && (question.event?.occurrence ?? "") !== ""
+                        text: I18n.t("calendar.deleteOccurrence")
+                        active: CalendarEvents.busy === ""
+                        onClicked: CalendarEvents.remove(question.event, false)
+                    }
+
+                    Item {
+                        width: parent.width
+                        height: cancelButton.height
+
+                        Spinner {
+                            anchors.verticalCenter: parent.verticalCenter
+                            running: CalendarEvents.busy === "delete"
+                        }
+
+                        TextButton {
+                            id: cancelButton
+                            anchors.right: parent.right
+                            text: I18n.t("common.cancel")
+                            onClicked: dayEvents.confirming = ""
+                        }
                     }
                 }
             }

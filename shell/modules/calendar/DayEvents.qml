@@ -26,6 +26,9 @@ Column {
     // The event whose details are open, and the one waiting for delete confirmation, by key().
     property string expanded: ""
     property string confirming: ""
+    // The event and its row while the delete question shows beside the panel.
+    readonly property var confirmEvent: confirming === "" ? null : (events.find(e => key(e) === confirming) ?? null)
+    property Item confirmRow: null
 
     // Form values.
     property string summary: ""
@@ -356,7 +359,6 @@ Column {
                                     verticalCenter: parent.verticalCenter
                                 }
                                 spacing: 2
-                                visible: !row.confirming
 
                                 Icon {
                                     anchors.verticalCenter: parent.verticalCenter
@@ -380,7 +382,10 @@ Column {
                                     icon: Icons.trash
                                     iconColor: Theme.muted
                                     tooltip: I18n.t("calendar.delete")
-                                    onClicked: root.confirming = row.rowKey
+                                    onClicked: {
+                                        root.confirmRow = row;
+                                        root.confirming = row.rowKey;
+                                    }
                                 }
                             }
                         }
@@ -414,49 +419,6 @@ Column {
                                 color: modelData.status === "accepted" ? Theme.accent : modelData.status === "declined" ? Theme.error : Theme.muted
                                 font.pixelSize: Theme.fontSizeSmall
                                 elide: Text.ElideRight
-                            }
-                        }
-
-                        // Delete confirmation.
-                        Column {
-                            width: parent.width
-                            visible: row.confirming
-                            spacing: 6
-
-                            Label {
-                                width: parent.width
-                                text: row.modelData.recurring ? I18n.t("calendar.deleteRepeating") : I18n.t("calendar.deleteQuestion", {
-                                    summary: row.modelData.summary
-                                })
-                                wrapMode: Text.WordWrap
-                                font.weight: Font.Medium
-                            }
-
-                            Row {
-                                anchors.right: parent.right
-                                spacing: 6
-
-                                Spinner {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    running: row.confirming && CalendarEvents.busy === "delete"
-                                }
-
-                                TextButton {
-                                    text: I18n.t("common.cancel")
-                                    onClicked: root.confirming = ""
-                                }
-
-                                TextButton {
-                                    visible: row.modelData.recurring && (row.modelData.occurrence ?? "") !== ""
-                                    text: I18n.t("calendar.deleteOccurrence")
-                                    onClicked: CalendarEvents.remove(row.modelData, false)
-                                }
-
-                                TextButton {
-                                    text: row.modelData.recurring ? I18n.t("calendar.deleteSeries") : I18n.t("calendar.delete")
-                                    primary: true
-                                    onClicked: CalendarEvents.remove(row.modelData, true)
-                                }
                             }
                         }
                     }
