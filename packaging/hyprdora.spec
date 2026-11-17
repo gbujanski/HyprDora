@@ -14,6 +14,8 @@ Requires:       hypridle
 Requires:       polkit
 # Calendar events of online accounts, over CalDAV.
 Requires:       python3-icalendar
+# Repeating events of the offline calendar.
+Requires:       python3-dateutil
 Requires:       xdg-desktop-portal-hyprland
 Requires:       xdg-desktop-portal-gtk
 Requires:       xdg-utils

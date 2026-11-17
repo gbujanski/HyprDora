@@ -5,9 +5,10 @@ import Quickshell
 import Quickshell.Io
 import qs.config
 
-// Calendar events of the Nextcloud accounts, for the calendar next to the clock. A helper talks CalDAV and
-// reads the app passwords from the keyring itself. The last results are kept in a cache, so events and
-// reminders work without a connection; adding and deleting need the server.
+// Calendar events of the Nextcloud accounts and of the offline calendar, kept on this computer only, for the
+// calendar next to the clock. A helper talks CalDAV and reads the app passwords from the keyring itself, and
+// keeps the offline calendar's files. The last results are kept in a cache, so events and reminders of an
+// unreachable account still show; adding and deleting there need its server.
 Singleton {
     id: root
 
@@ -15,7 +16,10 @@ Singleton {
     readonly property string cachePath: `${Quickshell.env("XDG_CACHE_HOME") || `${Quickshell.env("HOME")}/.cache`}/hyprdora/calendar.json`
 
     readonly property var accounts: OnlineAccounts.accounts.filter(a => a.provider === "nextcloud")
-    readonly property bool enabled: accounts.length > 0
+    // The offline calendar is always there, so the calendar works without any account.
+    readonly property bool enabled: true
+    // The calendar new events went to last, offered first in the form.
+    property string lastCalendar: ""
 
     // The visible range and the next days for reminders: { from, to, events }.
     property var month: null
@@ -86,7 +90,50 @@ Singleton {
      * @returns {list}
      */
     function accountArgs() {
-        return [].concat(...accounts.map(a => [a.server, a.login]));
+        return [...[].concat(...accounts.map(a => [a.server, a.login])), "local"];
+    }
+
+    /**
+     * The helper's arguments for one calendar's account: "local", or a Nextcloud server and login.
+     * @param {string} calendar  calendar href
+     * @returns {list} empty when the calendar is unknown
+     */
+    function accountOf(calendar) {
+        const target = calendars.find(c => c.href === calendar);
+        if (target?.account === "local")
+            return ["local"];
+        const account = accounts.find(a => `${a.login}@${a.server}` === target?.account);
+        return account ? [account.server, account.login] : [];
+    }
+
+    /**
+     * Whether a calendar is the offline one, which has no attendees.
+     * @param {string} calendar  calendar href
+     * @returns {bool}
+     */
+    function isLocal(calendar) {
+        return calendars.find(c => c.href === calendar)?.account === "local";
+    }
+
+    /**
+     * The calendar the form offers first: the one used last, or the first.
+     * @returns {string} calendar href
+     */
+    function preferredCalendar() {
+        return calendars.some(c => c.href === lastCalendar) ? lastCalendar : (calendars[0]?.href ?? "");
+    }
+
+    /**
+     * Joins a fresh reply with the cached events of the accounts it could not reach.
+     * @param {list} events  events read now
+     * @param {list} cached  events read before, for the same range
+     * @param {list} failed  accounts not reached, from the helper
+     * @returns {list}
+     */
+    function withUnreachable(events, cached, failed) {
+        const lost = new Set(failed.map(f => f.account));
+        const keep = new Set(calendars.filter(c => lost.has(c.account)).map(c => c.href));
+        return [...events, ...(cached ?? []).filter(e => keep.has(e.calendar))].sort((a, b) => a.start < b.start ? -1 : a.start > b.start ? 1 : 0);
     }
 
     /**
@@ -119,14 +166,14 @@ Singleton {
      * @param {object} event  { summary, location, start, end, allDay }
      */
     function create(calendar, event) {
-        const target = calendars.find(c => c.href === calendar);
-        const account = accounts.find(a => `${a.login}@${a.server}` === target?.account);
-        if (!account || busy !== "")
+        const account = accountOf(calendar);
+        if (account.length === 0 || busy !== "")
             return;
         error = "";
         busy = "create";
+        lastCalendar = calendar;
         writer.input = JSON.stringify(event);
-        writer.command = [helper, "create", account.server, account.login, calendar];
+        writer.command = account[0] === "local" ? [helper, "create", "local"] : [helper, "create", ...account, calendar];
         writer.stdinEnabled = true;
         writer.running = true;
     }
@@ -137,15 +184,14 @@ Singleton {
      * @param {bool} wholeSeries  for a repeating event, delete every occurrence
      */
     function remove(event, wholeSeries) {
-        const target = calendars.find(c => c.href === event.calendar);
-        const account = accounts.find(a => `${a.login}@${a.server}` === target?.account);
-        if (!account || busy !== "")
+        const account = accountOf(event.calendar);
+        if (account.length === 0 || busy !== "")
             return;
         error = "";
         busy = "delete";
         writer.input = "";
         const occurrence = event.recurring && !wholeSeries ? event.occurrence ?? "" : "";
-        writer.command = [helper, "delete", account.server, account.login, event.href, event.etag, ...(occurrence ? [occurrence] : [])];
+        writer.command = [helper, "delete", ...account, event.href, event.etag, ...(occurrence ? [occurrence] : [])];
         writer.stdinEnabled = false;
         writer.running = true;
     }
@@ -162,7 +208,8 @@ Singleton {
         cacheFile.setText(JSON.stringify({
             month: month,
             upcoming: upcoming,
-            calendars: calendars
+            calendars: calendars,
+            lastCalendar: lastCalendar
         }));
     }
 
@@ -189,6 +236,8 @@ Singleton {
                 root.upcoming = root.upcoming ?? cache.upcoming ?? null;
                 if (root.calendars.length === 0)
                     root.calendars = cache.calendars ?? [];
+                if (root.lastCalendar === "")
+                    root.lastCalendar = cache.lastCalendar ?? "";
             } catch (e) {}
         }
     }
@@ -207,15 +256,16 @@ Singleton {
                     return;
                 }
                 root.offline = reply.failed.length > 0;
-                // A server that could not be reached keeps its cached events rather than losing them.
-                if (reply.failed.length === root.accounts.length && root.month)
-                    return;
+                // A server that could not be reached keeps its cached events and calendars rather than
+                // losing them; the rest is replaced.
+                const sameRange = root.month?.from === monthReader.range.from && root.month?.to === monthReader.range.to;
+                const lost = new Set(reply.failed.map(f => f.account));
                 root.month = {
                     from: monthReader.range.from,
                     to: monthReader.range.to,
-                    events: reply.events
+                    events: root.withUnreachable(reply.events, sameRange ? root.month.events : [], reply.failed)
                 };
-                root.calendars = reply.calendars.filter(c => c.writable);
+                root.calendars = [...reply.calendars.filter(c => c.writable), ...root.calendars.filter(c => lost.has(c.account))];
                 root.save();
             }
         }
@@ -228,12 +278,10 @@ Singleton {
             onStreamFinished: {
                 try {
                     const reply = JSON.parse(text);
-                    if (reply.failed.length < root.accounts.length) {
-                        root.upcoming = {
-                            events: reply.events
-                        };
-                        root.save();
-                    }
+                    root.upcoming = {
+                        events: root.withUnreachable(reply.events, root.upcoming?.events, reply.failed)
+                    };
+                    root.save();
                 } catch (e) {}
             }
         }

@@ -35,7 +35,7 @@ Column {
     property bool allDay: false
     property int fromMinutes: 9 * 60
     property int toMinutes: 10 * 60
-    property string calendar: CalendarEvents.calendars[0]?.href ?? ""
+    property string calendar: CalendarEvents.preferredCalendar()
     property string repeat: ""
     property bool repeatUntil: false
     property date untilDate: new Date()
@@ -131,7 +131,7 @@ Column {
         const until = new Date(day);
         until.setMonth(until.getMonth() + 1);
         untilDate = until;
-        calendar = CalendarEvents.calendars[0]?.href ?? "";
+        calendar = CalendarEvents.preferredCalendar();
         formError = "";
         CalendarEvents.error = "";
         adding = true;
@@ -150,7 +150,8 @@ Column {
     function save() {
         if (summary.trim() === "" || calendar === "")
             return;
-        const addresses = attendees.split(/[,;\s]+/).map(a => a.trim()).filter(Boolean);
+        // The offline calendar has nothing to send invitations with.
+        const addresses = CalendarEvents.isLocal(calendar) ? [] : attendees.split(/[,;\s]+/).map(a => a.trim()).filter(Boolean);
         const wrong = addresses.filter(a => !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(a));
         if (wrong.length > 0) {
             formError = I18n.t("calendar.error.address", {
@@ -767,6 +768,7 @@ Column {
 
             TextField {
                 width: parent.width
+                visible: !CalendarEvents.isLocal(root.calendar)
                 placeholder: I18n.t("calendar.attendeesPlaceholder")
                 text: root.attendees
                 onTextChanged: root.attendees = text
