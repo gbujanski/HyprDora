@@ -15,7 +15,20 @@ Singleton {
     readonly property string helper: "/usr/libexec/hyprdora/calendar"
     readonly property string cachePath: `${Quickshell.env("XDG_CACHE_HOME") || `${Quickshell.env("HOME")}/.cache`}/hyprdora/calendar.json`
 
-    readonly property var accounts: OnlineAccounts.accounts.filter(a => a.provider === "nextcloud")
+    // Accounts for the helper, as { spec, key }: spec is the helper's JSON argument, key the account the
+    // helper files calendars under.
+    readonly property var accounts: [...OnlineAccounts.accounts.filter(a => a.provider === "nextcloud").map(a => ({
+                    spec: JSON.stringify({
+                        kind: "nextcloud",
+                        server: a.server,
+                        login: a.login
+                    }),
+                    key: `${a.login}@${a.server.replace(/\/+$/, "")}`,
+                    server: a.server
+                }))]
+    readonly property string localSpec: JSON.stringify({
+        kind: "local"
+    })
     // The offline calendar is always there, so the calendar works without any account.
     readonly property bool enabled: true
     // The calendar new events went to last, offered first in the form.
@@ -90,7 +103,7 @@ Singleton {
      * @returns {list}
      */
     function accountArgs() {
-        return [...[].concat(...accounts.map(a => [a.server, a.login])), "local"];
+        return [...accounts.map(a => a.spec), localSpec];
     }
 
     /**
@@ -101,9 +114,8 @@ Singleton {
     function accountOf(calendar) {
         const target = calendars.find(c => c.href === calendar);
         if (target?.account === "local")
-            return ["local"];
-        const account = accounts.find(a => `${a.login}@${a.server}` === target?.account);
-        return account ? [account.server, account.login] : [];
+            return localSpec;
+        return accounts.find(a => a.key === target?.account)?.spec ?? "";
     }
 
     /**
@@ -167,13 +179,13 @@ Singleton {
      */
     function create(calendar, event) {
         const account = accountOf(calendar);
-        if (account.length === 0 || busy !== "")
+        if (account === "" || busy !== "")
             return;
         error = "";
         busy = "create";
         lastCalendar = calendar;
         writer.input = JSON.stringify(event);
-        writer.command = account[0] === "local" ? [helper, "create", "local"] : [helper, "create", ...account, calendar];
+        writer.command = [helper, "create", account, calendar];
         writer.stdinEnabled = true;
         writer.running = true;
     }
@@ -185,20 +197,20 @@ Singleton {
      */
     function remove(event, wholeSeries) {
         const account = accountOf(event.calendar);
-        if (account.length === 0 || busy !== "")
+        if (account === "" || busy !== "")
             return;
         error = "";
         busy = "delete";
         writer.input = "";
         const occurrence = event.recurring && !wholeSeries ? event.occurrence ?? "" : "";
-        writer.command = [helper, "delete", ...account, event.href, event.etag, ...(occurrence ? [occurrence] : [])];
+        writer.command = [helper, "delete", account, event.href, event.etag, ...(occurrence ? [occurrence] : [])];
         writer.stdinEnabled = false;
         writer.running = true;
     }
 
     /** Opens Nextcloud Calendar in the browser, for what the shell does not edit, such as repeating events. */
     function openInNextcloud() {
-        const account = accounts[0];
+        const account = accounts.find(a => a.server);
         if (account)
             Quickshell.execDetached(["xdg-open", `${account.server}/apps/calendar/`]);
     }
@@ -224,6 +236,9 @@ Singleton {
         upcomingReader.command = [helper, "events", key(from), key(to), ...accountArgs()];
         upcomingReader.running = true;
     }
+
+    // An account signed in or out changes the calendars at once.
+    onAccountsChanged: refresh()
 
     FileView {
         id: cacheFile

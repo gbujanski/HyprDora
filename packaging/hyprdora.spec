@@ -183,6 +183,8 @@ install -Dpm 644 configs/pam/hyprdora-lock %{buildroot}%{_sysconfdir}/pam.d/hypr
 install -Dpm 644 configs/update/org.hyprdora.offline-update.policy %{buildroot}%{_datadir}/polkit-1/actions/org.hyprdora.offline-update.policy
 install -Dpm 755 configs/restore/system-restore.sh %{buildroot}%{_libexecdir}/%{name}/system-restore
 install -Dpm 755 configs/calendar/hyprdora-calendar.py %{buildroot}%{_libexecdir}/%{name}/calendar
+install -d %{buildroot}%{_libexecdir}/%{name}/hyprdora_calendar
+install -pm 644 configs/calendar/hyprdora_calendar/*.py %{buildroot}%{_libexecdir}/%{name}/hyprdora_calendar/
 install -Dpm 644 configs/restore/org.hyprdora.system-restore.policy %{buildroot}%{_datadir}/polkit-1/actions/org.hyprdora.system-restore.policy
 install -Dpm 644 configs/polkit/10-hyprdora-software.rules %{buildroot}%{_datadir}/polkit-1/rules.d/10-hyprdora-software.rules
 install -Dpm 755 bin/hyprdora %{buildroot}%{_bindir}/hyprdora
