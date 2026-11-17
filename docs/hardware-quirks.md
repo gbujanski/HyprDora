@@ -8,6 +8,10 @@ Findings from testing on real hardware. Each one explains code that may otherwis
 - `WifiNetwork.connect()` does not accept a password, so new networks go through `shell/scripts/nm-connect.py`. The helper also reports the exact failure and deletes the profile after a failed attempt.
 - A wrong password can produce a kernel warning from `net/wireless/sme.c` with `wl`. The connection recovers on its own.
 
+## Camera and suspend
+
+- The FaceTime HD driver (`facetimehd`, an akmod from COPR) must not be in the initramfs. An initramfs rebuilt on the running system takes every loaded driver, but not the calibration files this one reads at start, so the camera starts half set up (`Direct firmware load for facetimehd/1871_01XX.dat failed`) and the next suspend never wakes: the log ends at `PM: suspend entry (deep)`. `/usr/lib/dracut/dracut.conf.d/90-hyprdora.conf` leaves it out, so it loads from the disk after the root is mounted. `pm_trace` pointed at a memory block, a false match, and did not help here.
+
 ## Bluetooth
 
 - Quickshell does not register a pairing agent, so devices needing a PIN or code confirmation require `shell/scripts/bt-agent.py`.

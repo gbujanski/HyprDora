@@ -174,6 +174,7 @@ install -Dpm 755 configs/systemd/shell-stopped.sh %{buildroot}%{_libexecdir}/%{n
 install -Dpm 755 configs/systemd/shell-start.sh %{buildroot}%{_libexecdir}/%{name}/shell-start
 install -Dpm 755 configs/update/not-metered.sh %{buildroot}%{_libexecdir}/%{name}/not-metered
 install -Dpm 755 configs/plymouth/boot-theme.sh %{buildroot}%{_libexecdir}/%{name}/boot-theme
+install -Dpm 644 configs/dracut/90-hyprdora.conf %{buildroot}%{_prefix}/lib/dracut/dracut.conf.d/90-hyprdora.conf
 install -Dpm 644 configs/plymouth/hyprdora/hyprdora.plymouth %{buildroot}%{_datadir}/plymouth/themes/hyprdora/hyprdora.plymouth
 install -Dpm 644 configs/plymouth/hyprdora/hyprdora.script %{buildroot}%{_datadir}/plymouth/themes/hyprdora/hyprdora.script
 install -Dpm 644 configs/pam/hyprdora-lock %{buildroot}%{_sysconfdir}/pam.d/hyprdora-lock
@@ -252,6 +253,7 @@ fi
 %{_prefix}/lib/systemd/system/hyprdora-hint.service
 %{_prefix}/lib/systemd/system/dnf5-makecache.service.d/hyprdora-metered.conf
 %{_prefix}/lib/systemd/system/plymouth-quit.service.d/hyprdora-retain.conf
+%{_prefix}/lib/dracut/dracut.conf.d/90-hyprdora.conf
 %config(noreplace) %{_sysconfdir}/dnf/protected.d/hyprdora.conf
 %config(noreplace) %{_sysconfdir}/pam.d/hyprdora-lock
 %{_datadir}/glib-2.0/schemas/90_hyprdora.gschema.override

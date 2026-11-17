@@ -49,15 +49,17 @@ quiet_console() {
     local args="fbcon=nodefer vt.global_cursor_default=0"
     [ -e "$state/console-cleared" ] || [ ! -f /etc/default/grub ] && return 0
     grubby --update-kernel=ALL --args="$args" || return 1
-    sed -i "s/^GRUB_CMDLINE_LINUX=\"\(.*\)\"/GRUB_CMDLINE_LINUX=\"\1 $args\"/" /etc/default/grub
+    grep -q 'fbcon=nodefer' /etc/default/grub ||
+        sed -i "s/^GRUB_CMDLINE_LINUX=\"\(.*\)\"/GRUB_CMDLINE_LINUX=\"\1 $args\"/" /etc/default/grub
     install -d -m 755 "$state"
     touch "$state/console-cleared"
 }
 
-# The initramfs holds the splash shown before the disk is mounted, and its settings.
+# The initramfs holds the splash shown before the disk is mounted, its settings, and what HyprDora's dracut
+# settings leave out.
 rebuild_initramfs() {
     local sum
-    sum=$(cat "$dir"/* "$conf" | sha256sum | cut -d' ' -f1)
+    sum=$(cat "$dir"/* "$conf" /usr/lib/dracut/dracut.conf.d/90-hyprdora.conf 2>/dev/null | sha256sum | cut -d' ' -f1)
     [ "$(cat "$state/boot-theme.sum" 2>/dev/null)" = "$sum" ] && return 0
     if [ "$mode" = installer ]; then
         dracut -f --regenerate-all || return 1
