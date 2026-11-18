@@ -1,4 +1,9 @@
-# HyprDora
+<h1>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo/hyprdora-logo.svg">
+    <img src="assets/logo/hyprdora-logo-light.svg" alt="HyprDora" height="64">
+  </picture>
+</h1>
 
 A Hyprland desktop on Fedora with a custom [Quickshell](https://quickshell.org) shell, packaged as RPMs and installed from a kickstart ISO.
 
@@ -11,8 +16,8 @@ A Hyprland desktop on Fedora with a custom [Quickshell](https://quickshell.org) 
 | `shell/` | Quickshell shell |
 | `hypr/` | Hyprland config in Lua |
 | `configs/` | alacritty, hypridle, hyprpaper, SDDM theme, PAM for the lock screen |
-| `assets/` | wallpapers, bundled font |
-| `packaging/` | RPM spec files |
+| `assets/` | wallpapers, logo, bundled font |
+| `packaging/` | RPM spec files, the script that draws the logo |
 | `kickstart/` | install description, ISO build, first-login step |
 | `docs/` | documentation and decision records |
 

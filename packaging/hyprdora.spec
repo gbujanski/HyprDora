@@ -151,6 +151,13 @@ install -d %{buildroot}%{_datadir}/%{name}/assets
 cp -a shell hypr configs %{buildroot}%{_datadir}/%{name}/
 install -pm 644 assets/*.jpg %{buildroot}%{_datadir}/%{name}/assets/
 
+# The logo as an icon named hyprdora, drawn by packaging/logo/make-logo.py.
+for size in 16 22 24 32 48 64 128 256 512; do
+    install -Dpm 644 assets/logo/icons/hyprdora-$size.png \
+        %{buildroot}%{_datadir}/icons/hicolor/${size}x${size}/apps/hyprdora.png
+done
+install -Dpm 644 assets/logo/hyprdora-mark.svg %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/hyprdora.svg
+
 install -d %{buildroot}%{_datadir}/fonts/%{name}
 install -pm 644 assets/fonts/*.ttf %{buildroot}%{_datadir}/fonts/%{name}/
 
@@ -240,6 +247,7 @@ fi
 %doc README.md
 %{_datadir}/%{name}
 %{_libexecdir}/%{name}
+%{_datadir}/icons/hicolor/*/apps/hyprdora.*
 %{_datadir}/nautilus-python/extensions/hyprdora.py
 %{_datadir}/xdg-desktop-portal/portals/hyprdora.portal
 %{_datadir}/dbus-1/services/org.freedesktop.impl.portal.desktop.hyprdora.service

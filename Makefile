@@ -14,7 +14,7 @@ QMLLINT_FLAGS := --import disable --unqualified disable --unresolved-type disabl
 
 QML_FILES := $(shell find shell -name '*.qml' 2>/dev/null)
 SHELL_FILES := $(shell find kickstart configs -name '*.sh' 2>/dev/null) bin/hyprdora
-PYTHON_FILES := $(shell find shell/scripts configs/nautilus configs/portal configs/calendar -name '*.py' 2>/dev/null)
+PYTHON_FILES := $(shell find shell/scripts configs/nautilus configs/portal configs/calendar packaging/logo -name '*.py' 2>/dev/null)
 LUA_FILES := $(shell find hypr -name '*.lua' 2>/dev/null)
 
 .DEFAULT_GOAL := help

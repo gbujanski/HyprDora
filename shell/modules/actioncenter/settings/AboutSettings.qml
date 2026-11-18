@@ -1,10 +1,11 @@
 import QtQuick
+import Quickshell
 import qs.config
 import qs.components
 import qs.services
 
-// The computer's name, which a click turns into a field, and what the computer is, with a button that copies
-// it all as text.
+// HyprDora's mark beside the computer's name, which a click turns into a field, and what the computer is,
+// with a button that copies it all as text.
 Column {
     id: root
 
@@ -30,9 +31,20 @@ Column {
         width: root.width
         height: 40
 
+        Image {
+            id: mark
+            width: 40
+            height: 40
+            sourceSize: Qt.size(80, 80)
+            source: Quickshell.iconPath("hyprdora", true)
+        }
+
         // The name, with a pencil; a click starts editing.
         Rectangle {
-            anchors.fill: parent
+            anchors {
+                fill: parent
+                leftMargin: mark.width + 8
+            }
             visible: !root.editing
             radius: Theme.radius
             color: nameArea.containsMouse ? Theme.surface : "transparent"
@@ -84,7 +96,8 @@ Column {
         TextField {
             id: nameField
             anchors {
-                left: parent.left
+                left: mark.right
+                leftMargin: 8
                 right: parent.right
                 verticalCenter: parent.verticalCenter
             }
