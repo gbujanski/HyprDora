@@ -41,6 +41,8 @@ Singleton {
     property var batteryScreen: null
     property bool updatesOpen: false
     property var updatesScreen: null
+    property bool overviewOpen: false
+    property var overviewScreen: null
     property bool launcherOpen: false
     property var launcherScreen: null
     // "apps" or "clipboard".
@@ -133,6 +135,8 @@ Singleton {
             batteryOpen = false;
         if (keep !== "updates")
             updatesOpen = false;
+        if (keep !== "overview")
+            overviewOpen = false;
         if (keep !== "launcher")
             launcherOpen = false;
     }
@@ -208,6 +212,34 @@ Singleton {
             closeUpdates();
         else
             openUpdates(target);
+    }
+
+    /**
+     * Opens the overview of windows and workspaces.
+     * @param {ShellScreen} screen  target, or null for the focused screen
+     */
+    function openOverview(screen) {
+        overviewScreen = screen ?? focusedScreen();
+        overviewOpen = overviewScreen !== null;
+        if (overviewOpen)
+            closeOthers("overview");
+    }
+
+    /** Closes the overview. */
+    function closeOverview() {
+        overviewOpen = false;
+    }
+
+    /**
+     * Closes the overview if open on this screen, otherwise opens it there.
+     * @param {ShellScreen} screen  target, or null for the focused screen
+     */
+    function toggleOverview(screen) {
+        const target = screen ?? focusedScreen();
+        if (overviewOpen && target === overviewScreen)
+            closeOverview();
+        else
+            openOverview(target);
     }
 
     /**
@@ -322,6 +354,10 @@ Singleton {
                 root.closeUpdates();
                 root.updatesScreen = null;
             }
+            if (root.overviewOpen && !Quickshell.screens.includes(root.overviewScreen)) {
+                root.closeOverview();
+                root.overviewScreen = null;
+            }
             if (root.batteryOpen && !Quickshell.screens.includes(root.batteryScreen)) {
                 root.closeBattery();
                 root.batteryScreen = null;
@@ -363,6 +399,23 @@ Singleton {
         }
         function isOpen(): bool {
             return root.launcherOpen;
+        }
+    }
+
+    IpcHandler {
+        target: "overview"
+
+        function toggle(): void {
+            root.toggleOverview(null);
+        }
+        function open(): void {
+            root.openOverview(null);
+        }
+        function close(): void {
+            root.closeOverview();
+        }
+        function isOpen(): bool {
+            return root.overviewOpen;
         }
     }
 

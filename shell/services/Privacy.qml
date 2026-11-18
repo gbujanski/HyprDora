@@ -22,9 +22,32 @@ Singleton {
     // Screen sharing through the portal reaches applications as a PipeWire video stream.
     readonly property var screenApps: appNames(Pipewire.nodes.values.filter(n => n.isStream && n.properties?.["media.class"] === "Stream/Input/Video"))
     // The shell's own recording has its own indicator, and brief captures such as screenshots are ignored.
-    readonly property bool screenCaptured: captures > 0 && captureSettled.done && !Capture.recording
+    // Hyprland says only whether a capture is of a monitor or of a window, not who makes it, so the window
+    // previews of the shell's overview are counted out: a window capture shows only when there are more of
+    // them than the overview's own.
+    readonly property bool screenCaptured: (monitorCaptures > 0 || windowCaptures > ownHeld) && captureSettled.done && !Capture.recording
 
-    property int captures: 0
+    property int monitorCaptures: 0
+    property int windowCaptures: 0
+    // Window captures the overview runs now, set by it; a drop is taken a moment later, as Hyprland reports
+    // the captures ending just after the overview's previews go.
+    property int ownWindowCaptures: 0
+    property int ownHeld: 0
+
+    onOwnWindowCapturesChanged: {
+        if (ownWindowCaptures >= ownHeld) {
+            ownHeld = ownWindowCaptures;
+            ownDrop.stop();
+        } else {
+            ownDrop.restart();
+        }
+    }
+
+    Timer {
+        id: ownDrop
+        interval: 1000
+        onTriggered: root.ownHeld = root.ownWindowCaptures
+    }
 
     /**
      * Returns the distinct application names of PipeWire nodes.
@@ -45,10 +68,16 @@ Singleton {
         target: Hyprland
 
         function onRawEvent(event) {
+            // Such as "1,window" when a capture starts and "0,monitor" when one ends.
             if (event.name !== "screencast")
                 return;
-            root.captures = Math.max(0, root.captures + (event.data.startsWith("1") ? 1 : -1));
-            if (root.captures > 0) {
+            const [state, owner] = event.data.split(",");
+            const step = state === "1" ? 1 : -1;
+            if (owner === "window")
+                root.windowCaptures = Math.max(0, root.windowCaptures + step);
+            else
+                root.monitorCaptures = Math.max(0, root.monitorCaptures + step);
+            if (step > 0) {
                 captureSettled.done = false;
                 captureSettled.restart();
             }
@@ -92,7 +121,9 @@ Singleton {
                 camera: root.cameraApps,
                 screen: root.screenCaptured,
                 screenApps: root.screenApps,
-                captures: root.captures
+                monitorCaptures: root.monitorCaptures,
+                windowCaptures: root.windowCaptures,
+                overviewCaptures: root.ownHeld
             });
         }
     }

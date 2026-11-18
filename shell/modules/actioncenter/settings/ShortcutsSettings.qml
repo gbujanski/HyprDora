@@ -103,8 +103,12 @@ Column {
             keys: I18n.t("shortcuts.gesture.threeFingers") + " ← →"
         },
         {
-            description: I18n.t("shortcut.App launcher"),
+            description: I18n.t("shortcut.Windows and workspaces"),
             keys: I18n.t("shortcuts.gesture.threeFingers") + " ↑"
+        },
+        {
+            description: I18n.t("shortcut.App launcher"),
+            keys: I18n.t("shortcuts.gesture.pinchFour")
         }
     ]
 

@@ -15,6 +15,7 @@ import qs.modules.lock
 import qs.modules.restore
 import qs.modules.polkit
 import qs.modules.updates
+import qs.modules.overview
 import qs.services
 
 ShellRoot {
@@ -53,6 +54,7 @@ ShellRoot {
     PolkitDialog {}
     UpdatesPanel {}
     UpdateScreen {}
+    Overview {}
 
     Osd {}
 

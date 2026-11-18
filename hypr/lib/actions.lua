@@ -19,6 +19,7 @@ return {
     files = exec(apps.files),
     browser = exec(apps.browser),
     launcher = exec(shell_call("launcher toggle")),
+    overview = exec(shell_call("overview toggle")),
     clipboard = exec(shell_call("launcher clipboard")),
     lock = exec("loginctl lock-session"),
 

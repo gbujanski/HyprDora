@@ -510,5 +510,8 @@
   "updates.screen.retry": "Spróbuj ponownie",
   "updates.screen.poweroff": "Wyłącz",
   "updates.screen.back": "Wróć do pulpitu",
-  "updates.screen.poweroffNow": "Wyłącz teraz"
+  "updates.screen.poweroffNow": "Wyłącz teraz",
+  "overview.empty": "Brak okien na tym pulpicie",
+  "shortcut.Windows and workspaces": "Okna i pulpity",
+  "shortcuts.gesture.pinchFour": "Szczypnięcie 4 palcami"
 }

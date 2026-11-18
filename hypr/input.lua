@@ -18,9 +18,20 @@ hl.gesture({
     action = "workspace",
 })
 
+-- As on a Mac: three fingers up show the windows and workspaces (Mission Control), and pinching the thumb
+-- and three fingers together opens the launcher (Launchpad). Hyprland names directions as a zoom does:
+-- "pinchout" is fingers coming together, "pinchin" spreading them, as tried on the MacBook's touchpad.
 hl.gesture({
     fingers = 3,
     direction = "up",
+    action = function()
+        hl.exec_cmd(require("hypr.lib.paths").shell .. " ipc call overview toggle")
+    end,
+})
+
+hl.gesture({
+    fingers = 4,
+    direction = "pinchout",
     action = function()
         hl.exec_cmd(require("hypr.lib.paths").shell .. " ipc call launcher toggle")
     end,

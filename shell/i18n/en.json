@@ -508,5 +508,8 @@
   "updates.screen.retry": "Try again",
   "updates.screen.poweroff": "Power off",
   "updates.screen.back": "Back to the desktop",
-  "updates.screen.poweroffNow": "Power off now"
+  "updates.screen.poweroffNow": "Power off now",
+  "overview.empty": "No windows on this workspace",
+  "shortcut.Windows and workspaces": "Windows and workspaces",
+  "shortcuts.gesture.pinchFour": "Pinch with 4 fingers"
 }

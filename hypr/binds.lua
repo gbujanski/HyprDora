@@ -70,6 +70,7 @@ return {
     { "XF86KbdBrightnessUp",    act.keyboard_light_up,   "Keyboard light up",   hardware },
     { "XF86KbdBrightnessDown",  act.keyboard_light_down, "Keyboard light down", hardware },
     -- Launchpad key on Apple keyboards
+    { "XF86LaunchA",            act.overview,         "Windows and workspaces" },
     { "XF86LaunchB",            act.launcher,         "App launcher" },
     { "XF86PowerOff",           act.power_press,      "Power off when held for 2 seconds", { locked = true } },
     { "XF86PowerOff",           act.power_release,    "Power button released", { locked = true, release = true } },
