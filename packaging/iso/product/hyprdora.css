@@ -1,0 +1,27 @@
+/* Anaconda's look for HyprDora: HyprDora's black behind the sidebar and the top bar, and its logo in place
+ * of Fedora's. The rest is Anaconda's own. */
+
+@define-color hyprdora #0a0c0b;
+
+.logo-sidebar {
+    background-image: none;
+    background-color: @hyprdora;
+}
+
+.logo {
+    background-image: url('/usr/share/anaconda/pixmaps/sidebar-logo.png');
+    background-position: 50% 20px;
+    background-repeat: no-repeat;
+    background-color: transparent;
+}
+
+.product-logo {
+    background-image: none;
+    background-color: transparent;
+}
+
+AnacondaSpokeWindow #nav-box {
+    background-color: @hyprdora;
+    background-image: none;
+    color: white;
+}

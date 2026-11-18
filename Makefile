@@ -1,7 +1,10 @@
 QT_BIN ?= /usr/lib64/qt6/bin
 DEV_DIR := $(CURDIR)/build/dev/config
 RPM_DIR := $(CURDIR)/build/rpm
-VERSION := $(shell sed -n 's/^Version: *//p' packaging/hyprdora.spec)
+# The package's own version; hyprdora-release follows Fedora's instead.
+VERSION := $(shell sed -n 's/^Version: *//p' packaging/hyprdora.spec | head -1)
+# The Fedora release to build for; another one builds hyprdora-release ahead of an upgrade.
+FEDORA ?= $(shell rpm -E %fedora)
 ISO_DIR := $(CURDIR)/build/iso
 ISO_SOURCE ?= $(ISO_DIR)/source/Fedora-Everything-netinst-x86_64-44-1.7.iso
 ISO_OUT ?= $(ISO_DIR)/hyprdora-$(VERSION).iso
@@ -13,7 +16,7 @@ QMLLINT_FLAGS := --import disable --unqualified disable --unresolved-type disabl
 	--signal-handler-parameters disable --incompatible-type disable
 
 QML_FILES := $(shell find shell -name '*.qml' 2>/dev/null)
-SHELL_FILES := $(shell find kickstart configs -name '*.sh' 2>/dev/null) bin/hyprdora
+SHELL_FILES := $(shell find kickstart configs packaging -name '*.sh' 2>/dev/null) bin/hyprdora
 PYTHON_FILES := $(shell find shell/scripts configs/nautilus configs/portal configs/calendar packaging/logo -name '*.py' 2>/dev/null)
 LUA_FILES := $(shell find hypr -name '*.lua' 2>/dev/null)
 
@@ -62,7 +65,7 @@ rpm:
 	@mkdir -p $(RPM_DIR)/SOURCES
 	git ls-files -co --exclude-standard | xargs -d '\n' ls -d 2>/dev/null | \
 		tar -czf $(RPM_DIR)/SOURCES/hyprdora-$(VERSION).tar.gz --transform 's,^,hyprdora-$(VERSION)/,' -T -
-	rpmbuild -bb --define "_topdir $(RPM_DIR)" packaging/hyprdora.spec
+	rpmbuild -bb --define "_topdir $(RPM_DIR)" --define "fedora $(FEDORA)" packaging/hyprdora.spec
 	@echo "Packages are in $(RPM_DIR)/RPMS/noarch"
 
 # Neither Hyprland nor the shell takes in a package update by itself: Hyprland misses replaced files, and a
@@ -82,7 +85,12 @@ install: rpm
 iso: rpm
 	rm -rf $(ISO_DIR)/content
 	packaging/iso/build-repo.sh $(KICKSTART) $(RPM_DIR)/RPMS/noarch $(ISO_DIR)/content/hyprdora
+	packaging/iso/make-product.sh $(ISO_DIR)/content/images/product.img
 	rm -f $(ISO_OUT)
-	sudo mkksiso --ks $(KICKSTART) --add $(ISO_DIR)/content/hyprdora -V HyprDora-44 $(ISO_SOURCE) $(ISO_OUT)
+	# The installer is Fedora's: product.img gives it HyprDora's name and look, inst.profile picks HyprDora's
+	# profile in it, and the boot menu names HyprDora.
+	sudo mkksiso --ks $(KICKSTART) --add $(ISO_DIR)/content/hyprdora --add $(ISO_DIR)/content/images \
+		-c inst.profile=hyprdora -R "Fedora $(FEDORA)" "HyprDora $(FEDORA)" -R "a Fedora system" "a HyprDora system" \
+		-V HyprDora-$(FEDORA) $(ISO_SOURCE) $(ISO_OUT)
 	sudo chown $(shell id -u):$(shell id -g) $(ISO_OUT)
 	@echo "ISO is $(ISO_OUT)"

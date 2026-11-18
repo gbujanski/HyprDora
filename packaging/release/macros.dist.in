@@ -1,0 +1,13 @@
+# dist macros.
+
+%__bootstrap         ~bootstrap
+%fedora              @RELEASE@
+%fc@RELEASE@                1
+%distcore            .fc%{fedora}
+%dist                %{!?distprefix0:%{?distprefix}}%{expand:%{lua:for i=0,9999 do print("%{?distprefix" .. i .."}") end}}%{distcore}%{?with_bootstrap:%{__bootstrap}}%{?buildrelease:+build%{buildrelease}}
+%dist_vendor         HyprDora
+%dist_name           HyprDora
+%dist_purl_namespace hyprdora
+%dist_home_url       https://github.com/gbujanski/HyprDora
+%dist_bug_report_url https://github.com/gbujanski/HyprDora/issues
+%dist_debuginfod_url ima:enforcing https://debuginfod.fedoraproject.org/ ima:ignore

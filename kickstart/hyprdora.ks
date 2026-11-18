@@ -41,6 +41,13 @@ true
 hyprdora
 hyprdora-repos
 hyprdora-extras
+# HyprDora's name and logo in place of Fedora's, which a remix may not carry.
+hyprdora-release
+hyprdora-logos
+-fedora-release
+-fedora-release-common
+-fedora-release-identity-basic
+-fedora-logos
 rpmfusion-free-release
 rpmfusion-nonfree-release
 ffmpeg

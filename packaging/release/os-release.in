@@ -1,0 +1,15 @@
+NAME="HyprDora"
+VERSION="@RELEASE@"
+RELEASE_TYPE=stable
+ID=hyprdora
+ID_LIKE=fedora
+VERSION_ID=@RELEASE@
+PRETTY_NAME="HyprDora @RELEASE@"
+ANSI_COLOR="0;38;2;47;207;94"
+LOGO=hyprdora
+CPE_NAME="cpe:/o:hyprdora:hyprdora:@RELEASE@"
+DEFAULT_HOSTNAME="hyprdora"
+HOME_URL="https://github.com/gbujanski/HyprDora"
+DOCUMENTATION_URL="https://github.com/gbujanski/HyprDora/tree/main/docs"
+BUG_REPORT_URL="https://github.com/gbujanski/HyprDora/issues"
+SUPPORT_END=2027-05-19

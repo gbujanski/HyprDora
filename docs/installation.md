@@ -28,6 +28,8 @@ The packages land in `build/rpm/RPMS/noarch`:
 |---|---|
 | `hyprdora` | the shell, default configs, and every program the desktop needs, as dependencies |
 | `hyprdora-repos` | the two COPR repositories that hold Hyprland and the cursor theme |
+| `hyprdora-release` | the system's name and version, HyprDora 44, in place of `fedora-release`; numbered after Fedora's release |
+| `hyprdora-logos` | HyprDora's logo where programs look for the distribution's, in place of `fedora-logos` |
 | `hyprdora-extras` | personal applications and development tools |
 
 `hyprdora-extras` also needs the RPM Fusion, Microsoft, Docker and ONLYOFFICE repositories. The ISO carries their packages; the installed system gets their repositories for updates.
@@ -47,6 +49,14 @@ sudo systemctl set-default graphical.target
 ```
 
 Then choose the **HyprDora** session on the login screen.
+
+The system stays Fedora. To name it HyprDora, as the ISO does ([decision 9](decisions/0009-own-release-identity.md)), swap Fedora's release and logo packages for HyprDora's:
+
+```bash
+sudo dnf install --allowerasing ./hyprdora-release-*.rpm ./hyprdora-logos-*.rpm
+```
+
+Upgrading to a new Fedora release needs `hyprdora-release` built for it, since it replaces the package that names the release: `packaging/release/refresh.sh 45` takes the files that come from Fedora 45, and `make rpm FEDORA=45` builds the package as `hyprdora-release-45`.
 
 ## Where things go
 

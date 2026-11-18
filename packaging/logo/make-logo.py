@@ -1,5 +1,6 @@
 #!/usr/bin/python3
-"""Draws HyprDora's logo into assets/logo: the mark, the mark with the name, and icons.
+"""Draws HyprDora's logo into assets/logo: the mark, the mark with the name, icons, and the logos the
+system and the installer show in place of their distribution's.
 
 The mark is a lowercase h of rounded blocks on a dark rounded tile, in HyprDora's green; at 32 px and
 below the h is one round stroke instead, which stays readable there, as on the bar. The name is set in JetBrains Mono
@@ -163,6 +164,22 @@ def main() -> int:
         source = "hyprdora-mark-small.svg" if size <= 32 else "hyprdora-mark.svg"
         render(source, os.path.join(out, "icons", f"hyprdora-{size}.png"), size, size)
     render("hyprdora-social.svg", os.path.join(out, "hyprdora-social.png"), 1280, 640)
+
+    # Where the system and the installer look for their distribution's logo, always on a dark background:
+    # system-logo-white.png for the login screen and the boot splash, and the installer's sidebar and header.
+    width = float(files["hyprdora-logo.svg"].split('viewBox="0 0 ')[1].split(" ")[0])
+    os.makedirs(os.path.join(out, "system"), exist_ok=True)
+    for name, height in (
+        ("system-logo-white.png", 96),
+        ("anaconda-sidebar-logo.png", 36),
+        ("anaconda-header.png", 28),
+    ):
+        render(
+            "hyprdora-logo.svg",
+            os.path.join(out, "system", name),
+            round(width * height / 100),
+            height,
+        )
     return 0
 
 

@@ -141,6 +141,40 @@ Requires:       mediawriter
 Applications kept separate from the desktop. The kickstart enables the
 repositories they come from.
 
+%package release
+# The release follows Fedora's, which dnf reads as $releasever.
+Version:        %{fedora}
+Summary:        HyprDora's name and version, and the defaults a Fedora system starts with
+License:        MIT
+Provides:       system-release
+Provides:       system-release(%{fedora})
+Requires:       fedora-repos(%{fedora})
+Conflicts:      fedora-release
+Conflicts:      fedora-release-common
+Conflicts:      fedora-release-identity
+Conflicts:      generic-release
+Conflicts:      generic-release-common
+
+%description release
+Names the system HyprDora in os-release, in place of fedora-release, as
+Fedora asks of remixes that add software from outside Fedora. Its ID is
+hyprdora, with ID_LIKE=fedora. Everything else comes from Fedora and is
+kept as it is there: the systemd presets that enable the services a Fedora
+system expects, dnf's defaults, the console greeting and the RPM macros,
+%fedora and %dist among them, which drivers built on this computer use.
+dnf copr is told to pick Fedora's builds.
+
+%package logos
+Summary:        HyprDora's logo where the system looks for its distribution's
+License:        MIT
+Provides:       system-logos
+Conflicts:      fedora-logos
+Conflicts:      generic-logos
+
+%description logos
+HyprDora's logo in place of fedora-logos, for programs that show the
+distribution's logo, such as the login screen.
+
 %prep
 %autosetup
 
@@ -206,6 +240,32 @@ install -d %{buildroot}%{_datadir}/sddm/themes
 cp -a configs/sddm/theme/Hyprdora %{buildroot}%{_datadir}/sddm/themes/
 
 install -Dpm 644 packaging/hyprdora-copr.repo %{buildroot}%{_sysconfdir}/yum.repos.d/hyprdora-copr.repo
+
+# hyprdora-release: os-release and the release files, named after HyprDora; the rest as Fedora has it.
+install -d %{buildroot}%{_prefix}/lib %{buildroot}%{_sysconfdir}/issue.d
+sed 's/@RELEASE@/%{fedora}/g' packaging/release/os-release.in >%{buildroot}%{_prefix}/lib/os-release
+echo "HyprDora release %{fedora}" >%{buildroot}%{_prefix}/lib/hyprdora-release
+echo "cpe:/o:hyprdora:hyprdora:%{fedora}" >%{buildroot}%{_prefix}/lib/system-release-cpe
+install -pm 644 packaging/release/issue packaging/release/issue.net %{buildroot}%{_prefix}/lib/
+ln -s ../usr/lib/os-release %{buildroot}%{_sysconfdir}/os-release
+ln -s ../usr/lib/hyprdora-release %{buildroot}%{_sysconfdir}/hyprdora-release
+# Scripts written for Fedora look for these.
+ln -s hyprdora-release %{buildroot}%{_sysconfdir}/fedora-release
+ln -s hyprdora-release %{buildroot}%{_sysconfdir}/redhat-release
+ln -s hyprdora-release %{buildroot}%{_sysconfdir}/system-release
+ln -s ../usr/lib/system-release-cpe %{buildroot}%{_sysconfdir}/system-release-cpe
+ln -s ../usr/lib/issue %{buildroot}%{_sysconfdir}/issue
+ln -s ../usr/lib/issue.net %{buildroot}%{_sysconfdir}/issue.net
+install -Dpm 644 -t %{buildroot}%{_prefix}/lib/systemd/system-preset packaging/release/system-preset/*.preset
+install -Dpm 644 -t %{buildroot}%{_prefix}/lib/systemd/user-preset packaging/release/user-preset/*.preset
+install -Dpm 644 packaging/release/20-hyprdora-defaults.conf %{buildroot}%{_datadir}/dnf5/libdnf.conf.d/20-hyprdora-defaults.conf
+install -Dpm 644 packaging/release/copr.vendor.conf %{buildroot}%{_datadir}/dnf/plugins/copr.vendor.conf
+sed 's/@RELEASE@/%{fedora}/g' packaging/release/macros.dist.in >macros.dist
+install -Dpm 644 macros.dist %{buildroot}%{_rpmmacrodir}/macros.dist
+cp -p packaging/release/LICENSE.fedora-release LICENSE.fedora-release
+
+# hyprdora-logos
+install -Dpm 644 assets/logo/system/system-logo-white.png %{buildroot}%{_datadir}/pixmaps/system-logo-white.png
 
 %post
 # The login theme uses the last session, so the first login needs one to be set.
@@ -283,6 +343,33 @@ fi
 %config(noreplace) %{_sysconfdir}/yum.repos.d/hyprdora-copr.repo
 
 %files extras
+
+%files release
+%license LICENSE.fedora-release
+%{_prefix}/lib/os-release
+%{_prefix}/lib/hyprdora-release
+%{_prefix}/lib/system-release-cpe
+%{_prefix}/lib/issue
+%{_prefix}/lib/issue.net
+%{_sysconfdir}/os-release
+%{_sysconfdir}/hyprdora-release
+%{_sysconfdir}/fedora-release
+%{_sysconfdir}/redhat-release
+%{_sysconfdir}/system-release
+%{_sysconfdir}/system-release-cpe
+%config(noreplace) %{_sysconfdir}/issue
+%config(noreplace) %{_sysconfdir}/issue.net
+%dir %{_sysconfdir}/issue.d
+%{_prefix}/lib/systemd/system-preset/*.preset
+%{_prefix}/lib/systemd/user-preset/*.preset
+%{_datadir}/dnf5/libdnf.conf.d/20-hyprdora-defaults.conf
+%dir %{_datadir}/dnf
+%dir %{_datadir}/dnf/plugins
+%{_datadir}/dnf/plugins/copr.vendor.conf
+%{_rpmmacrodir}/macros.dist
+
+%files logos
+%{_datadir}/pixmaps/system-logo-white.png
 
 %changelog
 * Mon Nov 09 2026 Grzegorz Bujański <grzegorz.bujanski@gmail.com> - 0.1.0-1
