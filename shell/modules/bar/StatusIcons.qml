@@ -142,11 +142,17 @@ Row {
         onClicked: Panels.toggleBattery(root.screen)
     }
 
+    // HyprDora's mark opens the action center, green while it is open.
     BarButton {
+        id: actionCenterButton
         anchors.verticalCenter: parent.verticalCenter
-        icon: Icons.tune
         contentColor: Panels.actionCenterOpen ? Theme.accent : Theme.foreground
         tooltip: I18n.t("actionCenter.title")
         onClicked: Panels.toggleActionCenter(root.screen, "main")
+
+        LogoMark {
+            anchors.verticalCenter: parent.verticalCenter
+            color: actionCenterButton.contentColor
+        }
     }
 }

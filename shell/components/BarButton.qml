@@ -1,7 +1,8 @@
 import QtQuick
 import qs.config
 
-// Bar item: icon, optional text, hover background and tooltip.
+// Bar item: icon, optional text, hover background and tooltip. Items declared inside it come after the text, which
+// lets a button show something other than a glyph from the icon font.
 Rectangle {
     id: root
 
@@ -12,11 +13,13 @@ Rectangle {
     property color contentColor: Theme.foreground
     property string tooltip: ""
     property bool interactive: true
+    default property alias content: content.data
 
     signal clicked
     signal scrolled(int direction)
 
-    implicitWidth: content.implicitWidth + 12
+    // Whole pixels, so the buttons after it in the bar stay on whole pixels too.
+    implicitWidth: Math.ceil(content.implicitWidth) + 12
     implicitHeight: Theme.barHeight - 6
     radius: Theme.radius
     color: mouse.containsMouse && interactive ? Theme.surface : "transparent"

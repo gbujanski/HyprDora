@@ -113,7 +113,6 @@ Singleton {
     readonly property string monitor: glyph(0xF0379)
     readonly property string back: glyph(0xF004D)
     readonly property string check: glyph(0xF012C)
-    readonly property string tune: glyph(0xF062E)
     readonly property string application: glyph(0xF03D8)
 
     readonly property string bluetooth: glyph(0xF00AF)
