@@ -114,7 +114,6 @@ Singleton {
     readonly property string monitor: glyph(0xF0379)
     readonly property string back: glyph(0xF004D)
     readonly property string check: glyph(0xF012C)
-    readonly property string application: glyph(0xF03D8)
 
     readonly property string bluetooth: glyph(0xF00AF)
     readonly property string bluetoothOff: glyph(0xF00B2)
@@ -188,15 +187,10 @@ Singleton {
     readonly property string cpu: glyph(0xF035B)
     readonly property string memory: glyph(0xF061A)
     readonly property string processes: glyph(0xF012A)
-    readonly property string flash: glyph(0xF0241)
-    readonly property string health: glyph(0xF02D1)
 
-    readonly property string calendar: glyph(0xF00ED)
     readonly property string refresh: glyph(0xF0450)
-    readonly property string thermometer: glyph(0xF050F)
     readonly property string wind: glyph(0xF059D)
     readonly property string humidity: glyph(0xF058E)
-    readonly property string umbrella: glyph(0xF054A)
     readonly property string sunrise: glyph(0xF059C)
     readonly property string sunset: glyph(0xF059B)
 

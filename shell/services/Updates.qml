@@ -145,19 +145,12 @@ Singleton {
             progress = null;
     }
 
-    // The check reads only the cache that dnf-makecache.timer keeps fresh, so it downloads nothing.
-    Timer {
+    // The packages come from the cache dnf-makecache.timer keeps fresh, but Flatpaks need the remote's index,
+    // so the check waits for a network that is not metered. The first waits until the session has settled.
+    ScheduledTask {
         interval: 60 * 60 * 1000
-        repeat: true
-        running: true
-        onTriggered: root.check()
-    }
-
-    // The first check waits until the session has settled.
-    Timer {
-        interval: 60 * 1000
-        running: true
-        onTriggered: root.check()
+        delay: 60 * 1000
+        onRun: root.check()
     }
 
     FileView {

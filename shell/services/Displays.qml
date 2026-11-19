@@ -6,6 +6,7 @@ import Quickshell.Hyprland
 import Quickshell.Io
 import qs.base
 import qs.config
+import "DisplayGeometry.js" as Geometry
 
 // Monitors: state, draft changes, safe application and saving.
 Singleton {
@@ -46,24 +47,6 @@ Singleton {
      */
     function isInternal(monitor) {
         return /^(eDP|LVDS|DSI)/.test(monitor.name);
-    }
-
-    /**
-     * Returns a monitor's width after scaling.
-     * @param {object} monitor  monitor entry
-     * @returns {int}
-     */
-    function logicalWidth(monitor) {
-        return Math.ceil(monitor.width / monitor.scale);
-    }
-
-    /**
-     * Returns a monitor's height after scaling.
-     * @param {object} monitor  monitor entry
-     * @returns {int}
-     */
-    function logicalHeight(monitor) {
-        return Math.ceil(monitor.height / monitor.scale);
     }
 
     /**
@@ -251,7 +234,7 @@ Singleton {
             height: height,
             refresh: refreshRate
         });
-        draft = layoutWithoutOverlap(draft);
+        draft = Geometry.layoutWithoutOverlap(draft);
     }
 
     /**
@@ -263,7 +246,7 @@ Singleton {
         editDraft(name, {
             scale: scale
         });
-        draft = layoutWithoutOverlap(draft);
+        draft = Geometry.layoutWithoutOverlap(draft);
     }
 
     /**
@@ -290,26 +273,7 @@ Singleton {
             height: height,
             refresh: refreshRate
         });
-        draft = layoutWithoutOverlap(draft);
-    }
-
-    /**
-     * Rearranges screens in a row if a size change made them overlap.
-     * @param {list} list  monitor entries
-     * @returns {list}
-     */
-    function layoutWithoutOverlap(list) {
-        return hasOverlap(list) ? arrangeInRow(list) : normalized(list);
-    }
-
-    /**
-     * Tells whether any two active screens overlap.
-     * @param {list} list  monitor entries
-     * @returns {bool}
-     */
-    function hasOverlap(list) {
-        const active = list.filter(m => m.enabled && !m.mirrorOf);
-        return active.some((a, i) => active.slice(i + 1).some(b => a.x < b.x + logicalWidth(b) && b.x < a.x + logicalWidth(a) && a.y < b.y + logicalHeight(b) && b.y < a.y + logicalHeight(a)));
+        draft = Geometry.layoutWithoutOverlap(draft);
     }
 
     /**
@@ -386,43 +350,7 @@ Singleton {
     }
 
     /**
-     * Places active screens side by side in their current order.
-     * @param {list} list  monitor entries
-     * @returns {list}
-     */
-    function arrangeInRow(list) {
-        const positions = {};
-        let x = 0;
-        for (const m of list.filter(o => o.enabled && !o.mirrorOf).sort((a, b) => a.x - b.x || a.name.localeCompare(b.name))) {
-            positions[m.name] = x;
-            x += logicalWidth(m);
-        }
-        return list.map(m => m.name in positions ? Object.assign({}, m, {
-                x: positions[m.name],
-                y: 0
-            }) : m);
-    }
-
-    /**
-     * Shifts active screens so the smallest coordinates are 0.
-     * @param {list} list  monitor entries
-     * @returns {list}
-     */
-    function normalized(list) {
-        const active = list.filter(m => m.enabled && !m.mirrorOf);
-        if (active.length === 0)
-            return list;
-        const minX = Math.min(...active.map(m => m.x));
-        const minY = Math.min(...active.map(m => m.y));
-        return list.map(m => m.enabled && !m.mirrorOf ? Object.assign({}, m, {
-                x: m.x - minX,
-                y: m.y - minY
-            }) : m);
-    }
-
-    /**
-     * Snaps a dropped screen to the nearest free spot along another screen's edge:
-     * either corner or the center of that edge.
+     * Moves a dropped screen to the nearest free spot along another screen's edge.
      * @param {string} name  connector name
      * @param {int} x  drop position
      * @param {int} y  drop position
@@ -432,31 +360,13 @@ Singleton {
         const others = activeDraft.filter(m => m.name !== name);
         if (!moving || others.length === 0)
             return;
-        const w = logicalWidth(moving);
-        const h = logicalHeight(moving);
-        const clear = (cx, cy) => others.every(o => cx >= o.x + logicalWidth(o) || o.x >= cx + w || cy >= o.y + logicalHeight(o) || o.y >= cy + h);
-        let best = null;
-        let bestDistance = Infinity;
-        for (const o of others) {
-            const ow = logicalWidth(o);
-            const oh = logicalHeight(o);
-            const centerX = o.x + Math.round((ow - w) / 2);
-            const centerY = o.y + Math.round((oh - h) / 2);
-            const candidates = [[o.x - w, o.y], [o.x - w, centerY], [o.x - w, o.y + oh - h], [o.x + ow, o.y], [o.x + ow, centerY], [o.x + ow, o.y + oh - h], [o.x, o.y - h], [centerX, o.y - h], [o.x + ow - w, o.y - h], [o.x, o.y + oh], [centerX, o.y + oh], [o.x + ow - w, o.y + oh]];
-            for (const [cx, cy] of candidates) {
-                const distance = Math.hypot(cx - x, cy - y);
-                if (distance < bestDistance && clear(cx, cy)) {
-                    best = [cx, cy];
-                    bestDistance = distance;
-                }
-            }
-        }
+        const best = Geometry.snapPosition(moving, others, x, y);
         if (best) {
             editDraft(name, {
                 x: best[0],
                 y: best[1]
             });
-            draft = normalized(draft);
+            draft = Geometry.normalized(draft);
         }
     }
 
@@ -496,7 +406,7 @@ Singleton {
                     enable(m);
                     m.x = x;
                     m.y = 0;
-                    x += logicalWidth(m);
+                    x += Geometry.logicalWidth(m);
                 }
                 internal.enabled = false;
                 return copy;
@@ -504,17 +414,17 @@ Singleton {
         case "extend":
             {
                 // An extended layout stays as arranged, and coming from another mode restores the saved one.
-                if (copy.every(m => m.enabled) && monitors.every(m => !m.mirrorOf) && !hasOverlap(copy))
+                if (copy.every(m => m.enabled) && monitors.every(m => !m.mirrorOf) && !Geometry.hasOverlap(copy))
                     return copy;
                 const saved = savedTargets();
-                if (saved && saved.every(m => m.enabled && !m.mirrorOf) && !hasOverlap(saved))
+                if (saved && saved.every(m => m.enabled && !m.mirrorOf) && !Geometry.hasOverlap(saved))
                     return saved;
                 let x = 0;
                 for (const m of [internal, ...externals]) {
                     enable(m);
                     m.x = x;
                     m.y = 0;
-                    x += logicalWidth(m);
+                    x += Geometry.logicalWidth(m);
                 }
                 return copy;
             }

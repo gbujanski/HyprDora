@@ -297,10 +297,11 @@ Singleton {
         onNotification: notification => root.handle(notification)
     }
 
+    // Times are shown only in the notification panel; toasts leave them out.
     Timer {
         interval: 30000
         repeat: true
-        running: Panels.isOpen("actioncenter") || Panels.isOpen("notifications")
+        running: Panels.isOpen("notifications")
         triggeredOnStart: true
         onTriggered: root.now = new Date()
     }

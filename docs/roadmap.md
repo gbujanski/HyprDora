@@ -354,11 +354,11 @@ Review of the whole project (2026-11-19), in stages, each ending in a report the
   - [x] B3. The camera watched with inotify (inotify-tools) instead of a process every 4 seconds
   - [x] settings.json and monitors.lua made by the shell when missing, at start or after being deleted, with a note on top: watching needs a file, and a deleted folder ends the watch
   - [ ] Memory: measure what the shell's ~128 MB is made of (Qt and QML, graphics, fonts and icons, images, panels kept loaded, JavaScript), what can be cut, and how much each change saves
-  - [ ] B5. Bluetooth discovery retried when it ends rather than every 3 seconds
-  - [ ] B6. ScheduledTask: one policy for when downloads run (not offline, waiting on a metered network unless allowed, catching up after the network returns or after waking); weather and the calendar download on a metered network, updates wait; the data stays in its services
-  - [ ] A1. The media panel's position moves while the panel is open, not the action center; A2. notification times refresh with the notification panel
-  - [ ] C1, C2. Unused icons and translation keys removed
-  - [ ] D1. The calendar's event form in a file of its own; D2. the display layout's geometry out of Displays.qml, moved without changes
+  - Kept: B5, the Bluetooth discovery retry every 3 seconds; it runs only while the Bluetooth page is open and discovery is off, and a discovery BlueZ refuses right after power-on changes no state an event could follow
+  - [x] B6. ScheduledTask: one policy for when downloads run (not offline, waiting on a metered network unless allowed, catching up after the network returns or after waking); weather downloads on a metered network, updates wait, the calendar reads its local calendars offline too and reads again when the network returns; the data stays in its services
+  - [x] A1. The media panel's position moves while the panel is open, not the action center; A2. notification times refresh with the notification panel
+  - [x] C1, C2. Unused icons and translation keys removed
+  - [x] D1. The calendar's event form in a file of its own; D2. the display layout's geometry out of Displays.qml into DisplayGeometry.js, moved without changes
   - Kept: Capture.qml and Network.qml whole; arrows in the action center's lists
 - [ ] 4. Security, on the code as it stands after the stages above; anything serious found earlier is reported at once
 - [ ] 5. Documentation: docs/ and the README describe what the code does after the review

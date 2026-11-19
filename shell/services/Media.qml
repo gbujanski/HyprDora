@@ -49,7 +49,7 @@ Singleton {
     Timer {
         interval: 1000
         repeat: true
-        running: Panels.isOpen("actioncenter") && (root.player?.isPlaying ?? false)
+        running: Panels.isOpen("media") && (root.player?.isPlaying ?? false)
         onTriggered: root.player.positionChanged()
     }
 

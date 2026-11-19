@@ -2,14 +2,15 @@ import QtQuick
 import qs.config
 import qs.components
 import qs.services
+import "../../services/DisplayGeometry.js" as Geometry
 
 // Screen layout: dragging snaps a screen to a neighbor's edge.
 Rectangle {
     id: root
 
     readonly property var screens: Displays.activeDraft
-    readonly property real boundsWidth: Math.max(1, ...screens.map(m => m.x + Displays.logicalWidth(m)))
-    readonly property real boundsHeight: Math.max(1, ...screens.map(m => m.y + Displays.logicalHeight(m)))
+    readonly property real boundsWidth: Math.max(1, ...screens.map(m => m.x + Geometry.logicalWidth(m)))
+    readonly property real boundsHeight: Math.max(1, ...screens.map(m => m.y + Geometry.logicalHeight(m)))
     readonly property real factor: Math.min((width - 24) / boundsWidth, (height - 24) / boundsHeight)
     readonly property real offsetX: (width - boundsWidth * factor) / 2
     readonly property real offsetY: (height - boundsHeight * factor) / 2
@@ -34,8 +35,8 @@ Rectangle {
             x: root.offsetX + modelData.x * root.factor + dragX
             y: root.offsetY + modelData.y * root.factor + dragY
             z: dragArea.pressed ? 2 : 1
-            width: Displays.logicalWidth(modelData) * root.factor
-            height: Displays.logicalHeight(modelData) * root.factor
+            width: Geometry.logicalWidth(modelData) * root.factor
+            height: Geometry.logicalHeight(modelData) * root.factor
             radius: Theme.radiusSmall
             color: isSelected ? Theme.accentSoft : Theme.surfaceHover
             border.width: isSelected ? 2 : 1

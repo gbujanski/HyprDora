@@ -121,13 +121,6 @@ Column {
         DisplayLayout {
             width: parent.width
         }
-
-        Label {
-            visible: Displays.activeDraft.length > 1
-            text: I18n.t("displays.dragHint")
-            color: Theme.muted
-            font.pixelSize: Theme.fontSizeSmall
-        }
     }
 
     Column {

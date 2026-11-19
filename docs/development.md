@@ -74,7 +74,7 @@ In QML: `I18n.t("notifications.count", { count: 3 })`.
 - Documentation changes land in the same commit as the code they describe.
 - No dead code: a change that stops using a translation key, an icon, a Theme token, a setting, a function or a file removes it in the same commit. It can always be added back.
 - Watching the local system goes through `EventSources` in `shell/base/`, never straight from a module or another service: a process that prints events (`nmcli monitor`), a file watched for changes (`FileView.watchChanges`), or a poll where nothing can be subscribed to. Each source runs once however many listen, starts with its first listener and stops after its last, ends with the shell and restarts if it fails, so a change of tool happens in one place. Subscribing to an event comes before polling it.
-- Downloads on a schedule (weather, updates, calendars) run through `ScheduledTask`, which decides when they may run: not while offline, waiting on a metered network unless allowed, catching up once the network returns or after waking. The data stays in the service that owns it.
+- Downloads on a schedule (weather, updates, calendars) run through `ScheduledTask` (`shell/services/`), which decides when they may run: not while offline, waiting on a metered network unless allowed, catching up once the network returns or after waking. The data stays in the service that owns it.
 - A new tool the system needs (a package the spec requires) is the author's decision, with its pros and cons laid out first.
 
 ## Tools

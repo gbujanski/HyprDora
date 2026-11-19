@@ -360,12 +360,13 @@ Singleton {
     }
 
     // The next days are read every five minutes, so a reminder set shortly before is still known in time.
-    Timer {
+    // Offline too, as local calendars need no network and accounts out of reach keep their last events; the
+    // network returning reads them again at once.
+    ScheduledTask {
         interval: 5 * 60 * 1000
-        repeat: true
-        running: root.enabled
-        triggeredOnStart: true
-        onTriggered: root.loadUpcoming()
+        enabled: root.enabled
+        needsNetwork: false
+        onRun: root.loadUpcoming()
     }
 
     IpcHandler {

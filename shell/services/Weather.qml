@@ -26,18 +26,21 @@ Singleton {
     readonly property string url: !Settings.hasWeatherLocation ? "" : "https://api.open-meteo.com/v1/forecast" + `?latitude=${Settings.weatherLatitude}&longitude=${Settings.weatherLongitude}` + "&current=temperature_2m,apparent_temperature,weather_code,is_day,wind_speed_10m,relative_humidity_2m" + "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset" + "&timezone=auto&forecast_days=6"
 
     property var request: null
+    // Whether the saved result for the current location has been looked at, which the schedule waits for.
+    property bool cacheRead: false
 
     onUrlChanged: {
         const pending = request;
         request = null;
         pending?.abort();
         timeout.stop();
-        retry.stop();
         loading = false;
         error = "";
         current = null;
         daily = [];
         fetchedAt = 0;
+        cacheRead = false;
+        schedule.retrying = false;
         cache.reload();
     }
 
@@ -49,7 +52,7 @@ Singleton {
         return fetchedAt > 0 ? Date.now() - fetchedAt : Infinity;
     }
 
-    /** Refreshes only when the result is older than the interval. Called when the calendar opens and when the network returns, for example after a resume. */
+    /** Refreshes only when the result is older than the interval. Called when the calendar opens. */
     function refreshIfStale() {
         if (age() >= Settings.weatherInterval)
             refresh();
@@ -78,7 +81,7 @@ Singleton {
                     sunrise,
                     sunset
                 }));
-                retry.stop();
+                schedule.succeeded();
             } else {
                 fail(xhr.status === 0 ? I18n.t("weather.error.noConnection") : I18n.t("weather.error.server", {
                     status: xhr.status
@@ -91,14 +94,14 @@ Singleton {
     }
 
     /**
-     * Records a failed fetch and schedules a retry.
+     * Records a failed fetch; the schedule tries again sooner.
      * @param {string} message  user message
      */
     function fail(message) {
         error = message;
         loading = false;
         dropIfTooOld();
-        retry.restart();
+        schedule.failed();
     }
 
     /** Drops a result older than weatherMaxAge. */
@@ -241,24 +244,26 @@ Singleton {
     FileView {
         id: cache
         path: Quickshell.cachePath("weather.json")
+        // The schedule starts from the saved result, so a restarted shell does not fetch a fresh one again.
         onLoaded: {
             root.applyCache(text());
-            root.refreshIfStale();
+            schedule.lastRun = root.fetchedAt;
+            root.cacheRead = true;
         }
-        onLoadFailed: root.refresh()
+        onLoadFailed: {
+            schedule.lastRun = 0;
+            root.cacheRead = true;
+        }
     }
 
-    Timer {
+    // Weather is small, so it is fetched on a metered network too.
+    ScheduledTask {
+        id: schedule
         interval: Settings.weatherInterval
-        running: true
-        repeat: true
-        onTriggered: root.refresh()
-    }
-
-    Timer {
-        id: retry
-        interval: Settings.weatherRetry
-        onTriggered: root.refresh()
+        retryInterval: Settings.weatherRetry
+        enabled: root.url !== "" && root.cacheRead
+        allowMetered: true
+        onRun: root.refresh()
     }
 
     Timer {
@@ -269,14 +274,6 @@ Singleton {
             root.request = null;
             xhr?.abort();
             root.fail(I18n.t("weather.error.timeout"));
-        }
-    }
-
-    Connections {
-        target: Network
-        function onConnectedChanged() {
-            if (Network.connected)
-                root.refreshIfStale();
         }
     }
 
