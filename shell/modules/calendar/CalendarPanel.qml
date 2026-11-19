@@ -95,7 +95,11 @@ Scope {
                     horizontalCenter: parent.horizontalCenter
                     topMargin: Theme.panelMargin
                 }
-                width: 320
+                // Two columns: the month and the weather on the left, the selected day's events on the right.
+                readonly property int columnWidth: 320 - 2 * Theme.panelPadding
+                readonly property int columnGap: 2 * Theme.panelPadding + 1
+
+                width: 2 * columnWidth + columnGap + 2 * Theme.panelPadding
                 height: content.implicitHeight + Theme.panelPadding * 2
                 radius: Theme.panelRadius
                 color: Theme.background
@@ -151,9 +155,9 @@ Scope {
                     onWheel: wheel => {
                         // Months change only over the month heading and grid; elsewhere the wheel goes on,
                         // such as to a long list of events.
-                        const top = monthHeader.mapToItem(this, 0, 0).y;
+                        const corner = monthHeader.mapToItem(this, 0, 0);
                         const bottom = grid.mapToItem(this, 0, grid.height).y;
-                        if (wheel.y < top || wheel.y > bottom) {
+                        if (wheel.y < corner.y || wheel.y > bottom || wheel.x < corner.x || wheel.x > corner.x + grid.width) {
                             wheel.accepted = false;
                             return;
                         }
@@ -168,114 +172,117 @@ Scope {
                     }
                 }
 
-                Column {
+                Row {
                     id: content
 
                     anchors {
                         top: parent.top
                         left: parent.left
-                        right: parent.right
                         margins: Theme.panelPadding
                     }
-                    spacing: 10
+                    spacing: Theme.panelPadding
 
                     Column {
-                        id: dateHeader
-                        spacing: 1
+                        id: leftColumn
+                        width: panel.columnWidth
+                        spacing: 10
 
-                        Label {
-                            text: clock.date.toLocaleDateString(I18n.locale, "dddd")
-                            color: Theme.muted
-                            font.pixelSize: Theme.fontSizeSmall
-                        }
+                        Column {
+                            id: dateHeader
+                            spacing: 1
 
-                        Label {
-                            text: clock.date.toLocaleDateString(I18n.locale, "d MMMM yyyy")
-                            font.pixelSize: Theme.fontSizeTitle + 3
-                            font.weight: Font.DemiBold
-                        }
-                    }
-
-                    Item {
-                        id: monthHeader
-                        width: parent.width
-                        height: 30
-
-                        Label {
-                            anchors.verticalCenter: parent.verticalCenter
-                            leftPadding: 4
-                            text: `${I18n.monthName(panel.month)} ${panel.year}`
-                            font.weight: Font.Medium
-                        }
-
-                        Row {
-                            anchors {
-                                right: parent.right
-                                verticalCenter: parent.verticalCenter
+                            Label {
+                                text: clock.date.toLocaleDateString(I18n.locale, "dddd")
+                                color: Theme.muted
+                                font.pixelSize: Theme.fontSizeSmall
                             }
-                            spacing: 2
 
-                            TextButton {
+                            Label {
+                                text: clock.date.toLocaleDateString(I18n.locale, "d MMMM yyyy")
+                                font.pixelSize: Theme.fontSizeTitle + 3
+                                font.weight: Font.DemiBold
+                            }
+                        }
+
+                        Item {
+                            id: monthHeader
+                            width: parent.width
+                            height: 30
+
+                            Label {
                                 anchors.verticalCenter: parent.verticalCenter
-                                visible: !panel.isCurrentMonth
-                                implicitHeight: 26
-                                text: I18n.t("calendar.today")
-                                onClicked: panel.showToday()
+                                leftPadding: 4
+                                text: `${I18n.monthName(panel.month)} ${panel.year}`
+                                font.weight: Font.Medium
                             }
 
-                            IconButton {
-                                icon: Icons.chevronLeft
-                                iconColor: Theme.muted
-                                tooltip: I18n.t("calendar.previousMonth")
-                                onClicked: panel.shiftMonth(-1)
-                            }
+                            Row {
+                                anchors {
+                                    right: parent.right
+                                    verticalCenter: parent.verticalCenter
+                                }
+                                spacing: 2
 
-                            IconButton {
-                                icon: Icons.chevronRight
-                                iconColor: Theme.muted
-                                tooltip: I18n.t("calendar.nextMonth")
-                                onClicked: panel.shiftMonth(1)
+                                TextButton {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    visible: !panel.isCurrentMonth
+                                    implicitHeight: 26
+                                    text: I18n.t("calendar.today")
+                                    onClicked: panel.showToday()
+                                }
+
+                                IconButton {
+                                    icon: Icons.chevronLeft
+                                    iconColor: Theme.muted
+                                    tooltip: I18n.t("calendar.previousMonth")
+                                    onClicked: panel.shiftMonth(-1)
+                                }
+
+                                IconButton {
+                                    icon: Icons.chevronRight
+                                    iconColor: Theme.muted
+                                    tooltip: I18n.t("calendar.nextMonth")
+                                    onClicked: panel.shiftMonth(1)
+                                }
                             }
                         }
-                    }
 
-                    MonthGrid {
-                        id: grid
-                        width: parent.width
-                        year: panel.year
-                        month: panel.month
-                        today: clock.date
+                        MonthGrid {
+                            id: grid
+                            width: parent.width
+                            year: panel.year
+                            month: panel.month
+                            today: clock.date
+                        }
+
+                        Rectangle {
+                            width: parent.width
+                            height: 1
+                            visible: weather.visible
+                            color: Theme.surface
+                        }
+
+                        WeatherDetails {
+                            id: weather
+                            width: parent.width
+                            visible: Settings.hasWeatherLocation
+                        }
                     }
 
                     Rectangle {
-                        width: parent.width
-                        height: 1
-                        visible: dayEvents.visible
+                        width: 1
+                        height: leftColumn.height
                         color: Theme.surface
                     }
 
+                    // As tall as the left column at most: a long list of events, or the form for a new one,
+                    // scrolls rather than lengthening the panel.
                     DayEvents {
                         id: dayEvents
-                        width: parent.width
-                        visible: CalendarEvents.enabled
+                        width: panel.columnWidth
                         day: grid.selectedDay
-                        // The rest of the panel stays whole on the screen; the list of events scrolls.
-                        maxListHeight: Math.max(120, window.height - 2 * Theme.panelMargin - 2 * Theme.panelPadding - dateHeader.height - monthHeader.height - grid.height - 1 - chromeHeight - (weatherSeparator.visible ? 1 : 0) - (weather.visible ? weather.height : 0) - content.spacing * 6)
-                    }
-
-                    Rectangle {
-                        id: weatherSeparator
-                        width: parent.width
-                        height: 1
-                        visible: weather.visible
-                        color: Theme.surface
-                    }
-
-                    // Hidden while an event is added, so the form has room.
-                    WeatherDetails {
-                        id: weather
-                        width: parent.width
-                        visible: Settings.hasWeatherLocation && !dayEvents.adding
+                        today: clock.date
+                        maxListHeight: Math.max(80, leftColumn.height - chromeHeight - spacing)
                     }
                 }
 
@@ -290,7 +297,7 @@ Scope {
             }
 
             // The delete question, beside the panel at the height of its event, so the list neither grows nor
-            // scrolls. It goes to the left, or to the right where the left has no room.
+            // scrolls. It goes to the right, beside the events column, or to the left where the right has no room.
             Rectangle {
                 id: question
 
@@ -309,9 +316,9 @@ Scope {
                 x: {
                     const left = panel.x - width - 8;
                     const right = panel.x + panel.width + 8;
-                    if (left >= Theme.panelMargin)
-                        return left;
-                    return Math.max(Theme.panelMargin, Math.min(right, window.width - width - Theme.panelMargin));
+                    if (right + width <= window.width - Theme.panelMargin)
+                        return right;
+                    return Math.max(Theme.panelMargin, Math.min(left, window.width - width - Theme.panelMargin));
                 }
                 y: Math.max(Theme.panelMargin, Math.min(rowY, window.height - height - Theme.panelMargin))
                 radius: Theme.panelRadius

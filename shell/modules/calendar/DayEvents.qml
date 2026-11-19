@@ -10,6 +10,8 @@ Column {
     id: root
 
     required property var day
+    // Today, to name an empty day today or tomorrow.
+    property date today: new Date()
     // Height the list of events, or the form's fields, may take before they scroll, and the height of
     // everything else here.
     property real maxListHeight: 100000
@@ -239,7 +241,10 @@ Column {
     Label {
         id: emptyLabel
         visible: root.events.length === 0 && !root.adding
-        text: I18n.t("calendar.noEvents")
+        text: {
+            const days = Math.round((new Date(root.day.getFullYear(), root.day.getMonth(), root.day.getDate()) - new Date(root.today.getFullYear(), root.today.getMonth(), root.today.getDate())) / 86400000);
+            return days === 0 ? I18n.t("calendar.noEventsToday") : days === 1 ? I18n.t("calendar.noEventsTomorrow") : I18n.t("calendar.noEvents");
+        }
         color: Theme.muted
     }
 

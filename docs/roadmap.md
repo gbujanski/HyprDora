@@ -324,7 +324,8 @@ Fifth round (2026-11-19):
 - [x] The sound icon on the bar opens a sound panel of its own, as Wi-Fi, Bluetooth and the battery have theirs; the sound controls are one component, used both there and in the action center, so the two look the same
 - [x] On-screen indicators (volume, screen and keyboard brightness) only for a change the user makes: keys, a headset's buttons or another device's controls, and not for an automatic one, such as the volume of the next output after Bluetooth headphones disconnect. The indicator is started by the user's action rather than by every change of the value
 - [x] With an external screen connected, an icon on the bar opens the display settings, the same as on the settings page, for quick changes (tested in a nested Hyprland; not yet with a real external screen)
-- [ ] Calendar layout to consider: the month and weather on the left, events on the right, and nothing on the right when there are no events
+- [x] Calendar in two columns: the month and the weather on the left, the selected day's events on the right, always shown, with "No events today", "tomorrow" or "on this day" when there are none; the panel is as tall as the left column, and a long list or the new event form scrolls
+- [ ] Weather and date on the bar as one element: hovering either lights up only itself, which suggests two separate things, while both open the same panel
 
 Before the repository goes public:
 
