@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import qs.base
 
 // One backlight device driven by brightnessctl.
 // Level 0..1 is on a perceptual scale (power = p^exponent, p^3 for screens as in CIE L*),
@@ -101,13 +102,16 @@ Scope {
         id: valueFile
         path: root.device !== "" ? `/sys/class/${root.deviceClass === "leds" ? "leds" : "backlight"}/${root.device}/brightness` : ""
         printErrors: false
-        // inotify also sees changes from keys; udev does not report them for keyboards.
-        watchChanges: true
-        onFileChanged: reload()
         onLoaded: {
             const value = parseInt(text());
             if (!isNaN(value) && !writer.running && root.pendingRaw < 0)
                 root.raw = value;
         }
+    }
+
+    // inotify also sees changes from keys; udev does not report them for keyboards.
+    EventSubscription {
+        file: valueFile.path
+        onChanged: valueFile.reload()
     }
 }

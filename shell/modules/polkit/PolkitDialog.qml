@@ -1,6 +1,5 @@
 import QtQuick
 import Quickshell
-import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Services.Polkit
 import qs.config
@@ -40,8 +39,6 @@ Scope {
             PanelWindow {
                 id: window
 
-                property bool capsLock: false
-
                 /** Sends the typed password and clears the field. */
                 function submit() {
                     if (!host.flow?.isResponseRequired)
@@ -72,30 +69,7 @@ Scope {
                 Component.onCompleted: {
                     Panels.close("actioncenter");
                     field.focusInput();
-                    capsReader.running = true;
-                }
-
-                // Caps Lock state is read from Hyprland while the window is open.
-                Timer {
-                    interval: 500
-                    repeat: true
-                    running: true
-                    onTriggered: {
-                        if (!capsReader.running)
-                            capsReader.running = true;
-                    }
-                }
-
-                Process {
-                    id: capsReader
-                    command: ["hyprctl", "-j", "devices"]
-                    stdout: StdioCollector {
-                        onStreamFinished: {
-                            try {
-                                window.capsLock = JSON.parse(text).keyboards.some(k => k.main && k.capsLock);
-                            } catch (e) {}
-                        }
-                    }
+                    Keyboard.readCapsLock();
                 }
 
                 Rectangle {
@@ -144,6 +118,8 @@ Scope {
 
                             onAccepted: window.submit()
                             onCancelled: window.cancel()
+                            Keys.onPressed: Keyboard.readCapsLock()
+                            Keys.onReleased: Keyboard.readCapsLock()
                         }
 
                         Label {
@@ -152,7 +128,7 @@ Scope {
                             wrapMode: Text.WordWrap
                             font.pixelSize: Theme.fontSizeSmall
                             color: host.flow?.failed || host.flow?.supplementaryIsError ? Theme.error : Theme.warning
-                            text: host.flow?.failed ? I18n.t("polkit.wrongPassword") : host.flow?.supplementaryIsError ? host.flow.supplementaryMessage : window.capsLock ? I18n.t("polkit.capsLock") : ""
+                            text: host.flow?.failed ? I18n.t("polkit.wrongPassword") : host.flow?.supplementaryIsError ? host.flow.supplementaryMessage : Keyboard.capsLock ? I18n.t("polkit.capsLock") : ""
                         }
 
                         Row {

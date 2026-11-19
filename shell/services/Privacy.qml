@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Io
 import Quickshell.Services.Pipewire
+import qs.base
 
 // Whether an application uses the microphone or the camera, or captures the screen, and which one,
 // for the bar indicators.
@@ -91,12 +92,18 @@ Singleton {
         onTriggered: done = true
     }
 
-    // Browsers open the camera directly rather than through PipeWire, so its device is checked instead.
+    // Browsers open the camera directly rather than through PipeWire, so who holds its device is checked at
+    // start and whenever a camera is opened, closed or plugged in.
+    EventSubscription {
+        stream: "camera"
+        onEvent: cameraDelay.restart()
+    }
+
+    // An application often opens and closes the device several times while starting the camera.
     Timer {
-        interval: 4000
-        repeat: true
+        id: cameraDelay
+        interval: 300
         running: true
-        triggeredOnStart: true
         onTriggered: {
             if (!cameraCheck.running)
                 cameraCheck.running = true;

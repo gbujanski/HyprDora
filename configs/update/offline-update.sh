@@ -75,6 +75,9 @@ trap finish EXIT
 attempt() {
     state=preparing done=0 total=0 bytes=0 totalBytes=0 message=""
     write_status
+    # Tells the shell the file is there to follow. In a subshell, so a shell no longer reading cannot end the
+    # update with SIGPIPE.
+    (echo started) 2>/dev/null || true
 
     # Everything is counted before anything downloads, so the totals on the screen stay put and match the
     # update panel. Flatpaks count as one item each, with the sizes Flathub lists; they often download less,

@@ -1,8 +1,8 @@
 pragma Singleton
 
 import QtQuick
-import Quickshell
 import Quickshell.Io
+import qs.base
 import qs.config
 
 // VPN connections kept by NetworkManager: WireGuard and OpenVPN. Quickshell.Networking does not cover them,
@@ -202,13 +202,9 @@ ConnectionService {
     }
 
     // NetworkManager reports every change, such as a VPN dropping on its own.
-    Process {
-        // setpriv ends the monitor together with the shell, so a restart leaves no stray process.
-        command: ["setpriv", "--pdeathsig", "TERM", "env", "LC_ALL=C", "nmcli", "monitor"]
-        running: true
-        stdout: SplitParser {
-            onRead: refreshDelay.restart()
-        }
+    EventSubscription {
+        stream: "network"
+        onEvent: refreshDelay.restart()
     }
 
     Timer {

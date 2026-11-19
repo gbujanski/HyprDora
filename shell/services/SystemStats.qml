@@ -3,10 +3,11 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import qs.base
 import qs.config
 
-// CPU and memory from /proc, without starting processes. Reading happens only
-// after acquire(), that is, while a statistics view is open.
+// CPU and memory from /proc, without starting processes. Reading happens only after acquire(), that is,
+// while a statistics view is open.
 Singleton {
     id: root
 
@@ -27,11 +28,6 @@ Singleton {
     /** Registers a consumer and starts reading. */
     function acquire() {
         consumers += 1;
-        if (consumers === 1) {
-            sample();
-            // The first result comes after a short pause rather than a full interval.
-            firstSample.restart();
-        }
     }
 
     /** Removes a consumer and stops reading after the last one. */
@@ -42,12 +38,6 @@ Singleton {
             previous = null;
             cpu = -1;
         }
-    }
-
-    /** Reads CPU and memory once. */
-    function sample() {
-        statFile.reload();
-        memFile.reload();
     }
 
     /**
@@ -102,29 +92,18 @@ Singleton {
         Quickshell.execDetached(Settings.btopCommand);
     }
 
-    FileView {
-        id: statFile
-        path: "/proc/stat"
-        onLoaded: root.parseStat(text())
+    EventSubscription {
+        file: "/proc/stat"
+        pollInterval: Settings.statsInterval
+        enabled: root.active
+        onChanged: root.parseStat(text)
     }
 
-    FileView {
-        id: memFile
-        path: "/proc/meminfo"
-        onLoaded: root.parseMeminfo(text())
-    }
-
-    Timer {
-        id: firstSample
-        interval: 400
-        onTriggered: root.sample()
-    }
-
-    Timer {
-        interval: Settings.statsInterval
-        running: root.active
-        repeat: true
-        onTriggered: root.sample()
+    EventSubscription {
+        file: "/proc/meminfo"
+        pollInterval: Settings.statsInterval
+        enabled: root.active
+        onChanged: root.parseMeminfo(text)
     }
 
     IpcHandler {

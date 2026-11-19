@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import qs.base
 
 // Defaults, overridden by ~/.config/hyprdora/settings.json. Saving the file applies it.
 Singleton {
@@ -85,12 +86,19 @@ Singleton {
     function parsed(text) {
         try {
             const value = JSON.parse(text);
-            if (value !== null && typeof value === "object" && !Array.isArray(value))
+            if (value !== null && typeof value === "object" && !Array.isArray(value)) {
+                delete value["//"];
                 return value;
+            }
         } catch (e) {}
         console.warn("settings: invalid settings.json, using defaults");
         return {};
     }
+
+    // Whether settings.json exists and is watched.
+    property bool fileReady: false
+    // Written on top of settings.json, for whoever opens it.
+    readonly property var note: ["HyprDora shell settings, saved here by the settings in the action center.", "You may edit or replace this file; a change applies at once.", "A setting not listed keeps its default, so with none listed everything is at its default.", "To go back to the defaults, remove the settings below. Deleting the file does the same: the shell makes it again, with none."]
 
     /**
      * Saves a top-level setting to settings.json and applies it.
@@ -104,7 +112,24 @@ Singleton {
         else
             next[key] = value;
         overrides = next;
-        file.setText(JSON.stringify(next, null, 2) + "\n");
+        write(next);
+    }
+
+    /**
+     * Writes settings.json, the note on top.
+     * @param {object} values  the settings
+     */
+    function write(values) {
+        file.setText(JSON.stringify(Object.assign({
+            "//": note
+        }, values), null, 2) + "\n");
+    }
+
+    /** Makes settings.json again, with no settings, and watches the new file. */
+    function recreate() {
+        fileReady = false;
+        write({});
+        fileReady = true;
     }
 
     /**
@@ -123,11 +148,27 @@ Singleton {
         id: file
         path: `${root.configDir}/hyprdora/settings.json`
         atomicWrites: true
+        // Written at once, so a file just made is there to be watched.
+        blockWrites: true
         blockLoading: true
         printErrors: false
-        watchChanges: true
-        onFileChanged: reload()
-        onLoaded: root.overrides = root.parsed(text())
-        onLoadFailed: root.overrides = {}
+        onLoaded: {
+            root.overrides = root.parsed(text());
+            root.fileReady = true;
+        }
+        // Missing at start or deleted later, it is made again with no settings: watching needs a file, and a
+        // deleted folder ends the watch of the old one.
+        onLoadFailed: {
+            root.overrides = {};
+            root.recreate();
+        }
+        onSaveFailed: error => console.warn("settings: cannot write settings.json:", error)
+    }
+
+    // Edited by hand or by another tool, it is read again.
+    EventSubscription {
+        file: file.path
+        enabled: root.fileReady
+        onChanged: file.reload()
     }
 }

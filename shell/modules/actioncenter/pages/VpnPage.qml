@@ -1,5 +1,5 @@
 import QtQuick
-import Quickshell.Io
+import qs.base
 import qs.config
 import qs.components
 import qs.services
@@ -52,7 +52,7 @@ Column {
                 }
 
                 Label {
-                    text: Vpn.formatBytes(Number(sent.text().trim()) || 0)
+                    text: Vpn.formatBytes(Number(sent.text.trim()) || 0)
                     color: Theme.muted
                     font.pixelSize: Theme.fontSizeSmall
                 }
@@ -70,7 +70,7 @@ Column {
                 }
 
                 Label {
-                    text: Vpn.formatBytes(Number(received.text().trim()) || 0)
+                    text: Vpn.formatBytes(Number(received.text.trim()) || 0)
                     color: Theme.muted
                     font.pixelSize: Theme.fontSizeSmall
                 }
@@ -96,26 +96,19 @@ Column {
                 }
             ]
 
-            FileView {
+            // The counters report no change, so they are read again every two seconds while shown.
+            EventSubscription {
                 id: sent
-                path: row.connected && row.statistics !== "" ? `${row.statistics}/tx_bytes` : ""
-                printErrors: false
+                file: `${row.statistics}/tx_bytes`
+                pollInterval: 2000
+                enabled: row.connected && row.statistics !== ""
             }
 
-            FileView {
+            EventSubscription {
                 id: received
-                path: row.connected && row.statistics !== "" ? `${row.statistics}/rx_bytes` : ""
-                printErrors: false
-            }
-
-            Timer {
-                interval: 2000
-                repeat: true
-                running: row.connected && row.statistics !== ""
-                onTriggered: {
-                    sent.reload();
-                    received.reload();
-                }
+                file: `${row.statistics}/rx_bytes`
+                pollInterval: 2000
+                enabled: row.connected && row.statistics !== ""
             }
         }
     }

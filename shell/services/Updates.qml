@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import qs.base
 import qs.config
 
 // Available package and Flatpak updates, and installing them. Fedora publishes updates nearly every day, so,
@@ -247,6 +248,13 @@ Singleton {
 
         stdinEnabled: true
 
+        // The service has written the progress file, which is followed from then on.
+        stdout: SplitParser {
+            onRead: line => {
+                if (line === "started")
+                    progressFile.reload();
+            }
+        }
         stderr: StdioCollector {
             id: offlineErrors
         }
@@ -260,8 +268,9 @@ Singleton {
         }
     }
 
-    // The service writes the progress as root to a file the shell may read; it is read often while an update
-    // may run, and once at start, so a restarted shell shows the screen of a download still running.
+    // The service writes the progress as root to a file the shell may read; it is read once the service says
+    // it is there, and at start, so a restarted shell shows the screen of a download still running, and it is
+    // followed while it holds a progress.
     FileView {
         id: progressFile
         path: root.progressPath
@@ -276,11 +285,10 @@ Singleton {
         onLoadFailed: root.progress = null
     }
 
-    Timer {
-        interval: 400
-        repeat: true
-        running: root.preparing !== "" || root.updating
-        onTriggered: progressFile.reload()
+    EventSubscription {
+        file: root.progressPath
+        enabled: root.updating
+        onChanged: progressFile.reload()
     }
 
     Process {

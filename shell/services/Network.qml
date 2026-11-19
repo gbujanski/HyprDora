@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Networking as QsNet
+import qs.base
 import qs.config
 
 ConnectionService {
@@ -282,7 +283,8 @@ ConnectionService {
         property string pendingRequest: ""
         property bool resultReceived: false
 
-        command: ["python3", "-I", Quickshell.shellPath("scripts/nm-connect.py")]
+        // It ends with the shell, as the shell's service leaves processes running across a restart.
+        command: ["setpriv", "--pdeathsig", "TERM", "python3", "-I", Quickshell.shellPath("scripts/nm-connect.py")]
         stdinEnabled: true
 
         // The request contains the password: it goes only through stdin and is never stored.
@@ -398,13 +400,9 @@ ConnectionService {
         }
     }
 
-    Process {
-        // setpriv ends the monitor together with the shell, so a restart leaves no stray process.
-        command: ["setpriv", "--pdeathsig", "TERM", "env", "LC_ALL=C", "nmcli", "monitor"]
-        running: true
-        stdout: SplitParser {
-            onRead: wiredDelay.restart()
-        }
+    EventSubscription {
+        stream: "network"
+        onEvent: wiredDelay.restart()
     }
 
     Timer {

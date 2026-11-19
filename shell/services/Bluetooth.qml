@@ -258,7 +258,8 @@ ConnectionService {
     Process {
         id: agent
 
-        command: ["python3", "-I", Quickshell.shellPath("scripts/bt-agent.py")]
+        // It ends with the shell, as the shell's service leaves processes running across a restart.
+        command: ["setpriv", "--pdeathsig", "TERM", "python3", "-I", Quickshell.shellPath("scripts/bt-agent.py")]
         running: root.pageOpen || root.pairingDevice !== null
         stdinEnabled: true
 

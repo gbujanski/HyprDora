@@ -1,6 +1,5 @@
 import QtQuick
 import Quickshell
-import Quickshell.Io
 import Quickshell.Wayland
 import qs.config
 import qs.services
@@ -39,10 +38,9 @@ Scope {
                 id: content
 
                 property bool failed: false
-                property bool capsLock: false
                 property bool helpShown: false
                 readonly property bool hasPrompt: surface.screen === root.promptScreen || root.promptScreen === null
-                readonly property color promptColor: failed ? Theme.error : capsLock ? Theme.warning : Theme.accent
+                readonly property color promptColor: failed ? Theme.error : Keyboard.capsLock ? Theme.warning : Theme.accent
 
                 readonly property var commands: ["/help", "/suspend", "/reboot", "/poweroff"]
 
@@ -81,19 +79,6 @@ Scope {
                     id: failTimer
                     interval: 500
                     onTriggered: content.failed = false
-                }
-
-                // Caps Lock state is read from Hyprland after each key.
-                Process {
-                    id: capsReader
-                    command: ["hyprctl", "-j", "devices"]
-                    stdout: StdioCollector {
-                        onStreamFinished: {
-                            try {
-                                content.capsLock = JSON.parse(text).keyboards.some(k => k.main && k.capsLock);
-                            } catch (e) {}
-                        }
-                    }
                 }
 
                 Row {
@@ -135,15 +120,8 @@ Scope {
                             }
                         }
 
-                        // Caps Lock turns on when pressed but off only when released, so both are read.
-                        Keys.onPressed: event => {
-                            if (!capsReader.running)
-                                capsReader.running = true;
-                        }
-                        Keys.onReleased: event => {
-                            if (!capsReader.running)
-                                capsReader.running = true;
-                        }
+                        Keys.onPressed: Keyboard.readCapsLock()
+                        Keys.onReleased: Keyboard.readCapsLock()
 
                         onAccepted: {
                             // Only an exact command runs; any other text, even one starting with a slash, is a password.
@@ -156,7 +134,7 @@ Scope {
 
                         Component.onCompleted: {
                             forceActiveFocus();
-                            capsReader.running = true;
+                            Keyboard.readCapsLock();
                         }
                     }
                 }

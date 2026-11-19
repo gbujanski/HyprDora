@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import qs.base
 import qs.config
 
 // Removable drives (USB sticks, SD cards, USB disks) and their partitions, as UDisks sees them. Removing a
@@ -262,12 +263,9 @@ Singleton {
     }
 
     // Any change UDisks sees, including a drive mounted by the file manager, reads the drives again.
-    Process {
-        running: true
-        command: ["udisksctl", "monitor"]
-        stdout: SplitParser {
-            onRead: refreshDelay.restart()
-        }
+    EventSubscription {
+        stream: "drives"
+        onEvent: refreshDelay.restart()
     }
 
     Timer {
