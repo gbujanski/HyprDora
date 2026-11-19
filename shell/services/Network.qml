@@ -6,7 +6,7 @@ import Quickshell.Io
 import Quickshell.Networking as QsNet
 import qs.config
 
-Singleton {
+ConnectionService {
     id: root
 
     readonly property var wifiDevice: QsNet.Networking.devices.values.find(d => d.type === QsNet.DeviceType.Wifi) ?? null
@@ -17,6 +17,19 @@ Singleton {
     readonly property bool connected: activeNetwork !== null
     readonly property string ssid: activeNetwork?.name ?? ""
     readonly property real signal: activeNetwork?.signalStrength ?? 0
+
+    // The state in one line, an icon and a tooltip, for the bar and the action center's tile.
+    stateBusy: busySsid !== ""
+    stateBlocked: !hardwareEnabled
+    blockedText: I18n.t("wifi.tile.blocked")
+    stateOn: wifiEnabled
+    offText: I18n.t("wifi.tile.off")
+    connectedName: connected ? ssid : ""
+    idleText: I18n.t("wifi.notConnected")
+    statusIcon: connected ? Icons.wifi(signal) : Icons.wifiOff
+    statusTooltip: busySsid !== "" ? I18n.t("wifi.connectingTo", {
+        ssid: busySsid
+    }) : connected ? `${ssid} (${Math.round(signal * 100)}%)` : wifiEnabled ? I18n.t("wifi.notConnected") : I18n.t("wifi.off")
 
     // Current network, then saved ones, then strongest signal (rounded, so the list does not
     // jump on small fluctuations).

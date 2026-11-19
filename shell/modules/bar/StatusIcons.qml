@@ -74,10 +74,8 @@ Row {
     BarButton {
         anchors.verticalCenter: parent.verticalCenter
         visible: Vpn.connected
-        icon: Icons.vpn
-        tooltip: I18n.t("vpn.barTooltip", {
-            name: Vpn.active?.name ?? ""
-        })
+        icon: Vpn.statusIcon
+        tooltip: Vpn.statusTooltip
         onClicked: Panels.toggleActionCenter(root.screen, "vpn")
     }
 
@@ -122,19 +120,17 @@ Row {
     BarButton {
         anchors.verticalCenter: parent.verticalCenter
         visible: Bluetooth.enabled
-        icon: Bluetooth.connectedDevices.length > 0 ? Icons.bluetoothConnected : Icons.bluetooth
+        icon: Bluetooth.statusIcon
         contentColor: Bluetooth.connectedDevices.length > 0 ? Theme.foreground : Theme.muted
-        tooltip: Bluetooth.connectedDevices.length > 0 ? Bluetooth.connectedDevices.map(d => d.name).join(", ") : I18n.t("bluetooth.on")
+        tooltip: Bluetooth.statusTooltip
         onClicked: Panels.toggleActionCenter(root.screen, "bluetooth")
     }
 
     BarButton {
         anchors.verticalCenter: parent.verticalCenter
-        icon: Network.connected ? Icons.wifi(Network.signal) : Icons.wifiOff
+        icon: Network.statusIcon
         contentColor: Network.connected ? Theme.foreground : Theme.muted
-        tooltip: Network.busySsid !== "" ? I18n.t("wifi.connectingTo", {
-            ssid: Network.busySsid
-        }) : Network.connected ? `${Network.ssid} (${Math.round(Network.signal * 100)}%)` : Network.wifiEnabled ? I18n.t("wifi.notConnected") : I18n.t("wifi.off")
+        tooltip: Network.statusTooltip
         onClicked: Panels.toggleActionCenter(root.screen, "wifi")
     }
 

@@ -22,9 +22,9 @@ Column {
 
         Tile {
             width: tiles.tileWidth
-            icon: Network.connected ? Icons.wifi(Network.signal) : Icons.wifiOff
+            icon: Network.statusIcon
             title: "Wi-Fi"
-            subtitle: Network.busySsid !== "" ? I18n.t("status.connecting") : !Network.hardwareEnabled ? I18n.t("wifi.tile.blocked") : !Network.wifiEnabled ? I18n.t("wifi.tile.off") : Network.connected ? Network.ssid : I18n.t("wifi.notConnected")
+            subtitle: Network.summary
             active: Network.wifiEnabled
             enabledTile: Network.hardwareEnabled
             onToggled: Network.setWifiEnabled(!Network.wifiEnabled)
@@ -33,11 +33,9 @@ Column {
 
         Tile {
             width: tiles.tileWidth
-            icon: !Bluetooth.enabled ? Icons.bluetoothOff : Bluetooth.connectedDevices.length > 0 ? Icons.bluetoothConnected : Icons.bluetooth
+            icon: Bluetooth.statusIcon
             title: "Bluetooth"
-            subtitle: !Bluetooth.hasAdapter ? I18n.t("bluetooth.noAdapter") : Bluetooth.blocked ? I18n.t("bluetooth.tile.blocked") : !Bluetooth.enabled ? I18n.t("bluetooth.tile.off") : Bluetooth.connectedDevices.length === 1 ? Bluetooth.connectedDevices[0].name : Bluetooth.connectedDevices.length > 1 ? I18n.t("bluetooth.tile.connectedCount", {
-                count: Bluetooth.connectedDevices.length
-            }) : I18n.t("bluetooth.tile.on")
+            subtitle: Bluetooth.summary
             active: Bluetooth.enabled
             enabledTile: Bluetooth.hasAdapter && !Bluetooth.blocked
             onToggled: Bluetooth.setEnabled(!Bluetooth.enabled)
@@ -57,9 +55,9 @@ Column {
         // Always shown, because its page is where the first VPN is added.
         Tile {
             width: tiles.tileWidth
-            icon: Icons.vpn
+            icon: Vpn.statusIcon
             title: "VPN"
-            subtitle: Vpn.busy !== "" || Vpn.activating ? I18n.t("status.connecting") : Vpn.active ? Vpn.active.name : Vpn.connections.length === 0 ? I18n.t("vpn.none") : I18n.t("vpn.disconnected")
+            subtitle: Vpn.summary
             active: Vpn.connected
             onToggled: Vpn.connections.length === 0 ? Panels.actionCenterPage = "vpn" : Vpn.toggle()
             onOpened: Panels.actionCenterPage = "vpn"

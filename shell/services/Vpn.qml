@@ -7,7 +7,7 @@ import qs.config
 
 // VPN connections kept by NetworkManager: WireGuard and OpenVPN. Quickshell.Networking does not cover them,
 // so they are read and changed with nmcli, which also makes them work outside the shell.
-Singleton {
+ConnectionService {
     id: root
 
     // [{ uuid, name, kind: "wireguard" | "openvpn" | "vpn", state: "" | "activating" | "activated" }]
@@ -15,6 +15,15 @@ Singleton {
     readonly property var active: connections.find(c => c.state === "activated") ?? null
     readonly property var activating: connections.find(c => c.state === "activating") ?? null
     readonly property bool connected: active !== null
+
+    // The state in one line, an icon and a tooltip, for the bar and the action center's tile.
+    stateBusy: busy !== "" || activating !== null
+    connectedName: active?.name ?? ""
+    idleText: connections.length === 0 ? I18n.t("vpn.none") : I18n.t("vpn.disconnected")
+    statusIcon: Icons.vpn
+    statusTooltip: I18n.t("vpn.barTooltip", {
+        name: active?.name ?? ""
+    })
     property string busy: ""
     property string error: ""
 

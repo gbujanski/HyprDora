@@ -6,7 +6,7 @@ import Quickshell.Bluetooth as QsBt
 import Quickshell.Io
 import qs.config
 
-Singleton {
+ConnectionService {
     id: root
 
     readonly property var adapter: QsBt.Bluetooth.defaultAdapter
@@ -20,6 +20,19 @@ Singleton {
     readonly property var pairedDevices: devices.filter(d => d.paired).sort((a, b) => Number(b.connected) - Number(a.connected) || a.name.localeCompare(b.name))
     readonly property var discoveredDevices: devices.filter(d => !d.paired).sort((a, b) => a.name.localeCompare(b.name))
     readonly property var connectedDevices: pairedDevices.filter(d => d.connected)
+
+    // The state in one line, an icon and a tooltip, for the bar and the action center's tile.
+    missingText: hasAdapter ? "" : I18n.t("bluetooth.noAdapter")
+    stateBlocked: blocked
+    blockedText: I18n.t("bluetooth.tile.blocked")
+    stateOn: enabled
+    offText: I18n.t("bluetooth.tile.off")
+    connectedName: connectedDevices.length === 1 ? connectedDevices[0].name : connectedDevices.length > 1 ? I18n.t("bluetooth.tile.connectedCount", {
+        count: connectedDevices.length
+    }) : ""
+    idleText: I18n.t("bluetooth.tile.on")
+    statusIcon: !enabled ? Icons.bluetoothOff : connectedDevices.length > 0 ? Icons.bluetoothConnected : Icons.bluetooth
+    statusTooltip: connectedDevices.length > 0 ? connectedDevices.map(d => d.name).join(", ") : I18n.t("bluetooth.on")
 
     property string errorMessage: ""
 

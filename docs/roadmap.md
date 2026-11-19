@@ -345,7 +345,7 @@ Review of the whole project (2026-11-19), in stages, each ending in a report the
   - [x] S5. One delete button that asks for a second click; deleting a VPN connection or a printer, one click so far, asks for it too
   - [x] S6. One row with a slider for brightness and volume
   - [x] S7. ConfirmButton among the shared components
-  - [ ] S8. Wi-Fi's, Bluetooth's and VPN's icon and summary worked out in their services, with a shared base where their logic overlaps
+  - [x] S8. Wi-Fi's, Bluetooth's and VPN's icon and summary worked out in their services, with a shared base where their logic overlaps
   - [ ] S9. Shared empty and loading states
   - [ ] S10. One page header with a back arrow
   - [ ] S11. One scrolling area with the thin scroll bar, used by the action center, notifications, updates and the calendar
