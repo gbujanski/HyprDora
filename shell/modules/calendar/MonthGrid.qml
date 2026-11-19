@@ -61,7 +61,7 @@ Column {
             horizontalAlignment: Text.AlignHCenter
             text: I18n.t("calendar.week")
             color: Theme.dim
-            font.pixelSize: Theme.fontSizeSmall - 1
+            font.pixelSize: Theme.fontSizeTiny
         }
 
         Repeater {
@@ -96,7 +96,7 @@ Column {
                 horizontalAlignment: Text.AlignHCenter
                 text: String(root.isoWeek(week.weekDays[0]))
                 color: Theme.dim
-                font.pixelSize: Theme.fontSizeSmall - 1
+                font.pixelSize: Theme.fontSizeTiny
                 font.features: {
                     "tnum": 1
                 }
@@ -122,7 +122,7 @@ Column {
                         anchors.centerIn: parent
                         width: 28
                         height: 28
-                        radius: 14
+                        radius: width / 2
                         visible: (dayArea.containsMouse || cell.isSelected) && !cell.isToday
                         color: Theme.surface
                         border.width: cell.isSelected ? 1 : 0
@@ -133,7 +133,7 @@ Column {
                         anchors.centerIn: parent
                         width: 28
                         height: 28
-                        radius: 14
+                        radius: width / 2
                         color: cell.isToday ? Theme.accent : "transparent"
                     }
 
@@ -158,7 +158,7 @@ Column {
                         visible: cell.events.length > 0
                         width: 4
                         height: 4
-                        radius: 2
+                        radius: height / 2
                         color: cell.isToday ? Theme.accentText : Theme.accent
                     }
 

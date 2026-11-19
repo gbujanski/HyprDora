@@ -45,7 +45,7 @@ Column {
         anchors.horizontalCenter: parent.horizontalCenter
         text: Icons.chevronUp
         font.family: Theme.iconFamily
-        font.pixelSize: 14
+        font.pixelSize: Theme.iconSizeSmall
         color: upArea.containsMouse ? Theme.foreground : Theme.muted
 
         MouseArea {
@@ -132,7 +132,7 @@ Column {
         anchors.horizontalCenter: parent.horizontalCenter
         text: Icons.chevronDown
         font.family: Theme.iconFamily
-        font.pixelSize: 14
+        font.pixelSize: Theme.iconSizeSmall
         color: downArea.containsMouse ? Theme.foreground : Theme.muted
 
         MouseArea {

@@ -58,12 +58,34 @@ Singleton {
     readonly property int fontSize: 13
     readonly property int fontSizeSmall: 11
     readonly property int fontSizeTitle: 15
+    // Week numbers and day names in the calendar.
+    readonly property int fontSizeTiny: 10
+    // The launcher's search field and the calendar's date.
+    readonly property int fontSizeLarge: 18
+    // A code to compare, such as when pairing Bluetooth.
+    readonly property int fontSizeHuge: 24
+    // The temperature in the weather.
+    readonly property int fontSizeDisplay: 28
     readonly property int iconSize: 16
+    // Beside text in a row: arrows, a lock, repetition.
+    readonly property int iconSizeSmall: 14
+    // A tile's, a list row's or the indicator's icon.
+    readonly property int iconSizeLarge: 20
+    // In place of an application's image, when there is none.
+    readonly property int iconSizeImage: 22
+    // In place of a cover.
+    readonly property int iconSizeCover: 28
+    // The large icon at the head of a panel, such as the battery's or the weather's.
+    readonly property int iconSizeHero: 34
 
     // Sizes
     readonly property int barHeight: 30
     readonly property int spacing: 4
     readonly property int radius: 6
+    // Scroll bars, marks and handles.
+    readonly property int radiusTiny: 2
+    // The screens in the display layout.
+    readonly property int radiusSmall: 4
 
     // Animations
     readonly property int animFast: 120

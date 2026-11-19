@@ -36,7 +36,7 @@ Rectangle {
             z: dragArea.pressed ? 2 : 1
             width: Displays.logicalWidth(modelData) * root.factor
             height: Displays.logicalHeight(modelData) * root.factor
-            radius: 4
+            radius: Theme.radiusSmall
             color: isSelected ? Theme.accentSoft : Theme.surfaceHover
             border.width: isSelected ? 2 : 1
             border.color: isSelected ? Theme.accent : Theme.dim

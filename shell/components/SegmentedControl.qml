@@ -67,7 +67,7 @@ Rectangle {
                         anchors.verticalCenter: parent.verticalCenter
                         visible: !!segment.modelData.icon
                         text: segment.modelData.icon ?? ""
-                        font.pixelSize: 14
+                        font.pixelSize: Theme.iconSizeSmall
                         color: segment.isCurrent ? Theme.accentText : segment.isEnabled ? Theme.foreground : Theme.dim
                     }
 

@@ -73,7 +73,7 @@ BarPanel {
                     }
                     text: launcher.clipboardMode ? Icons.clipboard : Icons.search
                     color: Theme.muted
-                    font.pixelSize: 20
+                    font.pixelSize: Theme.iconSizeLarge
                 }
 
                 TextInput {
@@ -90,7 +90,7 @@ BarPanel {
                     selectionColor: Theme.accent
                     selectedTextColor: Theme.accentText
                     font.family: Theme.fontFamily
-                    font.pixelSize: 18
+                    font.pixelSize: Theme.fontSizeLarge
                     clip: true
 
                     onTextChanged: list.currentIndex = 0
@@ -100,7 +100,7 @@ BarPanel {
                         visible: search.text === ""
                         text: launcher.clipboardMode ? I18n.t("launcher.clipboardPlaceholder") : I18n.t("launcher.placeholder")
                         color: Theme.dim
-                        font.pixelSize: 18
+                        font.pixelSize: Theme.fontSizeLarge
                     }
 
                     Keys.onPressed: event => {
@@ -218,7 +218,7 @@ BarPanel {
                                     clip: Icons.clipboard
                                 })[row.modelData.kind] ?? ""
                             color: row.current ? Theme.accent : Theme.muted
-                            font.pixelSize: 22
+                            font.pixelSize: Theme.iconSizeImage
                         }
                     }
 

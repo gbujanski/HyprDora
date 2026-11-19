@@ -159,7 +159,7 @@ Scope {
                         verticalCenter: parent.verticalCenter
                     }
                     text: root.icon
-                    font.pixelSize: 20
+                    font.pixelSize: Theme.iconSizeLarge
                 }
 
                 Rectangle {
@@ -173,7 +173,7 @@ Scope {
                     }
                     visible: root.showBar
                     height: 6
-                    radius: 3
+                    radius: height / 2
                     color: Theme.surface
 
                     Rectangle {
@@ -217,7 +217,8 @@ Scope {
                 value: root.value
             });
         }
-        function show(kind: string): void {
+        // Not "show", which the qs command line takes for its own subcommand.
+        function request(kind: string): void {
             Indicator.show(kind);
         }
     }

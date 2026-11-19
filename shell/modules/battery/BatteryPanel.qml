@@ -23,7 +23,7 @@ BarPanel {
                 Icon {
                     anchors.verticalCenter: parent.verticalCenter
                     text: Icons.battery(Power.level, !UPower.onBattery)
-                    font.pixelSize: 34
+                    font.pixelSize: Theme.iconSizeHero
                     color: UPower.onBattery && Power.level <= Settings.batteryCritical ? Theme.error : UPower.onBattery && Power.level <= Settings.batteryLow ? Theme.warning : Theme.foreground
                 }
 

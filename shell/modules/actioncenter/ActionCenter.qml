@@ -113,7 +113,7 @@ BarPanel {
                     y: flick.visibleArea.yPosition * flick.height
                     width: 3
                     height: flick.visibleArea.heightRatio * flick.height
-                    radius: 2
+                    radius: Theme.radiusTiny
                     color: Theme.dim
                     visible: flick.contentHeight > flick.height
                 }

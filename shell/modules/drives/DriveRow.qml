@@ -30,7 +30,7 @@ Column {
                 verticalCenter: parent.verticalCenter
             }
             text: root.drive.icon
-            font.pixelSize: 20
+            font.pixelSize: Theme.iconSizeLarge
         }
 
         Label {

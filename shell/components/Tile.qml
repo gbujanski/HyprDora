@@ -41,7 +41,7 @@ Rectangle {
             verticalCenter: parent.verticalCenter
         }
         text: root.icon
-        font.pixelSize: 20
+        font.pixelSize: Theme.iconSizeLarge
         color: root.active ? Theme.accent : Theme.muted
     }
 

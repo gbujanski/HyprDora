@@ -11,6 +11,9 @@ import qs.services
 Scope {
     id: root
 
+    // The login screen's size, so the two look the same.
+    readonly property int terminalFontSize: 16
+
     property var promptScreen: null
 
     Connections {
@@ -102,7 +105,7 @@ Scope {
                         text: ">:"
                         color: content.promptColor
                         font.family: "monospace"
-                        font.pixelSize: 16
+                        font.pixelSize: root.terminalFontSize
                         font.bold: true
                     }
 
@@ -112,7 +115,7 @@ Scope {
                         width: 300
                         color: content.promptColor
                         font.family: "monospace"
-                        font.pixelSize: 16
+                        font.pixelSize: root.terminalFontSize
                         // Nothing typed is shown, commands included, so no part of a password can ever appear.
                         echoMode: TextInput.NoEcho
                         focus: content.hasPrompt
@@ -171,7 +174,7 @@ Scope {
                         anchors.horizontalCenter: parent.horizontalCenter
                         color: content.promptColor
                         font.family: "monospace"
-                        font.pixelSize: 16
+                        font.pixelSize: root.terminalFontSize
                         text: "SYSTEM CMDS:   /help   |   /poweroff   |   /reboot   |   /suspend"
                     }
 
@@ -179,7 +182,7 @@ Scope {
                         anchors.horizontalCenter: parent.horizontalCenter
                         color: content.promptColor
                         font.family: "monospace"
-                        font.pixelSize: 16
+                        font.pixelSize: root.terminalFontSize
                         text: "RECOVERY:   Ctrl+Alt+F3 console   |   hyprdora -h   |   hyprdora rollback"
                     }
                 }

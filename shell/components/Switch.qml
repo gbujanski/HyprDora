@@ -25,7 +25,7 @@ Rectangle {
         x: root.checked ? parent.width - width - 3 : 3
         width: 16
         height: 16
-        radius: 8
+        radius: height / 2
         color: root.active ? Theme.foreground : Theme.muted
 
         Behavior on x {

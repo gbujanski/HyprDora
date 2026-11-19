@@ -133,7 +133,7 @@ Rectangle {
             rightPadding: 6
             text: Icons.lock
             color: Theme.dim
-            font.pixelSize: 14
+            font.pixelSize: Theme.iconSizeSmall
         }
     }
 

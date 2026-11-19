@@ -78,14 +78,14 @@ Column {
         Icon {
             anchors.verticalCenter: parent.verticalCenter
             text: root.current ? Icons.weather(root.current.code, root.current.isDay) : ""
-            font.pixelSize: 34
+            font.pixelSize: Theme.iconSizeHero
             width: 40
         }
 
         Label {
             anchors.verticalCenter: parent.verticalCenter
             text: root.current ? Weather.formatTemp(root.current.temp) : ""
-            font.pixelSize: 28
+            font.pixelSize: Theme.fontSizeDisplay
             font.weight: Font.Medium
         }
 
@@ -144,7 +144,7 @@ Column {
                     anchors.verticalCenter: parent.verticalCenter
                     text: modelData.icon
                     color: Theme.muted
-                    font.pixelSize: 14
+                    font.pixelSize: Theme.iconSizeSmall
                 }
 
                 Label {
@@ -184,7 +184,7 @@ Column {
                 Icon {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: Icons.weather(modelData.code, true)
-                    font.pixelSize: 20
+                    font.pixelSize: Theme.iconSizeLarge
                     height: 24
                 }
 
@@ -206,7 +206,7 @@ Column {
                     // A blank line rather than nothing, so columns keep equal height.
                     text: modelData.precipitation >= 20 ? `${modelData.precipitation}%` : " "
                     color: Theme.muted
-                    font.pixelSize: Theme.fontSizeSmall - 1
+                    font.pixelSize: Theme.fontSizeTiny
                 }
             }
         }

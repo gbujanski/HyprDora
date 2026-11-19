@@ -134,7 +134,7 @@ BarPanel {
 
                         Label {
                             text: clock.date.toLocaleDateString(I18n.locale, "d MMMM yyyy")
-                            font.pixelSize: Theme.fontSizeTitle + 3
+                            font.pixelSize: Theme.fontSizeLarge
                             font.weight: Font.DemiBold
                         }
                     }

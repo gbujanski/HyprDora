@@ -34,7 +34,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         width: parent.width
         height: 6
-        radius: 3
+        radius: height / 2
         color: Theme.surface
 
         Rectangle {
@@ -51,7 +51,7 @@ Item {
         x: root.shownValue * (root.width - width)
         width: 14
         height: 14
-        radius: 7
+        radius: height / 2
         color: root.active ? Theme.foreground : Theme.muted
         border.width: root.activeFocus ? 2 : 0
         border.color: Theme.accent

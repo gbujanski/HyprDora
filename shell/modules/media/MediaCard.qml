@@ -41,7 +41,7 @@ Rectangle {
             visible: !artImage.visible
             text: Icons.music
             color: Theme.muted
-            font.pixelSize: 28
+            font.pixelSize: Theme.iconSizeCover
         }
     }
 

@@ -76,7 +76,7 @@ BarPanel {
                     anchors.verticalCenter: parent.verticalCenter
                     text: Icons.download
                     color: Theme.muted
-                    font.pixelSize: 14
+                    font.pixelSize: Theme.iconSizeSmall
                 }
 
                 Label {
@@ -108,7 +108,7 @@ BarPanel {
                     y: list.visibleArea.yPosition * list.height
                     width: 3
                     height: list.visibleArea.heightRatio * list.height
-                    radius: 2
+                    radius: Theme.radiusTiny
                     color: Theme.dim
                     visible: list.contentHeight > list.height
                 }

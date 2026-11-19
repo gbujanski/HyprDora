@@ -90,7 +90,7 @@ Variants {
                     y: window.target.y + window.target.height * modelData[1] - height / 2
                     width: 8
                     height: 8
-                    radius: 2
+                    radius: Theme.radiusTiny
                     color: Theme.accent
                 }
             }

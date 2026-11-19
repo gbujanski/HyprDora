@@ -266,7 +266,7 @@ Column {
             y: listView.visibleArea.yPosition * listView.height
             width: 3
             height: listView.visibleArea.heightRatio * listView.height
-            radius: 2
+            radius: Theme.radiusTiny
             color: Theme.dim
             visible: listView.contentHeight > listView.height
         }
@@ -312,7 +312,7 @@ Column {
                         }
                         width: 4
                         height: 28
-                        radius: 2
+                        radius: width / 2
                         color: row.modelData.color || Theme.accent
                     }
 
@@ -370,7 +370,7 @@ Column {
                                     visible: row.modelData.recurring
                                     text: Icons.repeat
                                     color: Theme.dim
-                                    font.pixelSize: 14
+                                    font.pixelSize: Theme.iconSizeSmall
                                 }
 
                                 // Read-only calendars, such as contact birthdays, are changed in Nextcloud.
@@ -450,7 +450,7 @@ Column {
             y: formView.visibleArea.yPosition * formView.height
             width: 3
             height: formView.visibleArea.heightRatio * formView.height
-            radius: 2
+            radius: Theme.radiusTiny
             color: Theme.dim
             visible: formView.contentHeight > formView.height
         }

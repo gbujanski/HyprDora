@@ -340,7 +340,7 @@ Review of the whole project (2026-11-19), in stages, each ending in a report the
 - [ ] 2. Shared components: one component wherever two places show the same thing (Wi-Fi, Bluetooth, sound, buttons that differ only in their icon), with what differs passed in; values written in place of Theme's tokens
   - [x] S1. One frame for the panels at the bar (BarPanel): the window, closing by a click outside and Esc, the delay before the window goes, the slide in, the background
   - [x] S2. One way to open panels in Panels.qml instead of a copy of open, close, toggle and IPC per panel; the IPC names change, and every script and binding that called the old ones changes with them
-  - [ ] S3. Font sizes and corner radii as named tokens in Theme instead of numbers written in place
+  - [x] S3. Font sizes and corner radii as named tokens in Theme instead of numbers written in place
   - [ ] S4. One list row (ItemRow): icon, title, subtitle, buttons on the right, hover and the active row's highlight
   - [ ] S5. One delete button that asks for a second click; deleting a VPN connection or a printer, one click so far, asks for it too
   - [ ] S6. One row with a slider for brightness and volume

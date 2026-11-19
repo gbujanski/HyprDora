@@ -118,7 +118,7 @@ Column {
             Label {
                 visible: page.requestKind === "confirm" || page.requestKind === "display"
                 text: page.request?.value ?? ""
-                font.pixelSize: 24
+                font.pixelSize: Theme.fontSizeHuge
                 font.weight: Font.DemiBold
                 font.letterSpacing: 2
             }

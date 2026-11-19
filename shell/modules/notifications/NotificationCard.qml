@@ -62,7 +62,7 @@ Rectangle {
             visible: !image.visible
             text: Icons.bell
             color: Theme.muted
-            font.pixelSize: 22
+            font.pixelSize: Theme.iconSizeImage
         }
     }
 
