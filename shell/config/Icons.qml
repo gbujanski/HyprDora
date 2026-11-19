@@ -30,6 +30,8 @@ Singleton {
     }
     readonly property string wifiOff: glyph(0xF092E)
     readonly property string lock: glyph(0xF033E)
+    readonly property string lockOpen: glyph(0xF033F)
+    readonly property string folder: glyph(0xF024B)
     readonly property string settings: glyph(0xF0493)
     readonly property string idle: glyph(0xF04B2)
     readonly property string coffee: glyph(0xF0176)
@@ -120,6 +122,9 @@ Singleton {
     readonly property string brightness: glyph(0xF00DF)
     readonly property string keyboard: glyph(0xF030C)
     readonly property string touchpad: glyph(0xF07F8)
+    readonly property string usbDrive: glyph(0xF129E)
+    readonly property string sdCard: glyph(0xF0479)
+    readonly property string eject: glyph(0xF01EA)
     readonly property string balanced: glyph(0xF05D1)
 
     /**

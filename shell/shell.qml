@@ -9,6 +9,7 @@ import qs.modules.displays
 import qs.modules.calendar
 import qs.modules.battery
 import qs.modules.audio
+import qs.modules.drives
 import qs.modules.capture
 import qs.modules.media
 import qs.modules.launcher
@@ -53,6 +54,7 @@ ShellRoot {
     MediaPanel {}
     BatteryPanel {}
     SoundPanel {}
+    DrivesPanel {}
     LauncherPanel {}
     LockScreen {}
     SystemRestoreWindow {}

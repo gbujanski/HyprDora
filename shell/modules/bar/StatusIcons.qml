@@ -81,6 +81,16 @@ Row {
         onClicked: Panels.toggleActionCenter(root.screen, "vpn")
     }
 
+    // While a removable drive is plugged in: the drives, each with a button that removes it safely.
+    BarButton {
+        anchors.verticalCenter: parent.verticalCenter
+        visible: Drives.drives.length > 0
+        icon: Icons.usbDrive
+        contentColor: Panels.drivesOpen ? Theme.accent : Theme.foreground
+        tooltip: I18n.t("drives.tooltip")
+        onClicked: Panels.toggleDrives(root.screen)
+    }
+
     // While an external screen is connected: its settings, the same as in the settings menu.
     BarButton {
         anchors.verticalCenter: parent.verticalCenter

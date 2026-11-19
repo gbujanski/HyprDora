@@ -47,6 +47,9 @@ Requires:       power-profiles-daemon
 Requires:       gnome-keyring
 Requires:       gnome-keyring-pam
 Requires:       gvfs
+# Removable drives on the bar: UDisks to unmount and power them off, fuser to name what holds a busy one.
+Requires:       udisks2
+Requires:       psmisc
 Requires:       xdg-user-dirs
 Requires:       cups
 Requires:       system-config-printer

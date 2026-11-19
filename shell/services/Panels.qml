@@ -36,6 +36,8 @@ Singleton {
     property var soundScreen: null
     property bool displaysOpen: false
     property var displaysScreen: null
+    property bool drivesOpen: false
+    property var drivesScreen: null
     property bool updatesOpen: false
     property var updatesScreen: null
     property bool overviewOpen: false
@@ -134,6 +136,8 @@ Singleton {
             soundOpen = false;
         if (keep !== "displays")
             displaysOpen = false;
+        if (keep !== "drives")
+            drivesOpen = false;
         if (keep !== "updates")
             updatesOpen = false;
         if (keep !== "overview")
@@ -340,6 +344,34 @@ Singleton {
     }
 
     /**
+     * Opens the removable drives panel under the bar's drive icon.
+     * @param {ShellScreen} screen  target, or null for the focused screen
+     */
+    function openDrives(screen) {
+        drivesScreen = screen ?? focusedScreen();
+        drivesOpen = drivesScreen !== null;
+        if (drivesOpen)
+            closeOthers("drives");
+    }
+
+    /** Closes the removable drives panel. */
+    function closeDrives() {
+        drivesOpen = false;
+    }
+
+    /**
+     * Closes the removable drives panel if open on this screen, otherwise opens it there.
+     * @param {ShellScreen} screen  target, or null for the focused screen
+     */
+    function toggleDrives(screen) {
+        const target = screen ?? focusedScreen();
+        if (drivesOpen && target === drivesScreen)
+            closeDrives();
+        else
+            openDrives(target);
+    }
+
+    /**
      * Opens the notification panel.
      * @param {ShellScreen} screen  target, or null for the focused screen
      */
@@ -411,6 +443,10 @@ Singleton {
                 root.closeDisplays();
                 root.displaysScreen = null;
             }
+            if (root.drivesOpen && !Quickshell.screens.includes(root.drivesScreen)) {
+                root.closeDrives();
+                root.drivesScreen = null;
+            }
         }
     }
 
@@ -479,6 +515,23 @@ Singleton {
         }
         function close(): void {
             root.closeUpdates();
+        }
+    }
+
+    IpcHandler {
+        target: "drivespanel"
+
+        function toggle(): void {
+            root.toggleDrives(null);
+        }
+        function open(): void {
+            root.openDrives(null);
+        }
+        function close(): void {
+            root.closeDrives();
+        }
+        function isOpen(): bool {
+            return root.drivesOpen;
         }
     }
 
