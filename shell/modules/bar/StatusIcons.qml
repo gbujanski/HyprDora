@@ -81,6 +81,16 @@ Row {
         onClicked: Panels.toggleActionCenter(root.screen, "vpn")
     }
 
+    // While an external screen is connected: its settings, the same as in the settings menu.
+    BarButton {
+        anchors.verticalCenter: parent.verticalCenter
+        visible: Displays.hasExternal
+        icon: Icons.monitor
+        contentColor: Panels.displaysOpen ? Theme.accent : Theme.foreground
+        tooltip: I18n.t("settings.displays")
+        onClicked: Panels.toggleDisplays(root.screen)
+    }
+
     BarButton {
         anchors.verticalCenter: parent.verticalCenter
         visible: Network.wiredConnected

@@ -61,6 +61,7 @@ ShellRoot {
     Osd {}
 
     DisplayConfirm {}
+    DisplaysPanel {}
 
     BatteryWarning {}
 

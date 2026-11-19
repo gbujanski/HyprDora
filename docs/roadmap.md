@@ -322,7 +322,8 @@ Fifth round (2026-11-19):
 - [ ] Removable drives on the bar (USB sticks, SD cards, USB disks): an icon while one is plugged in, a list on hover, and safe removal of each, which also powers it off as on Windows, with a clear sign when a drive cannot be removed yet
 - [ ] Update and restart: the download count showed 5/5 and 1 kB, then about 5/25 and a few MB, while the update panel said 600 MB
 - [x] The sound icon on the bar opens a sound panel of its own, as Wi-Fi, Bluetooth and the battery have theirs; the sound controls are one component, used both there and in the action center, so the two look the same
-- [ ] With an external screen connected, an icon on the bar opens the display settings, the same as on the settings page, for quick changes
+- [ ] On-screen indicators (volume, screen and keyboard brightness) only for a change the user makes: keys, a headset's buttons or another device's controls, and not for an automatic one, such as the volume of the next output after Bluetooth headphones disconnect. The indicator is started by the user's action rather than by every change of the value
+- [x] With an external screen connected, an icon on the bar opens the display settings, the same as on the settings page, for quick changes (tested in a nested Hyprland; not yet with a real external screen)
 - [ ] Calendar layout to consider: the month and weather on the left, events on the right, and nothing on the right when there are no events
 
 Before the repository goes public:

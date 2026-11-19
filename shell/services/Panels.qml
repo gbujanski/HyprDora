@@ -34,6 +34,8 @@ Singleton {
     property var batteryScreen: null
     property bool soundOpen: false
     property var soundScreen: null
+    property bool displaysOpen: false
+    property var displaysScreen: null
     property bool updatesOpen: false
     property var updatesScreen: null
     property bool overviewOpen: false
@@ -130,6 +132,8 @@ Singleton {
             batteryOpen = false;
         if (keep !== "sound")
             soundOpen = false;
+        if (keep !== "displays")
+            displaysOpen = false;
         if (keep !== "updates")
             updatesOpen = false;
         if (keep !== "overview")
@@ -308,6 +312,34 @@ Singleton {
     }
 
     /**
+     * Opens the display settings under the bar's display icon.
+     * @param {ShellScreen} screen  target, or null for the focused screen
+     */
+    function openDisplays(screen) {
+        displaysScreen = screen ?? focusedScreen();
+        displaysOpen = displaysScreen !== null;
+        if (displaysOpen)
+            closeOthers("displays");
+    }
+
+    /** Closes the display settings panel. */
+    function closeDisplays() {
+        displaysOpen = false;
+    }
+
+    /**
+     * Closes the display settings panel if open on this screen, otherwise opens it there.
+     * @param {ShellScreen} screen  target, or null for the focused screen
+     */
+    function toggleDisplays(screen) {
+        const target = screen ?? focusedScreen();
+        if (displaysOpen && target === displaysScreen)
+            closeDisplays();
+        else
+            openDisplays(target);
+    }
+
+    /**
      * Opens the notification panel.
      * @param {ShellScreen} screen  target, or null for the focused screen
      */
@@ -374,6 +406,10 @@ Singleton {
             if (root.soundOpen && !Quickshell.screens.includes(root.soundScreen)) {
                 root.closeSound();
                 root.soundScreen = null;
+            }
+            if (root.displaysOpen && !Quickshell.screens.includes(root.displaysScreen)) {
+                root.closeDisplays();
+                root.displaysScreen = null;
             }
         }
     }
@@ -443,6 +479,23 @@ Singleton {
         }
         function close(): void {
             root.closeUpdates();
+        }
+    }
+
+    IpcHandler {
+        target: "displayspanel"
+
+        function toggle(): void {
+            root.toggleDisplays(null);
+        }
+        function open(): void {
+            root.openDisplays(null);
+        }
+        function close(): void {
+            root.closeDisplays();
+        }
+        function isOpen(): bool {
+            return root.displaysOpen;
         }
     }
 
