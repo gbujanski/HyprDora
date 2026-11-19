@@ -33,11 +33,6 @@ PanelWindow {
         anchors.centerIn: parent
         spacing: 2
 
-        WeatherButton {
-            anchors.verticalCenter: parent.verticalCenter
-            screen: bar.modelData
-        }
-
         Clock {
             anchors.verticalCenter: parent.verticalCenter
             screen: bar.modelData

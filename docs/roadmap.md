@@ -325,7 +325,7 @@ Fifth round (2026-11-19):
 - [x] On-screen indicators (volume, screen and keyboard brightness) only for a change the user makes: keys, a headset's buttons or another device's controls, and not for an automatic one, such as the volume of the next output after Bluetooth headphones disconnect. The indicator is started by the user's action rather than by every change of the value
 - [x] With an external screen connected, an icon on the bar opens the display settings, the same as on the settings page, for quick changes (tested in a nested Hyprland; not yet with a real external screen)
 - [x] Calendar in two columns: the month and the weather on the left, the selected day's events on the right, always shown, with "No events today", "tomorrow" or "on this day" when there are none; the panel is as tall as the left column, and a long list or the new event form scrolls
-- [ ] Weather and date on the bar as one element: hovering either lights up only itself, which suggests two separate things, while both open the same panel
+- [x] Weather and date on the bar as one element: hovering either lights up only itself, which suggests two separate things, while both open the same panel
 
 Before the repository goes public:
 
