@@ -12,23 +12,9 @@ Column {
 
     Component.onCompleted: Printers.refresh()
 
-    // One printer or scanner: an icon, its name and state, and buttons on the right.
-    Item {
-        width: root.width
-        height: 24
-
-        SectionTitle {
-            anchors.verticalCenter: parent.verticalCenter
-            text: I18n.t("printers.printers")
-        }
-
-        Spinner {
-            anchors {
-                right: parent.right
-                verticalCenter: parent.verticalCenter
-            }
-            running: Printers.searching
-        }
+    SectionTitle {
+        text: I18n.t("printers.printers")
+        busy: Printers.searching
     }
 
     Repeater {
@@ -99,11 +85,10 @@ Column {
         }
     }
 
-    Label {
+    EmptyState {
         visible: Printers.printers.length === 0 && Printers.found.length === 0 && !Printers.searching
-        leftPadding: 8
+        width: root.width
         text: I18n.t("printers.none")
-        color: Theme.muted
     }
 
     ErrorBanner {
@@ -139,11 +124,10 @@ Column {
         }
     }
 
-    Label {
+    EmptyState {
         visible: Printers.scanners.length === 0 && !Printers.searching
-        leftPadding: 8
+        width: root.width
         text: I18n.t("printers.noScanners")
-        color: Theme.muted
     }
 
     TextButton {

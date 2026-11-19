@@ -55,31 +55,26 @@ BarPanel {
                     onClicked: Panels.actionCenterPage = "main"
                 }
 
-                Label {
+                Title {
                     anchors.verticalCenter: parent.verticalCenter
                     text: frame.pageTitles[Panels.actionCenterPage] ?? ""
-                    font.pixelSize: Theme.fontSizeTitle
-                    font.weight: Font.DemiBold
                 }
             }
 
-            Flickable {
+            ScrollArea {
                 id: flick
 
                 anchors {
                     fill: parent
                     topMargin: layout.headerSpace
                 }
-                contentWidth: width
                 contentHeight: pageLoader.item?.implicitHeight ?? 0
-                clip: true
-                boundsBehavior: Flickable.StopAtBounds
                 // Menus are placed by what opened them, so they would be left behind by scrolling.
                 onContentYChanged: Panels.settingsMenuOpen = false
 
                 Loader {
                     id: pageLoader
-                    width: flick.width - (flick.contentHeight > flick.height ? 8 : 0)
+                    width: flick.usableWidth
                     sourceComponent: {
                         switch (Panels.actionCenterPage) {
                         case "wifi":
@@ -105,17 +100,6 @@ BarPanel {
                     function onScrollToTop() {
                         flick.contentY = 0;
                     }
-                }
-
-                Rectangle {
-                    parent: flick
-                    anchors.right: parent.right
-                    y: flick.visibleArea.yPosition * flick.height
-                    width: 3
-                    height: flick.visibleArea.heightRatio * flick.height
-                    radius: Theme.radiusTiny
-                    color: Theme.dim
-                    visible: flick.contentHeight > flick.height
                 }
             }
 

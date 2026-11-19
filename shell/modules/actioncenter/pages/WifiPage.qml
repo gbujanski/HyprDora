@@ -153,26 +153,15 @@ Column {
         spacing: 2
         visible: Network.wifiEnabled
 
-        Row {
-            spacing: 6
-
-            SectionTitle {
-                anchors.verticalCenter: parent.verticalCenter
-                text: I18n.t("section.networks")
-            }
-
-            Spinner {
-                anchors.verticalCenter: parent.verticalCenter
-                running: Network.scanning
-            }
+        SectionTitle {
+            text: I18n.t("section.networks")
+            busy: Network.scanning
         }
 
-        Label {
+        EmptyState {
             visible: Network.networks.length === 0
+            width: parent.width
             text: I18n.t("wifi.searching")
-            color: Theme.muted
-            topPadding: 4
-            bottomPadding: 4
         }
 
         // ScriptModel keeps rows alive across reordering and signal updates.

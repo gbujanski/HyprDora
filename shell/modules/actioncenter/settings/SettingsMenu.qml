@@ -299,26 +299,23 @@ Item {
         }
 
         // Scrolls when the settings are taller than the screen.
-        Flickable {
+        ScrollArea {
+            id: settingsScroll
+
             anchors {
                 fill: parent
                 margins: Theme.panelPadding
             }
-            contentWidth: width
             contentHeight: content.implicitHeight
-            clip: true
-            boundsBehavior: Flickable.StopAtBounds
 
             Column {
                 id: content
 
-                width: parent.width
+                width: settingsScroll.usableWidth
                 spacing: 10
 
-                Label {
+                Title {
                     text: root.current?.label ?? ""
-                    font.pixelSize: Theme.fontSizeTitle
-                    font.weight: Font.DemiBold
                 }
 
                 Loader {

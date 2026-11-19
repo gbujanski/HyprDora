@@ -116,10 +116,8 @@ Scope {
                         }
                         spacing: 10
 
-                        Label {
+                        Title {
                             text: I18n.t("polkit.title")
-                            font.pixelSize: Theme.fontSizeTitle
-                            font.weight: Font.DemiBold
                         }
 
                         Label {

@@ -24,11 +24,9 @@ BarPanel {
                 }
                 height: 30
 
-                Label {
+                Title {
                     anchors.verticalCenter: parent.verticalCenter
                     text: Notifications.count > 0 ? `${I18n.t("notifications.title")} (${Notifications.count})` : I18n.t("notifications.title")
-                    font.pixelSize: Theme.fontSizeTitle
-                    font.weight: Font.DemiBold
                 }
 
                 Row {
@@ -73,7 +71,7 @@ BarPanel {
                 color: Theme.muted
             }
 
-            Flickable {
+            ScrollArea {
                 id: flick
 
                 anchors {
@@ -83,15 +81,12 @@ BarPanel {
                     right: parent.right
                     topMargin: 10
                 }
-                contentWidth: width
                 contentHeight: list.implicitHeight
-                clip: true
-                boundsBehavior: Flickable.StopAtBounds
 
                 Column {
                     id: list
 
-                    width: flick.width - (flick.contentHeight > flick.height ? 8 : 0)
+                    width: flick.usableWidth
                     spacing: 6
 
                     Repeater {
@@ -106,17 +101,6 @@ BarPanel {
                             onActivated: Panels.close("notifications")
                         }
                     }
-                }
-
-                Rectangle {
-                    parent: flick
-                    anchors.right: parent.right
-                    y: flick.visibleArea.yPosition * flick.height
-                    width: 3
-                    height: flick.visibleArea.heightRatio * flick.height
-                    radius: Theme.radiusTiny
-                    color: Theme.dim
-                    visible: flick.contentHeight > flick.height
                 }
             }
         }

@@ -46,7 +46,7 @@ BarPanel {
 
             implicitHeight: header.height + list.contentHeight + more.height + buttons.height + 3 * 10
 
-            Label {
+            Title {
                 id: header
                 anchors {
                     top: parent.top
@@ -58,8 +58,6 @@ BarPanel {
                 text: I18n.t("updates.title", {
                     count: Updates.count
                 })
-                font.pixelSize: Theme.fontSizeTitle
-                font.weight: Font.DemiBold
             }
 
             // How much the updates download, to choose between now and later.
@@ -86,7 +84,7 @@ BarPanel {
                 }
             }
 
-            Flickable {
+            ScrollArea {
                 id: list
 
                 anchors {
@@ -97,26 +95,12 @@ BarPanel {
                     topMargin: 10
                     bottomMargin: 6
                 }
-                contentWidth: width
                 contentHeight: rowsColumn.implicitHeight
-                clip: true
-                boundsBehavior: Flickable.StopAtBounds
-
-                Rectangle {
-                    parent: list
-                    anchors.right: parent.right
-                    y: list.visibleArea.yPosition * list.height
-                    width: 3
-                    height: list.visibleArea.heightRatio * list.height
-                    radius: Theme.radiusTiny
-                    color: Theme.dim
-                    visible: list.contentHeight > list.height
-                }
 
                 Column {
                     id: rowsColumn
 
-                    width: list.width - (list.contentHeight > list.height ? 8 : 0)
+                    width: list.usableWidth
 
                     Repeater {
                         model: content.rows

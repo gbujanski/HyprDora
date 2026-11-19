@@ -337,7 +337,7 @@ Review of the whole project (2026-11-19), in stages, each ending in a report the
   - [x] A4. The settings menu in groups: devices; look and behaviour; region; account and system
   - [ ] After the review: a keyboard shortcut cheat sheet on a key (B1); keyboard layouts in the settings, with a bar indicator for more than one (C1); "Mouse and touchpad" with pointer speed and tap to click (C2); choosing the wallpaper in the settings (C3)
   - Not done: a do-not-disturb tile and a dark theme tile in the action center, night light. Kept as they are: Wi-Fi, Bluetooth and VPN open the action center's pages from the bar; the system card stays in the action center
-- [ ] 2. Shared components: one component wherever two places show the same thing (Wi-Fi, Bluetooth, sound, buttons that differ only in their icon), with what differs passed in; values written in place of Theme's tokens
+- [x] 2. Shared components: one component wherever two places show the same thing (Wi-Fi, Bluetooth, sound, buttons that differ only in their icon), with what differs passed in; values written in place of Theme's tokens
   - [x] S1. One frame for the panels at the bar (BarPanel): the window, closing by a click outside and Esc, the delay before the window goes, the slide in, the background
   - [x] S2. One way to open panels in Panels.qml instead of a copy of open, close, toggle and IPC per panel; the IPC names change, and every script and binding that called the old ones changes with them
   - [x] S3. Font sizes and corner radii as named tokens in Theme instead of numbers written in place
@@ -346,9 +346,9 @@ Review of the whole project (2026-11-19), in stages, each ending in a report the
   - [x] S6. One row with a slider for brightness and volume
   - [x] S7. ConfirmButton among the shared components
   - [x] S8. Wi-Fi's, Bluetooth's and VPN's icon and summary worked out in their services, with a shared base where their logic overlaps
-  - [ ] S9. Shared empty and loading states
-  - [ ] S10. One page header with a back arrow
-  - [ ] S11. One scrolling area with the thin scroll bar, used by the action center, notifications, updates and the calendar
+  - [x] S9. Shared empty and loading states
+  - [x] S10. One page header with a back arrow: only the action center has one, so instead Title, the bold title nine panels, windows and pages drew on their own
+  - [x] S11. One scrolling area with the thin scroll bar, used by the action center, notifications, updates and the calendar
 - [ ] 3. Code quality: better ways to solve a problem, clean code, dead code, translation keys unused or missing in one language, background processes, timers and polling, keyboard use (Esc, arrows) the same in every panel
 - [ ] 4. Security, on the code as it stands after the stages above; anything serious found earlier is reported at once
 - [ ] 5. Documentation: docs/ and the README describe what the code does after the review

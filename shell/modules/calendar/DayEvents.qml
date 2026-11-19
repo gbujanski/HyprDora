@@ -238,43 +238,29 @@ Column {
         wrapMode: Text.WordWrap
     }
 
-    Label {
+    EmptyState {
         id: emptyLabel
+        width: root.width
         visible: root.events.length === 0 && !root.adding
         text: {
             const days = Math.round((new Date(root.day.getFullYear(), root.day.getMonth(), root.day.getDate()) - new Date(root.today.getFullYear(), root.today.getMonth(), root.today.getDate())) / 86400000);
             return days === 0 ? I18n.t("calendar.noEventsToday") : days === 1 ? I18n.t("calendar.noEventsTomorrow") : I18n.t("calendar.noEvents");
         }
-        color: Theme.muted
     }
 
     // The list hides while an event is added, so the form is always in view.
-    Flickable {
+    ScrollArea {
         id: listView
 
         width: root.width
         visible: !root.adding && root.events.length > 0
         height: visible ? Math.min(listColumn.implicitHeight, root.maxListHeight) : 0
-        contentWidth: width
         contentHeight: listColumn.implicitHeight
-        clip: true
-        boundsBehavior: Flickable.StopAtBounds
-
-        Rectangle {
-            parent: listView
-            anchors.right: parent.right
-            y: listView.visibleArea.yPosition * listView.height
-            width: 3
-            height: listView.visibleArea.heightRatio * listView.height
-            radius: Theme.radiusTiny
-            color: Theme.dim
-            visible: listView.contentHeight > listView.height
-        }
 
         Column {
             id: listColumn
 
-            width: listView.width - (listView.contentHeight > listView.height ? 8 : 0)
+            width: listView.usableWidth
             spacing: 4
 
             Repeater {
@@ -433,31 +419,17 @@ Column {
     }
 
     // The form for a new event; its fields scroll when they do not fit, the buttons stay in view.
-    Flickable {
+    ScrollArea {
         id: formView
 
         width: root.width
         visible: root.adding
         height: visible ? Math.min(formFields.implicitHeight, root.maxListHeight) : 0
-        contentWidth: width
         contentHeight: formFields.implicitHeight
-        clip: true
-        boundsBehavior: Flickable.StopAtBounds
-
-        Rectangle {
-            parent: formView
-            anchors.right: parent.right
-            y: formView.visibleArea.yPosition * formView.height
-            width: 3
-            height: formView.visibleArea.heightRatio * formView.height
-            radius: Theme.radiusTiny
-            color: Theme.dim
-            visible: formView.contentHeight > formView.height
-        }
 
         Column {
             id: formFields
-            width: formView.width - (formView.contentHeight > formView.height ? 8 : 0)
+            width: formView.usableWidth
             spacing: 8
 
             TextField {

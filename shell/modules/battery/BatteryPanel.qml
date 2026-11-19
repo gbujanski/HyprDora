@@ -32,10 +32,8 @@ BarPanel {
                     width: parent.width - 46
                     spacing: 2
 
-                    Label {
+                    Title {
                         text: `${Math.round(Power.level * 100)}%`
-                        font.pixelSize: Theme.fontSizeTitle
-                        font.weight: Font.DemiBold
                     }
 
                     Label {

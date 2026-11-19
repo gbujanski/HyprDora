@@ -184,26 +184,15 @@ Column {
         spacing: 2
         visible: Bluetooth.enabled
 
-        Row {
-            spacing: 6
-
-            SectionTitle {
-                anchors.verticalCenter: parent.verticalCenter
-                text: I18n.t("section.available")
-            }
-
-            Spinner {
-                anchors.verticalCenter: parent.verticalCenter
-                running: Bluetooth.discovering
-            }
+        SectionTitle {
+            text: I18n.t("section.available")
+            busy: Bluetooth.discovering
         }
 
-        Label {
+        EmptyState {
             visible: Bluetooth.discoveredDevices.length === 0
+            width: parent.width
             text: Bluetooth.discovering ? I18n.t("bluetooth.searching") : I18n.t("bluetooth.noneFound")
-            color: Theme.muted
-            topPadding: 4
-            bottomPadding: 4
         }
 
         Repeater {

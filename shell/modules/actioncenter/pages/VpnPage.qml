@@ -13,14 +13,10 @@ Column {
         text: Vpn.error
     }
 
-    Label {
+    EmptyState {
         visible: Vpn.connections.length === 0
         width: parent.width
         text: I18n.t("vpn.empty")
-        color: Theme.muted
-        wrapMode: Text.WordWrap
-        topPadding: 4
-        bottomPadding: 4
     }
 
     Repeater {

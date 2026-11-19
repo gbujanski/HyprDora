@@ -49,7 +49,7 @@ Column {
             radius: Theme.radius
             color: nameArea.containsMouse ? Theme.surface : "transparent"
 
-            Label {
+            Title {
                 anchors {
                     left: parent.left
                     right: pencil.left
@@ -58,8 +58,6 @@ Column {
                     verticalCenter: parent.verticalCenter
                 }
                 text: SystemInfo.name
-                font.pixelSize: Theme.fontSizeTitle
-                font.weight: Font.DemiBold
                 elide: Text.ElideRight
             }
 

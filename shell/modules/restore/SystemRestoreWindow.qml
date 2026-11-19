@@ -75,11 +75,9 @@ Scope {
                         width: parent.width
                         height: 30
 
-                        Label {
+                        Title {
                             anchors.verticalCenter: parent.verticalCenter
                             text: I18n.t("restore.title")
-                            font.pixelSize: Theme.fontSizeTitle
-                            font.weight: Font.DemiBold
                         }
 
                         IconButton {

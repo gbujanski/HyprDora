@@ -60,12 +60,10 @@ Column {
             text: I18n.t("section.applications")
         }
 
-        Label {
+        EmptyState {
             visible: root.streams.length === 0
-            leftPadding: 4
+            width: root.width
             text: I18n.t("audio.noStreams")
-            color: Theme.muted
-            font.pixelSize: Theme.fontSizeSmall
         }
 
         Repeater {

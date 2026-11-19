@@ -43,10 +43,8 @@ Scope {
                     }
                     spacing: 6
 
-                    Label {
+                    Title {
                         text: I18n.t("displays.confirmTitle")
-                        font.pixelSize: Theme.fontSizeTitle
-                        font.weight: Font.DemiBold
                     }
 
                     Label {
