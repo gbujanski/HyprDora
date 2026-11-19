@@ -127,6 +127,19 @@ Singleton {
     IpcHandler {
         target: "audio"
 
+        // For the volume and mute keys, which show the indicator: stepVolume 0.05 / stepVolume -0.05.
+        function stepVolume(delta: real): void {
+            root.changeVolume(delta);
+            Indicator.show("volume");
+        }
+        function toggleMute(): void {
+            root.toggleNodeMute(root.sink);
+            Indicator.show("volume");
+        }
+        function toggleMicrophone(): void {
+            root.toggleNodeMute(root.source);
+            Indicator.show("microphone");
+        }
         function selectSink(name: string): bool {
             const node = root.sinks.find(n => n.name === name);
             if (node)

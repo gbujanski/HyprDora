@@ -46,14 +46,14 @@ Singleton {
         if (!screen.available || screen.level <= dimLevel)
             return;
         dimmedFrom = screen.level;
-        screen.setLevel(dimLevel, true);
+        screen.setLevel(dimLevel);
     }
 
     /** Restores the brightness from before dimming. */
     function undim() {
         if (dimmedFrom < 0)
             return;
-        Brightness.display.setLevel(dimmedFrom, true);
+        Brightness.display.setLevel(dimmedFrom);
         dimmedFrom = -1;
     }
 

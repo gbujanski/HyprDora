@@ -38,9 +38,10 @@ Singleton {
                 }
             });
         }
-        // For brightness keys: step 0.05 / step -0.05.
+        // For the brightness keys, which show the indicator: step 0.05 / step -0.05.
         function step(delta: real): void {
             root.display.step(delta);
+            Indicator.show("display");
         }
         function set(value: real): void {
             root.display.setLevel(value);
@@ -50,6 +51,7 @@ Singleton {
         }
         function stepKeyboard(delta: real): void {
             root.keyboard.step(delta);
+            Indicator.show("keyboard");
         }
         function setDisplay(value: real): void {
             root.display.setLevel(value);

@@ -6,55 +6,77 @@ import qs.config
 import qs.components
 import qs.services
 
-// Volume and brightness indicator. It reacts to value changes, so it works for keys,
-// wpctl, brightnessctl and other applications without explicit triggers.
+// Volume and brightness indicator. It shows only when asked through Indicator, for a change the user made
+// (keys, the bar's sound icon), and then follows the current value, so it never shows for a change that
+// happens on its own. The one exception reads PipeWire: a Bluetooth headset with its own volume buttons
+// changes the volume directly, which counts as the user's when the output has stayed the same for a while,
+// so switching outputs, as when headphones disconnect, does not show it.
 Scope {
     id: root
 
     property string kind: ""
-    property string icon: ""
-    property string title: ""
-    property real value: 0
-    property bool showBar: true
     property bool shown: false
 
-    // Initial readings and device switches are not user changes.
-    property bool armed: false
-    property real lastVolume: -1
-    property real lastDisplay: -1
-    property real lastKeyboard: -1
+    // When the default output last changed, in milliseconds.
+    property real sinkChangedAt: Date.now()
+    readonly property int settleTime: 3000
 
-    function show(kindName, iconText, titleText, level, bar) {
-        if (!armed || Panels.actionCenterOpen)
+    readonly property string icon: {
+        switch (kind) {
+        case "volume":
+            return Icons.volume(Audio.volume, Audio.muted);
+        case "microphone":
+            return Icons.microphone(Audio.sourceMuted);
+        case "display":
+            return Icons.brightness;
+        case "keyboard":
+            return Icons.keyboard;
+        }
+        return "";
+    }
+    readonly property real value: {
+        switch (kind) {
+        case "volume":
+            return Audio.muted ? 0 : Audio.volume;
+        case "display":
+            return Brightness.display.level;
+        case "keyboard":
+            return Brightness.keyboard.level;
+        }
+        return 0;
+    }
+    readonly property string title: {
+        switch (kind) {
+        case "volume":
+            return Audio.muted ? I18n.t("osd.muted") : `${Math.round(Audio.volume * 100)}%`;
+        case "microphone":
+            return Audio.sourceMuted ? I18n.t("osd.micMuted") : I18n.t("osd.micOn");
+        case "display":
+        case "keyboard":
+            return `${Math.round(value * 100)}%`;
+        }
+        return "";
+    }
+    readonly property bool showBar: kind !== "microphone"
+
+    /**
+     * Shows the indicator for a kind, unless a panel with the same controls is open.
+     * @param {string} kindName  "volume", "microphone", "display" or "keyboard"
+     */
+    function show(kindName) {
+        if (Panels.actionCenterOpen || (Panels.soundOpen && (kindName === "volume" || kindName === "microphone")))
             return;
         kind = kindName;
-        icon = iconText;
-        title = titleText;
-        value = level;
-        showBar = bar;
         shown = true;
         hideTimer.restart();
     }
 
-    function suspendBriefly() {
-        armed = false;
-        armTimer.restart();
-    }
-
-    function showVolume() {
-        root.show("volume", Icons.volume(Audio.volume, Audio.muted), Audio.muted ? I18n.t("osd.muted") : `${Math.round(Audio.volume * 100)}%`, Audio.muted ? 0 : Audio.volume, true);
-    }
-
-    Timer {
-        id: armTimer
-        interval: 1500
-        running: true
-        onTriggered: {
-            root.lastVolume = Audio.volume;
-            root.lastDisplay = Brightness.display.level;
-            root.lastKeyboard = Brightness.keyboard.level;
-            root.armed = true;
-        }
+    /**
+     * Tells whether the default output is a Bluetooth device.
+     * @returns {bool}
+     */
+    function sinkIsBluetooth() {
+        return (Audio.sink?.properties?.["device.api"] ?? "") === "bluez5";
     }
 
     Timer {
@@ -72,50 +94,23 @@ Scope {
         fadeDelay.restart()
 
     Connections {
+        target: Indicator
+
+        function onRequested(kind) {
+            root.show(kind);
+        }
+    }
+
+    Connections {
         target: Audio
 
         function onSinkChanged() {
-            root.suspendBriefly();
+            root.sinkChangedAt = Date.now();
         }
-        function onSourceChanged() {
-            root.suspendBriefly();
-        }
-
+        // A headset's own volume buttons, on an output that has not just changed.
         function onVolumeChanged() {
-            if (Math.abs(Audio.volume - root.lastVolume) < 0.001)
-                return;
-            root.lastVolume = Audio.volume;
-            root.showVolume();
-        }
-        function onMutedChanged() {
-            root.showVolume();
-        }
-        function onSourceMutedChanged() {
-            root.show("microphone", Icons.microphone(Audio.sourceMuted), Audio.sourceMuted ? I18n.t("osd.micMuted") : I18n.t("osd.micOn"), 0, false);
-        }
-    }
-
-    Connections {
-        target: Brightness.display
-        function onLevelChanged() {
-            const level = Brightness.display.level;
-            if (Math.abs(level - root.lastDisplay) < 0.001)
-                return;
-            root.lastDisplay = level;
-            if (Brightness.display.raw === Brightness.display.quietRaw)
-                return;
-            root.show("display", Icons.brightness, `${Math.round(level * 100)}%`, level, true);
-        }
-    }
-
-    Connections {
-        target: Brightness.keyboard
-        function onLevelChanged() {
-            const level = Brightness.keyboard.level;
-            if (Math.abs(level - root.lastKeyboard) < 0.001)
-                return;
-            root.lastKeyboard = level;
-            root.show("keyboard", Icons.keyboard, `${Math.round(level * 100)}%`, level, true);
+            if (root.sinkIsBluetooth() && Date.now() - root.sinkChangedAt > root.settleTime)
+                root.show("volume");
         }
     }
 
@@ -217,11 +212,13 @@ Scope {
         function describe(): string {
             return JSON.stringify({
                 shown: root.shown,
-                armed: root.armed,
                 kind: root.kind,
                 title: root.title,
                 value: root.value
             });
+        }
+        function show(kind: string): void {
+            Indicator.show(kind);
         }
     }
 }

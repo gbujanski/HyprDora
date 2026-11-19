@@ -316,13 +316,13 @@ Large:
 
 Fifth round (2026-11-19):
 
-- [ ] Touchpad scrolling direction in the settings, shown only when a touchpad is present
-- [ ] Wi-Fi and Bluetooth tiles: the arrow to their page has a grey hover that looks off on a switched-on tile, and flashes dark green before turning grey
+- [x] Touchpad scrolling direction in the settings, shown only when a touchpad is present
+- [x] Wi-Fi and Bluetooth tiles: the arrow to their page has a grey hover that looks off on a switched-on tile, and flashes dark green before turning grey
 - [-] Renaming a file or folder in Nautilus: after a few presses of an arrow key, or holding it, the cursor jumps one character back and forth. Not HyprDora's: Nautilus's own rename popover only (Nautilus 50.4, GTK 4.22.5); its location bar, Text Editor, GNOME Software's search and the save dialog's name field behave. HyprDora's Nautilus extension only adds a menu item. Left to Nautilus; no matching report found on 2026-11-19
 - [ ] Removable drives on the bar (USB sticks, SD cards, USB disks): an icon while one is plugged in, a list on hover, and safe removal of each, which also powers it off as on Windows, with a clear sign when a drive cannot be removed yet
-- [ ] Update and restart: the download count showed 5/5 and 1 kB, then about 5/25 and a few MB, while the update panel said 600 MB
+- [x] Update and restart: the download count showed 5/5 and 1 kB, then about 5/25 and a few MB, while the update panel said 600 MB
 - [x] The sound icon on the bar opens a sound panel of its own, as Wi-Fi, Bluetooth and the battery have theirs; the sound controls are one component, used both there and in the action center, so the two look the same
-- [ ] On-screen indicators (volume, screen and keyboard brightness) only for a change the user makes: keys, a headset's buttons or another device's controls, and not for an automatic one, such as the volume of the next output after Bluetooth headphones disconnect. The indicator is started by the user's action rather than by every change of the value
+- [x] On-screen indicators (volume, screen and keyboard brightness) only for a change the user makes: keys, a headset's buttons or another device's controls, and not for an automatic one, such as the volume of the next output after Bluetooth headphones disconnect. The indicator is started by the user's action rather than by every change of the value
 - [x] With an external screen connected, an icon on the bar opens the display settings, the same as on the settings page, for quick changes (tested in a nested Hyprland; not yet with a real external screen)
 - [ ] Calendar layout to consider: the month and weather on the left, events on the right, and nothing on the right when there are no events
 

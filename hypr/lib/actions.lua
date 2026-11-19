@@ -50,10 +50,11 @@ return {
     end,
     special = hl.dsp.workspace.toggle_special("magic"),
 
-    volume_up = exec("wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"),
-    volume_down = exec("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),
-    mute = exec("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),
-    mic_mute = exec("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"),
+    -- Through the shell, which shows the indicator for them; wpctl is a fallback for when it is not running.
+    volume_up = exec(shell_call("audio stepVolume 0.05") .. " || wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"),
+    volume_down = exec(shell_call("audio stepVolume -0.05") .. " || wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),
+    mute = exec(shell_call("audio toggleMute") .. " || wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),
+    mic_mute = exec(shell_call("audio toggleMicrophone") .. " || wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"),
 
     -- brightnessctl is a fallback for when the shell is not running.
     brightness_up = exec(shell_call("brightness step 0.05") .. " || brightnessctl -e4 -n2 set 5%+"),

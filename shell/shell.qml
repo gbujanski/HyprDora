@@ -27,6 +27,9 @@ ShellRoot {
     // Singletons are created on first use, and these have no UI that would use them.
     readonly property var wallpaper: Wallpaper
     readonly property var idle: Idle
+    // The brightness and volume keys call these over IPC, which exists only once they are created.
+    readonly property var brightness: Brightness
+    readonly property var audio: Audio
     readonly property var automations: Automations
     readonly property var appearance: Appearance
     readonly property var backgroundApps: BackgroundApps

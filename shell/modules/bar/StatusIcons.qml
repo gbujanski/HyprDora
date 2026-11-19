@@ -134,7 +134,10 @@ Row {
         contentColor: Audio.muted ? Theme.muted : Theme.foreground
         tooltip: Audio.displayName(Audio.sink)
         onClicked: Panels.toggleSound(root.screen)
-        onScrolled: direction => Audio.changeVolume(direction * 0.05)
+        onScrolled: direction => {
+            Audio.changeVolume(direction * 0.05);
+            Indicator.show("volume");
+        }
     }
 
     BarButton {
