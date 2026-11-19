@@ -1,7 +1,8 @@
 import QtQuick
 import qs.config
-import qs.components
 
+// One of the two buttons of a confirmation, such as Cancel and Power off: the selected one is filled, in red
+// when it does something that cannot be undone, so arrows and Enter show which one they pick.
 Rectangle {
     id: root
 

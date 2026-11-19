@@ -100,7 +100,7 @@ Column {
         exclusive: true
     }
 
-    LevelRow {
+    SliderRow {
         width: parent.width
         visible: Brightness.display.available
         icon: Icons.brightness
@@ -109,7 +109,7 @@ Column {
         onMoved: value => Brightness.display.setLevel(value)
     }
 
-    LevelRow {
+    SliderRow {
         width: parent.width
         visible: Brightness.keyboard.available
         icon: Icons.keyboard

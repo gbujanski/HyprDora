@@ -343,8 +343,8 @@ Review of the whole project (2026-11-19), in stages, each ending in a report the
   - [x] S3. Font sizes and corner radii as named tokens in Theme instead of numbers written in place
   - [x] S4. One list row (ItemRow): icon, title, subtitle, buttons on the right, hover and the active row's highlight
   - [x] S5. One delete button that asks for a second click; deleting a VPN connection or a printer, one click so far, asks for it too
-  - [ ] S6. One row with a slider for brightness and volume
-  - [ ] S7. ConfirmButton among the shared components
+  - [x] S6. One row with a slider for brightness and volume
+  - [x] S7. ConfirmButton among the shared components
   - [ ] S8. Wi-Fi's, Bluetooth's and VPN's icon and summary worked out in their services, with a shared base where their logic overlaps
   - [ ] S9. Shared empty and loading states
   - [ ] S10. One page header with a back arrow

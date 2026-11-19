@@ -4,7 +4,6 @@ import Quickshell.Wayland
 import qs.config
 import qs.components
 import qs.services
-import qs.modules.actioncenter.pages
 
 // System restore: the snapshots taken before changes, newest first. A click asks for confirmation, then the
 // helper replaces the system and restarts. Esc, the close button or a click outside closes the window.

@@ -4,12 +4,11 @@ import qs.config
 import qs.components
 import qs.services
 
-// Mute button, name and volume slider for one PipeWire node.
-Item {
+// One PipeWire node's volume: the icon mutes it, and the arrow on the right, when shown, unfolds more.
+SliderRow {
     id: root
 
     property PwNode node: null
-    property string title: Audio.displayName(node)
     property string emptyTitle: I18n.t("audio.noDevice")
     property bool isMicrophone: false
     property bool showChevron: false
@@ -21,71 +20,21 @@ Item {
     readonly property bool muted: node?.audio?.muted ?? false
     readonly property real volume: node?.audio?.volume ?? 0
 
-    implicitHeight: 46
+    active: available
+    // An application's row has no arrow and takes the whole width.
+    reserveTrailing: showChevron
+    iconClickable: true
+    icon: isMicrophone ? Icons.microphone(muted) : Icons.volume(volume, muted)
+    iconColor: muted ? Theme.muted : Theme.foreground
+    iconTooltip: muted ? I18n.t("audio.unmute") : I18n.t("audio.mute")
+    title: available ? Audio.displayName(node) : emptyTitle
+    titleColor: available ? Theme.foreground : Theme.muted
+    valueText: !available ? "" : muted ? I18n.t("audio.muted") : `${Math.round(volume * 100)}%`
+    value: volume
+    onIconClicked: Audio.toggleNodeMute(node)
+    onMoved: value => Audio.setNodeVolume(node, value)
 
-    IconButton {
-        id: muteButton
-        anchors {
-            left: parent.left
-            verticalCenter: parent.verticalCenter
-        }
-        active: root.available
-        icon: root.isMicrophone ? Icons.microphone(root.muted) : Icons.volume(root.volume, root.muted)
-        iconColor: root.muted ? Theme.muted : Theme.foreground
-        tooltip: root.muted ? I18n.t("audio.unmute") : I18n.t("audio.mute")
-        onClicked: Audio.toggleNodeMute(root.node)
-    }
-
-    Column {
-        anchors {
-            left: muteButton.right
-            right: chevron.visible ? chevron.left : parent.right
-            leftMargin: 8
-            rightMargin: 4
-            verticalCenter: parent.verticalCenter
-        }
-        spacing: 2
-
-        Item {
-            width: parent.width
-            height: nameLabel.implicitHeight
-
-            Label {
-                id: nameLabel
-                anchors {
-                    left: parent.left
-                    right: percent.left
-                    rightMargin: 8
-                }
-                text: root.available ? root.title : root.emptyTitle
-                elide: Text.ElideRight
-                color: root.available ? Theme.foreground : Theme.muted
-            }
-
-            Label {
-                id: percent
-                anchors.right: parent.right
-                visible: root.available
-                text: root.muted ? I18n.t("audio.muted") : `${Math.round(root.volume * 100)}%`
-                color: Theme.muted
-                font.pixelSize: Theme.fontSizeSmall
-            }
-        }
-
-        Slider {
-            width: parent.width
-            active: root.available
-            value: root.volume
-            onMoved: value => Audio.setNodeVolume(root.node, value)
-        }
-    }
-
-    IconButton {
-        id: chevron
-        anchors {
-            right: parent.right
-            verticalCenter: parent.verticalCenter
-        }
+    trailing: IconButton {
         visible: root.showChevron
         icon: root.chevronIcon
         iconColor: Theme.muted
