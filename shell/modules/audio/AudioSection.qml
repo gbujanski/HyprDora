@@ -6,14 +6,13 @@ import qs.components
 import qs.services
 
 // Volume of the output or the microphone. The arrow unfolds the devices to switch to and the volume of
-// each application below it; one section is unfolded at a time.
+// each application below it.
 Column {
     id: root
 
     property bool isMicrophone: false
-
-    readonly property string key: isMicrophone ? "input" : "output"
-    readonly property bool expanded: Panels.audioExpanded === key
+    // Whether the devices and applications are unfolded; the arrow changes it.
+    property bool expanded: false
     readonly property var devices: isMicrophone ? Audio.sources : Audio.sinks
     readonly property var streams: isMicrophone ? Audio.recordingStreams : Audio.playbackStreams
 
@@ -31,7 +30,7 @@ Column {
         isMicrophone: root.isMicrophone
         showChevron: true
         chevronIcon: root.expanded ? Icons.chevronUp : Icons.chevronDown
-        onChevronClicked: Panels.audioExpanded = root.expanded ? "" : root.key
+        onChevronClicked: root.expanded = !root.expanded
     }
 
     Column {

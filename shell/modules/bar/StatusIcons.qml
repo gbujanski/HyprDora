@@ -123,7 +123,7 @@ Row {
         label: `${Math.round(Audio.volume * 100)}%`
         contentColor: Audio.muted ? Theme.muted : Theme.foreground
         tooltip: Audio.displayName(Audio.sink)
-        onClicked: Panels.toggleAudio(root.screen, "output")
+        onClicked: Panels.toggleSound(root.screen)
         onScrolled: direction => Audio.changeVolume(direction * 0.05)
     }
 

@@ -18,14 +18,7 @@ Singleton {
     property Item settingsButton: null
     property string settingsCategory: ""
 
-    // Audio section unfolded on the main page: "output", "input" or "".
-    property string audioExpanded: ""
-
-    onActionCenterOpenChanged: {
-        settingsMenuOpen = false;
-        if (!actionCenterOpen)
-            audioExpanded = "";
-    }
+    onActionCenterOpenChanged: settingsMenuOpen = false
     onActionCenterPageChanged: settingsMenuOpen = false
     onSettingsMenuOpenChanged: settingsCategory = ""
 
@@ -39,6 +32,8 @@ Singleton {
     property var mediaScreen: null
     property bool batteryOpen: false
     property var batteryScreen: null
+    property bool soundOpen: false
+    property var soundScreen: null
     property bool updatesOpen: false
     property var updatesScreen: null
     property bool overviewOpen: false
@@ -133,6 +128,8 @@ Singleton {
             mediaOpen = false;
         if (keep !== "battery")
             batteryOpen = false;
+        if (keep !== "sound")
+            soundOpen = false;
         if (keep !== "updates")
             updatesOpen = false;
         if (keep !== "overview")
@@ -283,19 +280,31 @@ Singleton {
     }
 
     /**
-     * Opens the action center with the sound output or microphone section unfolded, or closes it when
-     * that is already shown on this screen.
+     * Opens the sound panel under the bar's sound icon.
      * @param {ShellScreen} screen  target, or null for the focused screen
-     * @param {string} section  "output" or "input"
      */
-    function toggleAudio(screen, section) {
+    function openSound(screen) {
+        soundScreen = screen ?? focusedScreen();
+        soundOpen = soundScreen !== null;
+        if (soundOpen)
+            closeOthers("sound");
+    }
+
+    /** Closes the sound panel. */
+    function closeSound() {
+        soundOpen = false;
+    }
+
+    /**
+     * Closes the sound panel if open on this screen, otherwise opens it there.
+     * @param {ShellScreen} screen  target, or null for the focused screen
+     */
+    function toggleSound(screen) {
         const target = screen ?? focusedScreen();
-        if (actionCenterOpen && target === actionCenterScreen && actionCenterPage === "main" && audioExpanded === section) {
-            closeActionCenter();
-            return;
-        }
-        openActionCenter(target, "main");
-        audioExpanded = section;
+        if (soundOpen && target === soundScreen)
+            closeSound();
+        else
+            openSound(target);
     }
 
     /**
@@ -361,6 +370,10 @@ Singleton {
             if (root.batteryOpen && !Quickshell.screens.includes(root.batteryScreen)) {
                 root.closeBattery();
                 root.batteryScreen = null;
+            }
+            if (root.soundOpen && !Quickshell.screens.includes(root.soundScreen)) {
+                root.closeSound();
+                root.soundScreen = null;
             }
         }
     }
@@ -430,6 +443,23 @@ Singleton {
         }
         function close(): void {
             root.closeUpdates();
+        }
+    }
+
+    IpcHandler {
+        target: "soundpanel"
+
+        function toggle(): void {
+            root.toggleSound(null);
+        }
+        function open(): void {
+            root.openSound(null);
+        }
+        function close(): void {
+            root.closeSound();
+        }
+        function isOpen(): bool {
+            return root.soundOpen;
         }
     }
 

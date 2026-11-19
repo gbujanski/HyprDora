@@ -4,6 +4,7 @@ import Quickshell.Services.UPower
 import qs.config
 import qs.components
 import qs.services
+import qs.modules.audio
 
 // Quick settings: toggles, sliders and shortcuts. Notifications and the media player have their own panels
 // next to the clock, and display settings live in the settings menu.
@@ -94,13 +95,9 @@ Column {
         height: 2
     }
 
-    AudioSection {
+    SoundControls {
         width: parent.width
-    }
-
-    AudioSection {
-        width: parent.width
-        isMicrophone: true
+        exclusive: true
     }
 
     LevelRow {
