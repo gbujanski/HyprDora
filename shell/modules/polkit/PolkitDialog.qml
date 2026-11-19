@@ -70,7 +70,7 @@ Scope {
                 WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
 
                 Component.onCompleted: {
-                    Panels.closeActionCenter();
+                    Panels.close("actioncenter");
                     field.focusInput();
                     capsReader.running = true;
                 }

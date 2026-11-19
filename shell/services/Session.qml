@@ -150,7 +150,7 @@ Singleton {
      */
     function run(action) {
         cancelConfirm();
-        Panels.closeActionCenter();
+        Panels.close("actioncenter");
         if (action.update) {
             Updates.installOffline(action.update);
             return;
@@ -195,7 +195,7 @@ Singleton {
         }
         function describe(): string {
             return JSON.stringify({
-                open: Panels.actionCenterOpen && Panels.actionCenterPage === "power",
+                open: Panels.isOpen("actioncenter") && Panels.actionCenterPage === "power",
                 selected: root.actions[root.selectedIndex].id,
                 confirm: root.confirmAction?.id ?? null,
                 confirmSelected: root.confirmSelected

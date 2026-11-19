@@ -11,7 +11,7 @@ BarButton {
 
     required property ShellScreen screen
 
-    readonly property bool open: Panels.calendarOpen && Panels.calendarScreen === screen
+    readonly property bool open: Panels.isOpen("calendar") && Panels.currentScreen === screen
 
     // Minute precision, so the clock does not wake the process every second.
     SystemClock {
@@ -27,7 +27,7 @@ BarButton {
         description: Weather.describe(Weather.current.code),
         feels: Weather.formatTemp(Weather.current.feels)
     }) : ""
-    onClicked: Panels.toggleCalendar(root.screen)
+    onClicked: Panels.toggle("calendar", root.screen)
 
     Label {
         anchors.verticalCenter: parent.verticalCenter

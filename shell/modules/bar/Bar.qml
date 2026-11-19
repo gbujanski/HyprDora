@@ -42,11 +42,11 @@ PanelWindow {
             anchors.verticalCenter: parent.verticalCenter
             icon: Notifications.dnd ? Icons.bellOff : Notifications.count > 0 ? Icons.bellBadge : Icons.bell
             label: Notifications.count > 0 ? String(Notifications.count) : ""
-            contentColor: Panels.notificationsOpen || Notifications.count > 0 ? Theme.accent : Theme.foreground
+            contentColor: Panels.isOpen("notifications") || Notifications.count > 0 ? Theme.accent : Theme.foreground
             tooltip: Notifications.dnd ? I18n.t("notifications.dnd") : Notifications.count > 0 ? I18n.t("notifications.count", {
                 count: Notifications.count
             }) : I18n.t("notifications.title")
-            onClicked: Panels.toggleNotifications(bar.modelData)
+            onClicked: Panels.toggle("notifications", bar.modelData)
         }
 
         // Shown while something plays or is paused; opens the player controls.
@@ -56,9 +56,9 @@ PanelWindow {
             icon: Media.player?.isPlaying ? Icons.music : Icons.pause
             label: Media.player?.trackTitle || Media.player?.identity || ""
             labelMaxWidth: 180
-            contentColor: Panels.mediaOpen ? Theme.accent : Theme.foreground
+            contentColor: Panels.isOpen("media") ? Theme.accent : Theme.foreground
             tooltip: [Media.player?.trackArtist, Media.player?.trackTitle].filter(Boolean).join(" – ")
-            onClicked: Panels.toggleMedia(bar.modelData)
+            onClicked: Panels.toggle("media", bar.modelData)
         }
     }
 

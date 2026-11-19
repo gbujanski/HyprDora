@@ -170,7 +170,7 @@ Column {
                             return;
                         }
                         Drives.open(volumeItem.volume);
-                        Panels.closeDrives();
+                        Panels.close("drives");
                     }
                 }
             }

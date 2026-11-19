@@ -7,7 +7,7 @@ import qs.services
 Scope {
     // The same notifications are listed in the action center while it is open.
     LazyLoader {
-        active: Notifications.popups.length > 0 && !Panels.actionCenterOpen
+        active: Notifications.popups.length > 0 && !Panels.isOpen("actioncenter")
 
         PanelWindow {
             screen: Panels.focusedScreen()

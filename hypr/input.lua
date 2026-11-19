@@ -25,7 +25,7 @@ hl.gesture({
     fingers = 3,
     direction = "up",
     action = function()
-        hl.exec_cmd(require("hypr.lib.paths").shell .. " ipc call overview toggle")
+        hl.exec_cmd(require("hypr.lib.paths").shell .. " ipc call panel toggle overview")
     end,
 })
 
@@ -33,6 +33,6 @@ hl.gesture({
     fingers = 4,
     direction = "pinchout",
     action = function()
-        hl.exec_cmd(require("hypr.lib.paths").shell .. " ipc call launcher toggle")
+        hl.exec_cmd(require("hypr.lib.paths").shell .. " ipc call panel launcher apps")
     end,
 })

@@ -13,13 +13,16 @@ import qs.services
 Scope {
     id: root
 
-    Connections {
-        target: Panels
-        function onOverviewOpenChanged() {
-            if (!Panels.overviewOpen)
-                closeDelay.restart();
-            else
-                Hyprland.refreshToplevels();
+    readonly property bool open: Panels.isOpen("overview")
+    // The screen it opened on, kept while it fades out.
+    property var screen: null
+
+    onOpenChanged: {
+        if (open) {
+            screen = Panels.currentScreen;
+            Hyprland.refreshToplevels();
+        } else {
+            closeDelay.restart();
         }
     }
 
@@ -29,13 +32,13 @@ Scope {
     }
 
     LazyLoader {
-        active: Panels.overviewOpen || closeDelay.running
+        active: Panels.isOpen("overview") || closeDelay.running
 
         PanelWindow {
             id: window
 
             property bool entered: false
-            readonly property bool shown: entered && Panels.overviewOpen
+            readonly property bool shown: entered && Panels.isOpen("overview")
             readonly property var monitor: Hyprland.monitorFor(screen)
             readonly property int currentWorkspace: monitor?.activeWorkspace?.id ?? 1
             // Windows of the current workspace on this monitor, in the order Hyprland lists them.
@@ -69,7 +72,7 @@ Scope {
                 if (!toplevel)
                     return;
                 Hyprland.dispatch(`hl.dsp.focus({ window = "address:0x${toplevel.address}" })`);
-                Panels.closeOverview();
+                Panels.close("overview");
             }
 
             /**
@@ -78,7 +81,7 @@ Scope {
              */
             function showWorkspace(id) {
                 Hyprland.dispatch(`hl.dsp.focus({ workspace = ${id} })`);
-                Panels.closeOverview();
+                Panels.close("overview");
             }
 
             /**
@@ -108,7 +111,7 @@ Scope {
             }
             onWindowsChanged: selected = Math.min(selected, Math.max(0, windows.length - 1))
 
-            screen: Panels.overviewScreen
+            screen: root.screen
             anchors {
                 top: true
                 bottom: true
@@ -135,7 +138,7 @@ Scope {
                     }
                 }
 
-                Keys.onEscapePressed: Panels.closeOverview()
+                Keys.onEscapePressed: Panels.close("overview")
                 Keys.onReturnPressed: window.activate(window.windows[window.selected])
                 Keys.onEnterPressed: window.activate(window.windows[window.selected])
                 Keys.onPressed: event => {
@@ -162,7 +165,7 @@ Scope {
                 MouseArea {
                     anchors.fill: parent
                     acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
-                    onClicked: Panels.closeOverview()
+                    onClicked: Panels.close("overview")
                 }
             }
 

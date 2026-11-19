@@ -24,7 +24,7 @@ Row {
         }) : I18n.t("updates.tooltip", {
             count: Updates.count
         })
-        onClicked: Panels.toggleUpdates(root.screen)
+        onClicked: Panels.toggle("updates", root.screen)
     }
 
     // Shown only while coffee is on; a click turns it off.
@@ -86,9 +86,9 @@ Row {
         anchors.verticalCenter: parent.verticalCenter
         visible: Drives.drives.length > 0
         icon: Icons.usbDrive
-        contentColor: Panels.drivesOpen ? Theme.accent : Theme.foreground
+        contentColor: Panels.isOpen("drives") ? Theme.accent : Theme.foreground
         tooltip: I18n.t("drives.tooltip")
-        onClicked: Panels.toggleDrives(root.screen)
+        onClicked: Panels.toggle("drives", root.screen)
     }
 
     // While an external screen is connected: its settings, the same as in the settings menu.
@@ -96,9 +96,9 @@ Row {
         anchors.verticalCenter: parent.verticalCenter
         visible: Displays.hasExternal
         icon: Icons.monitor
-        contentColor: Panels.displaysOpen ? Theme.accent : Theme.foreground
+        contentColor: Panels.isOpen("displays") ? Theme.accent : Theme.foreground
         tooltip: I18n.t("settings.displays")
-        onClicked: Panels.toggleDisplays(root.screen)
+        onClicked: Panels.toggle("displays", root.screen)
     }
 
     BarButton {
@@ -116,7 +116,7 @@ Row {
         icon: Power.profile === PowerProfile.Performance ? Icons.performance : Icons.powerSaver
         contentColor: Power.profile === PowerProfile.Performance ? Theme.warning : Theme.accent
         tooltip: Power.profile === PowerProfile.Performance ? I18n.t("power.profilePerformanceTooltip") : I18n.t("power.profileSaverTooltip")
-        onClicked: Panels.toggleBattery(root.screen)
+        onClicked: Panels.toggle("battery", root.screen)
     }
 
     BarButton {
@@ -144,7 +144,7 @@ Row {
         label: `${Math.round(Audio.volume * 100)}%`
         contentColor: Audio.muted ? Theme.muted : Theme.foreground
         tooltip: Audio.displayName(Audio.sink)
-        onClicked: Panels.toggleSound(root.screen)
+        onClicked: Panels.toggle("sound", root.screen)
         onScrolled: direction => {
             Audio.changeVolume(direction * 0.05);
             Indicator.show("volume");
@@ -163,14 +163,14 @@ Row {
         }) : I18n.t("battery.timeLeft", {
             time: Power.formatTime(Power.secondsLeft)
         })
-        onClicked: Panels.toggleBattery(root.screen)
+        onClicked: Panels.toggle("battery", root.screen)
     }
 
     // HyprDora's mark opens the action center, green while it is open.
     BarButton {
         id: actionCenterButton
         anchors.verticalCenter: parent.verticalCenter
-        contentColor: Panels.actionCenterOpen ? Theme.accent : Theme.foreground
+        contentColor: Panels.isOpen("actioncenter") ? Theme.accent : Theme.foreground
         tooltip: I18n.t("actionCenter.title")
         onClicked: Panels.toggleActionCenter(root.screen, "main")
 

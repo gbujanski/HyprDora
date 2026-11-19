@@ -64,7 +64,7 @@ Scope {
      * @param {string} kindName  "volume", "microphone", "display" or "keyboard"
      */
     function show(kindName) {
-        if (Panels.actionCenterOpen || (Panels.soundOpen && (kindName === "volume" || kindName === "microphone")))
+        if (Panels.isOpen("actioncenter") || (Panels.isOpen("sound") && (kindName === "volume" || kindName === "microphone")))
             return;
         kind = kindName;
         shown = true;

@@ -139,7 +139,7 @@ Singleton {
                         kind: root.kind(type, description ?? "")
                     };
                 }).filter(s => s.number > 0 && s.type !== "post").reverse();
-                Panels.closeActionCenter();
+                Panels.close("actioncenter");
                 root.windowOpen = true;
             } else if (action === "create") {
                 Quickshell.execDetached(["notify-send", `--app-name=${I18n.t("restore.title")}`, "--icon=drive-harddisk", I18n.t("restore.created")]);

@@ -12,7 +12,7 @@ User files in `~/.config/hypr` and `~/.config/hyprdora/settings.json` only overr
 
 `shell/services/` holds singletons that read state and perform actions, `shell/modules/` displays it, `shell/components/` holds reusable controls, and `shell/config/` holds the theme, settings and translations. Keeping these apart means a change in how a service gets its data does not touch the interface.
 
-Keybindings reach the shell through IPC: `qs -c hyprdora ipc call <target> <function>`.
+Keybindings reach the shell through IPC: `qs -c hyprdora ipc call <target> <function>`. Panels open by name through one target, `panel`: `panel toggle sound`, `panel page power` for an action center page, `panel settings displays` for a settings category, `panel launcher clipboard`. At most one panel is open at a time.
 
 To save power, closed panels are not kept in memory, statistics are read only while visible, and nothing polls or animates continuously.
 

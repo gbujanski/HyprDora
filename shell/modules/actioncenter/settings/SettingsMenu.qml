@@ -156,8 +156,10 @@ Item {
             root.place();
             placeDelay.restart();
         }
+        // The button goes with the main page, as when the action center closes; there is nothing to place then.
         function onSettingsButtonChanged() {
-            placeDelay.restart();
+            if (Panels.settingsButton)
+                placeDelay.restart();
         }
         function onSettingsCategoryChanged() {
             root.submenu = null;
@@ -175,7 +177,7 @@ Item {
             if (inside)
                 Panels.settingsMenuOpen = false;
             else
-                Panels.closeActionCenter();
+                Panels.close("actioncenter");
         }
     }
 

@@ -12,7 +12,7 @@ Column {
         width: parent.width
         text: I18n.t("restore.restoreFrom")
         onClicked: {
-            Panels.closeActionCenter();
+            Panels.close("actioncenter");
             SystemRestore.open();
         }
     }
@@ -21,7 +21,7 @@ Column {
         width: parent.width
         text: I18n.t("restore.create")
         onClicked: {
-            Panels.closeActionCenter();
+            Panels.close("actioncenter");
             SystemRestore.create();
         }
     }

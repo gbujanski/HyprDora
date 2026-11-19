@@ -300,7 +300,7 @@ Singleton {
     Timer {
         interval: 30000
         repeat: true
-        running: Panels.actionCenterOpen || Panels.notificationsOpen
+        running: Panels.isOpen("actioncenter") || Panels.isOpen("notifications")
         triggeredOnStart: true
         onTriggered: root.now = new Date()
     }

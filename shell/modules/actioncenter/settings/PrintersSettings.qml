@@ -185,7 +185,7 @@ Column {
                 anchors.verticalCenter: parent.verticalCenter
                 text: I18n.t("printers.scan")
                 onClicked: {
-                    Panels.closeActionCenter();
+                    Panels.close("actioncenter");
                     Printers.scan();
                 }
             }
@@ -203,7 +203,7 @@ Column {
         anchors.right: parent.right
         text: I18n.t("printers.more")
         onClicked: {
-            Panels.closeActionCenter();
+            Panels.close("actioncenter");
             Printers.openSettings();
         }
     }

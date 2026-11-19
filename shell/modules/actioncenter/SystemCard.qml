@@ -32,7 +32,7 @@ Column {
             tooltip: I18n.t("system.processes")
             onClicked: {
                 SystemStats.openMonitor();
-                Panels.closeActionCenter();
+                Panels.close("actioncenter");
             }
         }
     }

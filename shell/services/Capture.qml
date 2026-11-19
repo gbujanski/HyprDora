@@ -69,8 +69,8 @@ Singleton {
     function open() {
         if (recording)
             return;
-        Panels.closeActionCenter();
-        Panels.closeCalendar();
+        Panels.close("actioncenter");
+        Panels.close("calendar");
         overlayScreen = Panels.focusedScreen();
         hoveredScreen = overlayScreen;
         hoveredWindow = null;

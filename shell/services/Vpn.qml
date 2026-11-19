@@ -122,7 +122,7 @@ Singleton {
      * so the panel closes meanwhile and comes back on the VPN page.
      */
     function chooseFile() {
-        Panels.closeActionCenter();
+        Panels.close("actioncenter");
         if (!fileDialog.running)
             fileDialog.running = true;
     }
