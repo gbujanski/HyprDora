@@ -227,7 +227,7 @@ Singleton {
 
     Process {
         id: flatpakCheck
-        command: ["env", "LC_ALL=C", "flatpak", "remote-ls", "--updates", "--columns=name,version,download-size"]
+        command: ["env", "LC_ALL=C", "flatpak", "remote-ls", "--system", "--updates", "--columns=name,version,download-size"]
         stdout: StdioCollector {
             onStreamFinished: root.flatpakList = text.split("\n").filter(line => line.trim() !== "").map(line => {
                 const [name, version, size] = line.split("\t");

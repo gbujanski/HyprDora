@@ -39,6 +39,14 @@ Item {
             label: I18n.t("settings.accounts"),
             icon: Icons.cloud
         },
+        // Only on a computer with a touchpad.
+        ...(Touchpad.present ? [
+                {
+                    id: "touchpad",
+                    label: I18n.t("settings.touchpad"),
+                    icon: Icons.touchpad
+                }
+            ] : []),
         {
             id: "appearance",
             label: I18n.t("settings.appearance"),
@@ -336,6 +344,8 @@ Item {
                             return automationsSettings;
                         case "appearance":
                             return appearanceSettings;
+                        case "touchpad":
+                            return touchpadSettings;
                         case "accounts":
                             return accountsSettings;
                         case "printers":
@@ -432,6 +442,11 @@ Item {
     Component {
         id: appearanceSettings
         AppearanceSettings {}
+    }
+
+    Component {
+        id: touchpadSettings
+        TouchpadSettings {}
     }
 
     Component {

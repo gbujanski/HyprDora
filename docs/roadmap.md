@@ -314,6 +314,26 @@ Large:
 - [x] Password prompt for administrator actions in the style of the shell, replacing hyprpolkitagent: the shell is the session's polkit agent and shows polkit's message and action id; polkit's own helper checks the password
 - [x] Default applications in the settings: browser, mail, files, terminal, text editor, images, video, music and PDF, written to `mimeapps.list` and `xdg-terminals.list`, which SUPER+E and SUPER+T follow
 
+Fifth round (2026-11-19):
+
+- [ ] Touchpad scrolling direction in the settings, shown only when a touchpad is present
+- [ ] Wi-Fi and Bluetooth tiles: the arrow to their page has a grey hover that looks off on a switched-on tile, and flashes dark green before turning grey
+- [ ] Renaming a file or folder in Nautilus: after a few presses of an arrow key, or holding it, the cursor jumps one character back and forth
+- [ ] Removable drives on the bar (USB sticks, SD cards, USB disks): an icon while one is plugged in, a list on hover, and safe removal of each, which also powers it off as on Windows, with a clear sign when a drive cannot be removed yet
+- [ ] Update and restart: the download count showed 5/5 and 1 kB, then about 5/25 and a few MB, while the update panel said 600 MB
+- [ ] The sound icon on the bar opens a sound panel of its own, as Wi-Fi, Bluetooth and the battery have theirs; the sound controls are one component, used both there and in the action center, so the two look the same
+- [ ] With an external screen connected, an icon on the bar opens the display settings, the same as on the settings page, for quick changes
+- [ ] Calendar layout to consider: the month and weather on the left, events on the right, and nothing on the right when there are no events
+
+Before the repository goes public:
+
+- [ ] Updates for installed systems: HyprDora's packages come only from the ISO or a local build, so an installed system gets no fixes and cannot move to the next Fedora release, which needs hyprdora-release for it. A COPR project built from the GitHub repository, enabled by hyprdora-repos
+- [ ] README: the status still says virtual machines only; screenshots and a short tour of the shell
+- [ ] CI: linters on GitHub Actions, as planned in section 7
+- [ ] Review for personal content; decide whether hyprdora-extras (the author's own applications) stays on the ISO, becomes optional or moves out
+- [ ] With a published ISO, where to get the sources of the GPL packages it carries from RPM Fusion and COPR
+- [ ] A full `make iso` with sudo after the release identity change, and an install from the ISO on real hardware (the Broadcom and FaceTime drivers from the ISO not yet seen)
+
 Later: battery charge limit to about 80% (this MacBook does not allow it; the Legion has a conservation mode, so it returns with the Legion). For F3, the Hyprspace overview plugin worked in a nested Hyprland 0.57.1, but a plugin must be rebuilt for every Hyprland release, which would tie Hyprland updates to it, so the overview was built in the shell.
 
 ## 12. Resolved decisions

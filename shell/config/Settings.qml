@@ -68,6 +68,8 @@ Singleton {
 
     // Applications quit a few seconds after their last window closes, by Wayland application id: the command
     // that quits each. GNOME Software otherwise stays in the background as a service of about 400 MB.
+    // Touchpad scrolling that moves the content with the fingers, as on a phone; Touchpad writes it for Hyprland.
+    readonly property bool touchpadNaturalScroll: overrides.touchpadNaturalScroll ?? false
     readonly property var quitWithLastWindow: overrides.quitWithLastWindow ?? {
         "org.gnome.Software": ["gnome-software", "--quit"]
     }

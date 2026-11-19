@@ -80,6 +80,8 @@ Rectangle {
         visible: root.showChevron
         icon: Icons.chevronRight
         iconColor: Theme.muted
+        // A switched-on tile is green, so the arrow lights up in green too.
+        hoverColor: root.active ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.2) : Theme.surfaceHover
         onClicked: root.opened()
     }
 }

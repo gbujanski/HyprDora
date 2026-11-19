@@ -56,11 +56,12 @@ write_status() {
     mv -f "$status.new" "$status"
 }
 
-# Prints a size such as 15 MiB, 685.2 MB or 12 kB in bytes.
+# Prints a size such as 15 MiB, 685.2 MB or 12 kB in bytes. Flatpak puts a no-break space before the unit,
+# so everything but letters is dropped from it.
 to_bytes() {
     awk -v s="$1" 'BEGIN {
         if (!match(s, /[0-9.]+/)) { print 0; exit }
-        n = substr(s, RSTART, RLENGTH); u = substr(s, RSTART + RLENGTH); gsub(/ /, "", u)
+        n = substr(s, RSTART, RLENGTH); u = substr(s, RSTART + RLENGTH); gsub(/[^A-Za-z]/, "", u)
         p = index("KMGT", toupper(substr(u, 1, 1)))
         printf "%d\n", n * ((u ~ /i/) ? 1024 : 1000) ^ p
     }'
@@ -75,13 +76,25 @@ attempt() {
     state=preparing done=0 total=0 bytes=0 totalBytes=0 message=""
     write_status
 
-    # Flatpaks count as one item each, with their download sizes.
-    local apps=0 appBytes=0 size
+    # Everything is counted before anything downloads, so the totals on the screen stay put and match the
+    # update panel. Flatpaks count as one item each, with the sizes Flathub lists; they often download less,
+    # as only the changes come down.
+    local apps=0 appBytes=0 size line
     while IFS=$'\t' read -r _ size; do
         apps=$((apps + 1))
         appBytes=$((appBytes + $(to_bytes "$size")))
     done < <(flatpak remote-ls --system --updates --columns=application,download-size 2>/dev/null)
     total=$apps totalBytes=$appBytes
+    # The system's packages, as dnf would download them now; ones downloaded earlier are not counted.
+    while IFS= read -r line; do
+        if [[ $line =~ ^\ *(Installing|Upgrading|Downgrading|Reinstalling):\ +([0-9]+)\ packages? ]]; then
+            total=$((total + BASH_REMATCH[2]))
+        elif [[ $line =~ Need\ to\ download\ ([0-9.]+\ ?[KMGT]?i?B) ]]; then
+            totalBytes=$((totalBytes + $(to_bytes "${BASH_REMATCH[1]}")))
+        fi
+    done < <(dnf5 upgrade --assumeno --refresh 2>&1)
+    write_status
+
     if [ "$apps" -gt 0 ]; then
         state=downloading
         write_status
@@ -97,15 +110,11 @@ attempt() {
     # A transaction left from an earlier attempt would be installed instead of the current updates.
     dnf5 offline clean >/dev/null 2>&1
 
-    local line downloading=0 last="" problem=""
+    local downloading=0 last="" problem=""
     while IFS= read -r line; do
         last=$line
         [[ ${line,,} =~ error|failed ]] && problem=$line
-        if [[ $line =~ ^\ *(Installing|Upgrading|Downgrading|Reinstalling):\ +([0-9]+)\ packages? ]]; then
-            total=$((total + BASH_REMATCH[2]))
-        elif [[ $line =~ Need\ to\ download\ ([0-9.]+\ ?[KMGT]?i?B) ]]; then
-            totalBytes=$((totalBytes + $(to_bytes "${BASH_REMATCH[1]}")))
-        elif [[ $line == "Downloading Packages:"* ]]; then
+        if [[ $line == "Downloading Packages:"* ]]; then
             downloading=1 state=downloading
         elif [ "$downloading" = 1 ] && [[ $line =~ 100%\ \|.*\|\ +([0-9.]+\ [KMGT]?i?B)\ \| ]]; then
             done=$((done + 1))
@@ -114,7 +123,7 @@ attempt() {
             continue
         fi
         write_status
-    done < <(dnf5 upgrade --offline --refresh -y 2>&1; echo "HYPRDORA-EXIT $?")
+    done < <(dnf5 upgrade --offline -y 2>&1; echo "HYPRDORA-EXIT $?")
 
     if [ "$last" != "HYPRDORA-EXIT 0" ]; then
         message=${problem:-"dnf5: ${last#HYPRDORA-EXIT }"}
