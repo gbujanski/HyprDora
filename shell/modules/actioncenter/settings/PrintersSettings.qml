@@ -13,73 +13,6 @@ Column {
     Component.onCompleted: Printers.refresh()
 
     // One printer or scanner: an icon, its name and state, and buttons on the right.
-    component Device: Rectangle {
-        id: device
-
-        property string icon
-        property string title
-        property string detail
-        property bool highlighted: false
-        default property alias actions: actionRow.data
-
-        width: root.width
-        height: 40
-        radius: Theme.radius
-        color: area.containsMouse ? Theme.surface : "transparent"
-
-        MouseArea {
-            id: area
-            anchors.fill: parent
-            hoverEnabled: true
-        }
-
-        Icon {
-            id: deviceIcon
-            anchors {
-                left: parent.left
-                leftMargin: 8
-                verticalCenter: parent.verticalCenter
-            }
-            text: device.icon
-            color: device.highlighted ? Theme.accent : Theme.muted
-        }
-
-        Column {
-            anchors {
-                left: deviceIcon.right
-                right: actionRow.left
-                leftMargin: 10
-                rightMargin: 6
-                verticalCenter: parent.verticalCenter
-            }
-
-            Label {
-                width: parent.width
-                text: device.title
-                elide: Text.ElideRight
-            }
-
-            Label {
-                width: parent.width
-                visible: text !== ""
-                text: device.detail
-                color: Theme.muted
-                font.pixelSize: Theme.fontSizeSmall
-                elide: Text.ElideRight
-            }
-        }
-
-        Row {
-            id: actionRow
-            anchors {
-                right: parent.right
-                rightMargin: 4
-                verticalCenter: parent.verticalCenter
-            }
-            spacing: 2
-        }
-    }
-
     Item {
         width: root.width
         height: 24
@@ -101,57 +34,68 @@ Column {
     Repeater {
         model: Printers.printers
 
-        Device {
+        ItemRow {
+            id: printer
+
             required property var modelData
 
+            width: root.width
             icon: Icons.printer
+            iconColor: modelData.isDefault ? Theme.accent : Theme.muted
             title: modelData.name.replace(/_/g, " ")
-            detail: [modelData.isDefault ? I18n.t("printers.default") : "", I18n.t(`printers.state.${modelData.state}`)].filter(Boolean).join(" · ")
-            highlighted: modelData.isDefault
+            subtitle: [modelData.isDefault ? I18n.t("printers.default") : "", I18n.t(`printers.state.${modelData.state}`)].filter(Boolean).join(" · ")
+            interactive: false
 
-            Spinner {
-                anchors.verticalCenter: parent.verticalCenter
-                running: Printers.busy === parent.parent.modelData?.name
-            }
-
-            IconButton {
-                visible: !parent.parent.modelData?.isDefault
-                icon: Icons.star
-                iconColor: Theme.muted
-                tooltip: I18n.t("printers.setDefault")
-                onClicked: Printers.setDefault(parent.parent.modelData)
-            }
-
-            IconButton {
-                icon: Icons.trash
-                iconColor: Theme.muted
-                tooltip: I18n.t("printers.remove")
-                onClicked: Printers.remove(parent.parent.modelData)
-            }
+            trailing: [
+                Spinner {
+                    anchors.verticalCenter: parent.verticalCenter
+                    running: Printers.busy === printer.modelData.name
+                },
+                IconButton {
+                    anchors.verticalCenter: parent.verticalCenter
+                    visible: !printer.modelData.isDefault
+                    icon: Icons.star
+                    iconColor: Theme.muted
+                    tooltip: I18n.t("printers.setDefault")
+                    onClicked: Printers.setDefault(printer.modelData)
+                },
+                DeleteButton {
+                    anchors.verticalCenter: parent.verticalCenter
+                    label: I18n.t("printers.remove")
+                    onConfirmed: Printers.remove(printer.modelData)
+                }
+            ]
         }
     }
 
     Repeater {
         model: Printers.found
 
-        Device {
+        ItemRow {
+            id: found
+
             required property var modelData
 
+            width: root.width
             icon: Icons.printer
+            iconColor: Theme.muted
             title: modelData.name
-            detail: I18n.t("printers.foundOnNetwork")
+            subtitle: I18n.t("printers.foundOnNetwork")
+            interactive: false
 
-            Spinner {
-                anchors.verticalCenter: parent.verticalCenter
-                running: Printers.busy === parent.parent.modelData?.name
-            }
-
-            IconButton {
-                icon: Icons.plus
-                iconColor: Theme.accent
-                tooltip: I18n.t("printers.add")
-                onClicked: Printers.add(parent.parent.modelData)
-            }
+            trailing: [
+                Spinner {
+                    anchors.verticalCenter: parent.verticalCenter
+                    running: Printers.busy === found.modelData.name
+                },
+                IconButton {
+                    anchors.verticalCenter: parent.verticalCenter
+                    icon: Icons.plus
+                    iconColor: Theme.accent
+                    tooltip: I18n.t("printers.add")
+                    onClicked: Printers.add(found.modelData)
+                }
+            ]
         }
     }
 
@@ -175,13 +119,16 @@ Column {
     Repeater {
         model: Printers.scanners
 
-        Device {
+        ItemRow {
             required property var modelData
 
+            width: root.width
             icon: Icons.scanner
+            iconColor: Theme.muted
             title: modelData.name
+            interactive: false
 
-            TextButton {
+            trailing: TextButton {
                 anchors.verticalCenter: parent.verticalCenter
                 text: I18n.t("printers.scan")
                 onClicked: {

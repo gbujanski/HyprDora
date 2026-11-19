@@ -245,7 +245,8 @@ Item {
                         }
                     }
 
-                    Rectangle {
+                    // Hovering a category opens it, as a click does.
+                    ItemRow {
                         id: row
 
                         readonly property var modelData: entry.modelData
@@ -253,53 +254,21 @@ Item {
 
                         width: list.width
                         height: root.rowHeight
-                        radius: Theme.radius
-                        color: current || rowArea.containsMouse ? Theme.surface : "transparent"
-
-                        Icon {
-                            id: rowIcon
-                            anchors {
-                                left: parent.left
-                                leftMargin: 10
-                                verticalCenter: parent.verticalCenter
-                            }
-                            text: row.modelData.icon
-                            color: row.current ? Theme.accent : Theme.muted
+                        icon: modelData.icon
+                        iconColor: current ? Theme.accent : Theme.muted
+                        title: modelData.label
+                        highlighted: current
+                        onHoveredChanged: {
+                            if (hovered)
+                                Panels.settingsCategory = modelData.id;
                         }
+                        onClicked: Panels.settingsCategory = modelData.id
 
-                        Label {
-                            anchors {
-                                left: rowIcon.right
-                                right: chevron.left
-                                leftMargin: 10
-                                rightMargin: 6
-                                verticalCenter: parent.verticalCenter
-                            }
-                            text: row.modelData.label
-                            elide: Text.ElideRight
-                        }
-
-                        Icon {
-                            id: chevron
-                            anchors {
-                                right: parent.right
-                                rightMargin: 8
-                                verticalCenter: parent.verticalCenter
-                            }
+                        trailing: Icon {
+                            anchors.verticalCenter: parent.verticalCenter
+                            rightPadding: 4
                             text: Icons.chevronRight
                             color: Theme.muted
-                        }
-
-                        MouseArea {
-                            id: rowArea
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onContainsMouseChanged: {
-                                if (containsMouse)
-                                    Panels.settingsCategory = row.modelData.id;
-                            }
-                            onClicked: Panels.settingsCategory = row.modelData.id
                         }
                     }
                 }

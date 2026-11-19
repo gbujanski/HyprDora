@@ -26,7 +26,7 @@ Column {
     Repeater {
         model: Vpn.connections
 
-        Rectangle {
+        ItemRow {
             id: row
 
             required property var modelData
@@ -37,8 +37,68 @@ Column {
             readonly property string statistics: modelData.device !== "" ? `/sys/class/net/${modelData.device}/statistics` : ""
 
             width: parent.width
-            implicitHeight: connected && statistics !== "" ? 60 : 44
-            radius: Theme.radius
+            icon: Icons.vpn
+            title: modelData.name
+            subtitle: (modelData.kind === "wireguard" ? "WireGuard" : "OpenVPN") + " · " + (working ? I18n.t("status.connecting") : connected ? I18n.t("vpn.connected") : I18n.t("vpn.disconnected"))
+            highlighted: connected
+            interactive: !connected
+            onClicked: Vpn.connect(modelData.uuid)
+
+            details: Row {
+                visible: row.connected && row.statistics !== ""
+                spacing: 4
+
+                Icon {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: Icons.arrowUp
+                    color: Theme.muted
+                    font.pixelSize: Theme.fontSizeSmall
+                }
+
+                Label {
+                    text: Vpn.formatBytes(Number(sent.text().trim()) || 0)
+                    color: Theme.muted
+                    font.pixelSize: Theme.fontSizeSmall
+                }
+
+                Item {
+                    width: 6
+                    height: 1
+                }
+
+                Icon {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: Icons.arrowDown
+                    color: Theme.muted
+                    font.pixelSize: Theme.fontSizeSmall
+                }
+
+                Label {
+                    text: Vpn.formatBytes(Number(received.text().trim()) || 0)
+                    color: Theme.muted
+                    font.pixelSize: Theme.fontSizeSmall
+                }
+            }
+
+            trailing: [
+                Spinner {
+                    anchors.verticalCenter: parent.verticalCenter
+                    running: row.working
+                },
+                IconButton {
+                    anchors.verticalCenter: parent.verticalCenter
+                    visible: row.connected
+                    icon: Icons.close
+                    iconColor: Theme.muted
+                    tooltip: I18n.t("vpn.disconnect")
+                    onClicked: Vpn.disconnect(row.modelData.uuid)
+                },
+                DeleteButton {
+                    anchors.verticalCenter: parent.verticalCenter
+                    label: I18n.t("vpn.delete")
+                    onConfirmed: Vpn.remove(row.modelData.uuid)
+                }
+            ]
 
             FileView {
                 id: sent
@@ -59,118 +119,6 @@ Column {
                 onTriggered: {
                     sent.reload();
                     received.reload();
-                }
-            }
-            color: connected || area.containsMouse ? Theme.surface : "transparent"
-
-            MouseArea {
-                id: area
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    if (!row.connected)
-                        Vpn.connect(row.modelData.uuid);
-                }
-            }
-
-            Icon {
-                id: vpnIcon
-                anchors {
-                    left: parent.left
-                    leftMargin: 10
-                    verticalCenter: parent.verticalCenter
-                }
-                text: Icons.vpn
-                color: row.connected ? Theme.accent : Theme.foreground
-            }
-
-            Column {
-                anchors {
-                    left: vpnIcon.right
-                    right: actions.left
-                    leftMargin: 10
-                    rightMargin: 6
-                    verticalCenter: parent.verticalCenter
-                }
-
-                Label {
-                    width: parent.width
-                    text: row.modelData.name
-                    elide: Text.ElideRight
-                }
-
-                Label {
-                    width: parent.width
-                    text: (row.modelData.kind === "wireguard" ? "WireGuard" : "OpenVPN") + " · " + (row.working ? I18n.t("status.connecting") : row.connected ? I18n.t("vpn.connected") : I18n.t("vpn.disconnected"))
-                    color: Theme.muted
-                    font.pixelSize: Theme.fontSizeSmall
-                    elide: Text.ElideRight
-                }
-
-                Row {
-                    visible: row.connected && row.statistics !== ""
-                    spacing: 4
-
-                    Icon {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: Icons.arrowUp
-                        color: Theme.muted
-                        font.pixelSize: Theme.fontSizeSmall
-                    }
-
-                    Label {
-                        text: Vpn.formatBytes(Number(sent.text().trim()) || 0)
-                        color: Theme.muted
-                        font.pixelSize: Theme.fontSizeSmall
-                    }
-
-                    Item {
-                        width: 6
-                        height: 1
-                    }
-
-                    Icon {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: Icons.arrowDown
-                        color: Theme.muted
-                        font.pixelSize: Theme.fontSizeSmall
-                    }
-
-                    Label {
-                        text: Vpn.formatBytes(Number(received.text().trim()) || 0)
-                        color: Theme.muted
-                        font.pixelSize: Theme.fontSizeSmall
-                    }
-                }
-            }
-
-            Row {
-                id: actions
-                anchors {
-                    right: parent.right
-                    rightMargin: 4
-                    verticalCenter: parent.verticalCenter
-                }
-
-                Spinner {
-                    anchors.verticalCenter: parent.verticalCenter
-                    running: row.working
-                }
-
-                IconButton {
-                    visible: row.connected
-                    icon: Icons.close
-                    iconColor: Theme.muted
-                    tooltip: I18n.t("vpn.disconnect")
-                    onClicked: Vpn.disconnect(row.modelData.uuid)
-                }
-
-                IconButton {
-                    icon: Icons.trash
-                    iconColor: Theme.muted
-                    tooltip: I18n.t("vpn.delete")
-                    onClicked: Vpn.remove(row.modelData.uuid)
                 }
             }
         }

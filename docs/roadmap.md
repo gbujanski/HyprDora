@@ -341,8 +341,8 @@ Review of the whole project (2026-11-19), in stages, each ending in a report the
   - [x] S1. One frame for the panels at the bar (BarPanel): the window, closing by a click outside and Esc, the delay before the window goes, the slide in, the background
   - [x] S2. One way to open panels in Panels.qml instead of a copy of open, close, toggle and IPC per panel; the IPC names change, and every script and binding that called the old ones changes with them
   - [x] S3. Font sizes and corner radii as named tokens in Theme instead of numbers written in place
-  - [ ] S4. One list row (ItemRow): icon, title, subtitle, buttons on the right, hover and the active row's highlight
-  - [ ] S5. One delete button that asks for a second click; deleting a VPN connection or a printer, one click so far, asks for it too
+  - [x] S4. One list row (ItemRow): icon, title, subtitle, buttons on the right, hover and the active row's highlight
+  - [x] S5. One delete button that asks for a second click; deleting a VPN connection or a printer, one click so far, asks for it too
   - [ ] S6. One row with a slider for brightness and volume
   - [ ] S7. ConfirmButton among the shared components
   - [ ] S8. Wi-Fi's, Bluetooth's and VPN's icon and summary worked out in their services, with a shared base where their logic overlaps

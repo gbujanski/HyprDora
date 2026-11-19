@@ -117,61 +117,22 @@ Column {
             width: root.width
             spacing: 4
 
-            Rectangle {
+            // Indented under the drive's name.
+            ItemRow {
                 width: parent.width
-                height: 40
-                radius: Theme.radius
-                color: volumeArea.containsMouse ? Theme.surface : "transparent"
-
-                Icon {
-                    id: volumeIcon
-                    anchors {
-                        left: parent.left
-                        leftMargin: 38
-                        verticalCenter: parent.verticalCenter
+                indent: 28
+                icon: volumeItem.locked ? Icons.lock : volumeItem.volume.encrypted ? Icons.lockOpen : Icons.folder
+                iconColor: volumeItem.mounted ? Theme.foreground : Theme.muted
+                title: volumeItem.volume.label || volumeItem.volume.device
+                subtitle: [Updates.formatSize(volumeItem.volume.size), volumeItem.locked ? I18n.t("drives.locked") : volumeItem.mounted ? "" : I18n.t("drives.notMounted")].filter(s => s).join(" · ")
+                interactive: !root.removing
+                onClicked: {
+                    if (volumeItem.locked) {
+                        root.asking = root.asking === volumeItem.volume.device ? "" : volumeItem.volume.device;
+                        return;
                     }
-                    text: volumeItem.locked ? Icons.lock : volumeItem.volume.encrypted ? Icons.lockOpen : Icons.folder
-                    color: volumeItem.mounted ? Theme.foreground : Theme.muted
-                }
-
-                Column {
-                    anchors {
-                        left: volumeIcon.right
-                        right: parent.right
-                        leftMargin: 10
-                        rightMargin: 8
-                        verticalCenter: parent.verticalCenter
-                    }
-
-                    Label {
-                        width: parent.width
-                        text: volumeItem.volume.label || volumeItem.volume.device
-                        elide: Text.ElideRight
-                    }
-
-                    Label {
-                        width: parent.width
-                        text: [Updates.formatSize(volumeItem.volume.size), volumeItem.locked ? I18n.t("drives.locked") : volumeItem.mounted ? "" : I18n.t("drives.notMounted")].filter(s => s).join(" · ")
-                        color: Theme.muted
-                        font.pixelSize: Theme.fontSizeSmall
-                        elide: Text.ElideRight
-                    }
-                }
-
-                MouseArea {
-                    id: volumeArea
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    enabled: !root.removing
-                    onClicked: {
-                        if (volumeItem.locked) {
-                            root.asking = root.asking === volumeItem.volume.device ? "" : volumeItem.volume.device;
-                            return;
-                        }
-                        Drives.open(volumeItem.volume);
-                        Panels.close("drives");
-                    }
+                    Drives.open(volumeItem.volume);
+                    Panels.close("drives");
                 }
             }
 

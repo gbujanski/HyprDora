@@ -18,58 +18,22 @@ Column {
     Repeater {
         model: OnlineAccounts.accounts
 
-        Rectangle {
+        ItemRow {
+            id: account
+
             required property var modelData
 
             width: root.width
-            height: 48
-            radius: Theme.radius
-            color: Theme.surface
+            icon: Icons.cloud
+            title: OnlineAccounts.providers.find(p => p.value === modelData.provider)?.label ?? modelData.provider
+            subtitle: `${modelData.login} · ${modelData.server.replace(/^https?:\/\//, "")}`
+            highlighted: true
+            interactive: false
 
-            Icon {
-                id: accountIcon
-                anchors {
-                    left: parent.left
-                    leftMargin: 10
-                    verticalCenter: parent.verticalCenter
-                }
-                text: Icons.cloud
-                color: Theme.accent
-            }
-
-            Column {
-                anchors {
-                    left: accountIcon.right
-                    right: signOut.left
-                    leftMargin: 10
-                    rightMargin: 8
-                    verticalCenter: parent.verticalCenter
-                }
-
-                Label {
-                    width: parent.width
-                    text: OnlineAccounts.providers.find(p => p.value === parent.parent.modelData.provider)?.label ?? parent.parent.modelData.provider
-                    font.weight: Font.Medium
-                }
-
-                Label {
-                    width: parent.width
-                    text: `${parent.parent.modelData.login} · ${parent.parent.modelData.server.replace(/^https?:\/\//, "")}`
-                    color: Theme.muted
-                    font.pixelSize: Theme.fontSizeSmall
-                    elide: Text.ElideRight
-                }
-            }
-
-            TextButton {
-                id: signOut
-                anchors {
-                    right: parent.right
-                    rightMargin: 8
-                    verticalCenter: parent.verticalCenter
-                }
+            trailing: TextButton {
+                anchors.verticalCenter: parent.verticalCenter
                 text: I18n.t("accounts.signOut")
-                onClicked: OnlineAccounts.remove(parent.modelData)
+                onClicked: OnlineAccounts.remove(account.modelData)
             }
         }
     }
