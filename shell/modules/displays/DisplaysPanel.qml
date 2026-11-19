@@ -4,7 +4,6 @@ import Quickshell.Wayland
 import qs.config
 import qs.components
 import qs.services
-import qs.modules.actioncenter.pages
 
 // The display settings under the bar's display icon, shown while an external screen is connected: the same
 // page as in the settings menu. Like the other panels, a click outside or Esc closes it, and a closed window

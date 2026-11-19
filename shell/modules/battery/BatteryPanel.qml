@@ -6,8 +6,9 @@ import qs.config
 import qs.components
 import qs.services
 
-// Battery state and power profiles under the battery icon. Like the other panels, a click outside or Esc
-// closes it, and a closed window does not exist.
+// Battery state and power profiles under the battery icon, and under the power profile icon. Without a
+// battery, as on a desktop, it holds the profiles alone. Like the other panels, a click outside or Esc closes
+// it, and a closed window does not exist.
 Scope {
     Connections {
         target: Panels
@@ -104,6 +105,7 @@ Scope {
 
                     Row {
                         width: parent.width
+                        visible: Power.hasBattery
                         spacing: 12
 
                         Icon {

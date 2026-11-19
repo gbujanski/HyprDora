@@ -14,7 +14,6 @@ Scope {
             wifi: "Wi-Fi",
             bluetooth: "Bluetooth",
             power: I18n.t("page.power"),
-            displays: I18n.t("page.displays"),
             vpn: "VPN"
         })
 
@@ -174,8 +173,6 @@ Scope {
                                     return bluetoothPage;
                                 case "power":
                                     return powerPage;
-                                case "displays":
-                                    return displaysPage;
                                 case "vpn":
                                     return vpnPage;
                                 default:
@@ -226,11 +223,6 @@ Scope {
                 Component {
                     id: powerPage
                     PowerPage {}
-                }
-
-                Component {
-                    id: displaysPage
-                    DisplaysPage {}
                 }
 
                 Component {

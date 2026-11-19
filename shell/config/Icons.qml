@@ -51,7 +51,6 @@ Singleton {
     readonly property string scanner: glyph(0xF06AB)
     readonly property string star: glyph(0xF04CE)
     readonly property string restore: glyph(0xF02DA)
-    readonly property string snapshot: glyph(0xF0419)
     readonly property string arrowUp: glyph(0xF005D)
     readonly property string arrowDown: glyph(0xF0045)
     readonly property string ethernet: glyph(0xF0200)

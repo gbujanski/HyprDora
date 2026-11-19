@@ -109,13 +109,14 @@ Row {
         tooltip: I18n.t("network.wired")
     }
 
+    // A profile other than balanced; the battery panel, which holds the profiles, opens from it.
     BarButton {
         anchors.verticalCenter: parent.verticalCenter
         visible: Power.profile !== PowerProfile.Balanced
         icon: Power.profile === PowerProfile.Performance ? Icons.performance : Icons.powerSaver
         contentColor: Power.profile === PowerProfile.Performance ? Theme.warning : Theme.accent
         tooltip: Power.profile === PowerProfile.Performance ? I18n.t("power.profilePerformanceTooltip") : I18n.t("power.profileSaverTooltip")
-        onClicked: Panels.toggleActionCenter(root.screen, "main")
+        onClicked: Panels.toggleBattery(root.screen)
     }
 
     BarButton {

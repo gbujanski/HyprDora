@@ -327,6 +327,22 @@ Fifth round (2026-11-19):
 - [x] Calendar in two columns: the month and the weather on the left, the selected day's events on the right, always shown, with "No events today", "tomorrow" or "on this day" when there are none; the panel is as tall as the left column, and a long list or the new event form scrolls
 - [x] Weather and date on the bar as one element: hovering either lights up only itself, which suggests two separate things, while both open the same panel
 
+Review of the whole project (2026-11-19), in stages, each ending in a report the author decides on before anything changes; what one stage finds may change the next:
+
+- [x] 0. A map: every module, component, service and script, and what uses what
+- [x] 1. What belongs where: settings that deserve the action center or the bar, things buried too deep, things missing. Decided:
+  - [x] A1. The action center's displays page goes; nothing opens it any more, and the displays live in the settings and the bar's panel
+  - [x] A2. The bar's power profile icon opens the battery panel, which holds the profiles, not the whole action center
+  - [x] A3. Restoring the system and taking a snapshot leave the list of setting categories as one category, "System restore", whose page holds both
+  - [x] A4. The settings menu in groups: devices; look and behaviour; region; account and system
+  - [ ] After the review: a keyboard shortcut cheat sheet on a key (B1); keyboard layouts in the settings, with a bar indicator for more than one (C1); "Mouse and touchpad" with pointer speed and tap to click (C2); choosing the wallpaper in the settings (C3)
+  - Not done: a do-not-disturb tile and a dark theme tile in the action center, night light. Kept as they are: Wi-Fi, Bluetooth and VPN open the action center's pages from the bar; the system card stays in the action center
+- [ ] 2. Shared components: one component wherever two places show the same thing (Wi-Fi, Bluetooth, sound, buttons that differ only in their icon), with what differs passed in; values written in place of Theme's tokens
+- [ ] 3. Code quality: better ways to solve a problem, clean code, dead code, translation keys unused or missing in one language, background processes, timers and polling, keyboard use (Esc, arrows) the same in every panel
+- [ ] 4. Security, on the code as it stands after the stages above; anything serious found earlier is reported at once
+- [ ] 5. Documentation: docs/ and the README describe what the code does after the review
+- The whole project is in scope: the shell, the Hyprland config, scripts, packaging and the kickstart
+
 Before the repository goes public:
 
 - [ ] Updates for installed systems: HyprDora's packages come only from the ISO or a local build, so an installed system gets no fixes and cannot move to the next Fedora release, which needs hyprdora-release for it. A COPR project built from the GitHub repository, enabled by hyprdora-repos

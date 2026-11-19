@@ -2,94 +2,104 @@ import QtQuick
 import qs.config
 import qs.components
 import qs.services
-import qs.modules.actioncenter.pages
+import qs.modules.displays
 
 // Category list under the action center's settings button. Hovering a category opens its settings beside the list.
 Item {
     id: root
 
+    // In groups, with a line between them: devices; look and behaviour; region; account and system.
     readonly property var categories: [
-        {
-            id: "idle",
-            label: I18n.t("settings.idle"),
-            icon: Icons.idle
-        },
-        {
-            id: "language",
-            label: I18n.t("settings.language"),
-            icon: Icons.language
-        },
-        {
-            id: "weather",
-            label: I18n.t("settings.weather"),
-            icon: Icons.place
-        },
         {
             id: "displays",
             label: I18n.t("settings.displays"),
-            icon: Icons.monitor
-        },
-        {
-            id: "printers",
-            label: I18n.t("settings.printers"),
-            icon: Icons.printer
-        },
-        {
-            id: "accounts",
-            label: I18n.t("settings.accounts"),
-            icon: Icons.cloud
+            icon: Icons.monitor,
+            group: 0
         },
         // Only on a computer with a touchpad.
         ...(Touchpad.present ? [
                 {
                     id: "touchpad",
                     label: I18n.t("settings.touchpad"),
-                    icon: Icons.touchpad
+                    icon: Icons.touchpad,
+                    group: 0
                 }
             ] : []),
         {
+            id: "printers",
+            label: I18n.t("settings.printers"),
+            icon: Icons.printer,
+            group: 0
+        },
+        {
             id: "appearance",
             label: I18n.t("settings.appearance"),
-            icon: Icons.palette
+            icon: Icons.palette,
+            group: 1
+        },
+        {
+            id: "idle",
+            label: I18n.t("settings.idle"),
+            icon: Icons.idle,
+            group: 1
         },
         {
             id: "automations",
             label: I18n.t("settings.automations"),
-            icon: Icons.automation
+            icon: Icons.automation,
+            group: 1
         },
         {
             id: "defaultApps",
             label: I18n.t("settings.defaultApps"),
-            icon: Icons.apps
+            icon: Icons.apps,
+            group: 1
         },
         {
             id: "shortcuts",
             label: I18n.t("settings.shortcuts"),
-            icon: Icons.keyboard
+            icon: Icons.keyboard,
+            group: 1
         },
         {
-            id: "about",
-            label: I18n.t("settings.about"),
-            icon: Icons.info
+            id: "language",
+            label: I18n.t("settings.language"),
+            icon: Icons.language,
+            group: 2
         },
-        // Actions rather than categories: a click runs them, after the administrator password.
+        {
+            id: "weather",
+            label: I18n.t("settings.weather"),
+            icon: Icons.place,
+            group: 2
+        },
+        {
+            id: "accounts",
+            label: I18n.t("settings.accounts"),
+            icon: Icons.cloud,
+            group: 3
+        },
         {
             id: "restore",
             label: I18n.t("settings.restore"),
             icon: Icons.restore,
-            action: () => SystemRestore.open()
+            group: 3
         },
         {
-            id: "snapshot",
-            label: I18n.t("settings.snapshot"),
-            icon: Icons.snapshot,
-            action: () => SystemRestore.create()
+            id: "about",
+            label: I18n.t("settings.about"),
+            icon: Icons.info,
+            group: 3
         }
     ]
     readonly property int currentIndex: categories.findIndex(c => c.id === Panels.settingsCategory)
     readonly property var current: categories[currentIndex] ?? null
     readonly property int rowHeight: 34
     readonly property int rowSpacing: 2
+    // The line between groups, with its margins.
+    readonly property int groupGap: 9
+    // Where the current row starts in the list, past the rows and group lines above it.
+    readonly property real currentOffset: currentIndex < 0 ? 0 : currentIndex * (rowHeight + rowSpacing) + categories.slice(1, currentIndex + 1).filter((c, i) => c.group !== categories[i].group).length * (groupGap + rowSpacing)
 
     // The action center panel, to tell a click on it from a click outside.
     property Item actionCenter: null
@@ -205,69 +215,89 @@ Item {
             Repeater {
                 model: root.categories
 
-                Rectangle {
-                    id: row
+                Column {
+                    id: entry
 
                     required property var modelData
-                    readonly property bool current: Panels.settingsCategory === modelData.id
+                    required property int index
 
                     width: list.width
-                    height: root.rowHeight
-                    radius: Theme.radius
-                    color: current || rowArea.containsMouse ? Theme.surface : "transparent"
+                    spacing: root.rowSpacing
 
-                    Icon {
-                        id: rowIcon
-                        anchors {
-                            left: parent.left
-                            leftMargin: 10
-                            verticalCenter: parent.verticalCenter
-                        }
-                        text: row.modelData.icon
-                        color: row.current ? Theme.accent : Theme.muted
-                    }
+                    // A line before the first category of a group.
+                    Item {
+                        width: entry.width
+                        height: root.groupGap
+                        visible: entry.index > 0 && root.categories[entry.index - 1].group !== entry.modelData.group
 
-                    Label {
-                        anchors {
-                            left: rowIcon.right
-                            right: chevron.left
-                            leftMargin: 10
-                            rightMargin: 6
-                            verticalCenter: parent.verticalCenter
-                        }
-                        text: row.modelData.label
-                        elide: Text.ElideRight
-                    }
-
-                    Icon {
-                        id: chevron
-                        anchors {
-                            right: parent.right
-                            rightMargin: 8
-                            verticalCenter: parent.verticalCenter
-                        }
-                        visible: !row.modelData.action
-                        text: Icons.chevronRight
-                        color: Theme.muted
-                    }
-
-                    MouseArea {
-                        id: rowArea
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onContainsMouseChanged: {
-                            if (containsMouse)
-                                Panels.settingsCategory = row.modelData.action ? "" : row.modelData.id;
-                        }
-                        onClicked: {
-                            if (!row.modelData.action) {
-                                Panels.settingsCategory = row.modelData.id;
-                                return;
+                        Rectangle {
+                            anchors {
+                                left: parent.left
+                                right: parent.right
+                                leftMargin: 8
+                                rightMargin: 8
+                                verticalCenter: parent.verticalCenter
                             }
-                            // The password prompt is an ordinary window, which the action center would cover.
-                            Panels.closeActionCenter();
-                            row.modelData.action();
+                            height: 1
+                            color: Theme.surface
+                        }
+                    }
+
+                    Rectangle {
+                        id: row
+
+                        readonly property var modelData: entry.modelData
+                        readonly property bool current: Panels.settingsCategory === modelData.id
+
+                        width: list.width
+                        height: root.rowHeight
+                        radius: Theme.radius
+                        color: current || rowArea.containsMouse ? Theme.surface : "transparent"
+
+                        Icon {
+                            id: rowIcon
+                            anchors {
+                                left: parent.left
+                                leftMargin: 10
+                                verticalCenter: parent.verticalCenter
+                            }
+                            text: row.modelData.icon
+                            color: row.current ? Theme.accent : Theme.muted
+                        }
+
+                        Label {
+                            anchors {
+                                left: rowIcon.right
+                                right: chevron.left
+                                leftMargin: 10
+                                rightMargin: 6
+                                verticalCenter: parent.verticalCenter
+                            }
+                            text: row.modelData.label
+                            elide: Text.ElideRight
+                        }
+
+                        Icon {
+                            id: chevron
+                            anchors {
+                                right: parent.right
+                                rightMargin: 8
+                                verticalCenter: parent.verticalCenter
+                            }
+                            text: Icons.chevronRight
+                            color: Theme.muted
+                        }
+
+                        MouseArea {
+                            id: rowArea
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onContainsMouseChanged: {
+                                if (containsMouse)
+                                    Panels.settingsCategory = row.modelData.id;
+                            }
+                            onClicked: Panels.settingsCategory = row.modelData.id
                         }
                     }
                 }
@@ -282,7 +312,7 @@ Item {
         // Beside the list, but never past the left edge of the screen.
         x: Math.max(Theme.panelMargin, menu.x - width - 6)
         // Level with the category's row, but always on screen.
-        y: Math.max(Theme.panelMargin, Math.min(menu.y + root.currentIndex * (root.rowHeight + root.rowSpacing), root.height - height - Theme.panelMargin))
+        y: Math.max(Theme.panelMargin, Math.min(menu.y + root.currentOffset, root.height - height - Theme.panelMargin))
         // The display layout needs the width of the panel.
         width: ["displays", "shortcuts", "automations", "accounts", "printers", "about"].includes(Panels.settingsCategory) ? Theme.panelWidth : 320
         height: Math.min(content.implicitHeight + Theme.panelPadding * 2, root.height - Theme.panelMargin * 2)
@@ -346,6 +376,8 @@ Item {
                             return appearanceSettings;
                         case "touchpad":
                             return touchpadSettings;
+                        case "restore":
+                            return restoreSettings;
                         case "accounts":
                             return accountsSettings;
                         case "printers":
@@ -447,6 +479,11 @@ Item {
     Component {
         id: touchpadSettings
         TouchpadSettings {}
+    }
+
+    Component {
+        id: restoreSettings
+        RestoreSettings {}
     }
 
     Component {
