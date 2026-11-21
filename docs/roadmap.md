@@ -2,6 +2,8 @@
 
 Status: **accepted** · Created: 2026-11-08
 
+The plan as accepted, and the record of the work since. Sections 2 and 3 show the repository and the system as first planned; the current state is described in [architecture](architecture.md) and [installation](installation.md).
+
 ## 1. Goals
 
 - One product in one new repository with a fresh commit history. The old project is kept unchanged as `HyprDora-legacy`.
@@ -368,7 +370,12 @@ Review of the whole project (2026-11-19), in stages, each ending in a report the
   - [x] S5. Ten wrong passwords lock the account for five minutes on new installs (faillock); the lock screen shows PAM's reason
   - [x] S7. Clipboard history in memory only ($XDG_RUNTIME_DIR), so a password copied by hand never reaches the disk; it ends with the session
   - Kept: disk encryption stays the installer's choice; Hyprland's permission system and fake password windows, which the shell cannot prevent
-- [ ] 5. Documentation: docs/ and the README describe what the code does after the review
+- [x] 5. Documentation: docs/ and the README describe what the code does after the review
+  - [x] The README's layout and links, the architecture (folders, EventSources and ScheduledTask, panels, root helpers), make install, the testing checklist, known issues, every installed file, and hardware quirks found in stages 3 and 4
+  - [x] docs/security.md, and decisions 10 (EventSources and ScheduledTask) and 11 (stricter security settings)
+  - [x] The nested test runner in the repository: tools/nested-test.sh
+  - [x] Comments that still placed the notification history in the action center
+  - [x] Toasts end when the notification panel opens, which lists them, and a notification arriving while it is open shows only there
 - The whole project is in scope: the shell, the Hyprland config, scripts, packaging and the kickstart
 
 Before the repository goes public:

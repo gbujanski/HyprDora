@@ -3,7 +3,7 @@ import qs.config
 import qs.components
 import qs.services
 
-// Card shared by toasts and the action center history.
+// Card shared by toasts and the history in the notification panel.
 Rectangle {
     id: root
 

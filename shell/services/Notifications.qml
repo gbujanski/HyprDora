@@ -6,7 +6,7 @@ import Quickshell.Io
 import Quickshell.Services.Notifications
 import qs.config
 
-// Notifications: toasts and the history in the action center. The history is also saved, so it comes back
+// Notifications: toasts and the history in the notification panel. The history is also saved, so it comes back
 // after the shell restarts, after logging out and after a restart of the computer, for 7 days. A saved
 // entry keeps its application's icon, and a click opens the application; actions and pictures belong to
 // the program that sent it and do not come back. The file is in a directory only its owner may open.
@@ -78,7 +78,8 @@ Singleton {
         const known = tracked.map(n => n.id);
         const active = popupIds.filter(id => known.includes(id));
         const silenced = dnd && notification.urgency !== NotificationUrgency.Critical && notification.hints[ignoreDndHint] !== true;
-        if (silenced) {
+        // With the notification panel open, a new notification is seen in its list, as its toast would be.
+        if (silenced || Panels.isOpen("notifications")) {
             popupIds = active;
             if (notification.transient)
                 notification.expire();
@@ -159,6 +160,16 @@ Singleton {
     function writeSaved() {
         if (savedLoaded)
             savedFile.setText(JSON.stringify(saved));
+    }
+
+    // Opening the notification panel shows every notification, so the toasts waiting to be read are over.
+    Connections {
+        target: Panels
+        function onCurrentChanged() {
+            if (Panels.isOpen("notifications"))
+                for (const notification of root.popups)
+                    root.endPopup(notification);
+        }
     }
 
     /**

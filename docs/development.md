@@ -6,6 +6,8 @@
 
 Its config files live in `build/dev/config`, so saving monitors or a wallpaper does not change the real ones. `settings.json` and `settings.lua` are copied there on the first run. Services such as `hypridle` are not started in a nested session.
 
+`make install` builds the package and installs it on the running system, then reloads Hyprland and restarts the shell service, so a change can be tried in the real session. It asks for `sudo`.
+
 ## Keybindings
 
 Defaults are in `hypr/binds.lua`, one per line. To change them, create `~/.config/hypr/binds.lua` and list only what differs. Saving the file applies it.
@@ -32,9 +34,11 @@ An error in a user file appears as a notification, and the defaults still load. 
 
 ## Settings
 
-`~/.config/hyprdora/settings.json` overrides the defaults in `shell/config/Settings.qml`. Every key is optional, and saving the file applies it. The settings button in the action center writes the same file, so everyday settings need no editing. The `"//"` key on top is a note for whoever opens the file and is not a setting.
+`~/.config/hyprdora/settings.json` overrides the defaults in `shell/config/Settings.qml`, which lists every key. Every key is optional, and saving the file applies it. The settings button in the action center writes the same file, so everyday settings need no editing. The `"//"` key on top is a note for whoever opens the file and is not a setting.
 
 The shell makes both files when they are missing, at start or after being deleted, with no settings and no rules: watching them for changes needs a file, and a deleted folder would end the watch for good. Deleting one is therefore the same as emptying it, a return to the defaults.
+
+A few of them:
 
 ```json
 {
@@ -70,7 +74,7 @@ In QML: `I18n.t("notifications.count", { count: 3 })`.
 - One-line comments only where truly needed. They explain why, not what.
 - Doc comments on functions: purpose, parameters, return value. JSDoc style in QML/JS, LuaLS `---@param` in Lua, docstrings in Python, a header comment in shell scripts. Required in services, libraries and scripts; trivial signal handlers are exempt.
 - Logic that can run in QML is written in QML. Python is used only where QML cannot do the job, and shell only where the desktop is not running.
-- Conventional Commits (`feat(shell): ...`), one branch per stage, merged to `main`.
+- Conventional Commits (`feat(shell): ...`), committed to `main`.
 - Documentation changes land in the same commit as the code they describe.
 - No dead code: a change that stops using a translation key, an icon, a Theme token, a setting, a function or a file removes it in the same commit. It can always be added back.
 - Watching the local system goes through `EventSources` in `shell/base/`, never straight from a module or another service: a process that prints events (`nmcli monitor`), a file watched for changes (`FileView.watchChanges`), or a poll where nothing can be subscribed to. Each source runs once however many listen, starts with its first listener and stops after its last, ends with the shell and restarts if it fails, so a change of tool happens in one place. Subscribing to an event comes before polling it.

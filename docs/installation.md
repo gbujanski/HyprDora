@@ -16,6 +16,8 @@ The installer checks no package signatures, so packages from outside Fedora come
 
 Snapshots and the subvolumes kept out of them need a Btrfs root and are skipped on other file systems. Recovery is described in [recovery.md](recovery.md).
 
+The installer also limits wrong passwords: ten in a row lock the account for five minutes. A system installed from packages has no such limit unless it is turned on as described in [security](security.md).
+
 ## Build packages
 
 ```bash
@@ -67,21 +69,30 @@ Upgrading to a new Fedora release needs `hyprdora-release` built for it, since i
 | `/usr/share/wayland-sessions/hyprdora.desktop` | login session, which starts Hyprland with the packaged config |
 | `/usr/lib/systemd/user/hyprdora-session.target` | activates `graphical-session.target`, which portals depend on |
 | `/usr/lib/systemd/user/hyprdora-shell.service` | runs the shell and restarts it after a crash |
-| `/usr/lib/systemd/logind.conf.d/50-hyprdora.conf` | stops logind from powering off on a press of the power button |
+| `/usr/libexec/hyprdora/shell-start`, `shell-stopped` | start the shell with the chosen icon theme; end the session if the shell stops while the screen is locked |
+| `/etc/pam.d/hyprdora-lock` | the lock screen's password check, the same as the console login |
 | `/usr/bin/hyprdora` | recovery tool: `hyprdora rollback`, `hyprdora --help` (see [recovery](recovery.md)) |
+| `/usr/libexec/hyprdora/offline-update`, `system-restore` | updates installed at restart, and system restore from the settings; run as root through pkexec, with their polkit actions in `/usr/share/polkit-1/actions` |
+| `/usr/share/polkit-1/rules.d/10-hyprdora-software.rules` | installing and removing software asks for the password (see [security](security.md)) |
+| `/usr/lib/sysctl.d/60-hyprdora-ptrace.conf` | a program may read only the memory of programs it started (see [security](security.md)) |
+| `/usr/libexec/hyprdora/calendar` | calendar helper: the offline calendar and Nextcloud accounts |
+| `/usr/libexec/hyprdora/hyprdora-portal`, `/etc/xdg/xdg-desktop-portal/hyprland-portals.conf` | wallpaper portal backend and the portal choice that enables it |
+| `/usr/libexec/hyprdora/not-metered`, `/usr/lib/systemd/system/dnf5-makecache.service.d/hyprdora-metered.conf` | the package cache is not refreshed on a metered network |
+| `/etc/dnf/libdnf5-plugins/actions.d/hyprdora-snapper.actions` | a snapshot before and after every `dnf` transaction |
 | `/etc/dnf/protected.d/hyprdora.conf` | stops `dnf` from removing HyprDora, snapper or `btrfs-progs` |
 | `/usr/lib/systemd/system/hyprdora-hint.service` | writes the reminder of `hyprdora --help` for the console login screen and SSH at boot, in the system language |
-| `/usr/libexec/hyprdora` | system setup run by the kickstart, and the first-login step |
-| `/etc/xdg/mimeapps.list` | default applications |
-| `/usr/libexec/hyprdora/hyprdora-portal`, `/etc/xdg/xdg-desktop-portal/hyprland-portals.conf` | wallpaper portal backend and the portal choice that enables it |
+| `/usr/lib/systemd/logind.conf.d/50-hyprdora.conf` | stops logind from powering off on a press of the power button |
+| `/usr/share/plymouth/themes/hyprdora`, `/usr/libexec/hyprdora/boot-theme`, `/usr/lib/dracut/dracut.conf.d/90-hyprdora.conf` | boot splash, the hidden GRUB menu, and drivers kept out of the initramfs |
+| `/usr/share/sddm/themes/Hyprdora`, `/etc/sddm.conf.d/hyprdora.conf` | login screen |
+| `/usr/share/glib-2.0/schemas/90_hyprdora.gschema.override` | GTK defaults: dark theme, icons, cursor; GNOME Software without its own updates |
 | `/usr/share/nautilus-python/extensions/hyprdora.py` | "Open in Terminal" in Nautilus |
-| `/etc/dnf/libdnf5-plugins/actions.d/hyprdora-snapper.actions` | a snapshot before and after every `dnf` transaction |
-| `/etc/alacritty/alacritty.toml`, `/etc/sddm.conf.d/hyprdora.conf` | system-wide defaults |
+| `/etc/xdg/mimeapps.list`, `/etc/xdg/xdg-terminals.list`, `/etc/alacritty/alacritty.toml` | default applications, terminal and its settings |
+| `/usr/libexec/hyprdora/system-setup.sh`, `first-login.sh` | system setup run by the kickstart, and the first-login step |
 
 The session needs no files in the home directory. User files in `~/.config/hypr` and `~/.config/hyprdora` are optional and override the defaults.
 
 ## First login
 
-The first session prepares the home directory: user folders, the keyboard layout chosen in the installer, VS Code's keyring setting, and Oh My Zsh. Existing files are left alone. If a step fails, for example without a network connection, the step runs again at the next login.
+The first session prepares the home directory: user folders and their bookmarks in the file manager, the keyboard layout chosen in the installer, VS Code's keyring setting, and Oh My Zsh. Existing files are left alone. If a step fails, for example without a network connection, the step runs again at the next login.
 
 The git identity is not set, because this step has no way to ask for it.

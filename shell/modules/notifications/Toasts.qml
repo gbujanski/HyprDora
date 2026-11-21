@@ -5,9 +5,10 @@ import qs.config
 import qs.services
 
 Scope {
-    // The same notifications are listed in the action center while it is open.
+    // Toasts wait while the action center, which opens where they appear, or the notification panel, which
+    // lists the same notifications, is open.
     LazyLoader {
-        active: Notifications.popups.length > 0 && !Panels.isOpen("actioncenter")
+        active: Notifications.popups.length > 0 && !Panels.isOpen("actioncenter") && !Panels.isOpen("notifications")
 
         PanelWindow {
             screen: Panels.focusedScreen()

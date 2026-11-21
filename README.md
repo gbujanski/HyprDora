@@ -13,23 +13,28 @@ A Hyprland desktop on Fedora with a custom [Quickshell](https://quickshell.org) 
 
 | Path | Contents |
 |---|---|
-| `shell/` | Quickshell shell |
+| `shell/` | Quickshell shell: services, modules, shared components, translations, Python helpers |
 | `hypr/` | Hyprland config in Lua |
-| `configs/` | alacritty, hypridle, hyprpaper, SDDM theme, PAM for the lock screen |
+| `configs/` | system files the package installs: login and lock screen, polkit, updates, system restore, calendar helper, portal, boot splash, systemd units |
+| `bin/` | `hyprdora`, the recovery tool |
 | `assets/` | wallpapers, logo, bundled font |
-| `packaging/` | RPM spec files, the script that draws the logo |
-| `kickstart/` | install description, ISO build, first-login step |
+| `packaging/` | RPM spec, release identity, the ISO's package repository and installer branding, logo script |
+| `kickstart/` | install description, system setup, first-login step |
+| `tools/` | development helpers, such as the nested test runner |
 | `docs/` | documentation and decision records |
 
 ## Documentation
 
 - [Architecture](docs/architecture.md)
 - [Installation](docs/installation.md)
+- [Recovery](docs/recovery.md)
+- [Security](docs/security.md)
 - [Development](docs/development.md)
 - [Testing](docs/testing.md)
 - [Hardware quirks](docs/hardware-quirks.md)
 - [Known issues](docs/known-issues.md)
 - [Decision records](docs/decisions/)
+- [Roadmap](docs/roadmap.md)
 
 ## License
 
