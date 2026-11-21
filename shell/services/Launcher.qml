@@ -226,7 +226,18 @@ Singleton {
      * @param {string} command  shell command
      */
     function exec(command) {
-        Quickshell.execDetached(["hyprctl", "dispatch", `hl.dsp.exec_cmd([==[${command}]==])`]);
+        Quickshell.execDetached(["hyprctl", "dispatch", `hl.dsp.exec_cmd(${luaString(command)})`]);
+    }
+
+    /**
+     * Writes text as a Lua string literal it cannot leave, whatever it holds: a command can come from the
+     * clipboard, which any web page may fill. Quotes and backslashes are escaped, control characters written
+     * as decimal codes.
+     * @param {string} text  any text
+     * @returns {string}
+     */
+    function luaString(text) {
+        return `"${String(text).replace(/[\\"\x00-\x1f\x7f]/g, c => c === "\\" || c === '"' ? `\\${c}` : `\\${String(c.charCodeAt(0)).padStart(3, "0")}`)}"`;
     }
 
     /**

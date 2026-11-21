@@ -2,11 +2,12 @@
 // does, and importing a repository's signing key asks every time. Fedora's own rules let a member of wheel
 // in an active session do all of this without a password, so any program running as the user could do it
 // silently through D-Bus. This file sorts before Fedora's (org.*), so its answer is the one taken.
-// Updates and catalog refreshes keep asking nothing, as their actions allow by default.
+// Updates and catalog refreshes keep asking nothing, as their actions allow by default. Installing a Flatpak
+// runtime is not listed: Flatpak's app-update implies it, since an update may need a new runtime, so it is
+// allowed whenever updates are. Runtimes come signed from remotes already set up, and adding a remote asks.
 polkit.addRule(function(action, subject) {
     var withPassword = [
         "org.freedesktop.Flatpak.app-install",
-        "org.freedesktop.Flatpak.runtime-install",
         "org.freedesktop.Flatpak.app-uninstall",
         "org.freedesktop.Flatpak.runtime-uninstall",
         "org.rpm.dnf.v0.rpm.execute_trusted_transaction",

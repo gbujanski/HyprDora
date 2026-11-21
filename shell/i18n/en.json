@@ -392,6 +392,7 @@
   "accounts.starting": "Connecting to the server…",
   "accounts.waiting": "Approve access in the browser.",
   "accounts.error.server": "Enter the server address.",
+  "accounts.error.https": "Use an https:// address.",
   "accounts.error.unreachable": "The server could not be reached, or it is not a Nextcloud server.",
   "accounts.error.timeout": "The sign-in was not approved in time.",
   "accounts.error.keyring": "The keyring did not accept the password.",

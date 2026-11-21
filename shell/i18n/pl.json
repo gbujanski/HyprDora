@@ -394,6 +394,7 @@
   "accounts.starting": "Łączenie z serwerem…",
   "accounts.waiting": "Zatwierdź dostęp w przeglądarce.",
   "accounts.error.server": "Wpisz adres serwera.",
+  "accounts.error.https": "Podaj adres https://.",
   "accounts.error.unreachable": "Nie udało się połączyć z serwerem albo to nie jest serwer Nextcloud.",
   "accounts.error.timeout": "Logowanie nie zostało zatwierdzone na czas.",
   "accounts.error.keyring": "Keyring nie przyjął hasła.",

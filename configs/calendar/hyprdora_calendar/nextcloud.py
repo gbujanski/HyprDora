@@ -22,6 +22,9 @@ class Nextcloud:
         self.server = server.rstrip("/")
         self.login = login
         key = f"nextcloud:{login}@{self.server}"
+        # The app password goes with every request, so never over plain http; signing in again requires https.
+        if not self.server.startswith("https://"):
+            raise CalendarError(3, f"{key}: not an https address")
         result = subprocess.run(
             ["secret-tool", "lookup", "application", "hyprdora", "account", key],
             capture_output=True,

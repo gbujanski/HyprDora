@@ -349,11 +349,11 @@ Review of the whole project (2026-11-19), in stages, each ending in a report the
   - [x] S9. Shared empty and loading states
   - [x] S10. One page header with a back arrow: only the action center has one, so instead Title, the bold title nine panels, windows and pages drew on their own
   - [x] S11. One scrolling area with the thin scroll bar, used by the action center, notifications, updates and the calendar
-- [ ] 3. Code quality: better ways to solve a problem, clean code, dead code, translation keys unused or missing in one language, background processes, timers and polling, keyboard use (Esc, arrows) the same in every panel
+- [x] 3. Code quality: better ways to solve a problem, clean code, dead code, translation keys unused or missing in one language, background processes, timers and polling, keyboard use (Esc, arrows) the same in every panel
   - [x] EventSources in shell/base: every watch of the local system goes through it, one process, file watch or poll per source however many listen, started on the first listener and stopped after the last, ending with the shell and restarted if it fails (nmcli monitor, udisksctl monitor, pactl subscribe, the settings file, monitors.lua, backlight, update progress, Caps Lock, VPN counters)
   - [x] B3. The camera watched with inotify (inotify-tools) instead of a process every 4 seconds
   - [x] settings.json and monitors.lua made by the shell when missing, at start or after being deleted, with a note on top: watching needs a file, and a deleted folder ends the watch
-  - [ ] Memory: measure what the shell's ~128 MB is made of (Qt and QML, graphics, fonts and icons, images, panels kept loaded, JavaScript), what can be cut, and how much each change saves
+  - [x] Memory: measured, nothing changes. The shell's ~128 MB RSS is ~105 MB of its own (56 in RAM, 30 swapped out, 20 of graphics buffers); a bare Quickshell takes 26, the JavaScript heap ~4, the rest is QML objects; no leaks. The one large saving, software rendering (about 55 MB), crashes the window overview and gives up the media cover's rounded corners and any GPU effect, so it is not worth it
   - Kept: B5, the Bluetooth discovery retry every 3 seconds; it runs only while the Bluetooth page is open and discovery is off, and a discovery BlueZ refuses right after power-on changes no state an event could follow
   - [x] B6. ScheduledTask: one policy for when downloads run (not offline, waiting on a metered network unless allowed, catching up after the network returns or after waking); weather downloads on a metered network, updates wait, the calendar reads its local calendars offline too and reads again when the network returns; the data stays in its services
   - [x] A1. The media panel's position moves while the panel is open, not the action center; A2. notification times refresh with the notification panel
@@ -361,6 +361,13 @@ Review of the whole project (2026-11-19), in stages, each ending in a report the
   - [x] D1. The calendar's event form in a file of its own; D2. the display layout's geometry out of Displays.qml into DisplayGeometry.js, moved without changes
   - Kept: Capture.qml and Network.qml whole; arrows in the action center's lists
 - [ ] 4. Security, on the code as it stands after the stages above; anything serious found earlier is reported at once
+  - [x] S1. The launcher passes what it runs to Hyprland as a Lua string the text cannot leave; a clipboard entry, which any web page may fill, could close the old long string and run a command of its own (shown in a nested Hyprland)
+  - [x] S2. Online accounts: https only, in the shell and the calendar helper; the server typed is kept, the sign-in and poll addresses must lead back to it, a login has no control characters, and every value given to curl is escaped
+  - [x] S3. ptrace limited to a program's own children (kernel.yama.ptrace_scope = 1), so a program running as the user cannot read the memory of the shell, the keyring or a browser
+  - [x] S4. Installing a Flatpak runtime passes without a password because Flatpak's app-update implies it; adding a remote still asks, so it stays, and the rule no longer lists it
+  - [x] S5. Ten wrong passwords lock the account for five minutes on new installs (faillock); the lock screen shows PAM's reason
+  - [x] S7. Clipboard history in memory only ($XDG_RUNTIME_DIR), so a password copied by hand never reaches the disk; it ends with the session
+  - Kept: disk encryption stays the installer's choice; Hyprland's permission system and fake password windows, which the shell cannot prevent
 - [ ] 5. Documentation: docs/ and the README describe what the code does after the review
 - The whole project is in scope: the shell, the Hyprland config, scripts, packaging and the kickstart
 

@@ -18,6 +18,10 @@ Singleton {
     readonly property bool checking: pam.active
     // Bumped after a wrong password, so the lock screen can flash.
     property int failures: 0
+    // What PAM said with its refusal, such as the account locked after too many wrong passwords.
+    property string message: ""
+    // PAM's lines of the check under way; the last before it asks for the password is the prompt itself.
+    property var pamLines: []
 
     property string pendingPassword: ""
 
@@ -40,6 +44,8 @@ Singleton {
         if (!active || pam.active || password === "")
             return;
         pendingPassword = password;
+        message = "";
+        pamLines = [];
         pam.start();
     }
 
@@ -48,9 +54,16 @@ Singleton {
 
         config: "hyprdora-lock"
 
+        // Quickshell gives PAM's errors as plain messages, so every line is kept but the password prompt.
+        onMessageChanged: {
+            if (message.trim() !== "")
+                root.pamLines = [...root.pamLines, message.trim()];
+        }
+
         onResponseRequiredChanged: {
             if (!responseRequired)
                 return;
+            root.pamLines = root.pamLines.slice(0, -1);
             respond(root.pendingPassword);
             root.pendingPassword = "";
         }
@@ -58,15 +71,20 @@ Singleton {
         onCompleted: result => {
             root.pendingPassword = "";
             if (result === PamResult.Success) {
+                root.message = "";
                 root.active = false;
                 Quickshell.execDetached(["rm", "-f", root.marker]);
             } else {
+                root.message = root.pamLines.join("\n");
                 root.failures++;
             }
+            root.pamLines = [];
         }
 
         onError: () => {
             root.pendingPassword = "";
+            root.message = root.pamLines.join("\n");
+            root.pamLines = [];
             root.failures++;
         }
     }

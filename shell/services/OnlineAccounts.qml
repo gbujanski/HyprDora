@@ -56,8 +56,13 @@ Singleton {
             error = I18n.t("accounts.error.server");
             return;
         }
-        if (!/^https?:\/\//.test(server))
+        if (!/^[a-z]+:\/\//i.test(server))
             server = `https://${server}`;
+        // The app password goes to the server with every calendar sync, so never as plain text.
+        if (!/^https:\/\/[^\s"\\/]+(\/[^\s"\\]*)?$/i.test(server)) {
+            error = I18n.t("accounts.error.https");
+            return;
+        }
         state = "starting";
         flow = {
             provider: provider,
@@ -100,7 +105,17 @@ Singleton {
      * @returns {string}
      */
     function curlQuoted(text) {
-        return `"${String(text).replace(/\\/g, "\\\\").replace(/"/g, "\\\"")}"`;
+        return `"${String(text).replace(/[\\"]/g, c => `\\${c}`).replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/\t/g, "\\t")}"`;
+    }
+
+    /**
+     * Tells whether an address the server sent leads back to it over https, so a server cannot send the
+     * browser, or the sign-in token, anywhere else.
+     * @param {string} url  address from the server
+     * @returns {bool}
+     */
+    function onServer(url) {
+        return typeof url === "string" && url.startsWith(`${flow.server}/`) && !/[\s"\\]/.test(url);
     }
 
     // Step 1: the server returns a sign-in address for the browser and a token to poll with.
@@ -118,7 +133,7 @@ Singleton {
             try {
                 reply = JSON.parse(starterOutput.text);
             } catch (e) {}
-            if (exitCode !== 0 || !reply?.login || !reply?.poll) {
+            if (exitCode !== 0 || !root.onServer(reply?.login) || !root.onServer(reply?.poll?.endpoint) || typeof reply.poll.token !== "string") {
                 root.error = I18n.t("accounts.error.unreachable");
                 root.state = "";
                 return;
@@ -174,9 +189,17 @@ Singleton {
             if (!reply?.appPassword)
                 return;
             pollTimer.stop();
+            // The server typed is kept, not the one the reply names, and a login has no control characters, as
+            // it ends up in curl's configuration when signing out.
+            if (typeof reply.loginName !== "string" || !/^[^\x00-\x1f\x7f]+$/.test(reply.loginName) || typeof reply.appPassword !== "string") {
+                root.error = I18n.t("accounts.error.unreachable");
+                root.state = "";
+                root.flow = null;
+                return;
+            }
             const account = {
                 provider: root.flow.provider,
-                server: (reply.server ?? root.flow.server).replace(/\/+$/, ""),
+                server: root.flow.server,
                 login: reply.loginName
             };
             saver.account = account;
@@ -216,9 +239,11 @@ Singleton {
         property var account: null
 
         command: ["sh", "-c", `
+            # Backslashes and quotes are escaped and line breaks dropped, so no value can add an option.
+            quoted() { printf '%s' "$1" | sed -e 's/[\\\\"]/\\\\&/g' | tr -d '\\n\\r'; }
             secret=$(secret-tool lookup application hyprdora account "$1") || secret=""
             if [ -n "$secret" ]; then
-                printf 'url = "%s"\\nuser = "%s:%s"\\n' "$2/ocs/v2.php/core/apppassword" "$3" "$secret" |
+                printf 'url = "%s"\\nuser = "%s:%s"\\n' "$(quoted "$2/ocs/v2.php/core/apppassword")" "$(quoted "$3")" "$(quoted "$secret")" |
                     curl -sS --fail --max-time 10 -X DELETE -H "OCS-APIRequest: true" -A HyprDora --config - >/dev/null
                 revoked=$?
             else

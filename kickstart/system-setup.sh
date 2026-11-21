@@ -107,6 +107,13 @@ enable_keyring_login() {
     authselect enable-feature with-pam-gnome-keyring && authselect apply-changes
 }
 
+# Ten wrong passwords in a row lock the account for five minutes, at the lock screen, sudo and polkit alike,
+# so a password cannot be guessed at length; the lock screen shows why it refuses. Fedora sets no limit.
+limit_password_attempts() {
+    sed -i -e 's/^#\? *deny *=.*/deny = 10/' -e 's/^#\? *unlock_time *=.*/unlock_time = 300/' /etc/security/faillock.conf &&
+        authselect enable-feature with-faillock && authselect apply-changes
+}
+
 enable_services() {
     systemctl enable sddm bluetooth power-profiles-daemon cups docker
     systemctl set-default graphical.target
@@ -131,6 +138,7 @@ step create_excluded_subvolumes
 step install_flatpaks
 step configure_snapshots
 step enable_keyring_login
+step limit_password_attempts
 step enable_services
 step configure_boot
 step configure_users

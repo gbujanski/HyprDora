@@ -82,6 +82,7 @@ Scope {
                 }
 
                 Row {
+                    id: promptRow
                     anchors.centerIn: parent
                     visible: content.hasPrompt
                     spacing: 10
@@ -137,6 +138,21 @@ Scope {
                             Keyboard.readCapsLock();
                         }
                     }
+                }
+
+                // Why PAM refused, such as an account locked for a while after too many wrong passwords.
+                Text {
+                    anchors {
+                        top: promptRow.bottom
+                        topMargin: 16
+                        horizontalCenter: parent.horizontalCenter
+                    }
+                    visible: content.hasPrompt && Lock.message !== ""
+                    text: Lock.message
+                    color: Theme.error
+                    font.family: "monospace"
+                    font.pixelSize: root.terminalFontSize
+                    horizontalAlignment: Text.AlignHCenter
                 }
 
                 Column {

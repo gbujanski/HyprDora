@@ -239,6 +239,7 @@ install -Dpm 644 configs/systemd/hyprdora-hint.service %{buildroot}%{_prefix}/li
 install -Dpm 644 configs/systemd/dnf5-makecache.service.d/hyprdora-metered.conf %{buildroot}%{_prefix}/lib/systemd/system/dnf5-makecache.service.d/hyprdora-metered.conf
 install -Dpm 644 configs/systemd/plymouth-quit.service.d/hyprdora-retain.conf %{buildroot}%{_prefix}/lib/systemd/system/plymouth-quit.service.d/hyprdora-retain.conf
 install -Dpm 644 configs/logind/50-hyprdora.conf %{buildroot}%{_prefix}/lib/systemd/logind.conf.d/50-hyprdora.conf
+install -Dpm 644 configs/sysctl/60-hyprdora-ptrace.conf %{buildroot}%{_prefix}/lib/sysctl.d/60-hyprdora-ptrace.conf
 install -Dpm 644 configs/systemd/hyprdora-shell.service %{buildroot}%{_prefix}/lib/systemd/user/hyprdora-shell.service
 install -Dpm 644 configs/systemd/hyprdora-session.target %{buildroot}%{_prefix}/lib/systemd/user/hyprdora-session.target
 install -d %{buildroot}%{_datadir}/sddm/themes
@@ -282,6 +283,8 @@ fi
 # RPM gives every file the same build date, and the greeter's compiled QML cache is checked by file date,
 # so it would keep showing the previous login theme. The cache is rebuilt on the next start.
 rm -rf %{_localstatedir}/lib/sddm/.cache/sddm-greeter* 2>/dev/null || :
+# The ptrace limit applies at once, not only from the next boot.
+%sysctl_apply 60-hyprdora-ptrace.conf
 # The console reminder of hyprdora --help is written at every boot, in the system language.
 systemctl enable hyprdora-hint.service >/dev/null 2>&1 || :
 if [ -d /run/systemd/system ]; then
@@ -326,6 +329,7 @@ fi
 %{_prefix}/lib/systemd/user/hyprdora-session.target
 %{_prefix}/lib/systemd/user/hyprdora-shell.service
 %{_prefix}/lib/systemd/logind.conf.d/50-hyprdora.conf
+%{_prefix}/lib/sysctl.d/60-hyprdora-ptrace.conf
 %{_bindir}/hyprdora
 %{_prefix}/lib/systemd/system/hyprdora-hint.service
 %{_prefix}/lib/systemd/system/dnf5-makecache.service.d/hyprdora-metered.conf
