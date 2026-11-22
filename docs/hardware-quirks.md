@@ -51,7 +51,7 @@ Findings from testing on real hardware. Each one explains code that may otherwis
 
 ## Quickshell
 
-- `console.log` is hidden by default. Use `console.info` or `console.warn`.
+- `console.log` and `console.debug` are hidden by default; a `--log-rules` rule turns a category's debug messages on, and the log file of `qs log` keeps only what was shown.
 - A singleton is created on first use, so its `IpcHandler` does not exist until something references it.
 - Devices and adapters appear asynchronously. The UI must react through bindings rather than read state once at startup.
 - `FileView` with `preload: false` does not load the file after `reload()`.

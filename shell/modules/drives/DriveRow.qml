@@ -5,7 +5,8 @@ import qs.services
 
 // One removable drive: its name and size with the button that removes it safely, then each of its
 // partitions, which a click opens in the file manager. A locked encrypted partition asks for its password
-// first. While the drive is in use, the programs holding it are named, with a button to try again.
+// first. While the drive is in use, the programs holding it are named with what they do there, with a button
+// to try again, and one that closes them first when they only read from it.
 Column {
     id: root
 
@@ -13,6 +14,28 @@ Column {
     readonly property var drive: modelData
     readonly property var status: Drives.status[drive.id] ?? null
     readonly property bool removing: status?.state === "removing"
+    readonly property bool busy: status?.state === "busy"
+    readonly property var holders: status?.holders ?? []
+    /**
+     * Says who holds the busy drive and what they do there, and what to do about a write or a folder.
+     * @returns {string}
+     */
+    function busyText() {
+        if (holders.length === 0)
+            return I18n.t("drives.busy");
+        const named = holders.map(h => h.reason === "uses" ? h.name : I18n.t(`drives.holder.${h.reason}`, {
+                name: h.name
+            }));
+        const lines = [I18n.t("drives.busyUsers", {
+                users: named.join(", ")
+            })];
+        if (holders.some(h => h.reason === "writes"))
+            lines.push(I18n.t("drives.waitForWrite"));
+        if (holders.some(h => h.reason === "folder"))
+            lines.push(I18n.t("drives.leaveFolder"));
+        return lines.join(" ");
+    }
+
     // The locked partition whose password is being asked for, by device.
     property string asking: ""
 
@@ -78,9 +101,7 @@ Column {
         width: root.width
         visible: root.status?.state === "busy" || root.status?.state === "failed"
         leftPadding: 38
-        text: root.status?.state === "busy" ? ((root.status.users ?? []).length > 0 ? I18n.t("drives.busyUsers", {
-                users: root.status.users.join(", ")
-            }) : I18n.t("drives.busy")) : I18n.t("drives.failed", {
+        text: root.busy ? root.busyText() : I18n.t("drives.failed", {
             message: root.status?.message ?? ""
         })
         color: Theme.warning
@@ -88,17 +109,39 @@ Column {
         wrapMode: Text.WordWrap
     }
 
-    Item {
-        width: root.width
-        height: retry.implicitHeight
-        visible: retry.visible
+    Row {
+        x: 38
+        spacing: 6
+        visible: root.busy || root.status?.state === "failed"
 
         TextButton {
-            id: retry
-            x: 38
-            visible: root.status?.state === "busy" || root.status?.state === "failed"
             text: I18n.t("drives.retry")
             onClicked: Drives.remove(root.drive)
+        }
+
+        // The first click asks for a second, as closing a program cannot be undone.
+        TextButton {
+            id: closeButton
+
+            property bool armed: false
+
+            visible: root.busy && root.status.closable === true
+            text: armed ? I18n.t("common.clickAgain") : I18n.t("drives.closeAndRemove")
+            onClicked: {
+                if (armed) {
+                    armed = false;
+                    Drives.remove(root.drive, true);
+                } else {
+                    armed = true;
+                    disarm.restart();
+                }
+            }
+
+            Timer {
+                id: disarm
+                interval: 3000
+                onTriggered: closeButton.armed = false
+            }
         }
     }
 

@@ -511,7 +511,7 @@ Singleton {
      */
     function reportSaveError(error) {
         root.errorMessage = I18n.t("displays.error.saveFailed");
-        console.warn("displays: save:", FileViewError.toString(error));
+        console.warn(log, "save:", FileViewError.toString(error));
     }
 
     /** Confirms the pending change and saves it. */
@@ -586,7 +586,7 @@ Singleton {
                 try {
                     parsed = root.parseMonitors(text);
                 } catch (e) {
-                    console.warn("displays: unreadable hyprctl response");
+                    console.warn(log, "unreadable hyprctl response");
                     return;
                 }
                 const plugged = root.knownNames.length > 0 && parsed.some(m => !root.knownNames.includes(m.name));
@@ -622,7 +622,7 @@ Singleton {
             const failed = exitCode !== 0 || applierOutput.text.split(/\s+/).some(word => word !== "" && word !== "ok");
             if (failed) {
                 root.errorMessage = I18n.t("displays.error.rejected");
-                console.warn("displays: hyprctl response:", applierOutput.text.trim());
+                console.warn(log, "hyprctl response:", applierOutput.text.trim());
                 root.revertChange();
             }
             refreshDelay.restart();
@@ -647,6 +647,7 @@ Singleton {
         // Missing at start or deleted later, it is made again with no rules: watching needs a file, and a
         // deleted folder ends the watch of the old one.
         onLoadFailed: {
+            console.info(log, "monitors.lua is missing; made it again with no rules");
             root.savedReady = false;
             setText(root.savedHeader);
             root.savedReady = true;
@@ -728,5 +729,10 @@ Singleton {
         function revert(): void {
             root.revertChange();
         }
+    }
+
+    LoggingCategory {
+        id: log
+        name: "hyprdora.displays"
     }
 }

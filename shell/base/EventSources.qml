@@ -101,7 +101,7 @@ Singleton {
             });
         const spec = streams[name];
         if (!spec) {
-            console.warn("EventSources: no stream named", name);
+            console.warn(log, "no stream named", name);
             return null;
         }
         return streamSource.createObject(root, {
@@ -178,6 +178,8 @@ Singleton {
             command: stream.command
             stdout: SplitParser {
                 onRead: line => {
+                    if (stream.failures > 0)
+                        console.info(log, stream.key, "runs again");
                     stream.failures = 0;
                     root.dispatchLine(stream.key, line);
                 }
@@ -189,6 +191,9 @@ Singleton {
                     stream.restarting = false;
                     return;
                 }
+                // Said once, not again for each start that fails in a row.
+                if (stream.failures === 0)
+                    console.info(log, stream.key, "ended, starting it again");
                 stream.failures++;
                 retry.interval = Math.min(60000, 1000 * Math.pow(2, Math.min(stream.failures, 6)));
                 retry.restart();
@@ -227,7 +232,7 @@ Singleton {
         watchChanges: true
         printErrors: false
         onFileChanged: root.dispatchChange(key)
-        onLoadFailed: console.warn("EventSources: not watching a missing file,", path)
+        onLoadFailed: console.warn(log, "not watching a missing file,", path)
     }
 
     // Read again at an interval, for counters and the like that report no change. The second read comes
@@ -286,5 +291,10 @@ Singleton {
     Component {
         id: fileSource
         FileSource {}
+    }
+
+    LoggingCategory {
+        id: log
+        name: "hyprdora.eventsources"
     }
 }

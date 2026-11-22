@@ -194,7 +194,7 @@ ConnectionService {
                 root.error = /secrets|password/i.test(message) ? I18n.t("vpn.error.password") : I18n.t("vpn.error.failed", {
                     message: message
                 });
-                console.warn("vpn:", runnerErrors.text.trim());
+                console.warn(log, runnerErrors.text.trim());
             }
             root.busy = "";
             root.refresh();
@@ -226,5 +226,10 @@ ConnectionService {
         function toggle(): void {
             root.toggle();
         }
+    }
+
+    LoggingCategory {
+        id: log
+        name: "hyprdora.vpn"
     }
 }

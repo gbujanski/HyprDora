@@ -31,7 +31,7 @@ Singleton {
      */
     function run(command) {
         if (dev)
-            console.info("idle: would run", command.join(" "));
+            console.debug(log, "would run", command.join(" "));
         else
             Quickshell.execDetached(command);
     }
@@ -39,7 +39,7 @@ Singleton {
     /** Lowers the screen brightness and remembers the previous level. */
     function dim() {
         if (dev) {
-            console.info("idle: would dim the screen");
+            console.debug(log, "would dim the screen");
             return;
         }
         const screen = Brightness.display;
@@ -126,5 +126,10 @@ Singleton {
                 dev: root.dev
             });
         }
+    }
+
+    LoggingCategory {
+        id: log
+        name: "hyprdora.idle"
     }
 }

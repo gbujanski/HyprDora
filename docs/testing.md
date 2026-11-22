@@ -38,9 +38,9 @@ Run through the sections related to a change.
 
 **VPN:** import a WireGuard or OpenVPN file, connect, disconnect, traffic counters.
 
-**Drives:** a USB stick and an SD card appear with their partitions; open, safely remove (the drive powers off), a program holding a file is named; a BitLocker partition unlocks with its password.
+**Drives:** a USB stick and an SD card appear with their partitions; open, safely remove (the drive powers off); a program holding it is named with what it does there (writing, a file open, a folder open in a terminal), and "Close and remove" with a second click closes a player reading a file and removes the drive, but is not offered during a copy; a BitLocker partition unlocks with its password.
 
-**Notifications:** toasts with actions and images, history in the panel under the bell (also after a shell restart), Do Not Disturb with a critical notification; opening the panel ends the toasts on screen, and a notification arriving while it is open shows only in its list; toasts wait while the action center is open.
+**Notifications:** toasts with actions and images; "can be removed safely" and "restore point created" leave nothing in the history; a notification with a `device.*` or `network.*` category is gone after a restart of the shell; history in the panel under the bell (also after a shell restart), Do Not Disturb with a critical notification; opening the panel ends the toasts on screen, and a notification arriving while it is open shows only in its list; toasts wait while the action center is open.
 
 **OSD and power:** volume, brightness and microphone indicators only for one's own changes; lock, suspend; confirmations for logout, restart and power off.
 

@@ -32,12 +32,17 @@ Singleton {
         path: root.configPath
         atomicWrites: true
         printErrors: false
-        onSaveFailed: error => console.warn("touchpad: save:", FileViewError.toString(error))
+        onSaveFailed: error => console.warn(log, "save:", FileViewError.toString(error))
     }
 
     Process {
         running: true
         command: ["sh", "-c", "grep -qsx 'E:ID_INPUT_TOUCHPAD=1' /run/udev/data/c13:*"]
         onExited: code => root.present = code === 0
+    }
+
+    LoggingCategory {
+        id: log
+        name: "hyprdora.touchpad"
     }
 }

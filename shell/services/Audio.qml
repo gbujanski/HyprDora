@@ -188,7 +188,7 @@ Singleton {
                             if (device.active_port)
                                 ports[device.name] = device.active_port;
                     } catch (e) {
-                        console.warn("audio: unreadable pactl output");
+                        console.warn(log, "unreadable pactl output");
                     }
                 }
                 root.activePorts = ports;
@@ -209,5 +209,10 @@ Singleton {
         id: portDelay
         interval: 300
         onTriggered: root.refreshPorts()
+    }
+
+    LoggingCategory {
+        id: log
+        name: "hyprdora.audio"
     }
 }

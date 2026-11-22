@@ -91,7 +91,7 @@ Singleton {
                 return value;
             }
         } catch (e) {}
-        console.warn("settings: invalid settings.json, using defaults");
+        console.warn(log, "invalid settings.json, using defaults");
         return {};
     }
 
@@ -159,10 +159,11 @@ Singleton {
         // Missing at start or deleted later, it is made again with no settings: watching needs a file, and a
         // deleted folder ends the watch of the old one.
         onLoadFailed: {
+            console.info(log, "settings.json is missing; made it again with no settings");
             root.overrides = {};
             root.recreate();
         }
-        onSaveFailed: error => console.warn("settings: cannot write settings.json:", error)
+        onSaveFailed: error => console.warn(log, "cannot write settings.json:", error)
     }
 
     // Edited by hand or by another tool, it is read again.
@@ -170,5 +171,10 @@ Singleton {
         file: file.path
         enabled: root.fileReady
         onChanged: file.reload()
+    }
+
+    LoggingCategory {
+        id: log
+        name: "hyprdora.settings"
     }
 }

@@ -243,7 +243,7 @@ ConnectionService {
             device = null;
             if (exitCode !== 0) {
                 root.errorMessage = root.connectErrorMessage(current, detail);
-                console.warn("bluetooth: connection failed:", detail.trim());
+                console.warn(log, "connection failed:", detail.trim());
             }
         }
     }
@@ -276,7 +276,7 @@ ConnectionService {
                 try {
                     message = JSON.parse(line);
                 } catch (e) {
-                    console.warn("bt-agent: unreadable line");
+                    console.warn(log, "agent: unreadable line");
                     return;
                 }
                 switch (message.event) {
@@ -298,7 +298,7 @@ ConnectionService {
                     break;
                 case "error":
                     root.errorMessage = I18n.t("bluetooth.error.agentFailed");
-                    console.warn("bt-agent:", message.detail);
+                    console.warn(log, "agent:", message.detail);
                     break;
                 }
             }
@@ -334,5 +334,10 @@ ConnectionService {
         function answer(accept: bool, value: string): void {
             root.answer(accept, value);
         }
+    }
+
+    LoggingCategory {
+        id: log
+        name: "hyprdora.bluetooth"
     }
 }

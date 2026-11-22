@@ -255,7 +255,7 @@ Singleton {
         onExited: exitCode => {
             root.preparing = "";
             if (exitCode !== 0 && exitCode !== 126)
-                console.warn("updates: offline update ended:", exitCode, offlineErrors.text.trim());
+                console.warn(log, "offline update ended:", exitCode, offlineErrors.text.trim());
             progressFile.reload();
             root.check();
         }
@@ -311,5 +311,10 @@ Singleton {
                 progress: root.progress
             });
         }
+    }
+
+    LoggingCategory {
+        id: log
+        name: "hyprdora.updates"
     }
 }

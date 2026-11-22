@@ -326,7 +326,7 @@ Singleton {
                 root.loadUpcoming();
                 return;
             }
-            console.warn("calendar:", writerErrors.text.trim());
+            console.warn(log, writerErrors.text.trim());
             root.error = exitCode === 4 ? I18n.t("calendar.error.offline") : exitCode === 3 ? I18n.t("calendar.error.password") : I18n.t(`calendar.error.${action}`);
         }
     }
@@ -385,5 +385,10 @@ Singleton {
                 upcoming: root.upcoming?.events.length ?? 0
             });
         }
+    }
+
+    LoggingCategory {
+        id: log
+        name: "hyprdora.calendar"
     }
 }

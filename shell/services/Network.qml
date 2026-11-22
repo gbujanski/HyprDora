@@ -303,7 +303,7 @@ ConnectionService {
                         root.busySsid = "";
                     else
                         root.fail(ssid, root.messageForHelper(result));
-                    console.info("wifi: helper result:", result.ok ? "ok" : result.reason, result.activeReason ?? "", result.deviceReason ?? "");
+                    console.debug(log, "Wi-Fi helper result:", result.ok ? "ok" : result.reason, result.activeReason ?? "", result.deviceReason ?? "");
                 } catch (e) {
                     root.fail(ssid, I18n.t("wifi.error.failed"));
                 }
@@ -451,5 +451,10 @@ ConnectionService {
             if (!meteredCheck.running)
                 meteredCheck.running = true;
         }
+    }
+
+    LoggingCategory {
+        id: log
+        name: "hyprdora.network"
     }
 }

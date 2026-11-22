@@ -146,7 +146,7 @@ Singleton {
             } else if (++root.muteTries < 15) {
                 muteRetry.restart();
             } else {
-                console.warn("automations: could not change muting");
+                console.warn(log, "could not change muting");
                 root.pendingMute = null;
             }
         }
@@ -290,5 +290,10 @@ Singleton {
                     Network.setMetered(active, true);
             }
         }
+    }
+
+    LoggingCategory {
+        id: log
+        name: "hyprdora.automations"
     }
 }

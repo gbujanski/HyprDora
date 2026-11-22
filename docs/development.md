@@ -68,6 +68,18 @@ Plurals are objects. Languages with simple plurals need `one` and `other`. If a 
 
 In QML: `I18n.t("notifications.count", { count: 3 })`.
 
+## Logs
+
+Each service that logs has a `LoggingCategory` named `hyprdora.<service>` and logs through it, as in `console.warn(log, "unreadable pactl output")`; Qt prints the category in front.
+
+- **Warning:** something failed, and the user feels it or a feature does not work.
+- **Info:** the shell put something right by itself: a watched stream that ended and runs again, a file made again, a fallback taken.
+- **Debug:** details for development, such as a helper's result.
+
+`shell-start` chooses the mode. A development copy (`-p`, as `make dev` and `tools/nested-test.sh` start it) shows the shell's debug messages too. An installed shell shows warnings and info, and leaves out warnings of other components that say nothing about the shell: Fedora desktop files Quickshell cannot parse, accessibility and PipeWire volume notices.
+
+Where to read them: `journalctl --user -u hyprdora-shell` keeps the installed shell's log across restarts, and is what a bug report needs. `qs -c hyprdora log` (`qs -p shell log` for a development copy) reads the running instance's log file, which goes with the next restart of the computer; `-r` filters it with the same rules.
+
 ## Code conventions
 
 - English everywhere in the repository: code, comments, Markdown, commit messages.

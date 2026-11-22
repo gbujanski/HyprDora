@@ -19,6 +19,9 @@ Singleton {
     readonly property string stateDir: `${Quickshell.env("XDG_STATE_HOME") || `${Quickshell.env("HOME")}/.local/state`}/hyprdora`
     // Hint on notifications that are not worth keeping past this session, such as a screenshot's preview.
     readonly property string sessionOnlyHint: "x-hyprdora-session-only"
+    // Categories of the notification specification that report a passing state, such as a device plugged
+    // in or a network connected, kept only for this session as well.
+    readonly property var sessionCategories: /^(device|network|presence)(\.|$)/
     // The shell's own notifications show a glyph of the shell's icon font in place of an image, in the
     // shell's look; the tone colors it: "warning", "error", or the accent when left out.
     readonly property string glyphHint: "x-hyprdora-glyph"
@@ -114,7 +117,7 @@ Singleton {
      * @param {Notification} notification  incoming notification
      */
     function remember(notification) {
-        if (notification.transient || notification.hints[sessionOnlyHint] === true || !savedLoaded)
+        if (notification.transient || notification.hints[sessionOnlyHint] === true || sessionCategories.test(notification.hints.category ?? "") || !savedLoaded)
             return;
         const key = `${Date.now()}-${notification.id}`;
         keys = Object.assign({}, keys, {

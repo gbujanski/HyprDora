@@ -38,7 +38,7 @@ Singleton {
         if (entry === undefined) {
             if (english === null)
                 return "";
-            console.warn("i18n: missing key:", key);
+            console.warn(log, "missing key:", key);
             return key;
         }
         const text = typeof entry === "string" ? entry : pluralOf(entry, values?.count ?? 0);
@@ -105,7 +105,7 @@ Singleton {
         try {
             return JSON.parse(text);
         } catch (e) {
-            console.warn("i18n: invalid translation file");
+            console.warn(log, "invalid translation file");
             return {};
         }
     }
@@ -128,5 +128,10 @@ Singleton {
             root.strings = {};
             root.loaded = false;
         }
+    }
+
+    LoggingCategory {
+        id: log
+        name: "hyprdora.i18n"
     }
 }

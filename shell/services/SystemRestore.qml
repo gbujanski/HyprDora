@@ -121,7 +121,7 @@ Singleton {
             if (exitCode === 126 || exitCode === 127)
                 return;
             if (exitCode !== 0) {
-                console.warn("restore:", helperErrors.text.trim());
+                console.warn(log, helperErrors.text.trim());
                 Quickshell.execDetached(["notify-send", `--app-name=${I18n.t("restore.title")}`, ...Notifications.glyphArgs(Icons.alert, "error"), I18n.t(`restore.failed.${action}`), helperErrors.text.trim().split("\n").pop() ?? ""]);
                 return;
             }
@@ -142,7 +142,7 @@ Singleton {
                 Panels.close("actioncenter");
                 root.windowOpen = true;
             } else if (action === "create") {
-                Quickshell.execDetached(["notify-send", `--app-name=${I18n.t("restore.title")}`, ...Notifications.glyphArgs(Icons.restore, ""), I18n.t("restore.created")]);
+                Quickshell.execDetached(["notify-send", "--transient", `--app-name=${I18n.t("restore.title")}`, ...Notifications.glyphArgs(Icons.restore, ""), I18n.t("restore.created")]);
             }
         }
     }
@@ -156,5 +156,10 @@ Singleton {
         function close(): void {
             root.windowOpen = false;
         }
+    }
+
+    LoggingCategory {
+        id: log
+        name: "hyprdora.restore"
     }
 }

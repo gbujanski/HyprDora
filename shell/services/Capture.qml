@@ -181,7 +181,7 @@ Singleton {
                         height: c.size[1]
                     }));
         } catch (e) {
-            console.warn("capture: unreadable hyprctl response");
+            console.warn(log, "unreadable hyprctl response");
             return [];
         }
     }
@@ -462,7 +462,7 @@ Singleton {
                 root.audioModules = [...root.audioModules, id];
             if (exitCode !== 0 && command[1] === "load-module") {
                 // Without the mix, the microphone alone is better than no sound at all.
-                console.warn("capture: audio mix failed:", command.join(" "));
+                console.warn(log, "audio mix failed:", command.join(" "));
                 root.releaseAudio();
                 root.audioArgs = [`--audio=${Audio.source?.name ?? ""}`, ...root.audioCodec];
                 steps = [];
@@ -486,7 +486,7 @@ Singleton {
         onExited: exitCode => {
             const failedEarly = !stopping && Date.now() - root.recordingStart < root.encoderFailureWindow;
             if (failedEarly && encoder + 1 < root.encoders.length) {
-                console.info("capture: encoder unavailable:", root.encoders[encoder][1]);
+                console.info(log, "encoder unavailable:", root.encoders[encoder][1]);
                 root.launchRecorder(encoder + 1);
                 return;
             }
@@ -495,7 +495,7 @@ Singleton {
             if (stopping || exitCode === 0) {
                 root.notify(I18n.t("capture.recordingSaved"), I18n.t("capture.recordingBody"), "", I18n.t("capture.open"), ["xdg-open", root.recordingFile]);
             } else {
-                console.warn("capture: recording failed:", recorderErrors.text.trim());
+                console.warn(log, "recording failed:", recorderErrors.text.trim());
                 root.notify(I18n.t("capture.failed"), I18n.t("capture.failedBody"));
             }
         }
@@ -538,5 +538,10 @@ Singleton {
         function stop(): void {
             root.stopRecording();
         }
+    }
+
+    LoggingCategory {
+        id: log
+        name: "hyprdora.capture"
     }
 }

@@ -392,9 +392,18 @@ Fixes from daily use (2026-11-22):
 - [x] The shell's own notifications show a glyph of its icon font, colored by their tone, instead of a theme icon
 - [x] Translations in alphabetical order, checked by make lint
 
+Analysis of items 6, 8 and 4 (2026-11-22, report `~/repos/HyprDora-dyski-powiadomienia-logi.md`):
+
+- [x] A busy drive names each program with what it does there: writing, running from it, a folder open in a terminal, a file open. Programs that only read a file there and write nowhere can be closed with "Close and remove" (a second click confirms, SIGTERM only, then one more try); one that writes is never closed, as a copy cut short looks whole. No forced (lazy) unmount and no waiting on a program to end
+- [x] "Can be removed safely" and "Restore point created" show for a few seconds and leave nothing in the history
+- [x] Notifications with a `device.*`, `network.*` or `presence.*` category, from any application, are kept only for the session
+- [x] Logging in categories `hyprdora.<service>`; a development copy shows debug messages, an installed shell leaves out other components' noise (1644 of 1935 journal lines in two days were one Fedora desktop file); streams that end and run again, and files made again, leave one info line
+- [-] "Can be removed safely" closing when the drive is pulled out: after UDisks powers a USB drive off it is gone from the system, and pulling it out reports nothing, neither through udev nor the port's `state` file in sysfs (tried with a USB stick on 2026-11-22)
+- [x] A `udisksctl monitor` outliving shell restarts (once, on 2026-11-22): not reproduced, as every stream ended with the shell in a test; to look at again if the journal reports a left-over process that stays
+
 **Next, in this order** (agreed 2026-11-22; each analysis ends in a report in `~/repos/HyprDora-<topic>.md` the author marks [+]/[-]/[x] before anything is built):
 
-1. Analyses, one report for the three:
+1. Analyses, one report for the three (done 2026-11-22, see above):
    - **Drives held by a program (item 6):** when removing a drive fails because Nautilus or another program still holds it, could the shell end that program? First the risks: a copy or a write still running (data loss), unsaved work, how to tell an idle file manager window from one that is busy, and what GNOME and Windows do. `services/Drives.qml` already names the holders through `fuser`.
    - **Notifications kept out of the history (item 8):** which ones have no use later, such as "safe to remove" for a drive, battery warnings, screenshots, the update screen. The shell has two ways already: `--transient` (not kept at all; the battery warnings use it) and the hint `x-hyprdora-session-only` (kept until the session ends; screenshots use it). Decide per notification, the shell's own and other applications' (by hint or by application).
    - **Logging in two modes (item 4):** development logs more; normal use logs only what matters, such as a crash, a failure, or the shell recovering by itself (a stream restarted by EventSources, a file made again). How the mode is chosen (`HYPRDORA_SHELL` is set in development) and what goes where (`qs log`, the journal).

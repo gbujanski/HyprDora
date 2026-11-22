@@ -16,7 +16,7 @@ Singleton {
     function set(path) {
         // A comma or newline would change the meaning of the hyprpaper command or config.
         if (!path.startsWith("/") || /[,\n]/.test(path)) {
-            console.warn("wallpaper: unsupported path:", path);
+            console.warn(log, "unsupported path:", path);
             return false;
         }
         applier.command = ["hyprctl", "hyprpaper", "wallpaper", `,${path},cover`];
@@ -35,7 +35,7 @@ Singleton {
         path: `${Settings.configDir}/hypr/hyprpaper.conf`
         blockLoading: true
         printErrors: false
-        onSaveFailed: error => console.warn("wallpaper: could not save hyprpaper.conf:", FileViewError.toString(error))
+        onSaveFailed: error => console.warn(log, "could not save hyprpaper.conf:", FileViewError.toString(error))
     }
 
     IpcHandler {
@@ -44,5 +44,10 @@ Singleton {
         function set(path: string): bool {
             return root.set(path);
         }
+    }
+
+    LoggingCategory {
+        id: log
+        name: "hyprdora.wallpaper"
     }
 }

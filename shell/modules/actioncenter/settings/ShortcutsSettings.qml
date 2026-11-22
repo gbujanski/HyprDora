@@ -90,7 +90,7 @@ Column {
                 try {
                     root.binds = root.rows(JSON.parse(text));
                 } catch (e) {
-                    console.warn("shortcuts: unreadable hyprctl response");
+                    console.warn(log, "unreadable hyprctl response");
                 }
             }
         }
@@ -161,5 +161,10 @@ Column {
                 font.pixelSize: Theme.fontSizeSmall
             }
         }
+    }
+
+    LoggingCategory {
+        id: log
+        name: "hyprdora.shortcuts"
     }
 }
