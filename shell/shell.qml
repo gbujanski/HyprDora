@@ -3,6 +3,7 @@ import QtQuick
 import Quickshell
 import qs.modules.bar
 import qs.modules.actioncenter
+import qs.modules.actioncenter.pages
 import qs.modules.notifications
 import qs.modules.osd
 import qs.modules.displays
@@ -54,6 +55,28 @@ ShellRoot {
     MediaPanel {}
     BatteryPanel {}
     SoundPanel {}
+
+    // Wi-Fi, Bluetooth and VPN under their bar icons: the action center's own pages.
+    PagePanel {
+        name: "wifi"
+        page: Component {
+            WifiPage {}
+        }
+    }
+
+    PagePanel {
+        name: "bluetooth"
+        page: Component {
+            BluetoothPage {}
+        }
+    }
+
+    PagePanel {
+        name: "vpn"
+        page: Component {
+            VpnPage {}
+        }
+    }
     DrivesPanel {}
     LauncherPanel {}
     LockScreen {}

@@ -170,7 +170,7 @@ Singleton {
     /** Runs the next command of the current removal, or finishes it. */
     function nextStep() {
         if (steps.length === 0) {
-            Quickshell.execDetached(["notify-send", `--app-name=${I18n.t("drives.appName")}`, "--icon=media-removable", I18n.t("drives.removed", {
+            Quickshell.execDetached(["notify-send", `--app-name=${I18n.t("drives.appName")}`, ...Notifications.glyphArgs(Icons.eject, ""), I18n.t("drives.removed", {
                     name: current.title
                 })]);
             setEntry("status", current.id, null);

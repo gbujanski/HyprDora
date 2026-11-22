@@ -256,7 +256,7 @@ Singleton {
             Settings.set("accounts", root.accounts.filter(a => root.id(a) !== root.id(account)));
             // Offline, the app password stays valid on the server until removed there.
             if (exitCode !== 0)
-                Quickshell.execDetached(["notify-send", `--app-name=${I18n.t("accounts.title")}`, I18n.t("accounts.revokeFailedTitle"), I18n.t("accounts.revokeFailedBody", {
+                Quickshell.execDetached(["notify-send", `--app-name=${I18n.t("accounts.title")}`, ...Notifications.glyphArgs(Icons.alert, "warning"), I18n.t("accounts.revokeFailedTitle"), I18n.t("accounts.revokeFailedBody", {
                         server: account.server
                     })]);
         }

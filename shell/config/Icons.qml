@@ -193,6 +193,7 @@ Singleton {
     readonly property string humidity: glyph(0xF058E)
     readonly property string sunrise: glyph(0xF059C)
     readonly property string sunset: glyph(0xF059B)
+    readonly property string calendar: glyph(0xF00ED)
 
     /**
      * Returns the icon for a WMO weather code.

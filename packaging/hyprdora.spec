@@ -229,6 +229,8 @@ install -Dpm 755 kickstart/first-login.sh %{buildroot}%{_libexecdir}/%{name}/fir
 install -Dpm 755 configs/update/offline-update.sh %{buildroot}%{_libexecdir}/%{name}/offline-update
 install -Dpm 755 configs/systemd/shell-stopped.sh %{buildroot}%{_libexecdir}/%{name}/shell-stopped
 install -Dpm 755 configs/systemd/shell-start.sh %{buildroot}%{_libexecdir}/%{name}/shell-start
+install -Dpm 755 configs/mime/editor-types.sh %{buildroot}%{_libexecdir}/%{name}/editor-types
+touch %{buildroot}%{_sysconfdir}/xdg/hyprland-mimeapps.list
 install -Dpm 755 configs/tmux/terminal-session.sh %{buildroot}%{_libexecdir}/%{name}/terminal-session
 install -Dpm 644 configs/tmux/tmux.conf %{buildroot}%{_sysconfdir}/tmux.conf
 install -Dpm 644 configs/nvim/sysinit.vim %{buildroot}%{_sysconfdir}/xdg/nvim/sysinit.vim
@@ -306,6 +308,15 @@ fi
 %posttrans
 # The boot splash and the hidden GRUB menu; also rebuilds the initramfs when the splash changed.
 %{_libexecdir}/%{name}/boot-theme >/dev/null 2>&1 || :
+# Every text file type opens in the text editor.
+%{_libexecdir}/%{name}/editor-types >/dev/null 2>&1 || :
+
+# The text types follow the MIME database, after Fedora's own trigger has rebuilt it (priority 1000000).
+%transfiletriggerin -P 999000 -- %{_datadir}/mime
+%{_libexecdir}/%{name}/editor-types >/dev/null 2>&1 || :
+
+%transfiletriggerpostun -P 999000 -- %{_datadir}/mime
+%{_libexecdir}/%{name}/editor-types >/dev/null 2>&1 || :
 
 %preun
 if [ "$1" -eq 0 ]; then
@@ -334,6 +345,8 @@ fi
 %dir %{_sysconfdir}/xdg/xdg-desktop-portal
 %config(noreplace) %{_sysconfdir}/xdg/xdg-desktop-portal/hyprland-portals.conf
 %config(noreplace) %{_sysconfdir}/xdg/mimeapps.list
+# Written by editor-types.
+%ghost %{_sysconfdir}/xdg/hyprland-mimeapps.list
 %config(noreplace) %{_sysconfdir}/xdg/xdg-terminals.list
 %config(noreplace) %{_sysconfdir}/dnf/libdnf5-plugins/actions.d/hyprdora-snapper.actions
 %{_datadir}/fonts/%{name}

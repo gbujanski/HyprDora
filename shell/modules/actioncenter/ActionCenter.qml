@@ -61,46 +61,31 @@ BarPanel {
                 }
             }
 
-            ScrollArea {
+            PageView {
                 id: flick
 
                 anchors {
                     fill: parent
                     topMargin: layout.headerSpace
                 }
-                contentHeight: pageLoader.item?.implicitHeight ?? 0
+                // A destroyed page takes focus with it, and Esc would stop working.
+                focusTarget: layout
+                page: {
+                    switch (Panels.actionCenterPage) {
+                    case "wifi":
+                        return wifiPage;
+                    case "bluetooth":
+                        return bluetoothPage;
+                    case "power":
+                        return powerPage;
+                    case "vpn":
+                        return vpnPage;
+                    default:
+                        return mainPage;
+                    }
+                }
                 // Menus are placed by what opened them, so they would be left behind by scrolling.
                 onContentYChanged: Panels.settingsMenuOpen = false
-
-                Loader {
-                    id: pageLoader
-                    width: flick.usableWidth
-                    sourceComponent: {
-                        switch (Panels.actionCenterPage) {
-                        case "wifi":
-                            return wifiPage;
-                        case "bluetooth":
-                            return bluetoothPage;
-                        case "power":
-                            return powerPage;
-                        case "vpn":
-                            return vpnPage;
-                        default:
-                            return mainPage;
-                        }
-                    }
-                    onSourceComponentChanged: flick.contentY = 0
-                    // A destroyed page takes focus with it, and Esc would stop working.
-                    onLoaded: (item.wantsFocus ? item : layout).forceActiveFocus()
-                }
-
-                Connections {
-                    target: pageLoader.item
-                    ignoreUnknownSignals: true
-                    function onScrollToTop() {
-                        flick.contentY = 0;
-                    }
-                }
             }
 
             Component {

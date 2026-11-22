@@ -19,6 +19,10 @@ Singleton {
     readonly property string stateDir: `${Quickshell.env("XDG_STATE_HOME") || `${Quickshell.env("HOME")}/.local/state`}/hyprdora`
     // Hint on notifications that are not worth keeping past this session, such as a screenshot's preview.
     readonly property string sessionOnlyHint: "x-hyprdora-session-only"
+    // The shell's own notifications show a glyph of the shell's icon font in place of an image, in the
+    // shell's look; the tone colors it: "warning", "error", or the accent when left out.
+    readonly property string glyphHint: "x-hyprdora-glyph"
+    readonly property string toneHint: "x-hyprdora-tone"
 
     // Saved entries, oldest first: { key, time, appName, summary, body, urgency, desktopEntry, appIcon }.
     property var saved: []
@@ -54,6 +58,8 @@ Singleton {
                     urgency: e.urgency,
                     desktopEntry: e.desktopEntry,
                     appIcon: e.appIcon,
+                    glyph: e.glyph ?? "",
+                    tone: e.tone ?? "",
                     image: "",
                     actions: [],
                     dismiss: () => root.forget(e.key)
@@ -142,8 +148,38 @@ Singleton {
             urgency: notification.urgency,
             desktopEntry: notification.desktopEntry,
             // A picture sent with the notification itself lives only as long as it does.
-            appIcon: notification.appIcon.startsWith("image://") ? "" : notification.appIcon
+            appIcon: notification.appIcon.startsWith("image://") ? "" : notification.appIcon,
+            glyph: notification.hints[glyphHint] ?? "",
+            tone: notification.hints[toneHint] ?? ""
         };
+    }
+
+    /**
+     * Returns notify-send's arguments that give the shell's own notification a glyph.
+     * @param {string} glyph  a glyph from Icons
+     * @param {string} tone  "warning", "error", or "" for the accent
+     * @returns {list}
+     */
+    function glyphArgs(glyph, tone) {
+        return [`--hint=string:${glyphHint}:${glyph}`, ...(tone ? [`--hint=string:${toneHint}:${tone}`] : [])];
+    }
+
+    /**
+     * Returns the glyph a notification shows, or "" for an image or the application's icon.
+     * @param {object} notification  live or saved notification
+     * @returns {string}
+     */
+    function glyphOf(notification) {
+        return (notification.archived ? notification.glyph : notification.hints?.[glyphHint]) ?? "";
+    }
+
+    /**
+     * Returns the tone of a notification's glyph.
+     * @param {object} notification  live or saved notification
+     * @returns {string}
+     */
+    function toneOf(notification) {
+        return (notification.archived ? notification.tone : notification.hints?.[toneHint]) ?? "";
     }
 
     /**

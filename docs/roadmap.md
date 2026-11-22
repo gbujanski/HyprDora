@@ -362,7 +362,7 @@ Review of the whole project (2026-11-19), in stages, each ending in a report the
   - [x] C1, C2. Unused icons and translation keys removed
   - [x] D1. The calendar's event form in a file of its own; D2. the display layout's geometry out of Displays.qml into DisplayGeometry.js, moved without changes
   - Kept: Capture.qml and Network.qml whole; arrows in the action center's lists
-- [ ] 4. Security, on the code as it stands after the stages above; anything serious found earlier is reported at once
+- [x] 4. Security, on the code as it stands after the stages above; anything serious found earlier is reported at once
   - [x] S1. The launcher passes what it runs to Hyprland as a Lua string the text cannot leave; a clipboard entry, which any web page may fill, could close the old long string and run a command of its own (shown in a nested Hyprland)
   - [x] S2. Online accounts: https only, in the shell and the calendar helper; the server typed is kept, the sign-in and poll addresses must lead back to it, a login has no control characters, and every value given to curl is escaped
   - [x] S3. ptrace limited to a program's own children (kernel.yama.ptrace_scope = 1), so a program running as the user cannot read the memory of the shell, the keyring or a browser
@@ -383,6 +383,25 @@ Terminal and editor (2026-11-22), as VS Code takes too much of 8 GB:
 - [x] Zed from Flathub on new installs, beside VS Code
 - [x] Alacritty opens in tmux: one shared session, each window its own view of it and a new tab in its folder; tmux's own key bindings, with the mouse on and tabs counted from 1
 - [x] LazyVim as Neovim's default config from hyprdora-extras, with the languages used here, QML through qmlls, and Diffview; its tools (ripgrep, fd, lazygit, tree-sitter, gcc) as dependencies
+
+Fixes from daily use (2026-11-22):
+
+- [x] Every text file type opens in the text editor: the package writes them from the MIME database, leaving out tables, mail, playlists and other text not meant for an editor; a new editor in the settings takes them all, except types given an application of their own
+- [x] Wi-Fi, Bluetooth and VPN open their action center page in a panel of their own under their bar icon, which lights up; the sound and battery icons light up too, and the power profile joins the battery as one button
+- [x] Ctrl+C takes a screenshot of the selected area, as Enter does
+- [x] The shell's own notifications show a glyph of its icon font, colored by their tone, instead of a theme icon
+- [x] Translations in alphabetical order, checked by make lint
+
+**Next, in this order** (agreed 2026-11-22; each analysis ends in a report in `~/repos/HyprDora-<topic>.md` the author marks [+]/[-]/[x] before anything is built):
+
+1. Analyses, one report for the three:
+   - **Drives held by a program (item 6):** when removing a drive fails because Nautilus or another program still holds it, could the shell end that program? First the risks: a copy or a write still running (data loss), unsaved work, how to tell an idle file manager window from one that is busy, and what GNOME and Windows do. `services/Drives.qml` already names the holders through `fuser`.
+   - **Notifications kept out of the history (item 8):** which ones have no use later, such as "safe to remove" for a drive, battery warnings, screenshots, the update screen. The shell has two ways already: `--transient` (not kept at all; the battery warnings use it) and the hint `x-hyprdora-session-only` (kept until the session ends; screenshots use it). Decide per notification, the shell's own and other applications' (by hint or by application).
+   - **Logging in two modes (item 4):** development logs more; normal use logs only what matters, such as a crash, a failure, or the shell recovering by itself (a stream restarted by EventSources, a file made again). How the mode is chosen (`HYPRDORA_SHELL` is set in development) and what goes where (`qs log`, the journal).
+2. Features held back during the review: B1, a cheat sheet of the key bindings on a key (descriptions are in `hypr/binds.lua`); C1, keyboard layouts in the settings, with a bar indicator when there is more than one; C2, "Mouse and touchpad" with pointer speed and tap to click; C3, choosing the wallpaper in the settings.
+3. Before publishing, the list below, starting with a review of the licenses (the Fedora files in `packaging/release`, the font, the logo, everything the ISO carries) and of the docs against the code.
+
+To check by hand when the chance comes: the display panel and bar icon with a real external screen; the editor taking every text type after a MIME database update.
 
 Before the repository goes public:
 

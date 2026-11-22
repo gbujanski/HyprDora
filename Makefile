@@ -13,11 +13,11 @@ KICKSTART ?= kickstart/hyprdora.ks
 
 QML_FILES := $(shell find shell -name '*.qml' 2>/dev/null)
 SHELL_FILES := $(shell find kickstart configs packaging tools -name '*.sh' 2>/dev/null) bin/hyprdora
-PYTHON_FILES := $(shell find shell/scripts configs/nautilus configs/portal configs/calendar packaging/logo -name '*.py' 2>/dev/null)
+PYTHON_FILES := $(shell find shell/scripts configs/nautilus configs/portal configs/calendar packaging/logo tools -name '*.py' 2>/dev/null)
 LUA_FILES := $(shell find hypr configs/nvim -name '*.lua' 2>/dev/null)
 
 .DEFAULT_GOAL := help
-.PHONY: help dev lint lint-qml lint-shell lint-python lint-lua rpm install iso
+.PHONY: help dev lint lint-qml lint-shell lint-python lint-lua lint-i18n rpm install iso
 
 help:
 	@echo "make dev    run the shell in a nested Hyprland"
@@ -26,7 +26,7 @@ help:
 	@echo "make install  build and install the hyprdora package on this system"
 	@echo "make iso    build the install ISO"
 
-lint: lint-qml lint-shell lint-python lint-lua
+lint: lint-qml lint-shell lint-python lint-lua lint-i18n
 
 lint-qml:
 ifneq ($(QML_FILES),)
@@ -45,6 +45,10 @@ lint-python:
 ifneq ($(PYTHON_FILES),)
 	ruff check $(PYTHON_FILES)
 endif
+
+# Every language has the same keys as English, in alphabetical order.
+lint-i18n:
+	python3 -I tools/check-i18n.py shell/i18n/*.json
 
 lint-lua:
 ifneq ($(LUA_FILES),)

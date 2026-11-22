@@ -37,6 +37,13 @@ Variants {
             Keys.onEscapePressed: Capture.close()
             Keys.onReturnPressed: Capture.capture()
             Keys.onEnterPressed: Capture.capture()
+            // A screenshot goes to the clipboard anyway, so Ctrl+C takes it as Enter does.
+            Keys.onPressed: event => {
+                if (event.key === Qt.Key_C && event.modifiers & Qt.ControlModifier && Capture.kind === "screenshot") {
+                    Capture.capture();
+                    event.accepted = true;
+                }
+            }
 
             Rectangle {
                 width: parent.width

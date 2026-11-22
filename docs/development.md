@@ -58,7 +58,7 @@ To add a settings category, add an entry to `categories` in `modules/actioncente
 
 ## Adding a language
 
-Copy `shell/i18n/en.json` to `shell/i18n/<code>.json` and translate the values. A missing key falls back to English.
+Copy `shell/i18n/en.json` to `shell/i18n/<code>.json` and translate the values. A missing key falls back to English. Keys stay in alphabetical order, and every language has the same keys; `make lint` checks both.
 
 Plurals are objects. Languages with simple plurals need `one` and `other`. If a language needs other forms, add its rule to `pluralRules` in `shell/config/I18n.qml`.
 
@@ -83,4 +83,4 @@ In QML: `I18n.t("notifications.count", { count: 3 })`.
 
 ## Tools
 
-`make lint` runs `qmllint`, `qmlformat`, `shellcheck`, `ruff` and `stylua` on the files that exist. Which QML warnings count is set in `shell/.qmllint.ini`, which `qmlls` reads too, so an editor reports the same as `make lint`: neither can see Quickshell's types or the `qs.*` modules, and the categories that would only report that are off. Set `QT_BIN` if the Qt tools are not in `/usr/lib64/qt6/bin`.
+`make lint` runs `qmllint`, `qmlformat`, `shellcheck`, `ruff` and `stylua` on the files that exist, and checks the translations. Which QML warnings count is set in `shell/.qmllint.ini`, which `qmlls` reads too, so an editor reports the same as `make lint`: neither can see Quickshell's types or the `qs.*` modules, and the categories that would only report that are off. Set `QT_BIN` if the Qt tools are not in `/usr/lib64/qt6/bin`.

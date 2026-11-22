@@ -3,10 +3,12 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import qs.config
 
-// Default applications by kind, such as the browser or the image viewer. A choice is written for every
-// file type of its kind to ~/.config/mimeapps.list, the same file other desktops and file managers use.
-// The terminal has no file type, so it is kept in xdg-terminals.list for xdg-terminal-exec instead.
+// Default applications by kind, such as the browser or the image viewer. A choice is written for the file
+// types of its kind to ~/.config/mimeapps.list, the same file other desktops and file managers use; a type
+// given an application of its own there, as with "Open With" in the file manager, keeps it. The terminal has
+// no file type, so it is kept in xdg-terminals.list for xdg-terminal-exec instead.
 Singleton {
     id: root
 
@@ -30,7 +32,7 @@ Singleton {
         },
         {
             id: "editor",
-            types: ["text/plain"]
+            types: root.editorTypes
         },
         {
             id: "images",
@@ -50,8 +52,32 @@ Singleton {
         }
     ]
 
+    // Every text type, from the list the package writes from the MIME database for the system's editor.
+    readonly property var editorTypes: ["text/plain", ...Object.keys(defaultsIn(editorTypesFile.text())).filter(t => t !== "text/plain")]
+
     // { kind: { current: "id.desktop" | "", choices: ["id.desktop", …] } }
     property var apps: ({})
+
+    /**
+     * Reads the default applications from a mimeapps.list.
+     * @param {string} text  the file's contents
+     * @returns {object} the first application of each type, by type
+     */
+    function defaultsIn(text) {
+        const defaults = {};
+        let inside = false;
+        for (const line of (text ?? "").split("\n")) {
+            if (line.startsWith("["))
+                inside = line.trim() === "[Default Applications]";
+            else if (inside && line.includes("=") && !line.startsWith("#")) {
+                const [type, value] = [line.slice(0, line.indexOf("=")).trim(), line.slice(line.indexOf("=") + 1)];
+                const app = value.split(";")[0].trim();
+                if (app !== "")
+                    defaults[type] = app;
+            }
+        }
+        return defaults;
+    }
 
     // Desktop entries load in the background, so names are looked up again as they arrive.
     readonly property int entryCount: DesktopEntries.applications.values.length
@@ -81,7 +107,16 @@ Singleton {
     function set(kind, desktopId) {
         if (writer.running)
             return;
-        writer.command = kind === "terminal" ? ["sh", "-c", 'printf "%s\\n" "$1" > "${XDG_CONFIG_HOME:-$HOME/.config}/xdg-terminals.list"', "hyprdora-default-terminal", desktopId] : ["sh", "-c", 'app=$1; shift; for type; do gio mime "$type" "$app" >/dev/null || exit 1; done', "hyprdora-default-app", desktopId, ...kinds.find(k => k.id === kind).types];
+        if (kind === "terminal") {
+            writer.command = ["sh", "-c", 'printf "%s\\n" "$1" > "${XDG_CONFIG_HOME:-$HOME/.config}/xdg-terminals.list"', "hyprdora-default-terminal", desktopId];
+        } else {
+            // The kind's own type always follows; another keeps an application chosen for it alone.
+            const previous = apps[kind]?.current ?? "";
+            userFile.reload();
+            const own = defaultsIn(userFile.text());
+            const types = kinds.find(k => k.id === kind).types.filter((type, i) => i === 0 || !own[type] || own[type] === previous);
+            writer.command = ["sh", "-c", 'app=$1; shift; for type; do gio mime "$type" "$app" >/dev/null || exit 1; done', "hyprdora-default-app", desktopId, ...types];
+        }
         writer.running = true;
     }
 
@@ -135,6 +170,20 @@ Singleton {
     Process {
         id: writer
         onExited: root.refresh()
+    }
+
+    FileView {
+        id: editorTypesFile
+        path: "/etc/xdg/hyprland-mimeapps.list"
+        blockLoading: true
+        printErrors: false
+    }
+
+    FileView {
+        id: userFile
+        path: `${Settings.configDir}/mimeapps.list`
+        blockLoading: true
+        printErrors: false
     }
 
     IpcHandler {

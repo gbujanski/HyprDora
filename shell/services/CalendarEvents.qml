@@ -350,7 +350,7 @@ Singleton {
                     if (at > root.lastAlarmCheck && at <= now && !fired[id]) {
                         fired[id] = true;
                         const when = event.allDay ? I18n.t("calendar.allDay") : minutes === 0 ? I18n.t("calendar.startsNow") : event.start.slice(11, 16);
-                        Quickshell.execDetached(["notify-send", `--app-name=${I18n.t("calendar.title")}`, "--icon=x-office-calendar", event.summary, [when, event.location].filter(Boolean).join(" · ")]);
+                        Quickshell.execDetached(["notify-send", `--app-name=${I18n.t("calendar.title")}`, ...Notifications.glyphArgs(Icons.calendar, ""), event.summary, [when, event.location].filter(Boolean).join(" · ")]);
                     }
                 }
             }

@@ -49,7 +49,7 @@ Rectangle {
         Image {
             id: image
             anchors.fill: parent
-            source: Notifications.iconSource(root.notification)
+            source: Notifications.glyphOf(root.notification) !== "" ? "" : Notifications.iconSource(root.notification)
             sourceSize.width: 72
             sourceSize.height: 72
             fillMode: Image.PreserveAspectFit
@@ -57,11 +57,15 @@ Rectangle {
             visible: status === Image.Ready
         }
 
+        // The shell's own glyph, or a bell when there is no image.
         Icon {
+            readonly property string glyph: Notifications.glyphOf(root.notification)
+            readonly property string tone: Notifications.toneOf(root.notification)
+
             anchors.centerIn: parent
             visible: !image.visible
-            text: Icons.bell
-            color: Theme.muted
+            text: glyph || Icons.bell
+            color: glyph === "" ? Theme.muted : tone === "warning" ? Theme.warning : tone === "error" ? Theme.error : Theme.accent
             font.pixelSize: Theme.iconSizeImage
         }
     }

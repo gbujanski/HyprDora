@@ -87,6 +87,7 @@ Upgrading to a new Fedora release needs `hyprdora-release` built for it, since i
 | `/usr/share/glib-2.0/schemas/90_hyprdora.gschema.override` | GTK defaults: dark theme, icons, cursor; GNOME Software without its own updates |
 | `/usr/share/nautilus-python/extensions/hyprdora.py` | "Open in Terminal" in Nautilus |
 | `/etc/xdg/mimeapps.list`, `/etc/xdg/xdg-terminals.list`, `/etc/alacritty/alacritty.toml` | default applications, terminal and its settings |
+| `/etc/xdg/hyprland-mimeapps.list`, `/usr/libexec/hyprdora/editor-types` | every text file type (Markdown, JSON, scripts, source code) opens in the text editor; written from the MIME database at install and whenever it changes, leaving out tables, mail, playlists and other text not meant for an editor |
 | `/usr/libexec/hyprdora/terminal-session`, `/etc/tmux.conf` | every Alacritty window in tmux, and tmux's settings (see [terminal](terminal.md)) |
 | `/etc/xdg/nvim/sysinit.vim` (`hyprdora-extras`) | LazyVim as Neovim's default config, from `/usr/share/hyprdora/configs/nvim` |
 | `/usr/libexec/hyprdora/system-setup.sh`, `first-login.sh` | system setup run by the kickstart, and the first-login step |

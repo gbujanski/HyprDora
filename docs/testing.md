@@ -20,7 +20,7 @@ tools/nested-test.sh sound /tmp/sound.sh
 
 In the test file, `q` calls the nested shell's IPC, `W` types or presses keys with `wtype` (unpacked into `build/`, not installed), and `$T` is the result folder, `build/test/NAME`, with its `config/`, `shots/` and the nested Hyprland's log. Errors from the shell's log are printed at the end. `SETTINGS=~/.config/hyprdora/settings.json` starts with real settings, such as a weather location; `EMPTY_CONFIG=1` starts without config folders, as on a new account. A third argument runs another copy of the shell.
 
-A second, virtual screen is added with `hyprctl output create headless`. Wi-Fi, Bluetooth, sound, drives and brightness act on the real hardware, and notifications go to the session's own shell, which owns the notification service.
+A second, virtual screen is added with `hyprctl output create headless`. Wi-Fi, Bluetooth, sound, drives and brightness act on the real hardware. Notifications go to the session's own shell, which owns the notification service, unless the runner is started with a bus of its own: `dbus-run-session -- tools/nested-test.sh …`, after which `notify-send` in the test file reaches the nested shell.
 
 ## Manual checklist
 

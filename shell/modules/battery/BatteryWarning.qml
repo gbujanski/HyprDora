@@ -53,7 +53,7 @@ Scope {
             time
         }) + " " + (critical ? I18n.t("battery.warning.criticalBody") : I18n.t("battery.warning.lowBody"));
         // Neither level expires on its own, so it cannot be missed, and both show during Do Not Disturb.
-        const command = ["notify-send", "--print-id", "--transient", `--hint=boolean:${Notifications.ignoreDndHint}:true`, `--app-name=${I18n.t("battery.appName")}`, `--icon=${critical ? "battery-empty" : "battery-caution"}`, `--urgency=${critical ? "critical" : "normal"}`, "--expire-time=0"];
+        const command = ["notify-send", "--print-id", "--transient", `--hint=boolean:${Notifications.ignoreDndHint}:true`, `--app-name=${I18n.t("battery.appName")}`, ...Notifications.glyphArgs(Icons.battery(Power.level, false), critical ? "error" : "warning"), `--urgency=${critical ? "critical" : "normal"}`, "--expire-time=0"];
         // Critical replaces the low warning instead of adding a second one.
         if (notificationId > 0)
             command.push(`--replace-id=${notificationId}`);

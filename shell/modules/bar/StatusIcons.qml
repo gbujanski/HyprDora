@@ -10,6 +10,15 @@ Row {
 
     required property ShellScreen screen
 
+    /**
+     * Tells whether a panel is open under this bar, so the icon that opened it lights up.
+     * @param {string} name  panel name
+     * @returns {bool}
+     */
+    function opened(name) {
+        return Panels.isOpen(name) && Panels.currentScreen === screen;
+    }
+
     spacing: 0
 
     // Security updates show at once, others after a week; a click lists them, with the install buttons.
@@ -75,8 +84,9 @@ Row {
         anchors.verticalCenter: parent.verticalCenter
         visible: Vpn.connected
         icon: Vpn.statusIcon
+        contentColor: root.opened("vpn") ? Theme.accent : Theme.foreground
         tooltip: Vpn.statusTooltip
-        onClicked: Panels.toggleActionCenter(root.screen, "vpn")
+        onClicked: Panels.toggle("vpn", root.screen)
     }
 
     // While a removable drive is plugged in: the drives, each with a button that removes it safely.
@@ -84,7 +94,7 @@ Row {
         anchors.verticalCenter: parent.verticalCenter
         visible: Drives.drives.length > 0
         icon: Icons.usbDrive
-        contentColor: Panels.isOpen("drives") ? Theme.accent : Theme.foreground
+        contentColor: root.opened("drives") ? Theme.accent : Theme.foreground
         tooltip: I18n.t("drives.tooltip")
         onClicked: Panels.toggle("drives", root.screen)
     }
@@ -94,7 +104,7 @@ Row {
         anchors.verticalCenter: parent.verticalCenter
         visible: Displays.hasExternal
         icon: Icons.monitor
-        contentColor: Panels.isOpen("displays") ? Theme.accent : Theme.foreground
+        contentColor: root.opened("displays") ? Theme.accent : Theme.foreground
         tooltip: I18n.t("settings.displays")
         onClicked: Panels.toggle("displays", root.screen)
     }
@@ -107,38 +117,28 @@ Row {
         tooltip: I18n.t("network.wired")
     }
 
-    // A profile other than balanced; the battery panel, which holds the profiles, opens from it.
-    BarButton {
-        anchors.verticalCenter: parent.verticalCenter
-        visible: Power.profile !== PowerProfile.Balanced
-        icon: Power.profile === PowerProfile.Performance ? Icons.performance : Icons.powerSaver
-        contentColor: Power.profile === PowerProfile.Performance ? Theme.warning : Theme.accent
-        tooltip: Power.profile === PowerProfile.Performance ? I18n.t("power.profilePerformanceTooltip") : I18n.t("power.profileSaverTooltip")
-        onClicked: Panels.toggle("battery", root.screen)
-    }
-
     BarButton {
         anchors.verticalCenter: parent.verticalCenter
         visible: Bluetooth.enabled
         icon: Bluetooth.statusIcon
-        contentColor: Bluetooth.connectedDevices.length > 0 ? Theme.foreground : Theme.muted
+        contentColor: root.opened("bluetooth") ? Theme.accent : Bluetooth.connectedDevices.length > 0 ? Theme.foreground : Theme.muted
         tooltip: Bluetooth.statusTooltip
-        onClicked: Panels.toggleActionCenter(root.screen, "bluetooth")
+        onClicked: Panels.toggle("bluetooth", root.screen)
     }
 
     BarButton {
         anchors.verticalCenter: parent.verticalCenter
         icon: Network.statusIcon
-        contentColor: Network.connected ? Theme.foreground : Theme.muted
+        contentColor: root.opened("wifi") ? Theme.accent : Network.connected ? Theme.foreground : Theme.muted
         tooltip: Network.statusTooltip
-        onClicked: Panels.toggleActionCenter(root.screen, "wifi")
+        onClicked: Panels.toggle("wifi", root.screen)
     }
 
     BarButton {
         anchors.verticalCenter: parent.verticalCenter
         icon: Icons.volume(Audio.volume, Audio.muted)
         label: `${Math.round(Audio.volume * 100)}%`
-        contentColor: Audio.muted ? Theme.muted : Theme.foreground
+        contentColor: root.opened("sound") ? Theme.accent : Audio.muted ? Theme.muted : Theme.foreground
         tooltip: Audio.displayName(Audio.sink)
         onClicked: Panels.toggle("sound", root.screen)
         onScrolled: direction => {
@@ -147,26 +147,52 @@ Row {
         }
     }
 
+    // The power profile, when not balanced, and the battery, as one button: both open the battery panel,
+    // which holds the profiles, so they light up together.
     BarButton {
-        anchors.verticalCenter: parent.verticalCenter
-        visible: Power.hasBattery
-        // A bolt while on power; color only when low on battery, at the same levels as the warnings.
-        icon: Icons.battery(Power.level, !UPower.onBattery)
-        label: `${Math.round(Power.level * 100)}%`
-        contentColor: !UPower.onBattery ? Theme.foreground : Power.level <= Settings.batteryCritical ? Theme.error : Power.level <= Settings.batteryLow ? Theme.warning : Theme.foreground
-        tooltip: Power.full ? I18n.t("battery.full") : Power.secondsLeft <= 0 ? "" : Power.charging ? I18n.t("battery.timeToFull", {
+        id: powerButton
+
+        readonly property bool profileShown: Power.profile !== PowerProfile.Balanced
+        readonly property string batteryTooltip: !Power.hasBattery ? "" : Power.full ? I18n.t("battery.full") : Power.secondsLeft <= 0 ? "" : Power.charging ? I18n.t("battery.timeToFull", {
             time: Power.formatTime(Power.secondsLeft)
         }) : I18n.t("battery.timeLeft", {
             time: Power.formatTime(Power.secondsLeft)
         })
+
+        anchors.verticalCenter: parent.verticalCenter
+        visible: profileShown || Power.hasBattery
+        icon: !profileShown ? "" : Power.profile === PowerProfile.Performance ? Icons.performance : Icons.powerSaver
+        contentColor: root.opened("battery") ? Theme.accent : Power.profile === PowerProfile.Performance ? Theme.warning : Theme.accent
+        tooltip: [!profileShown ? "" : Power.profile === PowerProfile.Performance ? I18n.t("power.profilePerformanceTooltip") : I18n.t("power.profileSaverTooltip"), batteryTooltip].filter(Boolean).join("\n")
         onClicked: Panels.toggle("battery", root.screen)
+
+        // A bolt while on power; color only when low on battery, at the same levels as the warnings.
+        Row {
+            anchors.verticalCenter: parent.verticalCenter
+            visible: Power.hasBattery
+            spacing: 5
+
+            readonly property color batteryColor: root.opened("battery") ? Theme.accent : !UPower.onBattery ? Theme.foreground : Power.level <= Settings.batteryCritical ? Theme.error : Power.level <= Settings.batteryLow ? Theme.warning : Theme.foreground
+
+            Icon {
+                anchors.verticalCenter: parent.verticalCenter
+                text: Icons.battery(Power.level, !UPower.onBattery)
+                color: parent.batteryColor
+            }
+
+            Label {
+                anchors.verticalCenter: parent.verticalCenter
+                text: `${Math.round(Power.level * 100)}%`
+                color: parent.batteryColor
+            }
+        }
     }
 
     // HyprDora's mark opens the action center, green while it is open.
     BarButton {
         id: actionCenterButton
         anchors.verticalCenter: parent.verticalCenter
-        contentColor: Panels.isOpen("actioncenter") ? Theme.accent : Theme.foreground
+        contentColor: root.opened("actioncenter") ? Theme.accent : Theme.foreground
         tooltip: I18n.t("actionCenter.title")
         onClicked: Panels.toggleActionCenter(root.screen, "main")
 

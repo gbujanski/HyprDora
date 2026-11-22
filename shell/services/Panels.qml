@@ -6,8 +6,8 @@ import Quickshell.Hyprland
 import Quickshell.Io
 
 // Which panel is open, and on which screen. Every panel takes the keyboard, so at most one is open: opening
-// one closes the others. Panels by name: actioncenter, calendar, notifications, media, battery, sound,
-// displays, drives, updates, launcher, overview.
+// one closes the others. Panels by name: actioncenter, calendar, notifications, media, battery, sound, wifi,
+// bluetooth, vpn, displays, drives, updates, launcher, overview.
 Singleton {
     id: root
 
