@@ -4,7 +4,7 @@ HyprDora has three parts:
 
 - **`hyprdora` RPM:** the shell, the Hyprland config and the default configs in `/usr/share/hyprdora`, system files such as the polkit rules and the lock screen's PAM file, and every program the desktop needs as a dependency. Updated by `dnf`. [Installation](installation.md) lists where each file goes.
 - **Kickstart and ISO:** repositories, drivers, system services, snapshots and the password limit. Disk layout and the user account are chosen in the installer.
-- **First-login step:** user folders and their bookmarks, the keyboard layout chosen in the installer, VS Code's keyring setting and Oh My Zsh.
+- **First-login step:** user folders and their bookmarks, VS Code's keyring setting and Oh My Zsh. The shell takes the keyboard layout chosen in the installer by itself.
 
 User files in `~/.config/hypr` and `~/.config/hyprdora/settings.json` only override the packaged defaults, so package updates never overwrite them.
 

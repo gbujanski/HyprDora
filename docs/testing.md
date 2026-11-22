@@ -28,6 +28,10 @@ Run through the sections related to a change.
 
 **Bar:** workspaces switch on click and scroll; the clock with the weather opens the calendar; the bell, and the media button while something plays, sit next to it; the tray works; status icons open their panels (sound, battery, drives, displays with an external screen, updates); the logo on the right opens the action center and turns green while it is open; a bar appears and disappears with each monitor.
 
+**Settings, input:** pointer speed and tap to click apply at once and after a new session; with two keyboard layouts the bar shows the active one, `SUPER + CTRL + Space` and a click on it switch and show the new layout's name; a layout found by searching is added, moved up to become the default, removed; with one layout the bar shows none.
+
+**Wallpaper and shortcuts:** a wallpaper from the appearance settings applies at once and after a new session; "+" sets a picture of one's own, which then shows after HyprDora's; "Set as wallpaper" in Files marks it there too. `SUPER + /` shows the shortcuts in groups, and a binding changed in `binds.lua` shows in it.
+
 **Panels:** the bar icon, shortcut, Esc and a click outside all close a panel; bar icons stay clickable while one is open; only one panel is open at a time.
 
 **Sound:** the speaker opens the sound panel with both sections unfolded; in the action center they start folded; volume, mute, readable device names (speakers, headphones after plugging into the jack, Bluetooth name), the volume of each application.

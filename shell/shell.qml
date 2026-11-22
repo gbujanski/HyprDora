@@ -19,6 +19,7 @@ import qs.modules.restore
 import qs.modules.polkit
 import qs.modules.updates
 import qs.modules.overview
+import qs.modules.cheatsheet
 import qs.services
 
 ShellRoot {
@@ -85,6 +86,7 @@ ShellRoot {
     UpdatesPanel {}
     UpdateScreen {}
     Overview {}
+    CheatSheet {}
 
     Osd {}
 

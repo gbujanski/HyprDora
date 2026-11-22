@@ -96,6 +96,6 @@ The session needs no files in the home directory. User files in `~/.config/hypr`
 
 ## First login
 
-The first session prepares the home directory: user folders and their bookmarks in the file manager, the keyboard layout chosen in the installer, VS Code's keyring setting, and Oh My Zsh. Existing files are left alone. If a step fails, for example without a network connection, the step runs again at the next login.
+The first session prepares the home directory: user folders and their bookmarks in the file manager, VS Code's keyring setting, and Oh My Zsh; the shell uses the keyboard layout chosen in the installer until others are chosen in the settings. Existing files are left alone. If a step fails, for example without a network connection, the step runs again at the next login.
 
 The git identity is not set, because this step has no way to ask for it.

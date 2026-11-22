@@ -16,15 +16,18 @@ Item {
             icon: Icons.monitor,
             group: 0
         },
-        // Only on a computer with a touchpad.
-        ...(Touchpad.present ? [
-                {
-                    id: "touchpad",
-                    label: I18n.t("settings.touchpad"),
-                    icon: Icons.touchpad,
-                    group: 0
-                }
-            ] : []),
+        {
+            id: "pointer",
+            label: I18n.t("settings.pointer"),
+            icon: Icons.mouse,
+            group: 0
+        },
+        {
+            id: "keyboard",
+            label: I18n.t("settings.keyboard"),
+            icon: Icons.keyboardLayout,
+            group: 0
+        },
         {
             id: "printers",
             label: I18n.t("settings.printers"),
@@ -342,8 +345,10 @@ Item {
                             return automationsSettings;
                         case "appearance":
                             return appearanceSettings;
-                        case "touchpad":
-                            return touchpadSettings;
+                        case "pointer":
+                            return pointerSettings;
+                        case "keyboard":
+                            return keyboardSettings;
                         case "restore":
                             return restoreSettings;
                         case "accounts":
@@ -445,8 +450,13 @@ Item {
     }
 
     Component {
-        id: touchpadSettings
-        TouchpadSettings {}
+        id: pointerSettings
+        PointerSettings {}
+    }
+
+    Component {
+        id: keyboardSettings
+        KeyboardSettings {}
     }
 
     Component {

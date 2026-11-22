@@ -5,23 +5,8 @@
 set -uo pipefail
 
 MARKER=${XDG_STATE_HOME:-$HOME/.local/state}/hyprdora/first-login-done
-CONFIG=${XDG_CONFIG_HOME:-$HOME/.config}
 
 [ -e "$MARKER" ] && exit 0
-
-# Copies the installer's keyboard layout into the Hyprland settings and applies it.
-set_keyboard_layout() {
-    local file=$CONFIG/hypr/settings.lua layout variant
-    [ -e "$file" ] && return 0
-
-    layout=$(localectl status | sed -n 's/^ *X11 Layout: *//p')
-    variant=$(localectl status | sed -n 's/^ *X11 Variant: *//p')
-    [ -n "$layout" ] && [ "$layout" != us ] || return 0
-
-    mkdir -p "$CONFIG/hypr"
-    printf 'hl.config({ input = { kb_layout = "%s", kb_variant = "%s" } })\n' "$layout" "$variant" > "$file"
-    hyprctl reload >/dev/null
-}
 
 # Makes VS Code keep its secrets in GNOME Keyring.
 configure_code() {
@@ -60,7 +45,6 @@ add_folder_bookmarks() {
 status=0
 xdg-user-dirs-update || status=1
 add_folder_bookmarks || status=1
-set_keyboard_layout || status=1
 configure_code || status=1
 install_oh_my_zsh || status=1
 

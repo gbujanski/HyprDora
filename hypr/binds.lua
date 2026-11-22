@@ -1,39 +1,42 @@
--- All default keybindings: { keys, action, description, options }.
--- To change one, list it in ~/.config/hypr/binds.lua; see docs/development.md.
+-- All default keybindings: { keys, action, description, options }, under the group heading before them,
+-- as the shortcut list and the cheat sheet show them. To change one, list it in ~/.config/hypr/binds.lua;
+-- see docs/development.md.
 
 local hardware = { locked = true, repeating = true }
 local media = { locked = true }
 
 -- stylua: ignore
 return {
-    -- Applications
+    { group = "Applications" },
     { "SUPER + T",              act.terminal,         "Terminal" },
     { "SUPER + E",              act.files,            "Files" },
     { "SUPER + B",              act.browser,          "Browser" },
     { "SUPER + SPACE",          act.launcher,         "App launcher" },
     { "SUPER + CTRL + V",       act.clipboard,        "Clipboard history" },
+    { "SUPER + CTRL + SPACE",   act.next_layout,      "Next keyboard layout" },
     { "SUPER + L",              act.lock,             "Lock" },
 
-    -- Panels
+    { group = "Panels" },
     { "SUPER + A",              act.action_center,    "Action center" },
     { "SUPER + Escape",         act.power_menu,       "Power" },
+    { "SUPER + slash",          act.cheat_sheet,      "Keyboard shortcuts" },
     { "Print",                  act.capture,          "Screenshot and recording" },
     { "SUPER + minus",          act.capture,          "Screenshot and recording" },
 
-    -- Windows
+    { group = "Windows" },
     { "SUPER + Q",              act.close,            "Close window" },
     { "SUPER + P",              act.pseudo,           "Pseudotile" },
     { "SUPER + J",              act.toggle_split,     "Toggle split" },
     { "SUPER + mouse:272",      act.drag,             "Move window",      { mouse = true } },
     { "SUPER + mouse:273",      act.resize,           "Resize window",    { mouse = true } },
 
-    -- Focus
+    { group = "Focus" },
     { "SUPER + left",           act.focus_left,       "Focus left" },
     { "SUPER + right",          act.focus_right,      "Focus right" },
     { "SUPER + up",             act.focus_up,         "Focus up" },
     { "SUPER + down",           act.focus_down,       "Focus down" },
 
-    -- Workspaces
+    { group = "Workspaces" },
     { "SUPER + 1",              act.workspace(1),     "Workspace 1" },
     { "SUPER + 2",              act.workspace(2),     "Workspace 2" },
     { "SUPER + 3",              act.workspace(3),     "Workspace 3" },
@@ -48,7 +51,7 @@ return {
     { "SUPER + mouse_up",       act.workspace("e-1"), "Previous workspace" },
     { "SUPER + S",              act.special,          "Scratchpad" },
 
-    -- Move window to workspace
+    { group = "Moving windows" },
     { "SUPER + SHIFT + 1",      act.move_to(1),       "Move to workspace 1" },
     { "SUPER + SHIFT + 2",      act.move_to(2),       "Move to workspace 2" },
     { "SUPER + SHIFT + 3",      act.move_to(3),       "Move to workspace 3" },
@@ -60,7 +63,7 @@ return {
     { "SUPER + SHIFT + 9",      act.move_to(9),       "Move to workspace 9" },
     { "SUPER + SHIFT + 0",      act.move_to(10),      "Move to workspace 10" },
 
-    -- Hardware keys
+    { group = "Hardware keys" },
     { "XF86AudioRaiseVolume",   act.volume_up,        "Volume up",        hardware },
     { "XF86AudioLowerVolume",   act.volume_down,      "Volume down",      hardware },
     { "XF86AudioMute",          act.mute,             "Mute",             hardware },

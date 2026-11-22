@@ -61,7 +61,7 @@ Shell name: `qs -c hyprdora`. User settings: `~/.config/hyprdora/settings.json`.
 |---|---|
 | kickstart | repositories, drivers, system services, snapper, `/var/lib/docker` subvolume, keyring PAM |
 | package | applications, shell, default configs, default applications, themes |
-| first login | keyboard layout, Oh My Zsh, `xdg-user-dirs-update` |
+| first login | Oh My Zsh, `xdg-user-dirs-update` |
 
 ## 4. Shell
 
@@ -401,13 +401,21 @@ Analysis of items 6, 8 and 4 (2026-11-22, report `~/repos/HyprDora-dyski-powiado
 - [-] "Can be removed safely" closing when the drive is pulled out: after UDisks powers a USB drive off it is gone from the system, and pulling it out reports nothing, neither through udev nor the port's `state` file in sysfs (tried with a USB stick on 2026-11-22)
 - [x] A `udisksctl monitor` outliving shell restarts (once, on 2026-11-22): not reproduced, as every stream ended with the shell in a test; to look at again if the journal reports a left-over process that stays
 
+Step 2, features held back during the review (2026-11-22, report `~/repos/HyprDora-krok2.md`):
+
+- [x] One `Input` service writes `input.lua` whole from the settings: keyboard layouts, pointer speed, the touchpad's scrolling and tap to click; without layouts chosen, the installer's (localectl) apply, so the first-login step no longer writes `settings.lua`
+- [x] "Mouse and touchpad" in the settings, always shown: one pointer speed for both, the touchpad's settings when there is one (C2)
+- [x] "Keyboard" in the settings: layouts and variants by name from xkeyboard-config, in the interface's language through gettext; added by searching, moved up to be the default, removed. With more than one, the bar shows the active one, a click or `SUPER + CTRL + Space` switches, and the OSD names the new one (C1)
+- [x] Wallpapers in the appearance settings: HyprDora's own as thumbnails, and "+" for a picture of one's own through a file dialog; the path is kept in `settings.json` (C3)
+- [x] A cheat sheet of the shortcuts on `SUPER + /`, over the whole screen in columns; groups come from headings in `binds.lua`, which the shortcut list in the settings shows too (B1)
+
 **Next, in this order** (agreed 2026-11-22; each analysis ends in a report in `~/repos/HyprDora-<topic>.md` the author marks [+]/[-]/[x] before anything is built):
 
 1. Analyses, one report for the three (done 2026-11-22, see above):
    - **Drives held by a program (item 6):** when removing a drive fails because Nautilus or another program still holds it, could the shell end that program? First the risks: a copy or a write still running (data loss), unsaved work, how to tell an idle file manager window from one that is busy, and what GNOME and Windows do. `services/Drives.qml` already names the holders through `fuser`.
    - **Notifications kept out of the history (item 8):** which ones have no use later, such as "safe to remove" for a drive, battery warnings, screenshots, the update screen. The shell has two ways already: `--transient` (not kept at all; the battery warnings use it) and the hint `x-hyprdora-session-only` (kept until the session ends; screenshots use it). Decide per notification, the shell's own and other applications' (by hint or by application).
    - **Logging in two modes (item 4):** development logs more; normal use logs only what matters, such as a crash, a failure, or the shell recovering by itself (a stream restarted by EventSources, a file made again). How the mode is chosen (`HYPRDORA_SHELL` is set in development) and what goes where (`qs log`, the journal).
-2. Features held back during the review: B1, a cheat sheet of the key bindings on a key (descriptions are in `hypr/binds.lua`); C1, keyboard layouts in the settings, with a bar indicator when there is more than one; C2, "Mouse and touchpad" with pointer speed and tap to click; C3, choosing the wallpaper in the settings.
+2. Features held back during the review (done 2026-11-22, see above): B1, a cheat sheet of the key bindings on a key (descriptions are in `hypr/binds.lua`); C1, keyboard layouts in the settings, with a bar indicator when there is more than one; C2, "Mouse and touchpad" with pointer speed and tap to click; C3, choosing the wallpaper in the settings.
 3. Before publishing, the list below, starting with a review of the licenses (the Fedora files in `packaging/release`, the font, the logo, everything the ISO carries) and of the docs against the code.
 
 To check by hand when the chance comes: the display panel and bar icon with a real external screen; the editor taking every text type after a MIME database update.

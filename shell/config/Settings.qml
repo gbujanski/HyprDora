@@ -54,6 +54,8 @@ Singleton {
     readonly property var btopCommand: [...terminalCommand, "btop"]
     // "dark" or "light", for the shell and GTK applications; the terminal stays dark.
     readonly property string theme: overrides.theme ?? "dark"
+    // The wallpaper's path; left out, HyprDora's default. Wallpaper shows it and keeps it.
+    readonly property string wallpaper: typeof overrides.wallpaper === "string" ? overrides.wallpaper : ""
     // Icon theme for applications, the launcher and GTK: one of iconThemes. The shell reads it at start.
     readonly property var iconThemes: ["Papirus", "Adwaita"]
     readonly property string iconTheme: iconThemes.includes(overrides.iconTheme) ? overrides.iconTheme : "Papirus"
@@ -69,8 +71,14 @@ Singleton {
 
     // Applications quit a few seconds after their last window closes, by Wayland application id: the command
     // that quits each. GNOME Software otherwise stays in the background as a service of about 400 MB.
-    // Touchpad scrolling that moves the content with the fingers, as on a phone; Touchpad writes it for Hyprland.
+    // Pointer and keyboard, which Input writes for Hyprland. Touchpad scrolling that moves the content with the
+    // fingers, as on a phone; a tap that clicks; pointer speed from -1 to 1 for the mouse and the touchpad.
     readonly property bool touchpadNaturalScroll: overrides.touchpadNaturalScroll ?? false
+    readonly property bool touchpadTapToClick: overrides.touchpadTapToClick ?? true
+    readonly property real pointerSpeed: Math.max(-1, Math.min(1, Number(overrides.pointerSpeed ?? 0) || 0))
+    // Keyboard layouts, the first the default: [{ layout, variant }] as xkb names them, such as
+    // { layout: "pl", variant: "" }. Left out, the system's layouts chosen in the installer apply.
+    readonly property var keyboardLayouts: overrides.keyboardLayouts ?? null
     readonly property var quitWithLastWindow: overrides.quitWithLastWindow ?? {
         "org.gnome.Software": ["gnome-software", "--quit"]
     }

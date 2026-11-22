@@ -16,7 +16,7 @@ require("hypr.autostart")
 
 hl.monitor({ output = "", mode = "preferred", position = "auto", scale = "auto" })
 user.load("monitors")
--- Settings the shell writes, such as the touchpad's scrolling direction; settings.lua below can override them.
+-- Settings the shell writes, such as keyboard layouts and the pointer; settings.lua below can override them.
 user.load("input")
 
 require("hypr.lib.binds").apply(require("hypr.binds"), user.load("binds"), paths.dev)

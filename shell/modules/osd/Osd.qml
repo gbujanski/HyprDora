@@ -6,8 +6,8 @@ import qs.config
 import qs.components
 import qs.services
 
-// Volume and brightness indicator. It shows only when asked through Indicator, for a change the user made
-// (keys, the bar's sound icon), and then follows the current value, so it never shows for a change that
+// Volume, brightness and keyboard layout indicator. It shows only when asked through Indicator, for a change
+// the user made (keys, the bar's sound icon), and then follows the current value, so it never shows for a change that
 // happens on its own. The one exception reads PipeWire: a Bluetooth headset with its own volume buttons
 // changes the volume directly, which counts as the user's when the output has stayed the same for a while,
 // so switching outputs, as when headphones disconnect, does not show it.
@@ -31,6 +31,8 @@ Scope {
             return Icons.brightness;
         case "keyboard":
             return Icons.keyboard;
+        case "layout":
+            return Icons.keyboardLayout;
         }
         return "";
     }
@@ -51,17 +53,19 @@ Scope {
             return Audio.muted ? I18n.t("osd.muted") : `${Math.round(Audio.volume * 100)}%`;
         case "microphone":
             return Audio.sourceMuted ? I18n.t("osd.micMuted") : I18n.t("osd.micOn");
+        case "layout":
+            return Input.nameOf(Input.active);
         case "display":
         case "keyboard":
             return `${Math.round(value * 100)}%`;
         }
         return "";
     }
-    readonly property bool showBar: kind !== "microphone"
+    readonly property bool showBar: kind !== "microphone" && kind !== "layout"
 
     /**
      * Shows the indicator for a kind, unless a panel with the same controls is open.
-     * @param {string} kindName  "volume", "microphone", "display" or "keyboard"
+     * @param {string} kindName  "volume", "microphone", "display", "keyboard" or "layout"
      */
     function show(kindName) {
         if (Panels.isOpen("actioncenter") || (Panels.isOpen("sound") && (kindName === "volume" || kindName === "microphone")))

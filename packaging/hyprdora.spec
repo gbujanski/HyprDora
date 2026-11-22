@@ -50,6 +50,8 @@ Requires:       gvfs
 # Removable drives on the bar: UDisks to unmount and power them off, fuser to name what holds a busy one.
 Requires:       udisks2
 Requires:       psmisc
+# Keyboard layout names in the interface's language, from xkeyboard-config's translations.
+Requires:       gettext-runtime
 # The camera indicator: inotify reports a camera device opened or closed, so nothing polls for it.
 Requires:       inotify-tools
 Requires:       xdg-user-dirs

@@ -25,9 +25,12 @@ return {
 
     action_center = exec(shell_call("panel toggle actioncenter")),
     power_menu = exec(shell_call("panel page power")),
+    cheat_sheet = exec(shell_call("panel toggle cheatsheet")),
     power_press = exec(shell_call("powerbutton press")),
     power_release = exec(shell_call("powerbutton release")),
     capture = exec(shell_call("capture toggle")),
+    -- Through the shell, which shows the new layout; hyprctl is a fallback for when it is not running.
+    next_layout = exec(shell_call("input nextLayout") .. " || hyprctl switchxkblayout all next"),
 
     close = hl.dsp.window.close(),
     pseudo = hl.dsp.window.pseudo(),

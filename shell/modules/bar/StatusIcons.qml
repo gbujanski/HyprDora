@@ -80,6 +80,15 @@ Row {
         }) : I18n.t("privacy.screen")
     }
 
+    // The active keyboard layout, only with more than one; a click switches to the next.
+    BarButton {
+        anchors.verticalCenter: parent.verticalCenter
+        visible: Input.layouts.length > 1
+        label: Input.labelOf(Input.active)
+        tooltip: Input.nameOf(Input.active)
+        onClicked: Input.nextLayout()
+    }
+
     BarButton {
         anchors.verticalCenter: parent.verticalCenter
         visible: Vpn.connected
