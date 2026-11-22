@@ -6,7 +6,7 @@
 
 Its config files live in `build/dev/config`, so saving monitors or a wallpaper does not change the real ones. `settings.json` and `settings.lua` are copied there on the first run. Services such as `hypridle` are not started in a nested session.
 
-`make install` builds the package and installs it on the running system, then reloads Hyprland and restarts the shell service, so a change can be tried in the real session. It asks for `sudo`.
+`make install` builds the packages and installs `hyprdora` on the running system, with `hyprdora-extras` when it is installed, then reloads Hyprland and restarts the shell service, so a change can be tried in the real session. It asks for `sudo`.
 
 ## Keybindings
 
@@ -83,4 +83,4 @@ In QML: `I18n.t("notifications.count", { count: 3 })`.
 
 ## Tools
 
-`make lint` runs `qmllint`, `qmlformat`, `shellcheck`, `ruff` and `stylua` on the files that exist. Set `QT_BIN` if the Qt tools are not in `/usr/lib64/qt6/bin`.
+`make lint` runs `qmllint`, `qmlformat`, `shellcheck`, `ruff` and `stylua` on the files that exist. Which QML warnings count is set in `shell/.qmllint.ini`, which `qmlls` reads too, so an editor reports the same as `make lint`: neither can see Quickshell's types or the `qs.*` modules, and the categories that would only report that are off. Set `QT_BIN` if the Qt tools are not in `/usr/lib64/qt6/bin`.

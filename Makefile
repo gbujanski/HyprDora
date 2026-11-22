@@ -10,15 +10,11 @@ ISO_SOURCE ?= $(ISO_DIR)/source/Fedora-Everything-netinst-x86_64-44-1.7.iso
 ISO_OUT ?= $(ISO_DIR)/hyprdora-$(VERSION).iso
 KICKSTART ?= kickstart/hyprdora.ks
 
-# qmllint cannot see Quickshell's types or the qs.* modules, so these categories only report noise.
-QMLLINT_FLAGS := --import disable --unqualified disable --unresolved-type disable --missing-type disable \
-	--missing-property disable --uncreatable-type disable --required disable \
-	--signal-handler-parameters disable --incompatible-type disable
 
 QML_FILES := $(shell find shell -name '*.qml' 2>/dev/null)
 SHELL_FILES := $(shell find kickstart configs packaging tools -name '*.sh' 2>/dev/null) bin/hyprdora
 PYTHON_FILES := $(shell find shell/scripts configs/nautilus configs/portal configs/calendar packaging/logo -name '*.py' 2>/dev/null)
-LUA_FILES := $(shell find hypr -name '*.lua' 2>/dev/null)
+LUA_FILES := $(shell find hypr configs/nvim -name '*.lua' 2>/dev/null)
 
 .DEFAULT_GOAL := help
 .PHONY: help dev lint lint-qml lint-shell lint-python lint-lua rpm install iso
@@ -34,7 +30,7 @@ lint: lint-qml lint-shell lint-python lint-lua
 
 lint-qml:
 ifneq ($(QML_FILES),)
-	$(QT_BIN)/qmllint $(QMLLINT_FLAGS) $(QML_FILES)
+	$(QT_BIN)/qmllint $(QML_FILES)
 	@for file in $(QML_FILES); do \
 		$(QT_BIN)/qmlformat "$$file" | diff -u "$$file" - || exit 1; \
 	done
@@ -75,9 +71,10 @@ rpm:
 # back on. The shell does not watch its installed files and is restarted once.
 install: rpm
 	-hyprctl eval 'hl.config({ misc = { disable_autoreload = true } })' >/dev/null
-	sudo dnf reinstall -y $(RPM_DIR)/RPMS/noarch/hyprdora-$(VERSION)-*.noarch.rpm || \
-		sudo dnf install -y $(RPM_DIR)/RPMS/noarch/hyprdora-$(VERSION)-*.noarch.rpm || \
-		{ hyprctl reload >/dev/null; exit 1; }
+	# hyprdora-extras goes along when installed, as some of the desktop's defaults live in it.
+	pkgs="$$(ls $(RPM_DIR)/RPMS/noarch/hyprdora-$(VERSION)-*.noarch.rpm)"; \
+	if rpm -q hyprdora-extras >/dev/null 2>&1; then pkgs="$$pkgs $$(ls $(RPM_DIR)/RPMS/noarch/hyprdora-extras-$(VERSION)-*.noarch.rpm)"; fi; \
+	sudo dnf reinstall -y $$pkgs || sudo dnf install -y $$pkgs || { hyprctl reload >/dev/null; exit 1; }
 	-hyprctl reload >/dev/null
 	-systemctl --user daemon-reload
 	-systemctl --user try-restart hyprdora-shell.service

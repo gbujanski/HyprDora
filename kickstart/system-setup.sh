@@ -85,7 +85,7 @@ create_excluded_subvolumes() {
 
 install_flatpaks() {
     flatpak remote-add --system --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo &&
-        flatpak install --system --noninteractive flathub app.zen_browser.zen com.github.tchx84.Flatseal
+        flatpak install --system --noninteractive flathub app.zen_browser.zen com.github.tchx84.Flatseal dev.zed.Zed
 }
 
 configure_snapshots() {

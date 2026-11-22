@@ -1,2 +1,11 @@
 [font.normal]
 family = "JetBrainsMono Nerd Font"
+
+# Each window opens in tmux, for tabs and panes; a command given with -e runs on its own.
+[terminal.shell]
+program = "/usr/libexec/hyprdora/terminal-session"
+
+# Shift+Enter sends what Alt+Enter does, a new line in Claude Code and in zsh's command line: tmux cannot pass
+# the separate code Alacritty gives Shift+Enter (the kitty keyboard protocol), while Alt+Enter goes through.
+[keyboard]
+bindings = [{ key = "Return", mods = "Shift", chars = "\u001b\r" }]

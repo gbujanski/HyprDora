@@ -67,6 +67,8 @@ Requires:       wl-clipboard
 Requires:       grim
 Requires:       swappy
 Requires:       wf-recorder
+# Tabs and panes in the terminal; Alacritty opens in it.
+Requires:       tmux
 # The only H.264 encoder without RPM Fusion; it comes from a repository that may be disabled.
 Recommends:     openh264
 
@@ -123,6 +125,13 @@ so the hyprdora package can be installed on an existing Fedora system.
 %package extras
 Summary:        Personal applications and development tools for HyprDora
 Requires:       neovim
+# What LazyVim, the default Neovim config, calls on: file and text search, git in the terminal, and the
+# tools that build syntax parsers.
+Requires:       ripgrep
+Requires:       fd-find
+Requires:       lazygit
+Requires:       tree-sitter-cli
+Requires:       gcc
 Requires:       code
 Requires:       discord
 Requires:       filezilla
@@ -220,6 +229,9 @@ install -Dpm 755 kickstart/first-login.sh %{buildroot}%{_libexecdir}/%{name}/fir
 install -Dpm 755 configs/update/offline-update.sh %{buildroot}%{_libexecdir}/%{name}/offline-update
 install -Dpm 755 configs/systemd/shell-stopped.sh %{buildroot}%{_libexecdir}/%{name}/shell-stopped
 install -Dpm 755 configs/systemd/shell-start.sh %{buildroot}%{_libexecdir}/%{name}/shell-start
+install -Dpm 755 configs/tmux/terminal-session.sh %{buildroot}%{_libexecdir}/%{name}/terminal-session
+install -Dpm 644 configs/tmux/tmux.conf %{buildroot}%{_sysconfdir}/tmux.conf
+install -Dpm 644 configs/nvim/sysinit.vim %{buildroot}%{_sysconfdir}/xdg/nvim/sysinit.vim
 install -Dpm 755 configs/update/not-metered.sh %{buildroot}%{_libexecdir}/%{name}/not-metered
 install -Dpm 755 configs/plymouth/boot-theme.sh %{buildroot}%{_libexecdir}/%{name}/boot-theme
 install -Dpm 644 configs/dracut/90-hyprdora.conf %{buildroot}%{_prefix}/lib/dracut/dracut.conf.d/90-hyprdora.conf
@@ -346,12 +358,14 @@ fi
 %{_sysconfdir}/xdg/quickshell/%{name}
 %dir %{_sysconfdir}/alacritty
 %config(noreplace) %{_sysconfdir}/alacritty/alacritty.toml
+%config(noreplace) %{_sysconfdir}/tmux.conf
 %config(noreplace) %{_sysconfdir}/sddm.conf.d/hyprdora.conf
 
 %files repos
 %config(noreplace) %{_sysconfdir}/yum.repos.d/hyprdora-copr.repo
 
 %files extras
+%config(noreplace) %{_sysconfdir}/xdg/nvim/sysinit.vim
 
 %files release
 %license LICENSE.fedora-release

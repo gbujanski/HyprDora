@@ -378,6 +378,12 @@ Review of the whole project (2026-11-19), in stages, each ending in a report the
   - [x] Toasts end when the notification panel opens, which lists them, and a notification arriving while it is open shows only there
 - The whole project is in scope: the shell, the Hyprland config, scripts, packaging and the kickstart
 
+Terminal and editor (2026-11-22), as VS Code takes too much of 8 GB:
+
+- [x] Zed from Flathub on new installs, beside VS Code
+- [x] Alacritty opens in tmux: one shared session, each window its own view of it and a new tab in its folder; tmux's own key bindings, with the mouse on and tabs counted from 1
+- [x] LazyVim as Neovim's default config from hyprdora-extras, with the languages used here, QML through qmlls, and Diffview; its tools (ripgrep, fd, lazygit, tree-sitter, gcc) as dependencies
+
 Before the repository goes public:
 
 - [ ] Updates for installed systems: HyprDora's packages come only from the ISO or a local build, so an installed system gets no fixes and cannot move to the next Fedora release, which needs hyprdora-release for it. A COPR project built from the GitHub repository, enabled by hyprdora-repos
