@@ -20,13 +20,9 @@ Snapshots and the subvolumes kept out of them need a Btrfs root and are skipped 
 
 The installer also limits wrong passwords: ten in a row lock the account for five minutes. A system installed from packages has no such limit unless it is turned on as described in [security](security.md).
 
-## Build packages
+## Packages
 
-```bash
-make rpm
-```
-
-The packages land in `build/rpm/RPMS/noarch`:
+Each release is built in the COPR project [gbujanski/hyprdora](https://copr.fedorainfracloud.org/coprs/gbujanski/hyprdora/). `make rpm` builds the same packages from the repository, numbered as a snapshot after the last release, such as `0.1.0^20261124.153000.git045dbd0`, so the next release from COPR replaces them. They land in `build/rpm/RPMS/noarch`:
 
 | Package | Contents |
 |---|---|
@@ -40,11 +36,12 @@ Applications beyond the base, such as a browser, VS Code, Docker, ONLYOFFICE and
 ## Install on an existing Fedora
 
 ```bash
-sudo dnf install ./hyprdora-repos-*.rpm
-sudo dnf install ./hyprdora-0*.rpm
+sudo dnf copr enable gbujanski/hyprdora
+sudo dnf install hyprdora-repos
+sudo dnf install hyprdora
 ```
 
-`dnf` pulls in all dependencies. To start the desktop at boot:
+`hyprdora-repos` enables the COPR repositories of Hyprland and the cursor theme, and `dnf` pulls in all dependencies from them. Packages built with `make rpm` install the same way, from their files. A system installed from the ISO gets HyprDora's COPR repository during setup. To start the desktop at boot:
 
 ```bash
 sudo systemctl enable sddm
@@ -56,7 +53,7 @@ Then choose the **HyprDora** session on the login screen.
 The system stays Fedora. To name it HyprDora, as the ISO does ([decision 9](decisions/0009-own-release-identity.md)), swap Fedora's release and logo packages for HyprDora's:
 
 ```bash
-sudo dnf install --allowerasing ./hyprdora-release-*.rpm ./hyprdora-logos-*.rpm
+sudo dnf install --allowerasing hyprdora-release hyprdora-logos
 ```
 
 Upgrading to a new Fedora release needs `hyprdora-release` built for it, since it replaces the package that names the release: `packaging/release/refresh.sh 45` takes the files that come from Fedora 45, and `make rpm FEDORA=45` builds the package as `hyprdora-release-45`.

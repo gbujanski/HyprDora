@@ -1,10 +1,15 @@
+# The released version, raised for each release together with the tag vX.Y.Z. A local build (make rpm) adds
+# a snapshot, such as 0.1.0^20261124.153000.git045dbd0: above this release and below the next, so the next
+# release from COPR replaces it.
+%global base_version 0.1.0
+
 Name:           hyprdora
-Version:        0.1.0
+Version:        %{base_version}%{?snapshot:^%{snapshot}}
 Release:        1%{?dist}
 Summary:        Hyprland desktop with a custom Quickshell shell
 License:        MIT AND OFL-1.1
 URL:            https://github.com/gbujanski/HyprDora
-Source0:        %{name}-%{version}.tar.gz
+Source0:        %{name}-%{base_version}.tar.gz
 BuildArch:      noarch
 
 # Hyprland
@@ -131,8 +136,10 @@ Enables the COPR repositories that hold Hyprland and the Bibata cursor theme,
 so the hyprdora package can be installed on an existing Fedora system.
 
 %package release
-# The release follows Fedora's, which dnf reads as $releasever.
+# The release follows Fedora's, which dnf reads as $releasever; HyprDora's own version goes in the release
+# number, so a new HyprDora version also updates this package.
 Version:        %{fedora}
+Release:        1.%{base_version}%{?snapshot:.%{snapshot}}%{?dist}
 Summary:        HyprDora's name and version, and the defaults a Fedora system starts with
 License:        MIT
 Provides:       system-release
@@ -165,7 +172,7 @@ HyprDora's logo in place of fedora-logos, for programs that show the
 distribution's logo, such as the login screen.
 
 %prep
-%autosetup
+%autosetup -n %{name}-%{base_version}
 
 %build
 

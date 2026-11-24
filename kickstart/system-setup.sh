@@ -16,6 +16,22 @@ step() {
 }
 
 
+# HyprDora's own packages get their updates from its COPR project, under the name dnf copr enable gives it, so
+# enabling it again by hand changes nothing.
+enable_hyprdora_repository() {
+    cat > /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:gbujanski:hyprdora.repo <<'EOF'
+[copr:copr.fedorainfracloud.org:gbujanski:hyprdora]
+name=Copr repo for hyprdora owned by gbujanski
+baseurl=https://download.copr.fedorainfracloud.org/results/gbujanski/hyprdora/fedora-$releasever-$basearch/
+type=rpm-md
+skip_if_unavailable=True
+gpgcheck=1
+gpgkey=https://download.copr.fedorainfracloud.org/results/gbujanski/hyprdora/pubkey.gpg
+repo_gpgcheck=0
+enabled=1
+EOF
+}
+
 # Where the camera driver from the ISO gets its updates, on MacBooks that have the camera. RPM Fusion's
 # repositories come with its release packages; applications from other makers add theirs when chosen on the
 # welcome screen.
@@ -98,6 +114,7 @@ configure_boot() {
     /usr/libexec/hyprdora/boot-theme installer
 }
 
+step enable_hyprdora_repository
 step enable_hardware_repositories
 step create_excluded_subvolumes
 step add_flathub

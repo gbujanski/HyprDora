@@ -6,7 +6,15 @@
 
 Its config files live in `build/dev/config`, so saving monitors or a wallpaper does not change the real ones. `settings.json` and `settings.lua` are copied there on the first run. Services such as `hypridle` are not started in a nested session.
 
-`make install` builds the packages and installs `hyprdora` on the running system, then reloads Hyprland and restarts the shell service, so a change can be tried in the real session. It asks for `sudo`.
+`make install` builds the packages and installs `hyprdora` on the running system, numbered as a snapshot after the last release, so it always installs over what is there and the next release replaces it; then it reloads Hyprland and restarts the shell service, so a change can be tried in the real session. It asks for `sudo`.
+
+## Releases
+
+Packit builds the packages in the COPR project `gbujanski/hyprdora` when a release is published on GitHub (`.packit.yaml`). A release:
+
+1. Raise `base_version` in `packaging/hyprdora.spec`, add a `%changelog` entry, and commit.
+2. Tag the commit `vX.Y.Z`, the same version, and push the tag.
+3. Publish a GitHub release from the tag. Packit builds it for the Fedora releases in `.packit.yaml`; a new Fedora release is added there and in the COPR project's chroots.
 
 ## Keybindings
 

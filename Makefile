@@ -1,8 +1,10 @@
 QT_BIN ?= /usr/lib64/qt6/bin
 DEV_DIR := $(CURDIR)/build/dev/config
 RPM_DIR := $(CURDIR)/build/rpm
-# The package's own version; hyprdora-release follows Fedora's instead.
-VERSION := $(shell sed -n 's/^Version: *//p' packaging/hyprdora.spec | head -1)
+# The released version; hyprdora-release follows Fedora's instead.
+VERSION := $(shell sed -n 's/^%global base_version *//p' packaging/hyprdora.spec)
+# Local builds are snapshots after that release: the time, the commit, and whether files changed since.
+SNAPSHOT := $(shell date +%Y%m%d.%H%M%S).git$(shell git rev-parse --short HEAD)$(shell git diff --quiet HEAD 2>/dev/null || echo .dirty)
 # The Fedora release to build for; another one builds hyprdora-release ahead of an upgrade.
 FEDORA ?= $(shell rpm -E %fedora)
 ISO_DIR := $(CURDIR)/build/iso
@@ -13,11 +15,11 @@ KICKSTART ?= kickstart/hyprdora.ks
 
 QML_FILES := $(shell find shell -name '*.qml' 2>/dev/null)
 SHELL_FILES := $(shell find kickstart configs packaging tools -name '*.sh' 2>/dev/null) bin/hyprdora
-PYTHON_FILES := $(shell find shell/scripts configs/nautilus configs/portal configs/calendar packaging/logo tools -name '*.py' 2>/dev/null)
+PYTHON_FILES := $(shell find shell/scripts configs/nautilus configs/portal configs/calendar configs/extras packaging/logo tools -name '*.py' 2>/dev/null)
 LUA_FILES := $(shell find hypr configs/nvim -name '*.lua' 2>/dev/null)
 
 .DEFAULT_GOAL := help
-.PHONY: help dev lint lint-qml lint-shell lint-python lint-lua lint-i18n rpm install iso
+.PHONY: help dev lint lint-qml lint-shell lint-python lint-lua lint-i18n archive rpm install iso
 
 help:
 	@echo "make dev    run the shell in a nested Hyprland"
@@ -61,11 +63,18 @@ dev:
 	@cp -n $(HOME)/.config/hypr/settings.lua $(DEV_DIR)/hypr/ 2>/dev/null || true
 	XDG_CONFIG_HOME=$(DEV_DIR) HYPRDORA_SHELL=$(CURDIR)/shell Hyprland --config $(CURDIR)/hypr/init.lua
 
-rpm:
+# The source archive of the files in the repository, its path from the repository as the last line, as
+# Packit expects.
+archive:
 	@mkdir -p $(RPM_DIR)/SOURCES
-	git ls-files -co --exclude-standard | xargs -d '\n' ls -d 2>/dev/null | \
+	@git ls-files -co --exclude-standard | xargs -d '\n' ls -d 2>/dev/null | \
 		tar -czf $(RPM_DIR)/SOURCES/hyprdora-$(VERSION).tar.gz --transform 's,^,hyprdora-$(VERSION)/,' -T -
-	rpmbuild -bb --define "_topdir $(RPM_DIR)" --define "fedora $(FEDORA)" packaging/hyprdora.spec
+	@echo build/rpm/SOURCES/hyprdora-$(VERSION).tar.gz
+
+# Only this build's packages stay, as make iso takes every package here.
+rpm: archive
+	rm -f $(RPM_DIR)/RPMS/noarch/hyprdora*.rpm
+	rpmbuild -bb --define "_topdir $(RPM_DIR)" --define "fedora $(FEDORA)" --define "snapshot $(SNAPSHOT)" packaging/hyprdora.spec
 	@echo "Packages are in $(RPM_DIR)/RPMS/noarch"
 
 # Neither Hyprland nor the shell takes in a package update by itself: Hyprland misses replaced files, and a
@@ -75,8 +84,7 @@ rpm:
 # back on. The shell does not watch its installed files and is restarted once.
 install: rpm
 	-hyprctl eval 'hl.config({ misc = { disable_autoreload = true } })' >/dev/null
-	pkgs="$$(ls $(RPM_DIR)/RPMS/noarch/hyprdora-$(VERSION)-*.noarch.rpm)"; \
-	sudo dnf reinstall -y $$pkgs || sudo dnf install -y $$pkgs || { hyprctl reload >/dev/null; exit 1; }
+	sudo dnf install -y "$(RPM_DIR)/RPMS/noarch/hyprdora-$(VERSION)^$(SNAPSHOT)-1.fc$(FEDORA).noarch.rpm" || { hyprctl reload >/dev/null; exit 1; }
 	-hyprctl reload >/dev/null
 	-systemctl --user daemon-reload
 	-systemctl --user try-restart hyprdora-shell.service

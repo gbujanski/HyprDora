@@ -9,6 +9,16 @@ A Hyprland desktop on Fedora with a custom [Quickshell](https://quickshell.org) 
 
 **Status: early development.** The ISO is built with `make iso` and has been tested in virtual machines only. See the [roadmap](docs/roadmap.md) and [installation](docs/installation.md).
 
+On Fedora 44:
+
+```bash
+sudo dnf copr enable gbujanski/hyprdora
+sudo dnf install hyprdora-repos
+sudo dnf install hyprdora
+```
+
+Then choose the HyprDora session on the login screen. An install ISO is built with `make iso`; see [installation](docs/installation.md).
+
 ## Layout
 
 | Path | Contents |

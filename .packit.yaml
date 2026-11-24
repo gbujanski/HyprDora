@@ -1,0 +1,30 @@
+# Packit builds HyprDora's packages in the COPR project gbujanski/hyprdora for each release published on GitHub.
+# The release's tag, vX.Y.Z, matches base_version in the spec, raised in the commit the tag points to.
+# Targets follow the project's chroots: a new Fedora release is added here when it is added there.
+specfile_path: packaging/hyprdora.spec
+upstream_package_name: hyprdora
+downstream_package_name: hyprdora
+upstream_tag_template: v{version}
+
+# What make archive needs, in the build that makes the source package.
+srpm_build_deps:
+  - make
+  - git-core
+  - tar
+  - gzip
+  - findutils
+  - sed
+
+actions:
+  get-current-version:
+    - bash -c "sed -n 's/^%global base_version *//p' packaging/hyprdora.spec"
+  create-archive:
+    - make --no-print-directory archive
+
+jobs:
+  - job: copr_build
+    trigger: release
+    owner: gbujanski
+    project: hyprdora
+    targets:
+      - fedora-44-x86_64
