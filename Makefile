@@ -95,9 +95,11 @@ iso: rpm
 	packaging/iso/make-product.sh $(ISO_DIR)/content/images/product.img
 	rm -f $(ISO_OUT)
 	# The installer is Fedora's: product.img gives it HyprDora's name and look, inst.profile picks HyprDora's
-	# profile in it, and the boot menu names HyprDora.
+	# profile in it, and the boot menu names HyprDora. The menu starts the install by default: Fedora's default
+	# entry first checks the whole medium, minutes of a black screen on a USB stick; the check stays in the menu.
 	sudo mkksiso --ks $(KICKSTART) --add $(ISO_DIR)/content/hyprdora --add $(ISO_DIR)/content/images \
 		-c inst.profile=hyprdora -R "Fedora $(FEDORA)" "HyprDora $(FEDORA)" -R "a Fedora system" "a HyprDora system" \
+		-R 'set default="1"' 'set default="0"' \
 		-V HyprDora-$(FEDORA) $(ISO_SOURCE) $(ISO_OUT)
 	sudo chown $(shell id -u):$(shell id -g) $(ISO_OUT)
 	@echo "ISO is $(ISO_OUT)"

@@ -238,6 +238,7 @@ install -Dpm 644 configs/dnf/protected.d/hyprdora.conf %{buildroot}%{_sysconfdir
 install -Dpm 644 configs/systemd/hyprdora-hint.service %{buildroot}%{_prefix}/lib/systemd/system/hyprdora-hint.service
 install -Dpm 644 configs/systemd/dnf5-makecache.service.d/hyprdora-metered.conf %{buildroot}%{_prefix}/lib/systemd/system/dnf5-makecache.service.d/hyprdora-metered.conf
 install -Dpm 644 configs/systemd/plymouth-quit.service.d/hyprdora-retain.conf %{buildroot}%{_prefix}/lib/systemd/system/plymouth-quit.service.d/hyprdora-retain.conf
+install -Dpm 644 configs/systemd/akmods.service.d/hyprdora-splash.conf %{buildroot}%{_prefix}/lib/systemd/system/akmods.service.d/hyprdora-splash.conf
 install -Dpm 644 configs/logind/50-hyprdora.conf %{buildroot}%{_prefix}/lib/systemd/logind.conf.d/50-hyprdora.conf
 install -Dpm 644 configs/sysctl/60-hyprdora-ptrace.conf %{buildroot}%{_prefix}/lib/sysctl.d/60-hyprdora-ptrace.conf
 install -Dpm 644 configs/systemd/hyprdora-shell.service %{buildroot}%{_prefix}/lib/systemd/user/hyprdora-shell.service
@@ -345,6 +346,7 @@ fi
 %{_prefix}/lib/systemd/system/hyprdora-hint.service
 %{_prefix}/lib/systemd/system/dnf5-makecache.service.d/hyprdora-metered.conf
 %{_prefix}/lib/systemd/system/plymouth-quit.service.d/hyprdora-retain.conf
+%{_prefix}/lib/systemd/system/akmods.service.d/hyprdora-splash.conf
 %{_prefix}/lib/dracut/dracut.conf.d/90-hyprdora.conf
 %config(noreplace) %{_sysconfdir}/dnf/protected.d/hyprdora.conf
 %config(noreplace) %{_sysconfdir}/pam.d/hyprdora-lock

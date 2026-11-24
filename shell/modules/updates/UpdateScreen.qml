@@ -35,27 +35,45 @@ Scope {
             color: "black"
 
             Column {
+                id: column
+
                 anchors.centerIn: parent
                 width: Math.min(420, parent.width - 64)
                 spacing: 14
                 visible: surface.screen === root.mainScreen || root.mainScreen === null
 
-                Label {
-                    width: parent.width
-                    horizontalAlignment: Text.AlignHCenter
-                    wrapMode: Text.Wrap
-                    font.pixelSize: Theme.fontSizeTitle + 6
-                    font.weight: Font.DemiBold
-                    text: {
-                        switch (root.phase) {
-                        case "downloading":
-                            return I18n.t("updates.screen.downloading");
-                        case "restarting":
-                            return I18n.t(root.progress.mode === "poweroff" ? "updates.screen.poweringOff" : "updates.screen.restarting");
-                        case "failed":
-                            return I18n.t("updates.screen.failed");
-                        default:
-                            return I18n.t("updates.screen.preparing");
+                // Turns while anything is under way, so a long wait for the next package does not look frozen.
+                Row {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    spacing: 12
+
+                    Spinner {
+                        id: busy
+
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 18
+                        height: 18
+                        color: Theme.accent
+                        running: root.phase !== "failed"
+                    }
+
+                    Label {
+                        width: Math.min(implicitWidth, column.width - (busy.visible ? busy.width + parent.spacing : 0))
+                        horizontalAlignment: Text.AlignHCenter
+                        wrapMode: Text.Wrap
+                        font.pixelSize: Theme.fontSizeTitle + 6
+                        font.weight: Font.DemiBold
+                        text: {
+                            switch (root.phase) {
+                            case "downloading":
+                                return I18n.t("updates.screen.downloading");
+                            case "restarting":
+                                return I18n.t(root.progress.mode === "poweroff" ? "updates.screen.poweringOff" : "updates.screen.restarting");
+                            case "failed":
+                                return I18n.t("updates.screen.failed");
+                            default:
+                                return I18n.t("updates.screen.preparing");
+                            }
                         }
                     }
                 }

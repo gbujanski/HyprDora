@@ -82,6 +82,7 @@ Upgrading to a new Fedora release needs `hyprdora-release` built for it, since i
 | `/usr/lib/systemd/system/hyprdora-hint.service` | writes the reminder of `hyprdora --help` for the console login screen and SSH at boot, in the system language |
 | `/usr/lib/systemd/logind.conf.d/50-hyprdora.conf` | stops logind from powering off on a press of the power button |
 | `/usr/share/plymouth/themes/hyprdora`, `/usr/libexec/hyprdora/boot-theme`, `/usr/lib/dracut/dracut.conf.d/90-hyprdora.conf` | boot splash, the hidden GRUB menu, and drivers kept out of the initramfs |
+| `/usr/lib/systemd/system/akmods.service.d/hyprdora-splash.conf` | hides akmods' message on the boot splash once a driver has been built |
 | `/usr/share/sddm/themes/Hyprdora`, `/etc/sddm.conf.d/hyprdora.conf` | login screen |
 | `/usr/share/glib-2.0/schemas/90_hyprdora.gschema.override` | GTK defaults: dark theme, icons, cursor; GNOME Software without its own updates |
 | `/usr/share/nautilus-python/extensions/hyprdora.py` | "Open in Terminal" in Nautilus |

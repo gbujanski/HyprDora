@@ -2,7 +2,8 @@
 # follows without a visible change. Starting types a short log, each line moving up when the next begins,
 # with "[ ok ]" in place of the prompt, starting where ">:" does; the pace follows Plymouth's estimate of the boot, so it never makes the boot longer.
 # Powering off or restarting types a shorter one. Installing updates shows a text progress bar, and a disk
-# password shows as stars after the prompt. Plymouth scripts read only decimal numbers.
+# password shows as stars after the prompt. A driver being built after a kernel update shows under the
+# prompt. Plymouth scripts read only decimal numbers.
 
 # Written when the package installs.
 version = "0";
@@ -69,6 +70,8 @@ password.active = 0;
 password.prompt = "";
 update.progress = 0;
 update.shown = -1;
+akmod.text = "";
+message.text = "";
 
 fun is_update_mode() {
     local.mode = Plymouth.GetMode();
@@ -178,7 +181,6 @@ fun progress_bar(percent) {
 fun show_update() {
     set_log_opacity(0);
     show_current("installing updates");
-    global.cursor.sprite.SetOpacity(0);
     if (global.update.shown != global.update.progress) {
         global.update.shown = global.update.progress;
         global.bar.image = green_text(progress_bar(global.update.progress));
@@ -203,12 +205,12 @@ fun refresh() {
         } else {
             advance();
         }
-        # The cursor blinks every half second, as on the login screen; refresh runs 50 times a second.
-        if (Math.Int(global.frame / 25) == Math.Int(global.frame / 50) * 2)
-            global.cursor.sprite.SetOpacity(1);
-        else
-            global.cursor.sprite.SetOpacity(0);
     }
+    # The cursor blinks every half second, as on the login screen; refresh runs 50 times a second.
+    if (Math.Int(global.frame / 25) == Math.Int(global.frame / 50) * 2)
+        global.cursor.sprite.SetOpacity(1);
+    else
+        global.cursor.sprite.SetOpacity(0);
 }
 
 Plymouth.SetRefreshFunction(refresh);
@@ -246,11 +248,75 @@ fun system_update(value) {
     global.update.progress = value;
 }
 
-# Messages, such as from a disk check, show dimmed near the bottom.
+fun starts_with(s, prefix) {
+    local.n = String(prefix).Length();
+    return String(s).Length() >= local.n && String(s).SubString(0, local.n) == prefix;
+}
+
+fun ends_with(s, suffix) {
+    local.length = String(s).Length();
+    local.n = String(suffix).Length();
+    return local.length >= local.n && String(s).SubString(local.length - local.n, local.length) == suffix;
+}
+
+# The driver's name in akmods' message: "facetimehd" in "akmod: Building /usr/src/akmods/facetimehd-kmod.latest...".
+fun akmod_name(s) {
+    local.length = String(s).Length();
+    local.start = 0;
+    for (local.i = 0; local.i < local.length; local.i++)
+        if (String(s).CharAt(local.i) == "/")
+            local.start = local.i + 1;
+    for (local.end = local.start; local.end + 5 <= local.length; local.end++)
+        if (String(s).SubString(local.end, local.end + 5) == "-kmod")
+            return String(s).SubString(local.start, local.end);
+    return String(s).SubString(local.start, local.length);
+}
+
+# akmods builds a driver, such as the FaceTime camera's, at the first boot of a new kernel, which takes a
+# minute or two; its message says so under the prompt, in the log's words, and an explanation below.
+fun show_akmod(s) {
+    local.name = akmod_name(s);
+    if (ends_with(s, "failed!")) {
+        local.line = local.name + " driver failed to build";
+        local.note = "see /var/cache/akmods";
+    } else {
+        if (starts_with(s, "akmod: Installing"))
+            local.line = "installing " + local.name + " driver";
+        else
+            local.line = "building " + local.name + " driver";
+        local.note = "after a kernel update, this takes a minute or two";
+    }
+    global.akmod.text = s;
+    global.akmod.line.sprite = Sprite(green_text(local.line));
+    global.akmod.line.sprite.SetPosition(global.field.x, global.prompt.y + global.line_height * 2, 10);
+    global.akmod.note.sprite = Sprite(dim_text(local.note));
+    global.akmod.note.sprite.SetPosition(global.field.x, global.prompt.y + global.line_height * 3, 10);
+}
+
+# Other messages, such as from a disk check, show dimmed near the bottom.
 fun show_message(s) {
+    if (starts_with(s, "akmod: ")) {
+        show_akmod(s);
+        return;
+    }
+    global.message.text = s;
     global.message.image = dim_text(s);
     global.message.sprite = Sprite(global.message.image);
     global.message.sprite.SetPosition(Math.Int(Window.GetWidth() / 2 - global.message.image.GetWidth() / 2), Window.GetHeight() - global.message.image.GetHeight() * 3, 10);
+}
+
+# akmods never hides its messages itself; HyprDora's addition to its service does once the build is done.
+# A message that has already been replaced by a newer one stays as it is.
+fun hide_message(s) {
+    if (s == global.akmod.text) {
+        global.akmod.text = "";
+        global.akmod.line.sprite.SetOpacity(0);
+        global.akmod.note.sprite.SetOpacity(0);
+    }
+    if (s == global.message.text) {
+        global.message.text = "";
+        global.message.sprite.SetOpacity(0);
+    }
 }
 
 Plymouth.SetBootProgressFunction(boot_progress);
@@ -259,3 +325,4 @@ Plymouth.SetDisplayPasswordFunction(display_password);
 Plymouth.SetDisplayNormalFunction(display_normal);
 Plymouth.SetSystemUpdateFunction(system_update);
 Plymouth.SetDisplayMessageFunction(show_message);
+Plymouth.SetHideMessageFunction(hide_message);
