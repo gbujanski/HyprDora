@@ -89,6 +89,12 @@ Item {
             group: 3
         },
         {
+            id: "updates",
+            label: I18n.t("settings.updates"),
+            icon: Icons.update,
+            group: 3
+        },
+        {
             id: "restore",
             label: I18n.t("settings.restore"),
             icon: Icons.restore,
@@ -357,6 +363,8 @@ Item {
                             return keyboardSettings;
                         case "extras":
                             return extrasSettings;
+                        case "updates":
+                            return updatesSettings;
                         case "restore":
                             return restoreSettings;
                         case "accounts":
@@ -470,6 +478,11 @@ Item {
     Component {
         id: extrasSettings
         ExtrasSettings {}
+    }
+
+    Component {
+        id: updatesSettings
+        UpdatesSettings {}
     }
 
     Component {

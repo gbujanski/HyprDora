@@ -34,7 +34,30 @@ Singleton {
     // When the system was last seen with nothing to update, in milliseconds.
     property real upToDateSince: 0
     property real now: Date.now()
-    readonly property bool notify: securityCount > 0 || (count > 0 && now - upToDateSince >= 7 * 24 * 3600 * 1000)
+    // Paused, nothing reminds of updates, not even security ones: the user looks after them.
+    readonly property bool notify: !paused && (securityCount > 0 || (count > 0 && now - upToDateSince >= 7 * 24 * 3600 * 1000))
+
+    // Set in the Updates settings and kept by the system (update-settings), as they also rule its services.
+    // A pause lasts until restart, for good ("always"), or until pauseEnd; while paused nothing is checked or
+    // downloaded unless asked for. interval is how often to look: "often" (every 3 hours), "daily" or "weekly".
+    property bool pausedUntilRestart: false
+    property bool pausedForGood: false
+    // In milliseconds since the epoch; 0 for none.
+    property real pauseEnd: 0
+    readonly property bool paused: pausedUntilRestart || pausedForGood || pauseEnd > now
+    property string interval: "often"
+    // Flatpaks are looked up at this interval, as their check downloads the remotes' index; packages come
+    // from the system's cache, which its own timer refreshes at the same interval.
+    readonly property real intervalMs: (interval === "weekly" ? 7 * 24 : interval === "daily" ? 24 : 3) * 3600 * 1000
+    property real flatpaksCheckedAt: 0
+    // A change of these settings or a check asked for by hand is under way.
+    readonly property bool changingSettings: settingsChange.running
+    readonly property bool checkingNow: manualCheck.running || manualPending
+    property bool manualPending: false
+    readonly property bool checksRunning: packageCheck.running || sizeCheck.running || flatpakCheck.running || advisoryCheck.running
+
+    /** A check asked for by hand has finished; failed when the package cache could not be refreshed. */
+    signal checkedNow(bool failed)
 
     readonly property var fedoraRepos: ["fedora", "updates", "updates-testing"]
     // Fedora's own packages, then security updates, then other repositories and Flatpaks.
@@ -60,9 +83,48 @@ Singleton {
     /** Remembers that nothing waits now. */
     function markUpToDate() {
         upToDateSince = Date.now();
+        saveState();
+    }
+
+    function saveState() {
         stateFile.setText(JSON.stringify({
-            upToDateSince: upToDateSince
+            upToDateSince: upToDateSince,
+            flatpaksCheckedAt: flatpaksCheckedAt
         }));
+    }
+
+    /**
+     * Pauses every automatic check and download, asking for the administrator password.
+     * @param {var} value  "restart", "always" or a number of seconds
+     */
+    function setPause(value) {
+        changeSettings(["pause", String(value)]);
+    }
+
+    /** Ends a pause, asking for the administrator password. */
+    function resume() {
+        changeSettings(["resume"]);
+    }
+
+    /**
+     * Sets how often to look for updates, asking for the administrator password.
+     * @param {string} value  "often", "daily" or "weekly"
+     */
+    function setInterval(value) {
+        changeSettings(["interval", value]);
+    }
+
+    function changeSettings(args) {
+        if (settingsChange.running)
+            return;
+        settingsChange.command = ["pkexec", "/usr/libexec/hyprdora/update-settings", ...args];
+        settingsChange.running = true;
+    }
+
+    /** Looks for updates now, paused or not: refreshes the system's package cache, then checks. */
+    function checkNow() {
+        if (!checkingNow)
+            manualCheck.running = true;
     }
     property bool installing: false
     // "reboot" or "poweroff" from the click until the download stops; "" otherwise.
@@ -101,18 +163,25 @@ Singleton {
     }
 
     /**
-     * Reads the available updates again. On a metered connection nothing is downloaded: the package lists
-     * come from the cache, and Flatpaks, which need the remote's index, wait for another network.
+     * Reads the available updates again; while paused, only when asked by hand. The package lists come from
+     * the system's cache. Flatpaks need the remotes' index, so they are looked up once per interval and not
+     * on a metered network, unless asked by hand.
+     * @param {bool} byHand  asked for by the user
      */
-    function check() {
+    function check(byHand) {
         now = Date.now();
         pulledFile.reload();
+        if (paused && !byHand)
+            return;
         if (!packageCheck.running)
             packageCheck.running = true;
         if (!advisoryCheck.running)
             advisoryCheck.running = true;
-        if (!flatpakCheck.running && !Network.metered)
+        if (!flatpakCheck.running && (byHand || (!Network.metered && now - flatpaksCheckedAt >= intervalMs))) {
+            flatpaksCheckedAt = now;
+            saveState();
             flatpakCheck.running = true;
+        }
     }
 
     /** Opens a terminal that installs the updates; dnf shows the list and asks before changing anything. */
@@ -160,6 +229,73 @@ Singleton {
         onRun: root.check()
     }
 
+    // key=value lines written by update-settings: pause=always or pause=END (seconds), interval=daily or weekly.
+    FileView {
+        id: settingsFile
+        path: "/etc/hyprdora/updates.conf"
+        printErrors: false
+        onLoaded: {
+            const value = key => (text().split("\n").find(line => line.startsWith(`${key}=`)) ?? "").slice(key.length + 1);
+            const pause = value("pause");
+            root.pausedForGood = pause === "always";
+            root.pauseEnd = /^\d+$/.test(pause) ? Number(pause) * 1000 : 0;
+            root.interval = value("interval") || "often";
+        }
+        onLoadFailed: {
+            root.pausedForGood = false;
+            root.pauseEnd = 0;
+            root.interval = "often";
+        }
+    }
+
+    // A pause until restart is this file, which a restart clears.
+    FileView {
+        id: restartPauseFile
+        path: "/run/hyprdora/updates-paused"
+        printErrors: false
+        onLoaded: root.pausedUntilRestart = true
+        onLoadFailed: root.pausedUntilRestart = false
+    }
+
+    // Ends when the password is refused too; the files then still hold the settings as they were.
+    Process {
+        id: settingsChange
+        stderr: StdioCollector {
+            id: settingsErrors
+        }
+        onExited: exitCode => {
+            if (exitCode !== 0 && exitCode !== 126)
+                console.warn(log, "update settings:", exitCode, settingsErrors.text.trim());
+            root.now = Date.now();
+            settingsFile.reload();
+            restartPauseFile.reload();
+        }
+    }
+
+    Process {
+        id: manualCheck
+        command: ["pkexec", "/usr/libexec/hyprdora/update-check"]
+        stderr: StdioCollector {
+            id: manualCheckErrors
+        }
+        onExited: exitCode => {
+            if (exitCode !== 0) {
+                console.warn(log, "update check:", exitCode, manualCheckErrors.text.trim());
+                root.checkedNow(true);
+                return;
+            }
+            root.manualPending = true;
+            root.check(true);
+        }
+    }
+
+    onChecksRunningChanged: {
+        if (!checksRunning && manualPending) {
+            manualPending = false;
+            checkedNow(false);
+        }
+    }
+
     // Written by the background download (update-download), one commit per line.
     FileView {
         id: pulledFile
@@ -175,7 +311,9 @@ Singleton {
         printErrors: false
         onLoaded: {
             try {
-                root.upToDateSince = JSON.parse(text()).upToDateSince ?? 0;
+                const state = JSON.parse(text());
+                root.upToDateSince = state.upToDateSince ?? 0;
+                root.flatpaksCheckedAt = state.flatpaksCheckedAt ?? 0;
             } catch (e) {}
         }
         // A new system counts as up to date, so the first notice comes after a week.

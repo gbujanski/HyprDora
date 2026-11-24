@@ -218,12 +218,16 @@ install -Dpm 644 configs/tmux/tmux.conf %{buildroot}%{_sysconfdir}/tmux.conf
 install -Dpm 644 configs/nvim/sysinit.vim %{buildroot}%{_sysconfdir}/xdg/nvim/sysinit.vim
 install -Dpm 755 configs/update/not-metered.sh %{buildroot}%{_libexecdir}/%{name}/not-metered
 install -Dpm 755 configs/update/update-download.sh %{buildroot}%{_libexecdir}/%{name}/update-download
+install -Dpm 755 configs/update/update-settings.sh %{buildroot}%{_libexecdir}/%{name}/update-settings
+install -Dpm 755 configs/update/update-check.sh %{buildroot}%{_libexecdir}/%{name}/update-check
+install -Dpm 755 configs/update/updates-allowed.sh %{buildroot}%{_libexecdir}/%{name}/updates-allowed
 install -Dpm 755 configs/plymouth/boot-theme.sh %{buildroot}%{_libexecdir}/%{name}/boot-theme
 install -Dpm 644 configs/dracut/90-hyprdora.conf %{buildroot}%{_prefix}/lib/dracut/dracut.conf.d/90-hyprdora.conf
 install -Dpm 644 configs/plymouth/hyprdora/hyprdora.plymouth %{buildroot}%{_datadir}/plymouth/themes/hyprdora/hyprdora.plymouth
 install -Dpm 644 configs/plymouth/hyprdora/hyprdora.script %{buildroot}%{_datadir}/plymouth/themes/hyprdora/hyprdora.script
 install -Dpm 644 configs/pam/hyprdora-lock %{buildroot}%{_sysconfdir}/pam.d/hyprdora-lock
 install -Dpm 644 configs/update/org.hyprdora.offline-update.policy %{buildroot}%{_datadir}/polkit-1/actions/org.hyprdora.offline-update.policy
+install -Dpm 644 configs/update/org.hyprdora.update-settings.policy %{buildroot}%{_datadir}/polkit-1/actions/org.hyprdora.update-settings.policy
 install -Dpm 755 configs/restore/system-restore.sh %{buildroot}%{_libexecdir}/%{name}/system-restore
 install -Dpm 755 configs/calendar/hyprdora-calendar.py %{buildroot}%{_libexecdir}/%{name}/calendar
 install -d %{buildroot}%{_libexecdir}/%{name}/hyprdora_calendar
@@ -239,6 +243,7 @@ install -Dpm 644 configs/dnf/protected.d/hyprdora.conf %{buildroot}%{_sysconfdir
 install -Dpm 644 configs/systemd/hyprdora-hint.service %{buildroot}%{_prefix}/lib/systemd/system/hyprdora-hint.service
 install -Dpm 644 configs/systemd/dnf5-makecache.service.d/hyprdora-metered.conf %{buildroot}%{_prefix}/lib/systemd/system/dnf5-makecache.service.d/hyprdora-metered.conf
 install -Dpm 644 configs/systemd/dnf5-makecache.service.d/hyprdora-download.conf %{buildroot}%{_prefix}/lib/systemd/system/dnf5-makecache.service.d/hyprdora-download.conf
+install -Dpm 644 configs/systemd/dnf5-makecache.service.d/hyprdora-pause.conf %{buildroot}%{_prefix}/lib/systemd/system/dnf5-makecache.service.d/hyprdora-pause.conf
 install -Dpm 644 configs/systemd/hyprdora-update-download.service %{buildroot}%{_prefix}/lib/systemd/system/hyprdora-update-download.service
 install -Dpm 644 configs/systemd/plymouth-quit.service.d/hyprdora-retain.conf %{buildroot}%{_prefix}/lib/systemd/system/plymouth-quit.service.d/hyprdora-retain.conf
 install -Dpm 644 configs/systemd/akmods.service.d/hyprdora-splash.conf %{buildroot}%{_prefix}/lib/systemd/system/akmods.service.d/hyprdora-splash.conf
@@ -317,6 +322,10 @@ fi
 if [ "$1" -eq 0 ]; then
     # Back to Fedora's splash; the next initramfs build picks it up.
     plymouth-set-default-theme --reset >/dev/null 2>&1 || :
+    # The update settings from the shell: Fedora's timer for the package cache comes back as it was.
+    rm -f /etc/hyprdora/updates.conf /etc/systemd/system/dnf5-makecache.timer.d/hyprdora-interval.conf
+    rmdir /etc/systemd/system/dnf5-makecache.timer.d /etc/hyprdora 2>/dev/null || :
+    systemctl daemon-reload >/dev/null 2>&1 || :
 fi
 
 %files
@@ -349,6 +358,7 @@ fi
 %{_prefix}/lib/systemd/system/hyprdora-hint.service
 %{_prefix}/lib/systemd/system/dnf5-makecache.service.d/hyprdora-metered.conf
 %{_prefix}/lib/systemd/system/dnf5-makecache.service.d/hyprdora-download.conf
+%{_prefix}/lib/systemd/system/dnf5-makecache.service.d/hyprdora-pause.conf
 %{_prefix}/lib/systemd/system/hyprdora-update-download.service
 %{_prefix}/lib/systemd/system/plymouth-quit.service.d/hyprdora-retain.conf
 %{_prefix}/lib/systemd/system/akmods.service.d/hyprdora-splash.conf
@@ -357,6 +367,7 @@ fi
 %config(noreplace) %{_sysconfdir}/pam.d/hyprdora-lock
 %{_datadir}/glib-2.0/schemas/90_hyprdora.gschema.override
 %{_datadir}/polkit-1/actions/org.hyprdora.offline-update.policy
+%{_datadir}/polkit-1/actions/org.hyprdora.update-settings.policy
 %{_datadir}/polkit-1/actions/org.hyprdora.system-restore.policy
 %{_datadir}/polkit-1/actions/org.hyprdora.install-extras.policy
 %{_datadir}/polkit-1/rules.d/10-hyprdora-software.rules
