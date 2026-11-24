@@ -428,9 +428,9 @@ To check by hand when the chance comes: the display panel and bar icon with a re
 
 Before the repository goes public:
 
-- [ ] Updates for installed systems: the COPR project gbujanski/hyprdora, built by Packit for each GitHub release (`.packit.yaml`); versions from `base_version` in the spec, local builds as snapshots after the last release; an ISO install enables the repository. Left: the COPR project itself (its web login failed on 2026-11-24), the repository made public, Packit's account check, and the first release
+- [x] Updates for installed systems: the COPR project gbujanski/hyprdora, built by Packit for each GitHub release (`.packit.yaml`); versions from `base_version` in the spec, local builds as snapshots after the last release; an ISO install enables the repository. The first release, 0.1.0, was built on 2026-11-24; an install from COPR on a clean Fedora is still to be tried
 - [ ] README: the status still says virtual machines only; screenshots and a short tour of the shell
-- [ ] CI: linters on GitHub Actions, as planned in section 7
+- [x] CI: `make lint` on GitHub Actions for every push to main and every pull request, in a Fedora 44 container (2026-11-24)
 - [x] Review for personal content (2026-11-24): no secrets, home paths, addresses or network names in the files or the history, and no metadata in the images. The author's name and address stay in the commits and the license; a personal example host name became `hyprdora`. hyprdora-extras became the welcome screen
 - [ ] A full `make iso` with sudo after the release identity change, and an install from the ISO on real hardware (the Broadcom and FaceTime drivers from the ISO not yet seen)
 

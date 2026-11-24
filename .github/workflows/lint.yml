@@ -1,0 +1,37 @@
+# Runs make lint on every push to main and every pull request, on Fedora 44 as the desktop runs on, so the
+# linters are the versions a local check uses. StyLua is not packaged in Fedora; its release is pinned by
+# checksum, as the checkout action is by commit.
+name: Lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    container: registry.fedoraproject.org/fedora:44
+    steps:
+      - name: Install the linters
+        run: >-
+          dnf -y install --setopt=install_weak_deps=False
+          git-core make findutils unzip python3 qt6-qtdeclarative-devel ShellCheck ruff
+
+      - name: Install StyLua
+        run: |
+          curl -fsSL -o /tmp/stylua.zip https://github.com/JohnnyMorganz/StyLua/releases/download/v2.6.0/stylua-linux-x86_64.zip
+          echo "a485f72bbfa22e4642e77a84b5edc2611a5cab7477b34e2e709dd8f78e919895  /tmp/stylua.zip" | sha256sum -c -
+          unzip -q /tmp/stylua.zip -d /usr/local/bin
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # The workspace belongs to another user than the container's root.
+      - name: Trust the checkout
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Lint
+        run: make lint
