@@ -24,7 +24,6 @@ To check, run `sleep 5; systemctl suspend` and keep your hands off the laptop fo
 
 - **Fedora 45:** not supported yet; HyprDora is built for Fedora 44 only. A system upgraded to Fedora 45 gets no HyprDora updates, and one installed from the ISO cannot upgrade, as `hyprdora-release` 44 requires Fedora 44's repositories. Stay on Fedora 44, supported until 2027-05-19, until HyprDora supports 45.
 - **Wired connections:** `Quickshell.Networking` knows only Wi-Fi, so the bar shows a wired link from `nmcli` and only as an icon, without settings. It has not been tested with a cable.
-- **Headset profiles:** the panel does not switch between A2DP and HFP, so a headset microphone can need a manual profile change.
 - **Enterprise and WEP networks:** the panel points to `nmcli` or `nmtui`.
 - **OpenVPN with a login:** the shell cannot ask for a VPN password yet, so such a connection shows an error. Certificate-only OpenVPN and WireGuard work. OpenVPN has been tested only up to importing a file.
 - **Notifications:** inline replies are not supported. Do Not Disturb turned on by hand does not survive a shell restart; one on a schedule comes back, and so does the history.
