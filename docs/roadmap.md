@@ -409,6 +409,12 @@ Step 2, features held back during the review (2026-11-22, report `~/repos/HyprDo
 - [x] Wallpapers in the appearance settings: HyprDora's own as thumbnails, and "+" for a picture of one's own through a file dialog; the path is kept in `settings.json` (C3)
 - [x] A cheat sheet of the shortcuts on `SUPER + /`, over the whole screen in columns; groups come from headings in `binds.lua`, which the shortcut list in the settings shows too (B1)
 
+Licenses and the welcome screen (2026-11-23/24, report `~/repos/HyprDora-licencje.md`):
+
+- [x] Decided: no ready ISO is published, only the code, the packages (through COPR, once it exists) and `make iso`, which builds an ISO for one's own use. Whoever builds it downloads the packages from their makers, so the vendors' applications, Apple's camera firmware, the GPL sources and the patented codecs are not HyprDora's to distribute
+- [x] The welcome screen at a user's first session, and later under Applications in the settings: the applications beyond the base in groups, "Select all" and "Select none", installed from their makers' repositories with signatures checked (`configs/extras/catalog.json`, `install-extras` through pkexec). A second step chooses the default applications (browser, mail, editor, images, video, music, PDF) among those installed and those ticked; nothing chosen, nothing set. The base has no browser any more: Firefox, Chrome, Chromium and Zen are on the list. The `hyprdora-extras` package is gone; its Neovim config moved into `hyprdora`. The ISO no longer carries VS Code, Discord, ONLYOFFICE, Docker or the codecs, and setup no longer turns on Docker or zsh for everyone
+- [ ] `THIRD-PARTY.md` (the font and its glyph sets, Fedora's files, lazy.nvim's lines, the AI-made wallpapers) and a sentence by `make iso` that passing a built ISO on makes one responsible for its licenses
+
 **Next, in this order** (agreed 2026-11-22; each analysis ends in a report in `~/repos/HyprDora-<topic>.md` the author marks [+]/[-]/[x] before anything is built):
 
 1. Analyses, one report for the three (done 2026-11-22, see above):

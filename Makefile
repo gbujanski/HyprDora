@@ -75,9 +75,7 @@ rpm:
 # back on. The shell does not watch its installed files and is restarted once.
 install: rpm
 	-hyprctl eval 'hl.config({ misc = { disable_autoreload = true } })' >/dev/null
-	# hyprdora-extras goes along when installed, as some of the desktop's defaults live in it.
 	pkgs="$$(ls $(RPM_DIR)/RPMS/noarch/hyprdora-$(VERSION)-*.noarch.rpm)"; \
-	if rpm -q hyprdora-extras >/dev/null 2>&1; then pkgs="$$pkgs $$(ls $(RPM_DIR)/RPMS/noarch/hyprdora-extras-$(VERSION)-*.noarch.rpm)"; fi; \
 	sudo dnf reinstall -y $$pkgs || sudo dnf install -y $$pkgs || { hyprctl reload >/dev/null; exit 1; }
 	-hyprctl reload >/dev/null
 	-systemctl --user daemon-reload

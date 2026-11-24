@@ -1,7 +1,7 @@
 #!/bin/bash
 # Builds the ISO's package repository: HyprDora's own packages, and every package from outside Fedora that
 # installing from the kickstart needs, with the drivers for every computer its %pre can pick. The installer
-# checks no signatures, so each outside package must carry a valid signature from a key in keys/, or the
+# checks no signatures, so each outside package must carry a valid signature from a key in ../keys/, or the
 # build stops. Fedora's packages stay out: the installer fetches them through metalinks.
 #
 # Usage: build-repo.sh KICKSTART RPMS_DIR OUT_DIR
@@ -96,7 +96,7 @@ fi
 db="$work/keys-db"
 rm -rf "$db"
 mkdir -p "$db"
-for key in "$here"/keys/*.asc; do
+for key in "$here"/../keys/*.asc; do
     rpm --dbpath "$db" --import "$key"
 done
 bad=0

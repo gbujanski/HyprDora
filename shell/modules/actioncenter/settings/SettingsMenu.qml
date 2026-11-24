@@ -77,6 +77,12 @@ Item {
             group: 2
         },
         {
+            id: "extras",
+            label: I18n.t("settings.extras"),
+            icon: Icons.packages,
+            group: 3
+        },
+        {
             id: "accounts",
             label: I18n.t("settings.accounts"),
             icon: Icons.cloud,
@@ -349,6 +355,8 @@ Item {
                             return pointerSettings;
                         case "keyboard":
                             return keyboardSettings;
+                        case "extras":
+                            return extrasSettings;
                         case "restore":
                             return restoreSettings;
                         case "accounts":
@@ -457,6 +465,11 @@ Item {
     Component {
         id: keyboardSettings
         KeyboardSettings {}
+    }
+
+    Component {
+        id: extrasSettings
+        ExtrasSettings {}
     }
 
     Component {

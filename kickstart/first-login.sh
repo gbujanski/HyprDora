@@ -8,26 +8,6 @@ MARKER=${XDG_STATE_HOME:-$HOME/.local/state}/hyprdora/first-login-done
 
 [ -e "$MARKER" ] && exit 0
 
-# Makes VS Code keep its secrets in GNOME Keyring.
-configure_code() {
-    command -v code >/dev/null || return 0
-    [ -e "$HOME/.vscode/argv.json" ] && return 0
-
-    mkdir -p "$HOME/.vscode"
-    printf '{\n  "password-store": "gnome-libsecret"\n}\n' > "$HOME/.vscode/argv.json"
-}
-
-install_oh_my_zsh() {
-    command -v zsh >/dev/null || return 0
-
-    if [ ! -d "$HOME/.oh-my-zsh" ]; then
-        git clone --quiet --depth 1 https://github.com/ohmyzsh/ohmyzsh.git "$HOME/.oh-my-zsh" || return 1
-    fi
-    if [ ! -e "$HOME/.zshrc" ]; then
-        sed 's/^ZSH_THEME=.*/ZSH_THEME="agnoster"/' "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" > "$HOME/.zshrc"
-    fi
-}
-
 # Nautilus lists in its sidebar only the folders bookmarked for GTK. GNOME adds the user folders with
 # xdg-user-dirs-gtk; the same folders are added here, keeping bookmarks that are already there.
 add_folder_bookmarks() {
@@ -45,8 +25,6 @@ add_folder_bookmarks() {
 status=0
 xdg-user-dirs-update || status=1
 add_folder_bookmarks || status=1
-configure_code || status=1
-install_oh_my_zsh || status=1
 
 if [ "$status" -eq 0 ]; then
     mkdir -p "$(dirname "$MARKER")"

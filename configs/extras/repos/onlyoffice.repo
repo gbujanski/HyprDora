@@ -1,0 +1,6 @@
+[onlyoffice]
+name=ONLYOFFICE
+baseurl=https://download.onlyoffice.com/repo/centos/main/noarch/
+enabled=1
+gpgcheck=1
+gpgkey=file:///usr/share/hyprdora/keys/onlyoffice.asc

@@ -57,6 +57,8 @@ Singleton {
 
     // { kind: { current: "id.desktop" | "", choices: ["id.desktop", …] } }
     property var apps: ({})
+    // Choices waiting while one is written: [[kind, desktopId], …].
+    property var queue: []
 
     /**
      * Reads the default applications from a mimeapps.list.
@@ -105,8 +107,10 @@ Singleton {
      * @param {string} desktopId  application
      */
     function set(kind, desktopId) {
-        if (writer.running)
+        if (writer.running) {
+            queue = [...queue, [kind, desktopId]];
             return;
+        }
         if (kind === "terminal") {
             writer.command = ["sh", "-c", 'printf "%s\\n" "$1" > "${XDG_CONFIG_HOME:-$HOME/.config}/xdg-terminals.list"', "hyprdora-default-terminal", desktopId];
         } else {
@@ -169,7 +173,16 @@ Singleton {
 
     Process {
         id: writer
-        onExited: root.refresh()
+        onExited: {
+            if (root.queue.length > 0) {
+                const [kind, desktopId] = root.queue[0];
+                root.queue = root.queue.slice(1);
+                // The process counts as running until this handler returns.
+                Qt.callLater(() => root.set(kind, desktopId));
+            } else {
+                root.refresh();
+            }
+        }
     }
 
     FileView {

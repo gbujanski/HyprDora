@@ -1,0 +1,6 @@
+[docker-ce-stable]
+name=Docker CE Stable
+baseurl=https://download.docker.com/linux/fedora/$releasever/$basearch/stable
+enabled=1
+gpgcheck=1
+gpgkey=file:///usr/share/hyprdora/keys/docker.asc

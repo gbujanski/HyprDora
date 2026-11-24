@@ -16,35 +16,12 @@ step() {
 }
 
 
-# Where the packages from outside Fedora that came from the ISO get their updates. RPM Fusion's come with
-# its release packages.
-enable_vendor_repositories() {
-    cat > /etc/yum.repos.d/vscode.repo <<'EOF'
-[code]
-name=Visual Studio Code
-baseurl=https://packages.microsoft.com/yumrepos/vscode
-enabled=1
-gpgcheck=1
-gpgkey=https://packages.microsoft.com/keys/microsoft.asc
-EOF
-    cat > /etc/yum.repos.d/docker-ce.repo <<'EOF'
-[docker-ce-stable]
-name=Docker CE Stable
-baseurl=https://download.docker.com/linux/fedora/$releasever/$basearch/stable
-enabled=1
-gpgcheck=1
-gpgkey=https://download.docker.com/linux/fedora/gpg
-EOF
-    cat > /etc/yum.repos.d/onlyoffice.repo <<'EOF'
-[onlyoffice]
-name=OnlyOffice
-baseurl=https://download.onlyoffice.com/repo/centos/main/noarch/
-enabled=1
-gpgcheck=1
-gpgkey=https://download.onlyoffice.com/GPG-KEY-ONLYOFFICE
-EOF
-    if rpm -q akmod-facetimehd >/dev/null 2>&1; then
-        cat > /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:mulderje:facetimehd-kmod.repo <<'EOF'
+# Where the camera driver from the ISO gets its updates, on MacBooks that have the camera. RPM Fusion's
+# repositories come with its release packages; applications from other makers add theirs when chosen on the
+# welcome screen.
+enable_hardware_repositories() {
+    rpm -q akmod-facetimehd >/dev/null 2>&1 || return 0
+    cat > /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:mulderje:facetimehd-kmod.repo <<'EOF'
 [copr:copr.fedorainfracloud.org:mulderje:facetimehd-kmod]
 name=Copr repo for facetimehd-kmod owned by mulderje
 baseurl=https://download.copr.fedorainfracloud.org/results/mulderje/facetimehd-kmod/fedora-$releasever-$basearch/
@@ -55,10 +32,7 @@ gpgkey=https://download.copr.fedorainfracloud.org/results/mulderje/facetimehd-km
 repo_gpgcheck=0
 enabled=1
 EOF
-    fi
 }
-
-
 
 # Nested in the root subvolume, so system snapshots leave out containers, virtual machine images and
 # Flatpaks: they are large, change often, and rolling them back fixes nothing. Their packages are installed
@@ -83,9 +57,9 @@ create_excluded_subvolumes() {
 }
 
 
-install_flatpaks() {
-    flatpak remote-add --system --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo &&
-        flatpak install --system --noninteractive flathub app.zen_browser.zen com.github.tchx84.Flatseal dev.zed.Zed
+# Flathub, for the software centre and the applications chosen on the welcome screen.
+add_flathub() {
+    flatpak remote-add --system --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 }
 
 configure_snapshots() {
@@ -115,7 +89,7 @@ limit_password_attempts() {
 }
 
 enable_services() {
-    systemctl enable sddm bluetooth power-profiles-daemon cups docker
+    systemctl enable sddm bluetooth power-profiles-daemon cups
     systemctl set-default graphical.target
 }
 
@@ -124,21 +98,11 @@ configure_boot() {
     /usr/libexec/hyprdora/boot-theme installer
 }
 
-configure_users() {
-    useradd -D -s /bin/zsh >/dev/null
-    local admins user
-    admins=$(getent group wheel | cut -d: -f4 | tr ',' ' ')
-    for user in $admins; do
-        usermod -s /bin/zsh -aG docker "$user"
-    done
-}
-
-step enable_vendor_repositories
+step enable_hardware_repositories
 step create_excluded_subvolumes
-step install_flatpaks
+step add_flathub
 step configure_snapshots
 step enable_keyring_login
 step limit_password_attempts
 step enable_services
 step configure_boot
-step configure_users

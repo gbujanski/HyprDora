@@ -62,6 +62,8 @@ Requires:       sane-airscan
 Requires:       simple-scan
 # A place to find and install applications, from RPM repositories and Flathub; updates stay with the shell.
 Requires:       gnome-software
+# Flathub, for the software centre and the applications chosen on the welcome screen.
+Requires:       flatpak
 
 # Desktop tools
 Requires:       cliphist
@@ -112,6 +114,9 @@ Requires:       snapper
 Requires:       libdnf5-plugin-actions
 Requires:       btrfs-assistant
 
+# The applications of the old extras package are offered on the welcome screen instead; its Neovim config is here.
+Obsoletes:      hyprdora-extras <= %{version}-%{release}
+
 %description
 HyprDora is a Hyprland desktop on Fedora with a custom Quickshell shell. This
 package holds the shell, default configuration and the programs the desktop
@@ -119,43 +124,11 @@ needs. Files in the user's config directory override the packaged defaults.
 
 %package repos
 Summary:        Repositories that provide Hyprland and the cursor theme for HyprDora
+License:        MIT
 
 %description repos
 Enables the COPR repositories that hold Hyprland and the Bibata cursor theme,
 so the hyprdora package can be installed on an existing Fedora system.
-
-%package extras
-Summary:        Personal applications and development tools for HyprDora
-Requires:       neovim
-# What LazyVim, the default Neovim config, calls on: file and text search, git in the terminal, and the
-# tools that build syntax parsers.
-Requires:       ripgrep
-Requires:       fd-find
-Requires:       lazygit
-Requires:       tree-sitter-cli
-Requires:       gcc
-Requires:       code
-Requires:       discord
-Requires:       filezilla
-Requires:       gimp
-Requires:       onlyoffice-desktopeditors
-Requires:       virt-manager
-Requires:       docker-ce
-Requires:       docker-ce-cli
-Requires:       containerd.io
-Requires:       docker-buildx-plugin
-Requires:       docker-compose-plugin
-Requires:       python3
-Requires:       nodejs
-Requires:       java-25-openjdk
-Requires:       dotnet-sdk-10.0
-Requires:       zsh
-Requires:       flatpak
-Requires:       mediawriter
-
-%description extras
-Applications kept separate from the desktop. The kickstart enables the
-repositories they come from.
 
 %package release
 # The release follows Fedora's, which dnf reads as $releasever.
@@ -247,6 +220,10 @@ install -Dpm 755 configs/restore/system-restore.sh %{buildroot}%{_libexecdir}/%{
 install -Dpm 755 configs/calendar/hyprdora-calendar.py %{buildroot}%{_libexecdir}/%{name}/calendar
 install -d %{buildroot}%{_libexecdir}/%{name}/hyprdora_calendar
 install -pm 644 configs/calendar/hyprdora_calendar/*.py %{buildroot}%{_libexecdir}/%{name}/hyprdora_calendar/
+install -Dpm 755 configs/extras/install-extras.py %{buildroot}%{_libexecdir}/%{name}/install-extras
+install -Dpm 644 configs/extras/org.hyprdora.install-extras.policy %{buildroot}%{_datadir}/polkit-1/actions/org.hyprdora.install-extras.policy
+install -d %{buildroot}%{_datadir}/%{name}/keys
+install -pm 644 packaging/keys/*.asc %{buildroot}%{_datadir}/%{name}/keys/
 install -Dpm 644 configs/restore/org.hyprdora.system-restore.policy %{buildroot}%{_datadir}/polkit-1/actions/org.hyprdora.system-restore.policy
 install -Dpm 644 configs/polkit/10-hyprdora-software.rules %{buildroot}%{_datadir}/polkit-1/rules.d/10-hyprdora-software.rules
 install -Dpm 755 bin/hyprdora %{buildroot}%{_bindir}/hyprdora
@@ -367,6 +344,7 @@ fi
 %{_datadir}/glib-2.0/schemas/90_hyprdora.gschema.override
 %{_datadir}/polkit-1/actions/org.hyprdora.offline-update.policy
 %{_datadir}/polkit-1/actions/org.hyprdora.system-restore.policy
+%{_datadir}/polkit-1/actions/org.hyprdora.install-extras.policy
 %{_datadir}/polkit-1/rules.d/10-hyprdora-software.rules
 %{_datadir}/sddm/themes/Hyprdora
 %dir %{_sysconfdir}/xdg/quickshell
@@ -375,12 +353,10 @@ fi
 %config(noreplace) %{_sysconfdir}/alacritty/alacritty.toml
 %config(noreplace) %{_sysconfdir}/tmux.conf
 %config(noreplace) %{_sysconfdir}/sddm.conf.d/hyprdora.conf
+%config(noreplace) %{_sysconfdir}/xdg/nvim/sysinit.vim
 
 %files repos
 %config(noreplace) %{_sysconfdir}/yum.repos.d/hyprdora-copr.repo
-
-%files extras
-%config(noreplace) %{_sysconfdir}/xdg/nvim/sysinit.vim
 
 %files release
 %license LICENSE.fedora-release

@@ -25,7 +25,7 @@ The mouse works too: the wheel scrolls the history, a click picks a tab or a pan
 
 ## Neovim: LazyVim
 
-The `hyprdora-extras` package makes [LazyVim](https://www.lazyvim.org) Neovim's default config (`/etc/xdg/nvim/sysinit.vim`, files in `/usr/share/hyprdora/configs/nvim`). The first start fetches the plugins from GitHub, which takes a minute. It adds Python, JSON, YAML, TOML, Markdown, git files, TypeScript, Tailwind, Docker, .NET and Java, QML through Qt's `qmlls`, and [Diffview](https://github.com/sindrets/diffview.nvim) for whole commits. Language servers are installed by Mason on first use of each language.
+Neovim with LazyVim, on the welcome screen, makes [LazyVim](https://www.lazyvim.org) Neovim's default config (`/etc/xdg/nvim/sysinit.vim`, files in `/usr/share/hyprdora/configs/nvim`). The first start fetches the plugins from GitHub, which takes a minute. It adds Python, JSON, YAML, TOML, Markdown, git files, TypeScript, Tailwind, Docker, .NET and Java, QML through Qt's `qmlls`, and [Diffview](https://github.com/sindrets/diffview.nvim) for whole commits. Language servers are installed by Mason on first use of each language.
 
 Plugins of one's own go in `~/.config/nvim/lua/plugins/`, read after HyprDora's. An `init.lua` in `~/.config/nvim` replaces the whole config.
 
@@ -58,4 +58,4 @@ Lines are marked against the last commit. To review a commit or a branch instead
 
 ## Zed
 
-[Zed](https://zed.dev) comes from Flathub (`dev.zed.Zed`) on new installs, next to VS Code. It can run the system's tools, so its terminal, git and language servers behave as outside it.
+[Zed](https://zed.dev) comes from Flathub (`dev.zed.Zed`), chosen on the welcome screen like VS Code. It can run the system's tools, so its terminal, git and language servers behave as outside it.

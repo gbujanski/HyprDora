@@ -37,15 +37,3 @@ baseurl=https://download.copr.fedorainfracloud.org/results/peterwu/rendezvous/fe
 [copr-facetimehd]
 name=COPR mulderje/facetimehd-kmod
 baseurl=https://download.copr.fedorainfracloud.org/results/mulderje/facetimehd-kmod/fedora-$releasever-$basearch/
-
-[code]
-name=Visual Studio Code
-baseurl=https://packages.microsoft.com/yumrepos/vscode
-
-[docker-ce-stable]
-name=Docker CE Stable
-baseurl=https://download.docker.com/linux/fedora/$releasever/$basearch/stable
-
-[onlyoffice]
-name=ONLYOFFICE
-baseurl=https://download.onlyoffice.com/repo/centos/main/noarch/

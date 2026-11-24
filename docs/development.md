@@ -6,7 +6,7 @@
 
 Its config files live in `build/dev/config`, so saving monitors or a wallpaper does not change the real ones. `settings.json` and `settings.lua` are copied there on the first run. Services such as `hypridle` are not started in a nested session.
 
-`make install` builds the packages and installs `hyprdora` on the running system, with `hyprdora-extras` when it is installed, then reloads Hyprland and restarts the shell service, so a change can be tried in the real session. It asks for `sudo`.
+`make install` builds the packages and installs `hyprdora` on the running system, then reloads Hyprland and restarts the shell service, so a change can be tried in the real session. It asks for `sudo`.
 
 ## Keybindings
 
@@ -84,6 +84,10 @@ Each service that logs has a `LoggingCategory` named `hyprdora.<service>` and lo
 `shell-start` chooses the mode. A development copy (`-p`, as `make dev` and `tools/nested-test.sh` start it) shows the shell's debug messages too. An installed shell shows warnings and info, and leaves out warnings of other components that say nothing about the shell: Fedora desktop files Quickshell cannot parse, accessibility and PipeWire volume notices.
 
 Where to read them: `journalctl --user -u hyprdora-shell` keeps the installed shell's log across restarts, and is what a bug report needs. `qs -c hyprdora log` (`qs -p shell log` for a development copy) reads the running instance's log file, which goes with the next restart of the computer; `-r` filters it with the same rules.
+
+## Applications on the welcome screen
+
+The welcome screen, at a user's first HyprDora session and later under Applications in the settings, offers what the base system leaves out. `configs/extras/catalog.json` lists it in groups. An item names its packages or Flathub applications, and can add a repository from `configs/extras/repos/` (its key pinned in `packaging/keys/`), RPM Fusion, services to enable, groups for the user, a login shell, and the kinds of default application it can be with its desktop file (`defaults`), which the screen's second step offers. Its name and description go in the translations as `extras.<id>` and `extras.<id>.description`. `/usr/libexec/hyprdora/install-extras` installs the chosen items as root through pkexec, with every package's signature checked by dnf; a step in the user's home, such as VS Code's keyring setting or Oh My Zsh, is in `services/Extras.qml`.
 
 ## Code conventions
 

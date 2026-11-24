@@ -1,0 +1,280 @@
+{
+  "//": [
+    "Applications offered on the welcome screen, outside the base system. Each item may have:",
+    "packages to install with dnf, flatpaks from Flathub, a repo from repos/ added first (its key pinned in",
+    "/usr/share/hyprdora/keys), rpmfusion (free or nonfree) when the packages come from RPM Fusion,",
+    "allowErasing when they replace packages of the base (codecs replace ffmpeg-free), services to enable,",
+    "userGroups to add the user to, loginShell to give the user, checkPackage, the package or flatpak",
+    "whose presence means the item is installed, and defaults, the kinds of default application it can be",
+    "(as in services/DefaultApps.qml) with its desktop file. Names and descriptions are in the shell's",
+    "translations, under extras.<id>. The shell offers the groups in this order."
+  ],
+  "groups": [
+    {
+      "id": "browsers",
+      "items": [
+        {
+          "id": "firefox",
+          "packages": [
+            "firefox"
+          ],
+          "defaults": {
+            "browser": "org.mozilla.firefox.desktop"
+          }
+        },
+        {
+          "id": "chrome",
+          "packages": [
+            "google-chrome-stable"
+          ],
+          "repo": "google-chrome",
+          "defaults": {
+            "browser": "google-chrome.desktop"
+          }
+        },
+        {
+          "id": "chromium",
+          "packages": [
+            "chromium"
+          ],
+          "defaults": {
+            "browser": "chromium-browser.desktop"
+          }
+        },
+        {
+          "id": "zen",
+          "flatpaks": [
+            "app.zen_browser.zen"
+          ],
+          "defaults": {
+            "browser": "app.zen_browser.zen.desktop"
+          }
+        }
+      ]
+    },
+    {
+      "id": "media",
+      "items": [
+        {
+          "id": "codecs",
+          "packages": [
+            "ffmpeg",
+            "gstreamer1-plugins-bad-freeworld",
+            "gstreamer1-plugins-ugly"
+          ],
+          "rpmfusion": "free",
+          "allowErasing": true,
+          "checkPackage": "ffmpeg"
+        },
+        {
+          "id": "vlc",
+          "packages": [
+            "vlc"
+          ],
+          "defaults": {
+            "video": "vlc.desktop",
+            "music": "vlc.desktop"
+          }
+        },
+        {
+          "id": "mpv",
+          "packages": [
+            "mpv"
+          ],
+          "defaults": {
+            "video": "mpv.desktop"
+          }
+        },
+        {
+          "id": "celluloid",
+          "packages": [
+            "celluloid"
+          ],
+          "defaults": {
+            "video": "io.github.celluloid_player.Celluloid.desktop"
+          }
+        },
+        {
+          "id": "rhythmbox",
+          "packages": [
+            "rhythmbox"
+          ],
+          "defaults": {
+            "music": "org.gnome.Rhythmbox3.desktop"
+          }
+        },
+        {
+          "id": "gthumb",
+          "packages": [
+            "gthumb"
+          ],
+          "defaults": {
+            "images": "org.gnome.gThumb.desktop"
+          }
+        },
+        {
+          "id": "gimp",
+          "packages": [
+            "gimp"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "office",
+      "items": [
+        {
+          "id": "onlyoffice",
+          "packages": [
+            "onlyoffice-desktopeditors"
+          ],
+          "repo": "onlyoffice"
+        },
+        {
+          "id": "thunderbird",
+          "packages": [
+            "thunderbird"
+          ],
+          "defaults": {
+            "mail": "net.thunderbird.Thunderbird.desktop"
+          }
+        },
+        {
+          "id": "geary",
+          "packages": [
+            "geary"
+          ],
+          "defaults": {
+            "mail": "org.gnome.Geary.desktop"
+          }
+        },
+        {
+          "id": "evince",
+          "packages": [
+            "evince"
+          ],
+          "defaults": {
+            "pdf": "org.gnome.Evince.desktop"
+          }
+        },
+        {
+          "id": "discord",
+          "packages": [
+            "discord"
+          ],
+          "rpmfusion": "nonfree"
+        },
+        {
+          "id": "filezilla",
+          "packages": [
+            "filezilla"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "development",
+      "items": [
+        {
+          "id": "vscode",
+          "packages": [
+            "code"
+          ],
+          "repo": "vscode",
+          "defaults": {
+            "editor": "code.desktop"
+          }
+        },
+        {
+          "id": "zed",
+          "flatpaks": [
+            "dev.zed.Zed"
+          ],
+          "defaults": {
+            "editor": "dev.zed.Zed.desktop"
+          }
+        },
+        {
+          "id": "neovim",
+          "packages": [
+            "neovim",
+            "ripgrep",
+            "fd-find",
+            "lazygit",
+            "tree-sitter-cli",
+            "gcc"
+          ],
+          "defaults": {
+            "editor": "nvim.desktop"
+          }
+        },
+        {
+          "id": "zsh",
+          "packages": [
+            "zsh",
+            "git"
+          ],
+          "loginShell": "/bin/zsh"
+        },
+        {
+          "id": "docker",
+          "packages": [
+            "docker-ce",
+            "docker-ce-cli",
+            "containerd.io",
+            "docker-buildx-plugin",
+            "docker-compose-plugin"
+          ],
+          "repo": "docker-ce",
+          "services": [
+            "docker"
+          ],
+          "userGroups": [
+            "docker"
+          ]
+        },
+        {
+          "id": "nodejs",
+          "packages": [
+            "nodejs"
+          ]
+        },
+        {
+          "id": "java",
+          "packages": [
+            "java-25-openjdk"
+          ]
+        },
+        {
+          "id": "dotnet",
+          "packages": [
+            "dotnet-sdk-10.0"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "system",
+      "items": [
+        {
+          "id": "virtmanager",
+          "packages": [
+            "virt-manager"
+          ]
+        },
+        {
+          "id": "mediawriter",
+          "packages": [
+            "mediawriter"
+          ]
+        },
+        {
+          "id": "flatseal",
+          "flatpaks": [
+            "com.github.tchx84.Flatseal"
+          ]
+        }
+      ]
+    }
+  ]
+}

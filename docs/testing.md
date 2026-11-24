@@ -30,6 +30,8 @@ Run through the sections related to a change.
 
 **Settings, input:** pointer speed and tap to click apply at once and after a new session; with two keyboard layouts the bar shows the active one, `SUPER + CTRL + Space` and a click on it switch and show the new layout's name; a layout found by searching is added, moved up to become the default, removed; with one layout the bar shows none.
 
+**Welcome screen:** opens by itself at a new user's first session and not again; "Select all" and "Select none"; "Next" lists, for each kind of default application, only those installed and those ticked, and a kind left unchosen keeps what it has; the chosen defaults are set after installing, a browser among them for SUPER + B; installed items are marked and cannot be ticked; installing asks for the password once, shows each item's progress, and a failed item (no network, cancelled password) says why and can be installed again; Docker adds the user to the docker group, Zsh becomes the login shell with Oh My Zsh, VS Code finds the keyring; the list opens again from Applications in the settings.
+
 **Wallpaper and shortcuts:** a wallpaper from the appearance settings applies at once and after a new session; "+" sets a picture of one's own, which then shows after HyprDora's; "Set as wallpaper" in Files marks it there too. `SUPER + /` shows the shortcuts in groups, and a binding changed in `binds.lua` shows in it.
 
 **Panels:** the bar icon, shortcut, Esc and a click outside all close a panel; bar icons stay clickable while one is open; only one panel is open at a time.

@@ -40,7 +40,6 @@ true
 @multimedia
 hyprdora
 hyprdora-repos
-hyprdora-extras
 # HyprDora's name and logo in place of Fedora's, which a remix may not carry.
 hyprdora-release
 hyprdora-logos
@@ -48,12 +47,9 @@ hyprdora-logos
 -fedora-release-common
 -fedora-release-identity-basic
 -fedora-logos
+# RPM Fusion for the drivers %pre picks; codecs and applications are chosen on the welcome screen.
 rpmfusion-free-release
 rpmfusion-nonfree-release
-ffmpeg
-gstreamer1-plugins-bad-freeworld
-gstreamer1-plugins-ugly
--ffmpeg-free
 -PackageKit-gstreamer-plugin
 -libheif-freeworld
 %include /tmp/hyprdora-hardware.ks

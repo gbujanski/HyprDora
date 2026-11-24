@@ -20,6 +20,7 @@ import qs.modules.polkit
 import qs.modules.updates
 import qs.modules.overview
 import qs.modules.cheatsheet
+import qs.modules.extras
 import qs.services
 
 ShellRoot {
@@ -38,6 +39,8 @@ ShellRoot {
     readonly property var backgroundApps: BackgroundApps
     // Calendar reminders work without the calendar open.
     readonly property var calendarEvents: CalendarEvents
+    // The welcome screen opens by itself at a user's first session.
+    readonly property var extras: Extras
 
     Variants {
         model: Quickshell.screens
@@ -87,6 +90,7 @@ ShellRoot {
     UpdateScreen {}
     Overview {}
     CheatSheet {}
+    ExtrasWindow {}
 
     Osd {}
 

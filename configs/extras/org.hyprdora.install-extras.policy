@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
+<policyconfig>
+  <vendor>HyprDora</vendor>
+  <vendor_url>https://github.com/gbujanski/HyprDora</vendor_url>
+
+  <action id="org.hyprdora.install-extras">
+    <description>Install applications from the welcome screen</description>
+    <description xml:lang="pl">Instalowanie aplikacji z ekranu powitalnego</description>
+    <message>Authentication is required to install the chosen applications</message>
+    <message xml:lang="pl">Wymagane jest uwierzytelnienie, aby zainstalować wybrane aplikacje</message>
+    <defaults>
+      <allow_any>auth_admin</allow_any>
+      <allow_inactive>auth_admin</allow_inactive>
+      <allow_active>auth_admin_keep</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/libexec/hyprdora/install-extras</annotate>
+  </action>
+</policyconfig>

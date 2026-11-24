@@ -121,6 +121,7 @@ Singleton {
     readonly property string keyboard: glyph(0xF030C)
     readonly property string mouse: glyph(0xF037D)
     readonly property string keyboardLayout: glyph(0xF0313)
+    readonly property string packages: glyph(0xF03D6)
     readonly property string usbDrive: glyph(0xF129E)
     readonly property string sdCard: glyph(0xF0479)
     readonly property string eject: glyph(0xF01EA)

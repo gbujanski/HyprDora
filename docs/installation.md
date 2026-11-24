@@ -12,7 +12,7 @@ make iso
 
 The result is `build/iso/hyprdora-<version>.iso`. The installer needs a network connection and asks only for the language, keyboard, disk layout and user account. It never wipes a disk on its own. Everything else is set up automatically, and the log is in `/root/hyprdora-setup.log`.
 
-The installer checks no package signatures, so packages from outside Fedora come from the ISO itself. `packaging/iso/build-repo.sh` resolves the kickstart's package list against `packaging/iso/repos.repo`, downloads every package from RPM Fusion, the COPR repositories, Microsoft, Docker and ONLYOFFICE that it needs, with the drivers for every computer the kickstart's `%pre` can pick, and stops if any of them lacks a valid signature from a key in `packaging/iso/keys`. Those keys are pinned in the repository. Fedora's own packages come from the network through metalinks, which carry checksums of the repository metadata. Downloads are kept in `build/iso/work`, so a rebuild fetches only what changed. Versions are those of the day the ISO was built; the first update brings them current.
+The installer checks no package signatures, so packages from outside Fedora come from the ISO itself. `packaging/iso/build-repo.sh` resolves the kickstart's package list against `packaging/iso/repos.repo`, downloads every package from RPM Fusion and the COPR repositories that it needs, with the drivers for every computer the kickstart's `%pre` can pick, and stops if any of them lacks a valid signature from a key in `packaging/keys`. Those keys are pinned in the repository. Fedora's own packages come from the network through metalinks, which carry checksums of the repository metadata. Downloads are kept in `build/iso/work`, so a rebuild fetches only what changed. Versions are those of the day the ISO was built; the first update brings them current.
 
 Snapshots and the subvolumes kept out of them need a Btrfs root and are skipped on other file systems. Recovery is described in [recovery.md](recovery.md).
 
@@ -32,9 +32,8 @@ The packages land in `build/rpm/RPMS/noarch`:
 | `hyprdora-repos` | the two COPR repositories that hold Hyprland and the cursor theme |
 | `hyprdora-release` | the system's name and version, HyprDora 44, in place of `fedora-release`; numbered after Fedora's release |
 | `hyprdora-logos` | HyprDora's logo where programs look for the distribution's, in place of `fedora-logos` |
-| `hyprdora-extras` | personal applications and development tools |
 
-`hyprdora-extras` also needs the RPM Fusion, Microsoft, Docker and ONLYOFFICE repositories. The ISO carries their packages; the installed system gets their repositories for updates.
+Applications beyond the base, such as a browser, VS Code, Docker, ONLYOFFICE and the full codecs, are chosen on the welcome screen at the first session, followed by the default applications among those installed and chosen, or later under Applications in the settings. Each is installed from its maker's repository, added only then, with signatures checked against keys pinned in `/usr/share/hyprdora/keys`.
 
 ## Install on an existing Fedora
 
@@ -89,13 +88,13 @@ Upgrading to a new Fedora release needs `hyprdora-release` built for it, since i
 | `/etc/xdg/mimeapps.list`, `/etc/xdg/xdg-terminals.list`, `/etc/alacritty/alacritty.toml` | default applications, terminal and its settings |
 | `/etc/xdg/hyprland-mimeapps.list`, `/usr/libexec/hyprdora/editor-types` | every text file type (Markdown, JSON, scripts, source code) opens in the text editor; written from the MIME database at install and whenever it changes, leaving out tables, mail, playlists and other text not meant for an editor |
 | `/usr/libexec/hyprdora/terminal-session`, `/etc/tmux.conf` | every Alacritty window in tmux, and tmux's settings (see [terminal](terminal.md)) |
-| `/etc/xdg/nvim/sysinit.vim` (`hyprdora-extras`) | LazyVim as Neovim's default config, from `/usr/share/hyprdora/configs/nvim` |
+| `/etc/xdg/nvim/sysinit.vim` | LazyVim as Neovim's default config once Neovim is installed, from `/usr/share/hyprdora/configs/nvim` |
 | `/usr/libexec/hyprdora/system-setup.sh`, `first-login.sh` | system setup run by the kickstart, and the first-login step |
 
 The session needs no files in the home directory. User files in `~/.config/hypr` and `~/.config/hyprdora` are optional and override the defaults.
 
 ## First login
 
-The first session prepares the home directory: user folders and their bookmarks in the file manager, VS Code's keyring setting, and Oh My Zsh; the shell uses the keyboard layout chosen in the installer until others are chosen in the settings. Existing files are left alone. If a step fails, for example without a network connection, the step runs again at the next login.
+The first session prepares the home directory: user folders and their bookmarks in the file manager; the shell uses the keyboard layout chosen in the installer until others are chosen in the settings. Existing files are left alone. If a step fails, the step runs again at the next login. Then the welcome screen offers applications to install.
 
 The git identity is not set, because this step has no way to ask for it.
