@@ -446,6 +446,7 @@ Since 0.2.0 (on `dev`):
 
 - [x] GNOME applications take the shell's green accent (2026-11-25): Nautilus's password window for an encrypted drive, among others, was blue. HyprDora's portal backend gives libadwaita the accent, which xdg-desktop-portal-gtk does not, and the first-login step writes the shell's exact green to `~/.config/gtk-4.0/gtk.css`
 - [x] Headset profiles (2026-11-25): not a limitation after all. Tried with EDIFIER X5 Pro earbuds: the shell lists their microphone, and WirePlumber switches to HFP while something records and back to A2DP a few seconds after; the entry left the known issues
+- [x] Do Not Disturb survives a shell restart and a new login (2026-11-25), kept in `~/.local/state/hyprdora/dnd.json`; a schedule still turns it on when its hours start and off when they end. Tried in a nested Hyprland, which now has a state folder of its own (`tools/nested-test.sh`, `STATE=` to start from an earlier test's)
 
 Later, postponed on 2026-11-24:
 

@@ -6,7 +6,7 @@ Changes are checked with `make lint`, `Hyprland --verify-config` for the Lua con
 
 ## Nested test runner
 
-`tools/nested-test.sh` starts a nested Hyprland with the shell from the repository, runs a short bash file against it, and closes it. The real session is not touched: the nested one has its own config folder and Wayland socket. A run takes a few seconds.
+`tools/nested-test.sh` starts a nested Hyprland with the shell from the repository, runs a short bash file against it, and closes it. The real session is not touched: the nested one has its own config and state folders and Wayland socket; `STATE=` starts it with an earlier test's state, to try what a restart keeps. A run takes a few seconds.
 
 ```bash
 cat > /tmp/sound.sh <<'EOF'

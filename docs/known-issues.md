@@ -26,7 +26,7 @@ To check, run `sleep 5; systemctl suspend` and keep your hands off the laptop fo
 - **Wired connections:** `Quickshell.Networking` knows only Wi-Fi, so the bar shows a wired link from `nmcli` and only as an icon, without settings. It has not been tested with a cable.
 - **Enterprise and WEP networks:** the panel points to `nmcli` or `nmtui`.
 - **OpenVPN with a login:** the shell cannot ask for a VPN password yet, so such a connection shows an error. Certificate-only OpenVPN and WireGuard work. OpenVPN has been tested only up to importing a file.
-- **Notifications:** inline replies are not supported. Do Not Disturb turned on by hand does not survive a shell restart; one on a schedule comes back, and so does the history.
+- **Notifications:** inline replies are not supported.
 - **`make dev`:** only one program can own the notification service, so notifications go to the session's own shell. Wi-Fi, Bluetooth, audio and brightness act on the real hardware.
 - **"Skipped OpenPGP checks" in the log of an update installed at restart:** expected. `dnf upgrade --offline` checks the signatures when it downloads the packages and stops on any problem; the install at boot then skips the check on purpose, and installs nothing if the system changed in between.
 - **Lock screen and shell crashes:** the lock screen is part of the shell. If the shell stops while the screen is locked, the session ends and the login screen comes back, so unsaved work is lost. Hyprland never shows the desktop in between. If the shell is not running when a lock is requested, the screen does not lock.

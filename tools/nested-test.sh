@@ -10,8 +10,9 @@
 #                 screenshots: `grim "$T/shots/name.png"`, run inside the body
 #   SHELL_DIR     another copy of the shell, the repository's by default
 #   SETTINGS      a settings.json to start with, such as ~/.config/hyprdora/settings.json
+#   STATE         a state folder to start with, such as an earlier test's build/test/NAME/state
 #   EMPTY_CONFIG  start without the config folders, as on a new account
-# The real session is not touched: the nested one has its own config folder and Wayland socket.
+# The real session is not touched: the nested one has its own config and state folders and Wayland socket.
 set -u
 [ -n "${1:-}" ] && [ -f "${2:-}" ] || { sed -n '3,4p' "$0"; exit 2; }
 R=$(cd "$(dirname "$0")/.." && pwd)
@@ -21,6 +22,7 @@ T=$R/build/test/$1
 rm -rf "$T"
 mkdir -p "$T/config/hypr" "$T/config/hyprdora" "$T/shots"
 [ -n "${SETTINGS:-}" ] && cp "$SETTINGS" "$T/config/hyprdora/settings.json"
+if [ -n "${STATE:-}" ]; then cp -r "$(realpath "$STATE")" "$T/state"; else mkdir -p "$T/state"; fi
 if [ -n "${EMPTY_CONFIG:-}" ]; then
     rm -rf "$T/config/hypr" "$T/config/hyprdora"
 else
@@ -30,7 +32,7 @@ fi
 instances() { hyprctl instances -j | python3 -I -c 'import json, sys; [print(i["instance"], i["wl_socket"]) for i in json.load(sys.stdin)]'; }
 before=$(instances)
 cd "$R" || exit 1
-XDG_CONFIG_HOME=$T/config HYPRDORA_SHELL=$SH timeout 120 Hyprland --config "$R/hypr/init.lua" >"$T/hyprland.out" 2>&1 &
+XDG_CONFIG_HOME=$T/config XDG_STATE_HOME=$T/state HYPRDORA_SHELL=$SH timeout 120 Hyprland --config "$R/hypr/init.lua" >"$T/hyprland.out" 2>&1 &
 # shellcheck disable=SC2034 # used by test bodies
 TPID=$!
 nested=""

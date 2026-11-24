@@ -33,7 +33,17 @@ Singleton {
     property var keys: ({})
     property bool savedLoaded: false
 
+    // Kept across shell restarts and logins, set by hand or by a schedule (Automations), which turns it on
+    // when its hours start and off when they end.
     property bool dnd: false
+    property bool dndLoaded: false
+
+    onDndChanged: {
+        if (dndLoaded)
+            dndFile.setText(JSON.stringify({
+                on: dnd
+            }));
+    }
 
     // Receive times and currently shown toasts, by notification id.
     property var receivedAt: ({})
@@ -360,7 +370,24 @@ Singleton {
     Process {
         running: true
         command: ["sh", "-c", 'mkdir -p "$1" && chmod 700 "$1"', "hyprdora-state", root.stateDir]
-        onExited: savedFile.path = `${root.stateDir}/notifications.json`
+        onExited: {
+            savedFile.path = `${root.stateDir}/notifications.json`;
+            dndFile.path = `${root.stateDir}/dnd.json`;
+        }
+    }
+
+    // A schedule may have turned it on before the file is read; that stays.
+    FileView {
+        id: dndFile
+
+        printErrors: false
+        onLoaded: {
+            try {
+                root.dnd = root.dnd || JSON.parse(text()).on === true;
+            } catch (e) {}
+            root.dndLoaded = true;
+        }
+        onLoadFailed: root.dndLoaded = true
     }
 
     FileView {
