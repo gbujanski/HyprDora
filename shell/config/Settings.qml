@@ -167,7 +167,7 @@ Singleton {
         // Missing at start or deleted later, it is made again with no settings: watching needs a file, and a
         // deleted folder ends the watch of the old one.
         onLoadFailed: {
-            console.info(log, "settings.json is missing; made it again with no settings");
+            console.info(log, "settings.json is missing; made it with no settings");
             root.overrides = {};
             root.recreate();
         }

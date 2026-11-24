@@ -244,6 +244,8 @@ Singleton {
     FileView {
         id: cache
         path: Quickshell.cachePath("weather.json")
+        // Missing until the first download, which is no error.
+        printErrors: false
         // The schedule starts from the saved result, so a restarted shell does not fetch a fresh one again.
         onLoaded: {
             root.applyCache(text());

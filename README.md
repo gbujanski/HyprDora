@@ -7,7 +7,7 @@
 
 A Hyprland desktop on Fedora with a custom [Quickshell](https://quickshell.org) shell, packaged as RPMs and installed from a kickstart ISO.
 
-**Status: early development.** The ISO is built with `make iso` and has been tested in virtual machines only. See the [roadmap](docs/roadmap.md) and [installation](docs/installation.md).
+**Status: early development.** Installing from COPR has been tried on a clean Fedora 44 in a virtual machine, and the ISO built with `make iso` in virtual machines. See the [roadmap](docs/roadmap.md) and [installation](docs/installation.md).
 
 On Fedora 44:
 
