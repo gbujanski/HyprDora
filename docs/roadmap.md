@@ -437,6 +437,11 @@ Open after publishing:
 - [ ] An install from the ISO on real hardware, with a full `make iso` after the release identity change and the welcome screen: the Broadcom and FaceTime drivers from the ISO not yet seen, and the welcome screen not yet clicked through
 - [ ] README: screenshots and a short tour of the shell; how many pictures, and where, is still to be decided (shots from the COPR test VM exist)
 
+For 0.2.0 (0.1.1 released on 2026-11-24 with the update screen, boot splash and ISO fixes):
+
+- [ ] Updates downloaded in the background, as GNOME Software does, so powering off with updates only installs them: a system service after each successful `dnf5-makecache` (no new timer or package), on AC power, off metered networks, at low priority and with enough free space; all package updates, and Flatpaks downloaded without deploying; the package cache cleaned of what is no longer needed; "Update and power off" stops a running background download first; the update panel says when everything is downloaded. First to check in a VM: `dnf5 upgrade --offline` reuses packages from `--downloadonly`
+- [ ] An Updates section in the settings: background updates off for good, or paused for a number of days, hours or minutes; details to agree when this is built
+
 Later: battery charge limit to about 80% (this MacBook does not allow it; the Legion has a conservation mode, so it returns with the Legion). For F3, the Hyprspace overview plugin worked in a nested Hyprland 0.57.1, but a plugin must be rebuilt for every Hyprland release, which would tie Hyprland updates to it, so the overview was built in the shell.
 
 ## 12. Resolved decisions
