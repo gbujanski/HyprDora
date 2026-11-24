@@ -49,7 +49,7 @@ An error in a user file appears as a notification, and the defaults still load. 
 
 `~/.config/hyprdora/settings.json` overrides the defaults in `shell/config/Settings.qml`, which lists every key. Every key is optional, and saving the file applies it. The settings button in the action center writes the same file, so everyday settings need no editing. The `"//"` key on top is a note for whoever opens the file and is not a setting.
 
-The shell makes both files when they are missing, at start or after being deleted, with no settings and no rules: watching them for changes needs a file, and a deleted folder would end the watch for good. Deleting one is therefore the same as emptying it, a return to the defaults.
+The shell makes `settings.json`, and `monitors.lua` and `input.lua` in `~/.config/hypr`, when they are missing, at start or after being deleted, with no settings and no rules: watching them for changes needs a file, and a deleted folder would end the watch for good. Deleting one is therefore the same as emptying it, a return to the defaults.
 
 A few of them:
 

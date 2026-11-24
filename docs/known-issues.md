@@ -8,7 +8,7 @@
 
 ### Installer looks stuck during post-install setup
 
-**Priority: low, nice to have.** The setup script runs for several minutes on the "post-installation scripts" step, with no sign of what is happening, so the installer looks frozen. To be decided after more important work. One option is to show the script's progress on a text console with `chvt`, which is untested with the Wayland-based installer. Another is to move large packages to `%packages`, so they appear on the progress bar.
+**Priority: low, nice to have.** The setup script ran for several minutes on the "post-installation scripts" step, with no sign of what is happening, so the installer looked frozen. Most of that time went to Flatpaks, which setup no longer installs since applications moved to the welcome screen (2026-11-24); the next install will show whether the wait is still long. One option is to show the script's progress on a text console with `chvt`, which is untested with the Wayland-based installer. Another is to move large packages to `%packages`, so they appear on the progress bar.
 
 ### Laptop wakes up after suspend on command
 

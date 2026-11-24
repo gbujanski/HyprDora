@@ -28,4 +28,4 @@ Keeping services apart from modules means a change in how a service gets its dat
 
 **IPC.** Keybindings reach the shell through IPC: `qs -c hyprdora ipc call <target> <function>`. Panels open by name through one target, `panel`: `panel toggle sound`, `panel page power` for an action center page, `panel settings displays` for a settings category, `panel launcher clipboard`. No IPC function runs anything as root or returns a secret ([security](security.md)).
 
-**Root actions.** Updates installed at restart and system restore run as small helpers in `/usr/libexec/hyprdora` through pkexec, so polkit asks for the password; the shell only starts them and shows their progress.
+**Root actions.** Updates installed at restart, system restore and the applications chosen on the welcome screen run as small helpers in `/usr/libexec/hyprdora` through pkexec, so polkit asks for the password; the shell only starts them and shows their progress.

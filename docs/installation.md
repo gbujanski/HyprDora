@@ -70,7 +70,8 @@ Upgrading to a new Fedora release needs `hyprdora-release` built for it, since i
 | `/usr/libexec/hyprdora/shell-start`, `shell-stopped` | start the shell with the chosen icon theme; end the session if the shell stops while the screen is locked |
 | `/etc/pam.d/hyprdora-lock` | the lock screen's password check, the same as the console login |
 | `/usr/bin/hyprdora` | recovery tool: `hyprdora rollback`, `hyprdora --help` (see [recovery](recovery.md)) |
-| `/usr/libexec/hyprdora/offline-update`, `system-restore` | updates installed at restart, and system restore from the settings; run as root through pkexec, with their polkit actions in `/usr/share/polkit-1/actions` |
+| `/usr/libexec/hyprdora/offline-update`, `system-restore`, `install-extras` | updates installed at restart, system restore from the settings, and the applications chosen on the welcome screen; run as root through pkexec, with their polkit actions in `/usr/share/polkit-1/actions` |
+| `/usr/share/hyprdora/configs/extras`, `/usr/share/hyprdora/keys` | the welcome screen's catalog and the repositories it adds, and the signing keys pinned for them |
 | `/usr/share/polkit-1/rules.d/10-hyprdora-software.rules` | installing and removing software asks for the password (see [security](security.md)) |
 | `/usr/lib/sysctl.d/60-hyprdora-ptrace.conf` | a program may read only the memory of programs it started (see [security](security.md)) |
 | `/usr/libexec/hyprdora/calendar` | calendar helper: the offline calendar and Nextcloud accounts |

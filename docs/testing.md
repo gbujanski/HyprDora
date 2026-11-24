@@ -26,7 +26,7 @@ A second, virtual screen is added with `hyprctl output create headless`. Wi-Fi, 
 
 Run through the sections related to a change.
 
-**Bar:** workspaces switch on click and scroll; the clock with the weather opens the calendar; the bell, and the media button while something plays, sit next to it; the tray works; status icons open their panels (sound, battery, drives, displays with an external screen, updates); the logo on the right opens the action center and turns green while it is open; a bar appears and disappears with each monitor.
+**Bar:** workspaces switch on click and scroll; the clock with the weather opens the calendar; the bell, and the media button while something plays, sit next to it; the tray works; status icons open their panels (Wi-Fi, Bluetooth, sound, battery, drives, VPN while connected, displays with an external screen, updates); with two keyboard layouts the active one shows and a click switches it; the logo on the right opens the action center and turns green while it is open; a bar appears and disappears with each monitor.
 
 **Settings, input:** pointer speed and tap to click apply at once and after a new session; with two keyboard layouts the bar shows the active one, `SUPER + CTRL + Space` and a click on it switch and show the new layout's name; a layout found by searching is added, moved up to become the default, removed; with one layout the bar shows none.
 
@@ -66,7 +66,7 @@ Run through the sections related to a change.
 
 **Launcher:** applications by name, without diacritics and with typos; arithmetic such as `2*(3+4)` shows its result; `>` runs a command; web search; the clipboard history searches, pastes and deletes an entry.
 
-**Window overview:** windows of every workspace with live thumbnails; click to focus; drag to another workspace.
+**Window overview:** the current workspace's windows with live thumbnails, the workspaces in a strip above; click or Enter to focus, arrows to choose; drag a window onto another workspace.
 
 **Weather and calendar:** hidden without a location; appears after setting one; month scrolling on a touchpad; events of a Nextcloud account and of the offline calendar; adding an event with reminders and repeats; a reminder arrives; deleting one occurrence or the whole series.
 

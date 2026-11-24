@@ -25,7 +25,7 @@ The mouse works too: the wheel scrolls the history, a click picks a tab or a pan
 
 ## Neovim: LazyVim
 
-Neovim with LazyVim, on the welcome screen, makes [LazyVim](https://www.lazyvim.org) Neovim's default config (`/etc/xdg/nvim/sysinit.vim`, files in `/usr/share/hyprdora/configs/nvim`). The first start fetches the plugins from GitHub, which takes a minute. It adds Python, JSON, YAML, TOML, Markdown, git files, TypeScript, Tailwind, Docker, .NET and Java, QML through Qt's `qmlls`, and [Diffview](https://github.com/sindrets/diffview.nvim) for whole commits. Language servers are installed by Mason on first use of each language.
+Once Neovim is installed, for example as Neovim with LazyVim on the welcome screen, [LazyVim](https://www.lazyvim.org) is its default config (`/etc/xdg/nvim/sysinit.vim`, files in `/usr/share/hyprdora/configs/nvim`). The first start fetches the plugins from GitHub, which takes a minute. It adds Python, JSON, YAML, TOML, Markdown, git files, TypeScript, Tailwind, Docker, .NET and Java, QML through Qt's `qmlls`, and [Diffview](https://github.com/sindrets/diffview.nvim) for whole commits. Language servers are installed by Mason on first use of each language.
 
 Plugins of one's own go in `~/.config/nvim/lua/plugins/`, read after HyprDora's. An `init.lua` in `~/.config/nvim` replaces the whole config.
 

@@ -25,10 +25,10 @@ Then choose the HyprDora session on the login screen. An install ISO is built wi
 |---|---|
 | `shell/` | Quickshell shell: services, modules, shared components, translations, Python helpers |
 | `hypr/` | Hyprland config in Lua |
-| `configs/` | system files the package installs: login and lock screen, polkit, updates, system restore, calendar helper, portal, boot splash, systemd units |
+| `configs/` | system files the package installs: login and lock screen, polkit, updates, system restore, the welcome screen's catalog, calendar helper, portal, boot splash, systemd units |
 | `bin/` | `hyprdora`, the recovery tool |
 | `assets/` | wallpapers, logo, bundled font |
-| `packaging/` | RPM spec, release identity, the ISO's package repository and installer branding, logo script |
+| `packaging/` | RPM spec, release identity, pinned signing keys, the ISO's package repository and installer branding, logo script |
 | `kickstart/` | install description, system setup, first-login step |
 | `tools/` | development helpers, such as the nested test runner |
 | `docs/` | documentation and decision records |

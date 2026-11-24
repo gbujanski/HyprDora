@@ -44,14 +44,14 @@ Shell name: `qs -c hyprdora`. User settings: `~/.config/hyprdora/settings.json`.
 - Look and login: Papirus, Bibata Modern Ice (24), dark GTK theme, wallpaper, SDDM with the Hyprdora theme
 - Snapshots: `snapper`, a `dnf5` action that takes a snapshot around each transaction, `btrfs-assistant`
 
-**Personal layer (separate from the desktop):** `neovim`, VS Code, Zen + Flatseal (flatpak), Discord, FileZilla, GIMP, Fedora Media Writer, OnlyOffice (official repository), virt-manager, `docker-ce`, Python 3, Node.js, Java 25, .NET 10, zsh + Oh My Zsh (agnoster). Zen is set as the default browser in this layer.
+**Applications to choose (welcome screen, since 2026-11-24):** browsers (Firefox, Chrome, Chromium, Zen), the full codecs, media players, GIMP, ONLYOFFICE, mail, Discord, FileZilla, VS Code, Zed, Neovim with LazyVim, zsh with Oh My Zsh, Docker, Node.js, Java, .NET, virt-manager, Fedora Media Writer, Flatseal; then the default applications among them. Until then a personal layer installed most of these, and Zen as the browser, for everyone.
 
-**Hardware-dependent (detected):** `wl` (Broadcom), the FaceTime HD camera driver (`akmod-facetimehd` from the `mulderje/facetimehd-kmod` COPR), full codecs and VA-API from RPM Fusion (`intel-media-driver` or `mesa-va-drivers-freeworld`), NVIDIA.
+**Hardware-dependent (detected):** `wl` (Broadcom), the FaceTime HD camera driver (`akmod-facetimehd` from the `mulderje/facetimehd-kmod` COPR), VA-API from RPM Fusion (`intel-media-driver` or `mesa-va-drivers-freeworld`), NVIDIA.
 
 - Hybrid laptop: desktop on the Intel GPU, NVIDIA on demand (`prime-run`). NVIDIA as the only GPU: environment variables included in the config.
 - Secure Boot: a signing key is prepared only when Secure Boot is on and a module is built (NVIDIA, `wl`). In practice this means the Legion.
 
-**Repositories:** RPM Fusion, `sdegler/hyprland`, `peterwu/rendezvous`, Microsoft (VS Code), Docker, OnlyOffice, Flathub.
+**Repositories:** RPM Fusion, `sdegler/hyprland`, `peterwu/rendezvous`, HyprDora's own `gbujanski/hyprdora`, Flathub; Microsoft, Docker, ONLYOFFICE and Google only when an application from them is chosen.
 
 **Dropped:** `gum` menu, gaming stack, OpenCL/CUDA/ROCm, `vulkan-tools`, waybar, swaync, `wiremix`, `nwg-displays`, `nwg-look`, `bluetui` and the Rust build, VirtualBox, `lazydocker`, `hyprpicker`, KeePassXC, `sys-power.sh`, `power-profiles.sh`, `toggle_audio.sh`, `screenshot.sh` (replaced by section 6), `slurp` (same), `set-wallpaper.sh` and `save-monitors.py` (moved to QML, section 4), the `nwg-displays` window rule.
 

@@ -10,7 +10,7 @@ Findings from testing on real hardware. Each one explains code that may otherwis
 
 ## Camera and suspend
 
-- The FaceTime HD camera in the MacBook Air 7,2 (`14e4:1570`) has no driver in Fedora. `akmod-facetimehd` from the `mulderje/facetimehd-kmod` COPR builds one, and `facetimehd-firmware` downloads the firmware from Apple's driver package during installation. Verified on the MacBook: `/dev/video0` at 1280x720 streams frames.
+- The FaceTime HD camera in the MacBook Air 7,2 (`14e4:1570`) has no driver in Fedora. `akmod-facetimehd` from the `mulderje/facetimehd-kmod` COPR builds one, and `facetimehd-firmware` from the same COPR carries the firmware, taken from Apple's driver package. Verified on the MacBook: `/dev/video0` at 1280x720 streams frames.
 - The FaceTime HD driver (`facetimehd`, an akmod from COPR) must not be in the initramfs. An initramfs rebuilt on the running system takes every loaded driver, but not the calibration files this one reads at start, so the camera starts half set up (`Direct firmware load for facetimehd/1871_01XX.dat failed`) and the next suspend never wakes: the log ends at `PM: suspend entry (deep)`. `/usr/lib/dracut/dracut.conf.d/90-hyprdora.conf` leaves it out, so it loads from the disk after the root is mounted. `pm_trace` pointed at a memory block, a false match, and did not help here.
 
 ## Bluetooth
@@ -61,12 +61,15 @@ Findings from testing on real hardware. Each one explains code that may otherwis
 - A live config reload does not pick up a newly added QML file, such as a new singleton: references to it are undefined until the shell restarts. `make install` therefore restarts the shell service.
 - `FileView.watchChanges` follows a file through being replaced, removed and made again, but not a file missing when the watch starts, and deleting the file's folder ends the watch for good. The owners of watched files therefore make them when missing, and make them again after a deletion, which also starts a new watch.
 - `FileView.setText` writes in the background and does not emit `saved`; with `blockWrites: true` the file exists as soon as `setText` returns.
+- `FileView.setText` with the text it already holds writes nothing, and after a failed load it holds empty text, so an empty file cannot be made that way. The welcome screen's marker therefore holds a date.
+- With `blockLoading: true`, `loadFailed` for a missing file arrives after `Component.onCompleted`, and `loaded` is still false there. Two files read at start arrive in either order, so code that needs both waits for both.
+- A `FileView` reads its file as soon as it has a path, so a file to be read only when needed gets its path only then (`Extras.readFile`).
 - Making an object from a `Component` while another object from the same component is still being made fails without a word. `EventSources` therefore attaches a stream's dependency with `Qt.callLater`.
 - Properties given when an object is made can change, and emit their change signals, before the owner's handlers listen. `ScheduledTask` therefore acts only after `Component.onCompleted`.
 - `PamContext` gives PAM's errors, such as an account locked by `pam_faillock`, as plain messages with `messageIsError` false. The lock screen keeps every line before the password prompt and shows them after a refusal.
 - `qs ipc call` treats a function named `show` as its own subcommand, so no IPC function has that name.
 - With `QT_QUICK_BACKEND=software`, which would save about 55 MB, the shell crashes as soon as a `ScreencopyView` appears (the window overview), and `ClippingRectangle` draws nothing, since it uses a shader.
-- Processes the shell starts outlive it, because its service keeps child processes across a restart (`KillMode=process`) for programs opened from the shell. Every background process therefore runs under `setpriv --pdeathsig TERM`.
+- Processes the shell starts outlive it, because its service keeps child processes across a restart (`KillMode=process`) for programs opened from the shell. Every watch that runs as long as the shell, the streams of `EventSources`, therefore runs under `setpriv --pdeathsig TERM`.
 
 ## Privacy indicators
 

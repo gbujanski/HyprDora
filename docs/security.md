@@ -29,7 +29,7 @@ What HyprDora protects, how, and where its limits are. Reviewed on 2026-11-20.
 
 ## Text from outside
 
-Text the shell did not write never becomes code. Shell commands get it as separate arguments (`"$1"`), never inside the command. What the launcher runs reaches Hyprland as a Lua string the text cannot leave, since a clipboard entry, which any web page can fill, may hold anything. Monitor names from a screen's EDID are quoted the same way. Notifications show plain text, with markup turned off. Addresses a Nextcloud server sends back must lead to the same server over https before the browser opens them.
+Text the shell did not write never becomes code. Shell commands get it as separate arguments (`"$1"`), never inside the command. What the launcher runs reaches Hyprland as a Lua string the text cannot leave, since a clipboard entry, which any web page can fill, may hold anything. Monitor names from a screen's EDID are quoted the same way. Notifications show plain text, with markup turned off. Addresses a Nextcloud server sends back must lead to the same server over https before the browser opens them. The welcome screen's helper, which runs as root, takes only the names of the catalog's items: what each installs, from which repository and with which key comes from files in `/usr/share/hyprdora` that only root can change, and dnf checks every package against a key pinned there rather than one fetched from the repository's own server.
 
 ## Limits
 
