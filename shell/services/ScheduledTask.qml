@@ -23,7 +23,7 @@ QtObject {
     property real lastRun: 0
     property bool retrying: false
 
-    readonly property bool allowed: enabled && (!needsNetwork || (Network.connected && (allowMetered || !Network.metered)))
+    readonly property bool allowed: enabled && (!needsNetwork || (Network.online && (allowMetered || !Network.metered)))
     readonly property real startedAt: Date.now()
     // Set once made: properties given while it is being made change before its owner listens to run().
     property bool ready: false
@@ -89,8 +89,8 @@ QtObject {
     // A computer waking reconnects to the network, which is when a run due during sleep catches up.
     property Connections network: Connections {
         target: Network
-        function onConnectedChanged() {
-            if (Network.connected)
+        function onOnlineChanged() {
+            if (Network.online)
                 root.check();
         }
     }

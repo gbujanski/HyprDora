@@ -46,6 +46,8 @@ ConnectionService {
     readonly property bool scanning: wifiDevice?.scannerEnabled ?? false
     // Quickshell.Networking knows only Wi-Fi, so a wired connection is read from nmcli.
     property bool wiredConnected: false
+    // Connected to a network at all, over Wi-Fi or a cable.
+    readonly property bool online: connected || wiredConnected
 
     // Metered ("taryfowe") connections: the system downloads nothing in the background on them. NetworkManager
     // guesses it for an Android hotspot; any saved network can be marked by hand, since a router with a SIM

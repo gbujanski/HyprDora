@@ -38,8 +38,6 @@ Scope {
             Rectangle {
                 id: panel
 
-                readonly property bool online: Network.connected || Network.wiredConnected
-
                 anchors.centerIn: parent
                 width: Math.min(620, parent.width - 2 * Theme.panelMargin)
                 height: Math.min(parent.height * 0.85, header.height + list.contentHeight + footer.height + 2 * Theme.panelPadding + 16)
@@ -320,7 +318,7 @@ Scope {
                             rightMargin: 12
                             verticalCenter: parent.verticalCenter
                         }
-                        visible: !panel.online
+                        visible: !Network.online
                         text: I18n.t("extras.offline")
                         color: Theme.warning
                         font.pixelSize: Theme.fontSizeSmall
@@ -367,7 +365,7 @@ Scope {
                             text: Extras.selectedIds.length > 0 ? I18n.t("extras.install", {
                                 count: Extras.selectedIds.length
                             }) : I18n.t("extras.save")
-                            active: panel.online || Extras.selectedIds.length === 0
+                            active: Network.online || Extras.selectedIds.length === 0
                             onClicked: Extras.finish()
                         }
                     }
