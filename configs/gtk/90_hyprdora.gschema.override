@@ -1,5 +1,7 @@
 [org.gnome.desktop.interface]
 color-scheme='prefer-dark'
+# HyprDora's portal gives it to libadwaita applications, Flatpaks among them; others take ~/.config/gtk-4.0/gtk.css.
+accent-color='green'
 gtk-theme='Adwaita-dark'
 icon-theme='Papirus'
 cursor-theme='Bibata-Modern-Ice'

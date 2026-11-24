@@ -4,7 +4,31 @@
 
 set -uo pipefail
 
-MARKER=${XDG_STATE_HOME:-$HOME/.local/state}/hyprdora/first-login-done
+STATE=${XDG_STATE_HOME:-$HOME/.local/state}/hyprdora
+MARKER=$STATE/first-login-done
+
+# GTK 4 and libadwaita applications draw their accent, such as a main button or a focused field, in the
+# shell's green rather than GNOME's nearer one; the dark text on it is the shell's too. Done once, also on
+# systems set up before it came, and only where the user has no gtk.css of their own, so one removed stays
+# removed. Flatpaks do not read it; they get GNOME's green through HyprDora's portal.
+add_accent() {
+    local file="${XDG_CONFIG_HOME:-$HOME/.config}/gtk-4.0/gtk.css"
+    [ -e "$STATE/accent-done" ] && return 0
+    if [ ! -e "$file" ]; then
+        mkdir -p "$(dirname "$file")"
+        cat >"$file" <<'CSS' || return 1
+/* HyprDora's accent, written once at login; change or remove it freely. */
+:root {
+  --accent-bg-color: #2fcf5e;
+  --accent-fg-color: rgb(0 0 0 / 80%);
+  --accent-color: #2fcf5e;
+}
+CSS
+    fi
+    mkdir -p "$STATE" && touch "$STATE/accent-done"
+}
+
+add_accent
 
 [ -e "$MARKER" ] && exit 0
 

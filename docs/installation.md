@@ -75,7 +75,7 @@ Upgrading to a new Fedora release needs `hyprdora-release` built for it, since i
 | `/usr/share/polkit-1/rules.d/10-hyprdora-software.rules` | installing and removing software asks for the password (see [security](security.md)) |
 | `/usr/lib/sysctl.d/60-hyprdora-ptrace.conf` | a program may read only the memory of programs it started (see [security](security.md)) |
 | `/usr/libexec/hyprdora/calendar` | calendar helper: the offline calendar and Nextcloud accounts |
-| `/usr/libexec/hyprdora/hyprdora-portal`, `/etc/xdg/xdg-desktop-portal/hyprland-portals.conf` | wallpaper portal backend and the portal choice that enables it |
+| `/usr/libexec/hyprdora/hyprdora-portal`, `/etc/xdg/xdg-desktop-portal/hyprland-portals.conf` | HyprDora's portal backend: the wallpaper, and the accent color for libadwaita applications, Flatpaks among them, which xdg-desktop-portal-gtk does not give; the portal choice that enables it |
 | `/usr/libexec/hyprdora/not-metered`, `/usr/lib/systemd/system/dnf5-makecache.service.d/hyprdora-metered.conf` | the package cache is not refreshed on a metered network |
 | `/usr/libexec/hyprdora/update-download`, `/usr/lib/systemd/system/hyprdora-update-download.service`, `dnf5-makecache.service.d/hyprdora-download.conf` | updates download in the background after each refresh of the package cache, on AC power and off metered networks, so updating at power off or restart only installs them; packages already installed are removed from the cache on the next run |
 | `/usr/libexec/hyprdora/update-settings`, `update-check`, `updates-allowed`, `/usr/share/polkit-1/actions/org.hyprdora.update-settings.policy`, `dnf5-makecache.service.d/hyprdora-pause.conf` | the Updates settings: how often to look for updates and a pause, kept in `/etc/hyprdora/updates.conf` (with a timer drop-in in `/etc/systemd/system/dnf5-makecache.timer.d`, and `/run/hyprdora/updates-paused` for a pause until restart), changed with the administrator password; while paused, nothing refreshes or downloads. Check now refreshes the package cache without a password |
@@ -86,13 +86,13 @@ Upgrading to a new Fedora release needs `hyprdora-release` built for it, since i
 | `/usr/share/plymouth/themes/hyprdora`, `/usr/libexec/hyprdora/boot-theme`, `/usr/lib/dracut/dracut.conf.d/90-hyprdora.conf` | boot splash, the hidden GRUB menu, and drivers kept out of the initramfs |
 | `/usr/lib/systemd/system/akmods.service.d/hyprdora-splash.conf` | hides akmods' message on the boot splash once a driver has been built |
 | `/usr/share/sddm/themes/Hyprdora`, `/etc/sddm.conf.d/hyprdora.conf` | login screen |
-| `/usr/share/glib-2.0/schemas/90_hyprdora.gschema.override` | GTK defaults: dark theme, icons, cursor; GNOME Software without its own updates |
+| `/usr/share/glib-2.0/schemas/90_hyprdora.gschema.override` | GTK defaults: dark theme, green accent, icons, cursor; GNOME Software without its own updates |
 | `/usr/share/nautilus-python/extensions/hyprdora.py` | "Open in Terminal" in Nautilus |
 | `/etc/xdg/mimeapps.list`, `/etc/xdg/xdg-terminals.list`, `/etc/alacritty/alacritty.toml` | default applications, terminal and its settings |
 | `/etc/xdg/hyprland-mimeapps.list`, `/usr/libexec/hyprdora/editor-types` | every text file type (Markdown, JSON, scripts, source code) opens in the text editor; written from the MIME database at install and whenever it changes, leaving out tables, mail, playlists and other text not meant for an editor |
 | `/usr/libexec/hyprdora/terminal-session`, `/etc/tmux.conf` | every Alacritty window in tmux, and tmux's settings (see [terminal](terminal.md)) |
 | `/etc/xdg/nvim/sysinit.vim` | LazyVim as Neovim's default config once Neovim is installed, from `/usr/share/hyprdora/configs/nvim` |
-| `/usr/libexec/hyprdora/system-setup.sh`, `first-login.sh` | system setup run by the kickstart, and the first-login step |
+| `/usr/libexec/hyprdora/system-setup.sh`, `first-login.sh` | system setup run by the kickstart, and the first-login step, which also writes the shell's green accent to `~/.config/gtk-4.0/gtk.css` once where there is none |
 
 The session needs no files in the home directory. User files in `~/.config/hypr` and `~/.config/hyprdora` are optional and override the defaults.
 
