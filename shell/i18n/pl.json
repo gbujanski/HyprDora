@@ -533,6 +533,7 @@
   "updates.atPoweroff": "Zaktualizuj i wyłącz",
   "updates.atRestart": "Zaktualizuj i uruchom ponownie",
   "updates.done": "Gotowe. Naciśnij Enter, aby zamknąć.",
+  "updates.downloaded": "Gotowe do instalacji",
   "updates.group.other": "Pozostałe",
   "updates.group.security": "Bezpieczeństwo",
   "updates.group.system": "System Fedora",

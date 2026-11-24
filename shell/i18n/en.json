@@ -531,6 +531,7 @@
   "updates.atPoweroff": "Update and power off",
   "updates.atRestart": "Update and restart",
   "updates.done": "Done. Press Enter to close.",
+  "updates.downloaded": "Ready to install",
   "updates.group.other": "Other",
   "updates.group.security": "Security",
   "updates.group.system": "Fedora",

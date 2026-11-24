@@ -43,6 +43,9 @@ if [ -z "${HYPRDORA_INHIBITED:-}" ]; then
         --mode=block "$0" run "$mode"
 fi
 
+# A background download still running would hold dnf's lock; what it has downloaded so far is kept and used.
+systemctl stop hyprdora-update-download.service 2>/dev/null
+
 state=preparing done=0 total=0 bytes=0 totalBytes=0 message=""
 
 # Writes the progress for the shell, replacing the file in one step so it never reads half of it.

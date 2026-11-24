@@ -77,6 +77,7 @@ Upgrading to a new Fedora release needs `hyprdora-release` built for it, since i
 | `/usr/libexec/hyprdora/calendar` | calendar helper: the offline calendar and Nextcloud accounts |
 | `/usr/libexec/hyprdora/hyprdora-portal`, `/etc/xdg/xdg-desktop-portal/hyprland-portals.conf` | wallpaper portal backend and the portal choice that enables it |
 | `/usr/libexec/hyprdora/not-metered`, `/usr/lib/systemd/system/dnf5-makecache.service.d/hyprdora-metered.conf` | the package cache is not refreshed on a metered network |
+| `/usr/libexec/hyprdora/update-download`, `/usr/lib/systemd/system/hyprdora-update-download.service`, `dnf5-makecache.service.d/hyprdora-download.conf` | updates download in the background after each refresh of the package cache, on AC power and off metered networks, so updating at power off or restart only installs them; packages already installed are removed from the cache on the next run. To turn it off: `sudo systemctl mask hyprdora-update-download.service` |
 | `/etc/dnf/libdnf5-plugins/actions.d/hyprdora-snapper.actions` | a snapshot before and after every `dnf` transaction |
 | `/etc/dnf/protected.d/hyprdora.conf` | stops `dnf` from removing HyprDora, snapper or `btrfs-progs` |
 | `/usr/lib/systemd/system/hyprdora-hint.service` | writes the reminder of `hyprdora --help` for the console login screen and SSH at boot, in the system language |

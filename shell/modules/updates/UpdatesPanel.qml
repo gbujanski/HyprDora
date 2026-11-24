@@ -59,7 +59,8 @@ BarPanel {
                 })
             }
 
-            // How much the updates download, to choose between now and later.
+            // How much the updates download, to choose between now and later, or that the background download
+            // has fetched them all.
             Row {
                 id: size
                 anchors {
@@ -67,18 +68,18 @@ BarPanel {
                     verticalCenter: header.verticalCenter
                 }
                 spacing: 4
-                visible: Updates.downloadSize > 0
+                visible: Updates.downloadSize > 0 || Updates.downloaded
 
                 Icon {
                     anchors.verticalCenter: parent.verticalCenter
-                    text: Icons.download
-                    color: Theme.muted
+                    text: Updates.downloaded ? Icons.check : Icons.download
+                    color: Updates.downloaded ? Theme.accent : Theme.muted
                     font.pixelSize: Theme.iconSizeSmall
                 }
 
                 Label {
                     anchors.verticalCenter: parent.verticalCenter
-                    text: Updates.formatSize(Updates.downloadSize)
+                    text: Updates.downloaded ? I18n.t("updates.downloaded") : Updates.formatSize(Updates.downloadSize)
                     color: Theme.muted
                 }
             }

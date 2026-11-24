@@ -1,0 +1,16 @@
+# Downloads the available updates in the background, after each refresh of the package cache (see
+# dnf5-makecache.service.d/hyprdora-download.conf), so powering off with updates only installs them. It
+# waits for AC power and a connection that is not metered, gives way to other work, and does not run while
+# the download before an offline update does: that one stops it instead.
+[Unit]
+Description=HyprDora background update download
+ConditionACPower=true
+After=network-online.target
+
+[Service]
+Type=oneshot
+Nice=19
+IOSchedulingClass=idle
+ExecCondition=/usr/libexec/hyprdora/not-metered
+ExecCondition=/bin/sh -c '! systemctl --quiet is-active hyprdora-offline-update.service'
+ExecStart=/usr/libexec/hyprdora/update-download

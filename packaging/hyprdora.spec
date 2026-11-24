@@ -217,6 +217,7 @@ install -Dpm 755 configs/tmux/terminal-session.sh %{buildroot}%{_libexecdir}/%{n
 install -Dpm 644 configs/tmux/tmux.conf %{buildroot}%{_sysconfdir}/tmux.conf
 install -Dpm 644 configs/nvim/sysinit.vim %{buildroot}%{_sysconfdir}/xdg/nvim/sysinit.vim
 install -Dpm 755 configs/update/not-metered.sh %{buildroot}%{_libexecdir}/%{name}/not-metered
+install -Dpm 755 configs/update/update-download.sh %{buildroot}%{_libexecdir}/%{name}/update-download
 install -Dpm 755 configs/plymouth/boot-theme.sh %{buildroot}%{_libexecdir}/%{name}/boot-theme
 install -Dpm 644 configs/dracut/90-hyprdora.conf %{buildroot}%{_prefix}/lib/dracut/dracut.conf.d/90-hyprdora.conf
 install -Dpm 644 configs/plymouth/hyprdora/hyprdora.plymouth %{buildroot}%{_datadir}/plymouth/themes/hyprdora/hyprdora.plymouth
@@ -237,6 +238,8 @@ install -Dpm 755 bin/hyprdora %{buildroot}%{_bindir}/hyprdora
 install -Dpm 644 configs/dnf/protected.d/hyprdora.conf %{buildroot}%{_sysconfdir}/dnf/protected.d/hyprdora.conf
 install -Dpm 644 configs/systemd/hyprdora-hint.service %{buildroot}%{_prefix}/lib/systemd/system/hyprdora-hint.service
 install -Dpm 644 configs/systemd/dnf5-makecache.service.d/hyprdora-metered.conf %{buildroot}%{_prefix}/lib/systemd/system/dnf5-makecache.service.d/hyprdora-metered.conf
+install -Dpm 644 configs/systemd/dnf5-makecache.service.d/hyprdora-download.conf %{buildroot}%{_prefix}/lib/systemd/system/dnf5-makecache.service.d/hyprdora-download.conf
+install -Dpm 644 configs/systemd/hyprdora-update-download.service %{buildroot}%{_prefix}/lib/systemd/system/hyprdora-update-download.service
 install -Dpm 644 configs/systemd/plymouth-quit.service.d/hyprdora-retain.conf %{buildroot}%{_prefix}/lib/systemd/system/plymouth-quit.service.d/hyprdora-retain.conf
 install -Dpm 644 configs/systemd/akmods.service.d/hyprdora-splash.conf %{buildroot}%{_prefix}/lib/systemd/system/akmods.service.d/hyprdora-splash.conf
 install -Dpm 644 configs/logind/50-hyprdora.conf %{buildroot}%{_prefix}/lib/systemd/logind.conf.d/50-hyprdora.conf
@@ -345,6 +348,8 @@ fi
 %{_bindir}/hyprdora
 %{_prefix}/lib/systemd/system/hyprdora-hint.service
 %{_prefix}/lib/systemd/system/dnf5-makecache.service.d/hyprdora-metered.conf
+%{_prefix}/lib/systemd/system/dnf5-makecache.service.d/hyprdora-download.conf
+%{_prefix}/lib/systemd/system/hyprdora-update-download.service
 %{_prefix}/lib/systemd/system/plymouth-quit.service.d/hyprdora-retain.conf
 %{_prefix}/lib/systemd/system/akmods.service.d/hyprdora-splash.conf
 %{_prefix}/lib/dracut/dracut.conf.d/90-hyprdora.conf

@@ -12,12 +12,18 @@ import qs.config
 Singleton {
     id: root
 
-    // [{ name, version, repo }] from dnf, and [{ name, version, size }] for Flatpaks, size in bytes.
+    // [{ name, version, repo }] from dnf, and [{ name, version, size, commit }] for Flatpaks, size in bytes.
     property var packageList: []
     property var flatpakList: []
     // Bytes the package updates still need to download; packages already downloaded do not count.
     property real packageDownload: 0
-    readonly property real downloadSize: packageDownload + flatpakList.reduce((sum, f) => sum + (f.size ?? 0), 0)
+    // Whether dnf has said how much that is.
+    property bool packageDownloadKnown: false
+    // Commits of Flatpak updates the background download has pulled; they need no download either.
+    property var pulledCommits: []
+    readonly property real downloadSize: packageDownload + flatpakList.filter(f => !pulledCommits.includes(f.commit)).reduce((sum, f) => sum + (f.size ?? 0), 0)
+    // Everything is downloaded, by the background download, and only waits to be installed.
+    readonly property bool downloaded: count > 0 && (packages === 0 || packageDownloadKnown) && downloadSize === 0
     // Names of packages whose update is a security advisory.
     property var securityNames: []
     readonly property int packages: packageList.length
@@ -100,6 +106,7 @@ Singleton {
      */
     function check() {
         now = Date.now();
+        pulledFile.reload();
         if (!packageCheck.running)
             packageCheck.running = true;
         if (!advisoryCheck.running)
@@ -153,6 +160,15 @@ Singleton {
         onRun: root.check()
     }
 
+    // Written by the background download (update-download), one commit per line.
+    FileView {
+        id: pulledFile
+        path: "/var/lib/hyprdora/flatpak-pulled"
+        printErrors: false
+        onLoaded: root.pulledCommits = text().split("\n").filter(c => c !== "")
+        onLoadFailed: root.pulledCommits = []
+    }
+
     FileView {
         id: stateFile
         path: root.statePath
@@ -185,6 +201,7 @@ Singleton {
                 root.packageList = list;
                 if (list.length === 0) {
                     root.packageDownload = 0;
+                    root.packageDownloadKnown = false;
                     if (root.flatpaks === 0)
                         root.markUpToDate();
                 } else if (!sizeCheck.running) {
@@ -210,25 +227,33 @@ Singleton {
     }
 
     // dnf answers no after showing the transaction, which ends with a line on stderr such as
-    // "Total size of inbound packages is 15 MiB. Need to download 15 MiB."
+    // "Total size of inbound packages is 15 MiB. Need to download 15 MiB." It looks in the system's cache,
+    // where the background download puts packages; a user's dnf would look in its own.
     Process {
         id: sizeCheck
-        command: ["env", "LC_ALL=C", "dnf5", "upgrade", "--assumeno", "--cacheonly"]
+        command: ["env", "LC_ALL=C", "dnf5", "upgrade", "--assumeno", "--cacheonly", "--setopt=cachedir=/var/cache/libdnf5"]
         stderr: StdioCollector {
-            onStreamFinished: root.packageDownload = root.bytesOf(/Need to download ([\d.]+\s*\S*B)/.exec(text)?.[1])
+            onStreamFinished: {
+                const size = /Need to download ([\d.]+\s*\S*B)/.exec(text)?.[1];
+                root.packageDownload = root.bytesOf(size);
+                root.packageDownloadKnown = size !== undefined;
+            }
         }
     }
 
+    // Each remote on its own: a user may not read Fedora's OCI remote, and one failing remote would hide the
+    // updates from the others.
     Process {
         id: flatpakCheck
-        command: ["env", "LC_ALL=C", "flatpak", "remote-ls", "--system", "--updates", "--columns=name,version,download-size"]
+        command: ["env", "LC_ALL=C", "sh", "-c", 'for remote in $(flatpak remotes --system --columns=name); do flatpak remote-ls --system --updates --columns=name,version,download-size,commit "$remote" 2>/dev/null; done']
         stdout: StdioCollector {
             onStreamFinished: root.flatpakList = text.split("\n").filter(line => line.trim() !== "").map(line => {
-                const [name, version, size] = line.split("\t");
+                const [name, version, size, commit] = line.split("\t");
                 return {
                     name: name,
                     version: version ?? "",
-                    size: root.bytesOf(size)
+                    size: root.bytesOf(size),
+                    commit: commit ?? ""
                 };
             })
         }
