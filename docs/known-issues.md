@@ -22,6 +22,7 @@ To check, run `sleep 5; systemctl suspend` and keep your hands off the laptop fo
 
 ## Limitations
 
+- **Fedora 45:** not supported yet; HyprDora is built for Fedora 44 only. A system upgraded to Fedora 45 gets no HyprDora updates, and one installed from the ISO cannot upgrade, as `hyprdora-release` 44 requires Fedora 44's repositories. Stay on Fedora 44, supported until 2027-05-19, until HyprDora supports 45.
 - **Wired connections:** `Quickshell.Networking` knows only Wi-Fi, so the bar shows a wired link from `nmcli` and only as an icon, without settings. It has not been tested with a cable.
 - **Headset profiles:** the panel does not switch between A2DP and HFP, so a headset microphone can need a manual profile change.
 - **Enterprise and WEP networks:** the panel points to `nmcli` or `nmtui`.
