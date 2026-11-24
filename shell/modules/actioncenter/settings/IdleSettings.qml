@@ -61,65 +61,17 @@ Column {
     Repeater {
         model: root.rows
 
-        Rectangle {
-            id: row
-
+        ChoiceRow {
             required property var modelData
             readonly property int value: Settings[modelData.setting]
-            readonly property bool open: root.menu?.submenu?.owner === row
-
-            /** Shows this setting's choices beside the row. */
-            function showOptions() {
-                root.menu?.openSubmenu(row, root.options(value), value, v => Settings.setIn("idle", modelData.key, v));
-            }
 
             width: root.width
-            height: 34
-            radius: Theme.radius
-            color: open || rowArea.containsMouse ? Theme.surface : "transparent"
-
-            Label {
-                anchors {
-                    left: parent.left
-                    leftMargin: 8
-                    verticalCenter: parent.verticalCenter
-                }
-                text: row.modelData.title
-                color: Theme.muted
-            }
-
-            Row {
-                anchors {
-                    right: parent.right
-                    rightMargin: 6
-                    verticalCenter: parent.verticalCenter
-                }
-                spacing: 4
-
-                Label {
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: root.label(row.value)
-                    font.weight: Font.Medium
-                }
-
-                Icon {
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: Icons.chevronRight
-                    color: Theme.muted
-                }
-            }
-
-            MouseArea {
-                id: rowArea
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onContainsMouseChanged: {
-                    if (containsMouse)
-                        row.showOptions();
-                }
-                onClicked: row.showOptions()
-            }
+            menu: root.menu
+            title: modelData.title
+            valueText: root.label(value)
+            options: root.options(value)
+            current: value
+            onSelected: v => Settings.setIn("idle", modelData.key, v)
         }
     }
 }

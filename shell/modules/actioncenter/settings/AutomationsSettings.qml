@@ -240,70 +240,20 @@ Column {
             spacing: 2
 
             // The VPN to connect; with more than one, hovering opens the choice.
-            Rectangle {
-                id: connectionRow
-
-                readonly property bool open: root.menu?.submenu?.owner === connectionRow
-
-                /** Shows the VPN connections beside the row. */
-                function showOptions() {
-                    if (Vpn.connections.length < 2)
-                        return;
-                    root.menu?.openSubmenu(connectionRow, Vpn.connections.map(c => ({
-                                value: c.uuid,
-                                label: c.name
-                            })), vpnRule.target?.uuid, uuid => Automations.update("vpn", {
-                            connection: uuid
-                        }));
-                }
-
+            ChoiceRow {
                 width: parent.width - 8
-                height: 30
-                radius: Theme.radius
-                color: open || connectionArea.containsMouse ? Theme.surface : "transparent"
-
-                Label {
-                    anchors {
-                        left: parent.left
-                        leftMargin: 6
-                        verticalCenter: parent.verticalCenter
-                    }
-                    text: I18n.t("automations.vpnConnection")
-                    color: Theme.muted
-                    font.pixelSize: Theme.fontSizeSmall
-                }
-
-                Row {
-                    anchors {
-                        right: parent.right
-                        rightMargin: 6
-                        verticalCenter: parent.verticalCenter
-                    }
-                    spacing: 4
-
-                    Label {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: vpnRule.target?.name ?? ""
-                        font.weight: Font.Medium
-                    }
-
-                    Icon {
-                        anchors.verticalCenter: parent.verticalCenter
-                        visible: Vpn.connections.length > 1
-                        text: Icons.chevronRight
-                        color: Theme.muted
-                    }
-                }
-
-                MouseArea {
-                    id: connectionArea
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    onContainsMouseChanged: {
-                        if (containsMouse)
-                            connectionRow.showOptions();
-                    }
-                }
+                compact: true
+                menu: root.menu
+                title: I18n.t("automations.vpnConnection")
+                valueText: vpnRule.target?.name ?? ""
+                options: Vpn.connections.length < 2 ? [] : Vpn.connections.map(c => ({
+                            value: c.uuid,
+                            label: c.name
+                        }))
+                current: vpnRule.target?.uuid ?? null
+                onSelected: uuid => Automations.update("vpn", {
+                        connection: uuid
+                    })
             }
 
             Label {

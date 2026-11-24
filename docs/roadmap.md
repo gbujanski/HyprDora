@@ -337,7 +337,7 @@ Review of the whole project (2026-11-19), in stages, each decided on before anyt
   - [x] A2. The bar's power profile icon opens the battery panel, which holds the profiles, not the whole action center
   - [x] A3. Restoring the system and taking a snapshot leave the list of setting categories as one category, "System restore", whose page holds both
   - [x] A4. The settings menu in groups: devices; look and behaviour; region; account and system
-  - [ ] After the review: a keyboard shortcut cheat sheet on a key (B1); keyboard layouts in the settings, with a bar indicator for more than one (C1); "Mouse and touchpad" with pointer speed and tap to click (C2); choosing the wallpaper in the settings (C3)
+  - [x] After the review: a keyboard shortcut cheat sheet on a key (B1); keyboard layouts in the settings, with a bar indicator for more than one (C1); "Mouse and touchpad" with pointer speed and tap to click (C2); choosing the wallpaper in the settings (C3), built in commit f6e2fb5
   - Not done: a do-not-disturb tile and a dark theme tile in the action center, night light. Kept as they are: Wi-Fi, Bluetooth and VPN open the action center's pages from the bar; the system card stays in the action center
 - [x] 2. Shared components: one component wherever two places show the same thing (Wi-Fi, Bluetooth, sound, buttons that differ only in their icon), with what differs passed in; values written in place of Theme's tokens
   - [x] S1. One frame for the panels at the bar (BarPanel): the window, closing by a click outside and Esc, the delay before the window goes, the slide in, the background
@@ -447,6 +447,7 @@ Since 0.2.0 (on `dev`):
 - [x] GNOME applications take the shell's green accent (2026-11-25): Nautilus's password window for an encrypted drive, among others, was blue. HyprDora's portal backend gives libadwaita the accent, which xdg-desktop-portal-gtk does not, and the first-login step writes the shell's exact green to `~/.config/gtk-4.0/gtk.css`
 - [x] Headset profiles (2026-11-25): not a limitation after all. Tried with EDIFIER X5 Pro earbuds: the shell lists their microphone, and WirePlumber switches to HFP while something records and back to A2DP a few seconds after; the entry left the known issues
 - [x] Do Not Disturb survives a shell restart and a new login (2026-11-25), kept in `~/.local/state/hyprdora/dnd.json`; a schedule still turns it on when its hours start and off when they end. Tried in a nested Hyprland, which now has a state folder of its own (`tools/nested-test.sh`, `STATE=` to start from an earlier test's)
+- [x] Small debts (2026-11-25): the idle, default applications and VPN automation rows use `ChoiceRow`, which gained a compact form and a row with nothing to choose; the download screen before an offline update no longer counts Flatpaks the background download has pulled; the review's B1, C1, C2 and C3 ticked, as built on 2026-11-22
 
 Later, postponed on 2026-11-24:
 

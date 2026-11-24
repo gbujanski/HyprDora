@@ -3,7 +3,8 @@ import qs.config
 import qs.components
 
 // A setting with a few choices: its name, the current choice, and the choices beside it in the settings
-// menu when hovered or clicked.
+// menu when hovered or clicked. Without choices it only shows the value. A compact row sits under another
+// setting, as a detail of it.
 Rectangle {
     id: row
 
@@ -15,16 +16,19 @@ Rectangle {
     // [{ value, label }], and the current value among them.
     property var options: []
     property var current: null
+    property bool compact: false
+    readonly property bool choosable: options.length > 0
     readonly property bool open: menu?.submenu?.owner === row
 
     signal selected(var value)
 
     /** Shows the choices beside the row. */
     function showOptions() {
-        menu?.openSubmenu(row, options, current, value => row.selected(value));
+        if (choosable)
+            menu?.openSubmenu(row, options, current, value => row.selected(value));
     }
 
-    height: 34
+    height: compact ? 30 : 34
     radius: Theme.radius
     color: open || rowArea.containsMouse ? Theme.surface : "transparent"
 
@@ -32,11 +36,12 @@ Rectangle {
         id: titleLabel
         anchors {
             left: parent.left
-            leftMargin: 8
+            leftMargin: row.compact ? 6 : 8
             verticalCenter: parent.verticalCenter
         }
         text: row.title
         color: Theme.muted
+        font.pixelSize: row.compact ? Theme.fontSizeSmall : Theme.fontSize
     }
 
     Row {
@@ -60,6 +65,7 @@ Rectangle {
             anchors.verticalCenter: parent.verticalCenter
             text: Icons.chevronRight
             color: Theme.muted
+            opacity: row.choosable ? 1 : 0
         }
     }
 
@@ -67,7 +73,7 @@ Rectangle {
         id: rowArea
         anchors.fill: parent
         hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
+        cursorShape: row.choosable ? Qt.PointingHandCursor : Qt.ArrowCursor
         onContainsMouseChanged: {
             if (containsMouse)
                 row.showOptions();

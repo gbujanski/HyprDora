@@ -84,12 +84,13 @@ attempt() {
 
     # Everything is counted before anything downloads, so the totals on the screen stay put and match the
     # update panel. Flatpaks count as one item each, with the sizes Flathub lists; they often download less,
-    # as only the changes come down.
-    local apps=0 appBytes=0 size line
-    while IFS=$'\t' read -r _ size; do
+    # as only the changes come down. One the background download has pulled (update-download) needs none.
+    local apps=0 appBytes=0 size commit line pulled
+    pulled=$(cat /var/lib/hyprdora/flatpak-pulled 2>/dev/null)
+    while IFS=$'\t' read -r _ size commit; do
         apps=$((apps + 1))
-        appBytes=$((appBytes + $(to_bytes "$size")))
-    done < <(flatpak remote-ls --system --updates --columns=application,download-size 2>/dev/null)
+        [ -n "$commit" ] && grep -qxF "$commit" <<<"$pulled" || appBytes=$((appBytes + $(to_bytes "$size")))
+    done < <(flatpak remote-ls --system --updates --columns=application,download-size,commit 2>/dev/null)
     total=$apps totalBytes=$appBytes
     # The system's packages, as dnf would download them now; ones downloaded earlier are not counted.
     while IFS= read -r line; do
