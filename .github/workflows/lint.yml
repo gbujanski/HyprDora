@@ -19,7 +19,7 @@ jobs:
       - name: Install the linters
         run: >-
           dnf -y install --setopt=install_weak_deps=False
-          git-core make findutils unzip python3 qt6-qtdeclarative-devel ShellCheck ruff
+          git-core make findutils diffutils unzip python3 qt6-qtdeclarative-devel ShellCheck ruff
 
       - name: Install StyLua
         run: |
