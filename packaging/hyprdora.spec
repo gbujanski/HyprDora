@@ -1,7 +1,7 @@
 # The released version, raised for each release together with the tag vX.Y.Z. A local build (make rpm) adds
 # a snapshot, such as 0.1.0^20261124.153000.git045dbd0: above this release and below the next, so the next
 # release from COPR replaces it.
-%global base_version 0.1.1
+%global base_version 0.2.0
 
 Name:           hyprdora
 Version:        %{base_version}%{?snapshot:^%{snapshot}}
@@ -411,6 +411,14 @@ fi
 %{_datadir}/pixmaps/system-logo-white.png
 
 %changelog
+* Tue Nov 24 2026 Grzegorz Bujański <grzegorz.bujanski@gmail.com> - 0.2.0-1
+- Updates download in the background after each refresh of the package cache, on AC power and off
+  metered networks, so updating at power off or restart only installs them
+- Updates settings: how often to look, a pause until restart, for hours or days, or for good, and a
+  check now
+- Scheduled tasks (updates, weather, calendars) run over a wired connection too
+- Flatpak updates show where Fedora's own Flatpak remote is set up
+
 * Tue Nov 24 2026 Grzegorz Bujański <grzegorz.bujanski@gmail.com> - 0.1.1-1
 - Update screen: a spinner while updates prepare and download
 - Boot splash: the cursor blinks while updates install; akmods' driver builds show in the splash's
