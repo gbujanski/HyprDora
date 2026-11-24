@@ -1,11 +1,11 @@
-# Runs make lint on every push to main and every pull request, on Fedora 44 as the desktop runs on, so the
+# Runs make lint on every push to main or dev and every pull request, on Fedora 44 as the desktop runs on, so the
 # linters are the versions a local check uses. StyLua is not packaged in Fedora; its release is pinned by
 # checksum, as the checkout action is by commit.
 name: Lint
 
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
   pull_request:
 
 permissions:

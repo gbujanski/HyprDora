@@ -10,11 +10,14 @@ Its config files live in `build/dev/config`, so saving monitors or a wallpaper d
 
 ## Releases
 
-Packit builds the packages in the COPR project `gbujanski/hyprdora` when a release is published on GitHub (`.packit.yaml`). A release:
+Work happens on `dev`; `main` holds only what has been released. Packit builds the packages in the COPR project `gbujanski/hyprdora` when a release is published on GitHub (`.packit.yaml`). A release:
 
-1. Raise `base_version` in `packaging/hyprdora.spec`, add a `%changelog` entry, and commit.
-2. Tag the commit `vX.Y.Z`, the same version, and push the tag.
-3. Publish a GitHub release from the tag. Packit builds it for the Fedora releases in `.packit.yaml`; a new Fedora release is added there and in the COPR project's chroots.
+1. On `dev`, raise `base_version` in `packaging/hyprdora.spec`, add a `%changelog` entry, and commit.
+2. Open a pull request from `dev` to `main`. Once CI passes, merge it with a merge commit, not a squash or a rebase, so `dev` and `main` keep the same history.
+3. Tag the merge commit on `main` `vX.Y.Z`, the same version, and push the tag.
+4. Publish a GitHub release from the tag. Packit builds it for the Fedora releases in `.packit.yaml`; a new Fedora release is added there and in the COPR project's chroots.
+
+Releases come when a set of changes is ready and tried, not after each change. A fix that cannot wait for the next release starts from `main` on its own branch, goes to `main` by a pull request and a patch release, and `main` is then merged into `dev`.
 
 ## Keybindings
 
@@ -103,7 +106,7 @@ The welcome screen, at a user's first HyprDora session and later under Applicati
 - One-line comments only where truly needed. They explain why, not what.
 - Doc comments on functions: purpose, parameters, return value. JSDoc style in QML/JS, LuaLS `---@param` in Lua, docstrings in Python, a header comment in shell scripts. Required in services, libraries and scripts; trivial signal handlers are exempt.
 - Logic that can run in QML is written in QML. Python is used only where QML cannot do the job, and shell only where the desktop is not running.
-- Conventional Commits (`feat(shell): ...`), committed to `main`.
+- Conventional Commits (`feat(shell): ...`), committed to `dev` (see [Releases](#releases)).
 - Documentation changes land in the same commit as the code they describe.
 - No dead code: a change that stops using a translation key, an icon, a Theme token, a setting, a function or a file removes it in the same commit. It can always be added back.
 - Watching the local system goes through `EventSources` in `shell/base/`, never straight from a module or another service: a process that prints events (`nmcli monitor`), a file watched for changes (`FileView.watchChanges`), or a poll where nothing can be subscribed to. Each source runs once however many listen, starts with its first listener and stops after its last, ends with the shell and restarts if it fails, so a change of tool happens in one place. Subscribing to an event comes before polling it.
@@ -114,4 +117,4 @@ The welcome screen, at a user's first HyprDora session and later under Applicati
 
 `make lint` runs `qmllint`, `qmlformat`, `shellcheck`, `ruff` and `stylua` on the files that exist, and checks the translations. Which QML warnings count is set in `shell/.qmllint.ini`, which `qmlls` reads too, so an editor reports the same as `make lint`: neither can see Quickshell's types or the `qs.*` modules, and the categories that would only report that are off. Set `QT_BIN` if the Qt tools are not in `/usr/lib64/qt6/bin`.
 
-GitHub Actions runs `make lint` on every push to `main` and every pull request (`.github/workflows/lint.yml`), in a Fedora 44 container, so CI uses the same linters as a local check. StyLua comes from its release, pinned by checksum; moving to a new version means changing the version and the checksum there.
+GitHub Actions runs `make lint` on every push to `main` or `dev` and every pull request (`.github/workflows/lint.yml`), in a Fedora 44 container, so CI uses the same linters as a local check. StyLua comes from its release, pinned by checksum; moving to a new version means changing the version and the checksum there.
