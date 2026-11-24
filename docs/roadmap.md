@@ -426,13 +426,16 @@ Licenses and the welcome screen (2026-11-23/24):
 
 To check by hand when the chance comes: the display panel and bar icon with a real external screen; the editor taking every text type after a MIME database update.
 
-Before the repository goes public:
+Publishing (closed on 2026-11-24: the repository and the COPR project are public):
 
 - [x] Updates for installed systems: the COPR project gbujanski/hyprdora, built by Packit for each GitHub release (`.packit.yaml`); versions from `base_version` in the spec, local builds as snapshots after the last release; an ISO install enables the repository. The first release, 0.1.0, was built on 2026-11-24 and tried the same day on a clean minimal Fedora 44 in a VM, following the README: 710 packages installed without a conflict, the login screen, the session and the welcome screen came up, and its helper installed mpv, the codecs (bringing in RPM Fusion through its pinned key) and Docker (its repository with the pinned key, the service and the group)
-- [ ] README: the status still says virtual machines only; screenshots and a short tour of the shell
 - [x] CI: `make lint` on GitHub Actions for every push to main and every pull request, in a Fedora 44 container (2026-11-24)
 - [x] Review for personal content (2026-11-24): no secrets, home paths, addresses or network names in the files or the history, and no metadata in the images. The author's name and address stay in the commits and the license; a personal example host name became `hyprdora`. hyprdora-extras became the welcome screen
-- [ ] A full `make iso` with sudo after the release identity change, and an install from the ISO on real hardware (the Broadcom and FaceTime drivers from the ISO not yet seen)
+
+Open after publishing:
+
+- [ ] An install from the ISO on real hardware, with a full `make iso` after the release identity change and the welcome screen: the Broadcom and FaceTime drivers from the ISO not yet seen, and the welcome screen not yet clicked through
+- [ ] README: screenshots and a short tour of the shell; how many pictures, and where, is still to be decided (shots from the COPR test VM exist)
 
 Later: battery charge limit to about 80% (this MacBook does not allow it; the Legion has a conservation mode, so it returns with the Legion). For F3, the Hyprspace overview plugin worked in a nested Hyprland 0.57.1, but a plugin must be rebuilt for every Hyprland release, which would tie Hyprland updates to it, so the overview was built in the shell.
 
