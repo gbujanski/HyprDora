@@ -12,6 +12,8 @@ make iso
 
 The result is `build/iso/hyprdora-<version>.iso`. The installer needs a network connection and asks only for the language, keyboard, disk layout and user account. It never wipes a disk on its own. Everything else is set up automatically, and the log is in `/root/hyprdora-setup.log`.
 
+The ISO is for your own use. It carries packages from Fedora, RPM Fusion and other vendors under their own licenses, so passing it on makes you responsible for meeting them; see [THIRD-PARTY.md](../THIRD-PARTY.md).
+
 The installer checks no package signatures, so packages from outside Fedora come from the ISO itself. `packaging/iso/build-repo.sh` resolves the kickstart's package list against `packaging/iso/repos.repo`, downloads every package from RPM Fusion and the COPR repositories that it needs, with the drivers for every computer the kickstart's `%pre` can pick, and stops if any of them lacks a valid signature from a key in `packaging/keys`. Those keys are pinned in the repository. Fedora's own packages come from the network through metalinks, which carry checksums of the repository metadata. Downloads are kept in `build/iso/work`, so a rebuild fetches only what changed. Versions are those of the day the ISO was built; the first update brings them current.
 
 Snapshots and the subvolumes kept out of them need a Btrfs root and are skipped on other file systems. Recovery is described in [recovery.md](recovery.md).

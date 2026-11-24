@@ -313,7 +313,7 @@ fi
 %{_datadir}/plymouth/themes/hyprdora/hyprdora.plymouth
 # The version is written into it when the package installs.
 %verify(not md5 size mtime) %{_datadir}/plymouth/themes/hyprdora/hyprdora.script
-%license LICENSE assets/fonts/OFL.txt
+%license LICENSE THIRD-PARTY.md assets/fonts/OFL.txt
 %doc README.md
 %{_datadir}/%{name}
 %{_libexecdir}/%{name}

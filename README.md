@@ -39,4 +39,4 @@ A Hyprland desktop on Fedora with a custom [Quickshell](https://quickshell.org) 
 
 ## License
 
-[MIT](LICENSE). The bundled Nerd Font is under the SIL Open Font License, included with the font.
+[MIT](LICENSE). The bundled Nerd Font, Fedora's release files and the other material from others are listed with their licenses in [THIRD-PARTY.md](THIRD-PARTY.md).
