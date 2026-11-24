@@ -329,7 +329,7 @@ Fifth round (2026-11-19):
 - [x] Calendar in two columns: the month and the weather on the left, the selected day's events on the right, always shown, with "No events today", "tomorrow" or "on this day" when there are none; the panel is as tall as the left column, and a long list or the new event form scrolls
 - [x] Weather and date on the bar as one element: hovering either lights up only itself, which suggests two separate things, while both open the same panel
 
-Review of the whole project (2026-11-19), in stages, each ending in a report the author decides on before anything changes; what one stage finds may change the next:
+Review of the whole project (2026-11-19), in stages, each decided on before anything changes; what one stage finds may change the next:
 
 - [x] 0. A map: every module, component, service and script, and what uses what
 - [x] 1. What belongs where: settings that deserve the action center or the bar, things buried too deep, things missing. Decided:
@@ -392,7 +392,7 @@ Fixes from daily use (2026-11-22):
 - [x] The shell's own notifications show a glyph of its icon font, colored by their tone, instead of a theme icon
 - [x] Translations in alphabetical order, checked by make lint
 
-Analysis of items 6, 8 and 4 (2026-11-22, report `~/repos/HyprDora-dyski-powiadomienia-logi.md`):
+Analysis of items 6, 8 and 4 (2026-11-22):
 
 - [x] A busy drive names each program with what it does there: writing, running from it, a folder open in a terminal, a file open. Programs that only read a file there and write nowhere can be closed with "Close and remove" (a second click confirms, SIGTERM only, then one more try); one that writes is never closed, as a copy cut short looks whole. No forced (lazy) unmount and no waiting on a program to end
 - [x] "Can be removed safely" and "Restore point created" show for a few seconds and leave nothing in the history
@@ -401,7 +401,7 @@ Analysis of items 6, 8 and 4 (2026-11-22, report `~/repos/HyprDora-dyski-powiado
 - [-] "Can be removed safely" closing when the drive is pulled out: after UDisks powers a USB drive off it is gone from the system, and pulling it out reports nothing, neither through udev nor the port's `state` file in sysfs (tried with a USB stick on 2026-11-22)
 - [x] A `udisksctl monitor` outliving shell restarts (once, on 2026-11-22): not reproduced, as every stream ended with the shell in a test; to look at again if the journal reports a left-over process that stays
 
-Step 2, features held back during the review (2026-11-22, report `~/repos/HyprDora-krok2.md`):
+Step 2, features held back during the review (2026-11-22):
 
 - [x] One `Input` service writes `input.lua` whole from the settings: keyboard layouts, pointer speed, the touchpad's scrolling and tap to click; without layouts chosen, the installer's (localectl) apply, so the first-login step no longer writes `settings.lua`
 - [x] "Mouse and touchpad" in the settings, always shown: one pointer speed for both, the touchpad's settings when there is one (C2)
@@ -409,15 +409,15 @@ Step 2, features held back during the review (2026-11-22, report `~/repos/HyprDo
 - [x] Wallpapers in the appearance settings: HyprDora's own as thumbnails, and "+" for a picture of one's own through a file dialog; the path is kept in `settings.json` (C3)
 - [x] A cheat sheet of the shortcuts on `SUPER + /`, over the whole screen in columns; groups come from headings in `binds.lua`, which the shortcut list in the settings shows too (B1)
 
-Licenses and the welcome screen (2026-11-23/24, report `~/repos/HyprDora-licencje.md`):
+Licenses and the welcome screen (2026-11-23/24):
 
 - [x] Decided: no ready ISO is published, only the code, the packages (through COPR, once it exists) and `make iso`, which builds an ISO for one's own use. Whoever builds it downloads the packages from their makers, so the vendors' applications, Apple's camera firmware, the GPL sources and the patented codecs are not HyprDora's to distribute
 - [x] The welcome screen at a user's first session, and later under Applications in the settings: the applications beyond the base in groups, "Select all" and "Select none", installed from their makers' repositories with signatures checked (`configs/extras/catalog.json`, `install-extras` through pkexec). A second step chooses the default applications (browser, mail, editor, images, video, music, PDF) among those installed and those ticked; nothing chosen, nothing set. The base has no browser any more: Firefox, Chrome, Chromium and Zen are on the list. The `hyprdora-extras` package is gone; its Neovim config moved into `hyprdora`. The ISO no longer carries VS Code, Discord, ONLYOFFICE, Docker or the codecs, and setup no longer turns on Docker or zsh for everyone
 - [x] `THIRD-PARTY.md` (the font and its glyph sets, Fedora's files, lazy.nvim's lines, the AI-made wallpapers, the signing keys), in the package with the licenses, and a sentence by `make iso` that passing a built ISO on makes one responsible for its licenses
 
-**Next, in this order** (agreed 2026-11-22; each analysis ends in a report in `~/repos/HyprDora-<topic>.md` the author marks [+]/[-]/[x] before anything is built):
+**Next, in this order** (agreed 2026-11-22; each analysis is decided on before anything is built):
 
-1. Analyses, one report for the three (done 2026-11-22, see above):
+1. Analyses of the three (done 2026-11-22, see above):
    - **Drives held by a program (item 6):** when removing a drive fails because Nautilus or another program still holds it, could the shell end that program? First the risks: a copy or a write still running (data loss), unsaved work, how to tell an idle file manager window from one that is busy, and what GNOME and Windows do. `services/Drives.qml` already names the holders through `fuser`.
    - **Notifications kept out of the history (item 8):** which ones have no use later, such as "safe to remove" for a drive, battery warnings, screenshots, the update screen. The shell has two ways already: `--transient` (not kept at all; the battery warnings use it) and the hint `x-hyprdora-session-only` (kept until the session ends; screenshots use it). Decide per notification, the shell's own and other applications' (by hint or by application).
    - **Logging in two modes (item 4):** development logs more; normal use logs only what matters, such as a crash, a failure, or the shell recovering by itself (a stream restarted by EventSources, a file made again). How the mode is chosen (`HYPRDORA_SHELL` is set in development) and what goes where (`qs log`, the journal).
@@ -431,8 +431,7 @@ Before the repository goes public:
 - [ ] Updates for installed systems: HyprDora's packages come only from the ISO or a local build, so an installed system gets no fixes and cannot move to the next Fedora release, which needs hyprdora-release for it. A COPR project built from the GitHub repository, enabled by hyprdora-repos
 - [ ] README: the status still says virtual machines only; screenshots and a short tour of the shell
 - [ ] CI: linters on GitHub Actions, as planned in section 7
-- [ ] Review for personal content; decide whether hyprdora-extras (the author's own applications) stays on the ISO, becomes optional or moves out
-- [ ] With a published ISO, where to get the sources of the GPL packages it carries from RPM Fusion and COPR
+- [x] Review for personal content (2026-11-24): no secrets, home paths, addresses or network names in the files or the history, and no metadata in the images. The author's name and address stay in the commits and the license; a personal example host name became `hyprdora`. hyprdora-extras became the welcome screen
 - [ ] A full `make iso` with sudo after the release identity change, and an install from the ISO on real hardware (the Broadcom and FaceTime drivers from the ISO not yet seen)
 
 Later: battery charge limit to about 80% (this MacBook does not allow it; the Legion has a conservation mode, so it returns with the Legion). For F3, the Hyprspace overview plugin worked in a nested Hyprland 0.57.1, but a plugin must be rebuilt for every Hyprland release, which would tie Hyprland updates to it, so the overview was built in the shell.
@@ -444,6 +443,6 @@ Later: battery charge limit to about 80% (this MacBook does not allow it; the Le
 | GitHub name | old repository renamed to `HyprDora-legacy` |
 | Capture | single tool, area selection by default, options in a toolbar |
 | Interface language | English by default in code; `auto` setting; `pl.json` ships |
-| License | MIT; wallpaper and SDDM theme are the author's own work; Nerd Font under OFL with its license included |
+| License | MIT; logo and SDDM theme are the author's own work, the wallpapers AI-made with no copyright claimed; the font and other material from others in `THIRD-PARTY.md` |
 | Automated tests | none; linters and a manual checklist |
 | Scripts | logic in QML; Python only where QML cannot reach (D-Bus objects, the Nautilus extension); shell only outside the running desktop |

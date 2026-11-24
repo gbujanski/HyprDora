@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Set the computer's name through systemd-hostnamed.
 
-Arguments: the pretty name, such as "Laptop Grzegorza", and the network name made
-from it, such as laptop-grzegorza. Both go through one process, so the polkit
+Arguments: the pretty name, such as "HyprDora", and the network name made
+from it, such as hyprdora. Both go through one process, so the polkit
 agent asks for the administrator password once (hostnamed allows auth_admin_keep).
 
 Exit status 0 on success; otherwise the reason is on stderr.

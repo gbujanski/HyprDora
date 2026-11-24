@@ -25,8 +25,8 @@ Singleton {
 
     /**
      * The network name made from a pretty name: letters without accents, digits and dashes, at most 63.
-     * @param {string} pretty  such as Laptop Grzegorza
-     * @returns {string} such as laptop-grzegorza
+     * @param {string} pretty  such as HyprDora
+     * @returns {string} such as hyprdora
      */
     function networkName(pretty) {
         const plain = pretty.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[łŁ]/g, "l").replace(/ß/g, "ss").replace(/[æÆ]/g, "ae").replace(/[øØ]/g, "o");
@@ -35,7 +35,7 @@ Singleton {
 
     /**
      * Gives the computer a new name.
-     * @param {string} pretty  name as shown, such as Laptop Grzegorza
+     * @param {string} pretty  name as shown, such as HyprDora
      */
     function setName(pretty) {
         const text = pretty.trim();
