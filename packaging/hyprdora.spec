@@ -1,7 +1,7 @@
 # The released version, raised for each release together with the tag vX.Y.Z. A local build (make rpm) adds
 # a snapshot, such as 0.1.0^20261124.153000.git045dbd0: above this release and below the next, so the next
 # release from COPR replaces it.
-%global base_version 0.1.0
+%global base_version 0.1.1
 
 Name:           hyprdora
 Version:        %{base_version}%{?snapshot:^%{snapshot}}
@@ -395,5 +395,12 @@ fi
 %{_datadir}/pixmaps/system-logo-white.png
 
 %changelog
+* Tue Nov 24 2026 Grzegorz Bujański <grzegorz.bujanski@gmail.com> - 0.1.1-1
+- Update screen: a spinner while updates prepare and download
+- Boot splash: the cursor blinks while updates install; akmods' driver builds show in the splash's
+  style and are hidden once done
+- ISO: the install starts by default, rather than the medium check
+- Quieter first start; the install from COPR is recorded
+
 * Mon Nov 09 2026 Grzegorz Bujański <grzegorz.bujanski@gmail.com> - 0.1.0-1
 - First package
