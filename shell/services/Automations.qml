@@ -165,7 +165,7 @@ Singleton {
 
     // The network the VPN rule last acted on, so it acts once per change of network.
     property string lastNetwork: ""
-    readonly property string currentNetwork: Network.connected ? `wifi:${Network.ssid}` : Network.wiredConnected ? "wired" : ""
+    readonly property string currentNetwork: Network.connected ? `wifi:${Network.ssid}` : Wired.connected ? "wired" : ""
 
     onCurrentNetworkChanged: {
         vpnDelay.restart();

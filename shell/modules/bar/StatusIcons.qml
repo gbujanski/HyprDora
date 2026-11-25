@@ -118,12 +118,14 @@ Row {
         onClicked: Panels.toggle("displays", root.screen)
     }
 
+    // While a cable is in; dimmed while it is not connected.
     BarButton {
         anchors.verticalCenter: parent.verticalCenter
-        visible: Network.wiredConnected
-        interactive: false
+        visible: Wired.cable
         icon: Icons.ethernet
+        contentColor: root.opened("wired") ? Theme.accent : Wired.connected ? Theme.foreground : Theme.muted
         tooltip: I18n.t("network.wired")
+        onClicked: Panels.toggle("wired", root.screen)
     }
 
     BarButton {

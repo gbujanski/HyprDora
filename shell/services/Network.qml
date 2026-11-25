@@ -44,10 +44,8 @@ ConnectionService {
     // Scanning uses power, so it runs only while the Wi-Fi page is open.
     property bool scanRequested: false
     readonly property bool scanning: wifiDevice?.scannerEnabled ?? false
-    // Quickshell.Networking knows only Wi-Fi, so a wired connection is read from nmcli.
-    property bool wiredConnected: false
     // Connected to a network at all, over Wi-Fi or a cable.
-    readonly property bool online: connected || wiredConnected
+    readonly property bool online: connected || Wired.connected
 
     // Metered ("taryfowe") connections: the system downloads nothing in the background on them. NetworkManager
     // guesses it for an Android hotspot; any saved network can be marked by hand, since a router with a SIM
@@ -393,26 +391,15 @@ ConnectionService {
         }
     }
 
-    Process {
-        id: wiredCheck
-        command: ["env", "LC_ALL=C", "nmcli", "-t", "-f", "TYPE,STATE", "device"]
-        running: true
-        stdout: StdioCollector {
-            onStreamFinished: root.wiredConnected = text.split("\n").some(line => line === "ethernet:connected")
-        }
-    }
-
     EventSubscription {
         stream: "network"
-        onEvent: wiredDelay.restart()
+        onEvent: meteredDelay.restart()
     }
 
     Timer {
-        id: wiredDelay
+        id: meteredDelay
         interval: 500
         onTriggered: {
-            if (!wiredCheck.running)
-                wiredCheck.running = true;
             if (!meteredCheck.running)
                 meteredCheck.running = true;
         }

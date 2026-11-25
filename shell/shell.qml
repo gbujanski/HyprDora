@@ -60,7 +60,7 @@ ShellRoot {
     BatteryPanel {}
     SoundPanel {}
 
-    // Wi-Fi, Bluetooth and VPN under their bar icons: the action center's own pages.
+    // Wi-Fi, Bluetooth, the wired connection and VPN under their bar icons: the action center's own pages.
     PagePanel {
         name: "wifi"
         page: Component {
@@ -72,6 +72,13 @@ ShellRoot {
         name: "bluetooth"
         page: Component {
             BluetoothPage {}
+        }
+    }
+
+    PagePanel {
+        name: "wired"
+        page: Component {
+            WiredPage {}
         }
     }
 
