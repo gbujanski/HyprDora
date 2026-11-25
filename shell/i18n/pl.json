@@ -331,6 +331,7 @@
   "extras.thunderbird": "Thunderbird",
   "extras.thunderbird.description": "Poczta i kalendarz",
   "extras.title": "Aplikacje",
+  "extras.toInstall": "{name} (do zainstalowania)",
   "extras.virtmanager": "Maszyny wirtualne",
   "extras.virtmanager.description": "virt-manager z KVM",
   "extras.vlc": "VLC",

@@ -11,6 +11,8 @@ Singleton {
 
     readonly property var dark: ({
             background: "#181818",
+            // Between the background and a surface: an unfolded list and the row it unfolds from.
+            surfaceLow: "#212121",
             surface: "#2a2a2a",
             surfaceHover: "#333333",
             foreground: "#e6e6e6",
@@ -25,6 +27,7 @@ Singleton {
     // A darker green and amber keep the accents readable on a light background.
     readonly property var lightPalette: ({
             background: "#f6f6f6",
+            surfaceLow: "#eeeeee",
             surface: "#e6e6e6",
             surfaceHover: "#dadada",
             foreground: "#1e1e1e",
@@ -40,6 +43,7 @@ Singleton {
 
     // Colors
     readonly property color background: palette.background
+    readonly property color surfaceLow: palette.surfaceLow
     readonly property color surface: palette.surface
     readonly property color surfaceHover: palette.surfaceHover
     readonly property color foreground: palette.foreground

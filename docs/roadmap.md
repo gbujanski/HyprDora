@@ -453,6 +453,9 @@ Since 0.2.0 (on `dev`):
 - [x] Tiles for Do Not Disturb and the dark theme in the action center (2026-11-25), so there are six; the review had left both out, but Do Not Disturb now lasts across restarts
 - [x] HyprDora's own updates (2026-11-25): a group of their own at the top of the update list, with what is new from the packages' changelog (`dnf5 changelog --upgrades`, from HyprDora's repository alone); shown on the bar at once rather than after a week, and each new version announced once in a notification with a button to the list; nothing while updates are paused
 - [x] `make install` also updates HyprDora's other packages where they are installed (2026-11-25)
+- [x] The welcome screen takes the whole screen (2026-11-25), with the groups in up to three columns; the default applications are one row per kind with a list to open, rather than every candidate under each kind; after installing, Back comes first and Close is the main button; a click beside it no longer closes it, as there is nothing beside it
+- [x] Unfolded lists stand out (2026-11-25): `Expandable` opens what a row unfolds in a box of its own under it, as GNOME's quick settings do, a little lighter than the panel (`Theme.surfaceLow`), with room inside and an optional title; the row itself does not move or narrow, and it is clear where the unfolded rows end. Used by `Dropdown` (the welcome screen's default applications, accounts, the calendar's event form, displays) and by the sound sections in the action center and the sound panel
+- [ ] Review the other places that unfold rows, and move them onto `Expandable` where it fits: the calendar's day events, the details of Wi-Fi, Bluetooth and VPN rows, the update list's "show all", and any other found on the way
 
 Later, postponed on 2026-11-24:
 

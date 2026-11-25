@@ -2,21 +2,18 @@ import QtQuick
 import qs.config
 
 // Row showing the current value that expands into options: [{ value, label }].
-Column {
+Expandable {
     id: root
 
     property string title: ""
     property var options: []
     property var currentValue
-    property bool expanded: false
 
     signal selected(var value)
 
     readonly property var currentOption: options.find(o => o.value === currentValue) ?? null
 
-    spacing: 2
-
-    Rectangle {
+    header: Rectangle {
         width: parent.width
         height: 34
         radius: Theme.radius
@@ -69,7 +66,7 @@ Column {
 
         ListRow {
             required property var modelData
-            width: root.width
+            width: root.contentWidth
             text: modelData.label
             selected: modelData.value === root.currentValue
             onClicked: {

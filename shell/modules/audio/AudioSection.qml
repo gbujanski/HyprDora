@@ -7,23 +7,19 @@ import qs.services
 
 // Volume of the output or the microphone. The arrow unfolds the devices to switch to and the volume of
 // each application below it.
-Column {
+Expandable {
     id: root
 
     property bool isMicrophone: false
-    // Whether the devices and applications are unfolded; the arrow changes it.
-    property bool expanded: false
     readonly property var devices: isMicrophone ? Audio.sources : Audio.sinks
     readonly property var streams: isMicrophone ? Audio.recordingStreams : Audio.playbackStreams
-
-    spacing: 2
 
     // Full data for the listed nodes is needed only while the list is open.
     PwObjectTracker {
         objects: root.expanded ? [...root.devices, ...root.streams] : []
     }
 
-    VolumeRow {
+    header: VolumeRow {
         width: root.width
         node: root.isMicrophone ? Audio.source : Audio.sink
         emptyTitle: root.isMicrophone ? I18n.t("audio.noMicrophone") : I18n.t("audio.noOutput")
@@ -34,11 +30,8 @@ Column {
     }
 
     Column {
-        width: root.width
-        visible: root.expanded
+        width: root.contentWidth
         spacing: 2
-        topPadding: 2
-        bottomPadding: 6
 
         Repeater {
             model: ScriptModel {
@@ -47,7 +40,7 @@ Column {
 
             ListRow {
                 required property var modelData
-                width: root.width
+                width: parent.width
                 text: Audio.displayName(modelData)
                 selected: modelData === (root.isMicrophone ? Audio.source : Audio.sink)
                 onClicked: root.isMicrophone ? Audio.selectSource(modelData) : Audio.selectSink(modelData)
@@ -62,7 +55,7 @@ Column {
 
         EmptyState {
             visible: root.streams.length === 0
-            width: root.width
+            width: parent.width
             text: I18n.t("audio.noStreams")
         }
 
@@ -73,7 +66,7 @@ Column {
 
             VolumeRow {
                 required property var modelData
-                width: root.width
+                width: parent.width
                 node: modelData
                 isMicrophone: root.isMicrophone
             }

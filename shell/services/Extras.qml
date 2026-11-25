@@ -90,17 +90,14 @@ Singleton {
     }
 
     /**
-     * Chooses the default application of a kind, or takes the choice back.
+     * Chooses the default application of a kind.
      * @param {string} kind  kind id
      * @param {string} desktop  desktop file name
      */
     function chooseDefault(kind, desktop) {
-        const next = Object.assign({}, defaults);
-        if (next[kind] === desktop)
-            delete next[kind];
-        else
-            next[kind] = desktop;
-        defaults = next;
+        defaults = Object.assign({}, defaults, {
+            [kind]: desktop
+        });
     }
 
     /** Installs the ticked applications, then sets the chosen defaults; with nothing to install, sets them now. */
