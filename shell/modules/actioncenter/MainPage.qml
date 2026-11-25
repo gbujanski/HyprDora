@@ -61,6 +61,27 @@ Column {
             onToggled: Vpn.connections.length === 0 ? Panels.actionCenterPage = "vpn" : Vpn.toggle()
             onOpened: Panels.actionCenterPage = "vpn"
         }
+
+        Tile {
+            width: tiles.tileWidth
+            icon: Notifications.dnd ? Icons.bellOff : Icons.bell
+            title: I18n.t("notifications.dnd")
+            subtitle: Notifications.dnd ? I18n.t("notifications.dndOn") : I18n.t("notifications.dndOff")
+            active: Notifications.dnd
+            showChevron: false
+            onToggled: Notifications.dnd = !Notifications.dnd
+        }
+
+        // The same choice as under Appearance in the settings.
+        Tile {
+            width: tiles.tileWidth
+            icon: Icons.themeDark
+            title: I18n.t("appearance.darkTile")
+            subtitle: Theme.light ? I18n.t("appearance.darkOff") : I18n.t("appearance.darkOn")
+            active: !Theme.light
+            showChevron: false
+            onToggled: Settings.set("theme", Theme.light ? undefined : "light")
+        }
     }
 
     SegmentedControl {

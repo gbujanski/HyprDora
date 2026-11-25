@@ -448,6 +448,11 @@ Since 0.2.0 (on `dev`):
 - [x] Headset profiles (2026-11-25): not a limitation after all. Tried with EDIFIER X5 Pro earbuds: the shell lists their microphone, and WirePlumber switches to HFP while something records and back to A2DP a few seconds after; the entry left the known issues
 - [x] Do Not Disturb survives a shell restart and a new login (2026-11-25), kept in `~/.local/state/hyprdora/dnd.json`; a schedule still turns it on when its hours start and off when they end. Tried in a nested Hyprland, which now has a state folder of its own (`tools/nested-test.sh`, `STATE=` to start from an earlier test's)
 - [x] Small debts (2026-11-25): the idle, default applications and VPN automation rows use `ChoiceRow`, which gained a compact form and a row with nothing to choose; the download screen before an offline update no longer counts Flatpaks the background download has pulled; the review's B1, C1, C2 and C3 ticked, as built on 2026-11-22
+- [x] CI builds the packages too (2026-11-25): `make rpm` next to `make lint` in `.github/workflows/ci.yml`, so a package that would not build in COPR fails before a release
+- [x] Keyboard light off and on from its icon in the action center, as the speaker's icon mutes (2026-11-25)
+- [x] Tiles for Do Not Disturb and the dark theme in the action center (2026-11-25), so there are six; the review had left both out, but Do Not Disturb now lasts across restarts
+- [x] HyprDora's own updates (2026-11-25): a group of their own at the top of the update list, with what is new from the packages' changelog (`dnf5 changelog --upgrades`, from HyprDora's repository alone); shown on the bar at once rather than after a week, and each new version announced once in a notification with a button to the list; nothing while updates are paused
+- [x] `make install` also updates HyprDora's other packages where they are installed (2026-11-25)
 
 Later, postponed on 2026-11-24:
 

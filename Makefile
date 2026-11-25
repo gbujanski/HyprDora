@@ -81,10 +81,13 @@ rpm: archive
 # live shell reload misses new files. Both are restarted; the shell loses its notification history.
 # Hyprland would reload itself for each config file the package replaces, and every reload makes the
 # screen flash, so autoreload is off during the install and one reload follows; it also turns autoreload
-# back on. The shell does not watch its installed files and is restarted once.
+# back on. The shell does not watch its installed files and is restarted once. HyprDora's other packages
+# are updated too where installed, and left out where not: hyprdora-release and -logos replace Fedora's.
 install: rpm
 	-hyprctl eval 'hl.config({ misc = { disable_autoreload = true } })' >/dev/null
-	sudo dnf install -y "$(RPM_DIR)/RPMS/noarch/hyprdora-$(VERSION)^$(SNAPSHOT)-1.fc$(FEDORA).noarch.rpm" || { hyprctl reload >/dev/null; exit 1; }
+	sudo dnf install -y "$(RPM_DIR)/RPMS/noarch/hyprdora-$(VERSION)^$(SNAPSHOT)-1.fc$(FEDORA).noarch.rpm" \
+		$$(for p in hyprdora-repos hyprdora-logos hyprdora-release; do \
+			rpm -q --quiet $$p && ls $(RPM_DIR)/RPMS/noarch/$$p-[0-9]*.rpm; done) || { hyprctl reload >/dev/null; exit 1; }
 	-hyprctl reload >/dev/null
 	-systemctl --user daemon-reload
 	-systemctl --user try-restart hyprdora-shell.service

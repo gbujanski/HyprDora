@@ -184,6 +184,7 @@ Singleton {
     readonly property string bell: glyph(0xF009A)
     readonly property string bellBadge: glyph(0xF116B)
     readonly property string bellOff: glyph(0xF009B)
+    readonly property string themeDark: glyph(0xF0594)
     readonly property string performance: glyph(0xF0463)
     readonly property string powerSaver: glyph(0xF032A)
 

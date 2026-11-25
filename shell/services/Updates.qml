@@ -8,7 +8,8 @@ import qs.config
 
 // Available package and Flatpak updates, and installing them. Fedora publishes updates nearly every day, so,
 // like GNOME Software, the bar shows ordinary updates once they have waited a week since the system was
-// last up to date, and security updates at once.
+// last up to date, and security updates and HyprDora's own at once; a new HyprDora version is also announced
+// once in a notification.
 Singleton {
     id: root
 
@@ -31,11 +32,22 @@ Singleton {
     readonly property int count: packages + flatpaks
     readonly property int securityCount: packageList.filter(p => securityNames.includes(p.name)).length
 
+    // HyprDora's own packages, listed first and shown at once. Its version is the hyprdora package's, or
+    // another of its packages' where hyprdora itself has nothing new; hyprdora-release goes by Fedora's.
+    readonly property string hyprdoraRepo: "copr:copr.fedorainfracloud.org:gbujanski:hyprdora"
+    readonly property var hyprdoraList: packageList.filter(p => isHyprdora(p.name))
+    readonly property var hyprdoraLead: hyprdoraList.find(p => p.name === "hyprdora") ?? hyprdoraList.find(p => p.name !== "hyprdora-release") ?? null
+    readonly property string hyprdoraVersion: hyprdoraLead ? hyprdoraLead.version.split("-")[0] : ""
+    // What is new, from the packages' changelog: [{ version, notes: [line] }], newest first.
+    property var hyprdoraChanges: []
+    // The last HyprDora version a notification announced, so each one is announced once.
+    property string announcedVersion: ""
+
     // When the system was last seen with nothing to update, in milliseconds.
     property real upToDateSince: 0
     property real now: Date.now()
     // Paused, nothing reminds of updates, not even security ones: the user looks after them.
-    readonly property bool notify: !paused && (securityCount > 0 || (count > 0 && now - upToDateSince >= 7 * 24 * 3600 * 1000))
+    readonly property bool notify: !paused && (securityCount > 0 || hyprdoraList.length > 0 || (count > 0 && now - upToDateSince >= 7 * 24 * 3600 * 1000))
 
     // Set in the Updates settings and kept by the system (update-settings), as they also rule its services.
     // A pause lasts until restart, for good ("always"), or until pauseEnd; while paused nothing is checked or
@@ -60,8 +72,12 @@ Singleton {
     signal checkedNow(bool failed)
 
     readonly property var fedoraRepos: ["fedora", "updates", "updates-testing"]
-    // Fedora's own packages, then security updates, then other repositories and Flatpaks.
+    // HyprDora, then Fedora's own packages, security updates, other repositories and Flatpaks.
     readonly property var groups: [
+        {
+            key: "hyprdora",
+            items: hyprdoraList
+        },
         {
             key: "system",
             items: packageList.filter(p => fedoraRepos.includes(p.repo) && !securityNames.includes(p.name))
@@ -72,13 +88,36 @@ Singleton {
         },
         {
             key: "other",
-            items: [...packageList.filter(p => !fedoraRepos.includes(p.repo) && !securityNames.includes(p.name)), ...flatpakList.map(f => Object.assign({}, f, {
+            items: [...packageList.filter(p => !fedoraRepos.includes(p.repo) && !securityNames.includes(p.name) && !isHyprdora(p.name)), ...flatpakList.map(f => Object.assign({}, f, {
                         repo: "Flatpak"
                     }))]
         }
     ].filter(g => g.items.length > 0)
 
     readonly property string statePath: `${Quickshell.env("XDG_STATE_HOME") || `${Quickshell.env("HOME")}/.local/state`}/hyprdora/updates.json`
+
+    /**
+     * Whether a package is one of HyprDora's own.
+     * @param {string} name  package name
+     * @returns {bool}
+     */
+    function isHyprdora(name) {
+        return name === "hyprdora" || name.startsWith("hyprdora-");
+    }
+
+    /**
+     * Announces a new HyprDora version once, with a button that opens the update list. Not while paused.
+     */
+    function announceHyprdora() {
+        if (paused || hyprdoraVersion === "" || hyprdoraVersion === announcedVersion)
+            return;
+        announcedVersion = hyprdoraVersion;
+        saveState();
+        announcement.command = ["notify-send", "--app-name=HyprDora", ...Notifications.glyphArgs(Icons.update, ""), `--action=show=${I18n.t("updates.hyprdora.show")}`, I18n.t("updates.hyprdora.available", {
+                version: hyprdoraVersion
+            }), I18n.t("updates.hyprdora.body")];
+        announcement.running = true;
+    }
 
     /** Remembers that nothing waits now. */
     function markUpToDate() {
@@ -89,7 +128,8 @@ Singleton {
     function saveState() {
         stateFile.setText(JSON.stringify({
             upToDateSince: upToDateSince,
-            flatpaksCheckedAt: flatpaksCheckedAt
+            flatpaksCheckedAt: flatpaksCheckedAt,
+            announcedVersion: announcedVersion
         }));
     }
 
@@ -314,6 +354,7 @@ Singleton {
                 const state = JSON.parse(text());
                 root.upToDateSince = state.upToDateSince ?? 0;
                 root.flatpaksCheckedAt = state.flatpaksCheckedAt ?? 0;
+                root.announcedVersion = state.announcedVersion ?? "";
             } catch (e) {}
         }
         // A new system counts as up to date, so the first notice comes after a week.
@@ -337,6 +378,13 @@ Singleton {
                         });
                 }
                 root.packageList = list;
+                if (root.hyprdoraLead && !changelogCheck.running) {
+                    changelogCheck.command = ["env", "LC_ALL=C", "dnf5", "changelog", "--upgrades", `--repo=${root.hyprdoraRepo}`, root.hyprdoraLead.name];
+                    changelogCheck.running = true;
+                } else if (!root.hyprdoraLead) {
+                    root.hyprdoraChanges = [];
+                }
+                root.announceHyprdora();
                 if (list.length === 0) {
                     root.packageDownload = 0;
                     root.packageDownloadKnown = false;
@@ -345,6 +393,44 @@ Singleton {
                 } else if (!sizeCheck.running) {
                     sizeCheck.running = true;
                 }
+            }
+        }
+    }
+
+    // The changelog entries newer than the installed version, from HyprDora's repository alone, whose small
+    // changelog file dnf downloads the first time:
+    //   * Tue Nov 24 2026 Name <address> - 0.2.0-1
+    //   - Updates download in the background after each refresh of the package cache, on AC power and off
+    //     metered networks, so updating at power off or restart only installs them
+    Process {
+        id: changelogCheck
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const changes = [];
+                for (const line of text.split("\n")) {
+                    const header = /^\* .* - ([^-\s]+)-[^-\s]+$/.exec(line);
+                    const current = changes[changes.length - 1];
+                    if (header)
+                        changes.push({
+                            version: header[1],
+                            notes: []
+                        });
+                    else if (current && line.startsWith("- "))
+                        current.notes.push(line.slice(2));
+                    else if (current && current.notes.length > 0 && /^\s+\S/.test(line))
+                        current.notes[current.notes.length - 1] += ` ${line.trim()}`;
+                }
+                root.hyprdoraChanges = changes;
+            }
+        }
+    }
+
+    Process {
+        id: announcement
+        stdout: SplitParser {
+            onRead: line => {
+                if (line === "show")
+                    Panels.open("updates", null);
             }
         }
     }

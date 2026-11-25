@@ -3,8 +3,8 @@ import qs.config
 import qs.components
 import qs.services
 
-// The list of updates under the update icon: Fedora's own packages, then security updates, then other
-// repositories and Flatpaks. The first ten show; "show all" unfolds the rest, which scrolls when long.
+// The list of updates under the update icon: HyprDora's own packages with what is new in them, then
+// Fedora's own packages, security updates, other repositories and Flatpaks. The first ten show; "show all" unfolds the rest, which scrolls when long.
 // The install buttons stay in view below the list.
 BarPanel {
     id: root
@@ -29,13 +29,20 @@ BarPanel {
                     });
                     for (const item of group.items)
                         all.push(item);
+                    // What is new in HyprDora, under its packages.
+                    if (group.key === "hyprdora")
+                        for (const change of Updates.hyprdoraChanges)
+                            all.push({
+                                notes: change.version,
+                                text: change.notes.map(n => `• ${n}`).join("\n")
+                            });
                 }
                 if (showAll)
                     return all;
                 const cut = [];
                 let packages = 0;
                 for (const row of all) {
-                    if (!row.heading && ++packages > root.preview)
+                    if (!row.heading && row.notes === undefined && ++packages > root.preview)
                         break;
                     cut.push(row);
                 }
@@ -109,10 +116,28 @@ BarPanel {
                             required property var modelData
                             required property int index
                             readonly property bool heading: !!modelData.heading
+                            readonly property bool notes: modelData.notes !== undefined
 
                             width: rowsColumn.width
                             // Compact rows, so a long list stays short; headings get a little air above.
-                            height: heading ? (index === 0 ? 20 : 28) : 20
+                            height: notes ? notesLabel.implicitHeight + 8 : heading ? (index === 0 ? 20 : 28) : 20
+
+                            // "0.3.0" over its changelog lines.
+                            Label {
+                                id: notesLabel
+                                anchors {
+                                    left: parent.left
+                                    right: parent.right
+                                    bottom: parent.bottom
+                                    bottomMargin: 2
+                                }
+                                visible: parent.notes
+                                text: parent.notes ? `${parent.modelData.notes}\n${parent.modelData.text}` : ""
+                                color: Theme.muted
+                                font.pixelSize: Theme.fontSizeSmall
+                                wrapMode: Text.WordWrap
+                                textFormat: Text.PlainText
+                            }
 
                             Label {
                                 anchors {
@@ -134,7 +159,7 @@ BarPanel {
                                     rightMargin: 8
                                     verticalCenter: parent.verticalCenter
                                 }
-                                visible: !parent.heading
+                                visible: !parent.heading && !parent.notes
                                 text: parent.modelData.name ?? ""
                                 elide: Text.ElideRight
                             }
@@ -146,7 +171,7 @@ BarPanel {
                                     verticalCenter: parent.verticalCenter
                                 }
                                 width: Math.min(implicitWidth, parent.width * 0.45)
-                                visible: !parent.heading
+                                visible: !parent.heading && !parent.notes
                                 text: parent.modelData.version ?? ""
                                 color: Theme.muted
                                 font.pixelSize: Theme.fontSizeSmall
