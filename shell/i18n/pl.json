@@ -73,6 +73,8 @@
   "automations.vpnConnection": "Połączenie",
   "automations.vpnHome": "Sieci domowe, które wyłączają VPN:",
   "backlight.keyboard": "Klawiatura",
+  "backlight.keyboardOff": "Wyłącz podświetlenie klawiatury",
+  "backlight.keyboardOn": "Włącz podświetlenie klawiatury",
   "backlight.screen": "Ekran",
   "battery.appName": "Bateria",
   "battery.chargeRate": "moc {watts} W",

@@ -109,9 +109,13 @@ Column {
     SliderRow {
         width: parent.width
         visible: Brightness.keyboard.available
-        icon: Icons.keyboard
+        iconClickable: true
+        icon: Brightness.keyboard.level > 0 ? Icons.keyboard : Icons.keyboardOff
+        iconColor: Brightness.keyboard.level > 0 ? Theme.foreground : Theme.muted
+        iconTooltip: Brightness.keyboard.level > 0 ? I18n.t("backlight.keyboardOff") : I18n.t("backlight.keyboardOn")
         title: I18n.t("backlight.keyboard")
         value: Brightness.keyboard.level
+        onIconClicked: Brightness.keyboard.toggle()
         onMoved: value => Brightness.keyboard.setLevel(value)
     }
 

@@ -50,6 +50,19 @@ Scope {
         flush();
     }
 
+    // The last level above off, which turning it back on returns to; full before any is seen.
+    property real lastOn: 1
+
+    onLevelChanged: {
+        if (level > 0)
+            lastOn = level;
+    }
+
+    /** Turns the light off, or back on at its last level, as a click on a mute icon does for sound. */
+    function toggle() {
+        setLevel(level > 0 ? 0 : lastOn);
+    }
+
     /**
      * Changes the level by a delta, aligned to multiples of its size so keys give even values.
      * @param {real} delta  signed step size

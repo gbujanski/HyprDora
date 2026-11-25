@@ -1,7 +1,8 @@
-# Runs make lint on every push to main or dev and every pull request, on Fedora 44 as the desktop runs on, so the
-# linters are the versions a local check uses. StyLua is not packaged in Fedora; its release is pinned by
-# checksum, as the checkout action is by commit.
-name: Lint
+# Runs make lint and make rpm on every push to main or dev and every pull request, on Fedora 44 as the desktop
+# runs on, so the linters are the versions a local check uses, and a package that would fail to build in COPR
+# fails here first. StyLua is not packaged in Fedora; its release is pinned by checksum, as the checkout
+# action is by commit.
+name: CI
 
 on:
   push:
@@ -35,3 +36,21 @@ jobs:
 
       - name: Lint
         run: make lint
+
+  rpm:
+    runs-on: ubuntu-latest
+    container: registry.fedoraproject.org/fedora:44
+    steps:
+      - name: Install the build tools
+        run: >-
+          dnf -y install --setopt=install_weak_deps=False
+          git-core make rpm-build tar gzip findutils sed
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # The workspace belongs to another user than the container's root.
+      - name: Trust the checkout
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Build the packages
+        run: make rpm

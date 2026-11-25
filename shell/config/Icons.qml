@@ -119,6 +119,7 @@ Singleton {
     readonly property string bluetoothOff: glyph(0xF00B2)
     readonly property string brightness: glyph(0xF00DF)
     readonly property string keyboard: glyph(0xF030C)
+    readonly property string keyboardOff: glyph(0xF0310)
     readonly property string mouse: glyph(0xF037D)
     readonly property string keyboardLayout: glyph(0xF0313)
     readonly property string packages: glyph(0xF03D6)

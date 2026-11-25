@@ -73,6 +73,8 @@
   "automations.vpnConnection": "Connection",
   "automations.vpnHome": "Home networks, which turn the VPN off:",
   "backlight.keyboard": "Keyboard",
+  "backlight.keyboardOff": "Turn the keyboard light off",
+  "backlight.keyboardOn": "Turn the keyboard light on",
   "backlight.screen": "Screen",
   "battery.appName": "Battery",
   "battery.chargeRate": "charging {watts} W",
