@@ -4,7 +4,8 @@ import qs.components
 import qs.services
 
 // The list of updates under the update icon: HyprDora's own packages with what is new in them, then
-// Fedora's own packages, security updates, other repositories and Flatpaks. The first ten show; "show all" unfolds the rest, which scrolls when long.
+// Fedora's own packages, security updates, other repositories and Flatpaks. The first ten show; "show all"
+// unfolds the rest, which scrolls when long.
 // The install buttons stay in view below the list.
 BarPanel {
     id: root

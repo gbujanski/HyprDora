@@ -128,126 +128,134 @@ Column {
             Repeater {
                 model: root.events
 
-                Rectangle {
+                // A click unfolds the details under the event, in a box of their own.
+                Expandable {
                     id: row
 
                     required property var modelData
                     readonly property string rowKey: root.key(modelData)
-                    readonly property bool open: root.expanded === rowKey
                     readonly property bool confirming: root.confirming === rowKey
 
                     width: listColumn.width
-                    height: rowContent.implicitHeight + 12
-                    radius: Theme.radius
-                    color: open || confirming || rowArea.containsMouse ? Theme.surface : "transparent"
-                    border.width: open ? 1 : 0
-                    border.color: Theme.surfaceHover
+                    expanded: root.expanded === rowKey
 
-                    MouseArea {
-                        id: rowArea
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: root.expanded = row.open ? "" : row.rowKey
-                    }
+                    header: Rectangle {
+                        width: row.width
+                        height: rowContent.implicitHeight + 12
+                        radius: Theme.radius
+                        color: row.expanded || row.confirming || rowArea.containsMouse ? Theme.surface : "transparent"
 
-                    Rectangle {
-                        anchors {
-                            left: parent.left
-                            leftMargin: 4
-                            top: parent.top
-                            topMargin: 8
+                        MouseArea {
+                            id: rowArea
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: root.expanded = row.expanded ? "" : row.rowKey
                         }
-                        width: 4
-                        height: 28
-                        radius: width / 2
-                        color: row.modelData.color || Theme.accent
-                    }
 
-                    Column {
-                        id: rowContent
-
-                        anchors {
-                            left: parent.left
-                            right: parent.right
-                            top: parent.top
-                            leftMargin: 18
-                            rightMargin: 6
-                            topMargin: 6
-                        }
-                        spacing: 4
-
-                        Item {
-                            width: parent.width
-                            height: titleColumn.implicitHeight
-
-                            Column {
-                                id: titleColumn
-                                anchors {
-                                    left: parent.left
-                                    right: actions.left
-                                    rightMargin: 6
-                                }
-                                spacing: 1
-
-                                Label {
-                                    width: parent.width
-                                    text: row.modelData.summary
-                                    elide: Text.ElideRight
-                                }
-
-                                Label {
-                                    width: parent.width
-                                    text: [CalendarEvents.when(row.modelData, root.day), row.modelData.location, row.modelData.calendarName].filter(Boolean).join(" · ")
-                                    color: Theme.muted
-                                    font.pixelSize: Theme.fontSizeSmall
-                                    elide: Text.ElideRight
-                                }
+                        Rectangle {
+                            anchors {
+                                left: parent.left
+                                leftMargin: 4
+                                top: parent.top
+                                topMargin: 8
                             }
+                            width: 4
+                            height: 28
+                            radius: width / 2
+                            color: row.modelData.color || Theme.accent
+                        }
 
-                            Row {
-                                id: actions
-                                anchors {
-                                    right: parent.right
-                                    verticalCenter: parent.verticalCenter
+                        Column {
+                            id: rowContent
+
+                            anchors {
+                                left: parent.left
+                                right: parent.right
+                                top: parent.top
+                                leftMargin: 18
+                                rightMargin: 6
+                                topMargin: 6
+                            }
+                            spacing: 4
+
+                            Item {
+                                width: parent.width
+                                height: titleColumn.implicitHeight
+
+                                Column {
+                                    id: titleColumn
+                                    anchors {
+                                        left: parent.left
+                                        right: actions.left
+                                        rightMargin: 6
+                                    }
+                                    spacing: 1
+
+                                    Label {
+                                        width: parent.width
+                                        text: row.modelData.summary
+                                        elide: Text.ElideRight
+                                    }
+
+                                    Label {
+                                        width: parent.width
+                                        text: [CalendarEvents.when(row.modelData, root.day), row.modelData.location, row.modelData.calendarName].filter(Boolean).join(" · ")
+                                        color: Theme.muted
+                                        font.pixelSize: Theme.fontSizeSmall
+                                        elide: Text.ElideRight
+                                    }
                                 }
-                                spacing: 2
 
-                                Icon {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    visible: row.modelData.recurring
-                                    text: Icons.repeat
-                                    color: Theme.dim
-                                    font.pixelSize: Theme.iconSizeSmall
-                                }
+                                Row {
+                                    id: actions
+                                    anchors {
+                                        right: parent.right
+                                        verticalCenter: parent.verticalCenter
+                                    }
+                                    spacing: 2
 
-                                // Read-only calendars, such as contact birthdays, are changed in Nextcloud.
-                                IconButton {
-                                    visible: !row.modelData.writable
-                                    icon: Icons.openExternal
-                                    iconColor: Theme.muted
-                                    tooltip: I18n.t("calendar.editInNextcloud")
-                                    onClicked: CalendarEvents.openInNextcloud()
-                                }
+                                    Icon {
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        visible: row.modelData.recurring
+                                        text: Icons.repeat
+                                        color: Theme.dim
+                                        font.pixelSize: Theme.iconSizeSmall
+                                    }
 
-                                IconButton {
-                                    visible: row.modelData.writable
-                                    icon: Icons.trash
-                                    iconColor: Theme.muted
-                                    tooltip: I18n.t("calendar.delete")
-                                    onClicked: {
-                                        root.confirmRow = row;
-                                        root.confirming = row.rowKey;
+                                    // Read-only calendars, such as contact birthdays, are changed in Nextcloud.
+                                    IconButton {
+                                        visible: !row.modelData.writable
+                                        icon: Icons.openExternal
+                                        iconColor: Theme.muted
+                                        tooltip: I18n.t("calendar.editInNextcloud")
+                                        onClicked: CalendarEvents.openInNextcloud()
+                                    }
+
+                                    IconButton {
+                                        visible: row.modelData.writable
+                                        icon: Icons.trash
+                                        iconColor: Theme.muted
+                                        tooltip: I18n.t("calendar.delete")
+                                        onClicked: {
+                                            root.confirmRow = row;
+                                            root.confirming = row.rowKey;
+                                        }
                                     }
                                 }
                             }
                         }
+                    }
 
-                        // Details beyond the line above: repetition and reminder, the description and the attendees.
+                    // The repetition and reminder, the description and the attendees.
+                    Column {
+                        width: row.contentWidth
+                        spacing: 4
+
                         Label {
                             width: parent.width
-                            visible: row.open && text !== ""
-                            topPadding: 2
+                            visible: text !== ""
+                            leftPadding: 6
                             text: [row.modelData.recurring ? I18n.t("calendar.repeats") : "", (row.modelData.alarms ?? []).length > 0 ? I18n.t("calendar.reminderSet") : ""].filter(Boolean).join(" · ")
                             color: Theme.muted
                             font.pixelSize: Theme.fontSizeSmall
@@ -255,7 +263,8 @@ Column {
 
                         Label {
                             width: parent.width
-                            visible: row.open
+                            leftPadding: 6
+                            rightPadding: 6
                             text: (row.modelData.description ?? "") !== "" ? row.modelData.description : I18n.t("calendar.noDescription")
                             color: (row.modelData.description ?? "") !== "" ? Theme.foreground : Theme.dim
                             wrapMode: Text.WordWrap
@@ -263,11 +272,12 @@ Column {
                         }
 
                         Repeater {
-                            model: row.open ? row.modelData.attendees ?? [] : []
+                            model: row.modelData.attendees ?? []
 
                             Label {
                                 required property var modelData
-                                width: rowContent.width
+                                width: parent.width
+                                leftPadding: 6
                                 text: `${modelData.name || modelData.address} · ${I18n.t(`calendar.attendee.${modelData.status}`)}`
                                 color: modelData.status === "accepted" ? Theme.accent : modelData.status === "declined" ? Theme.error : Theme.muted
                                 font.pixelSize: Theme.fontSizeSmall
