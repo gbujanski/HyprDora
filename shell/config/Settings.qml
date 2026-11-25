@@ -60,6 +60,10 @@ Singleton {
     readonly property var iconThemes: ["Papirus", "Adwaita"]
     readonly property string iconTheme: iconThemes.includes(overrides.iconTheme) ? overrides.iconTheme : "Papirus"
 
+    // Days that ordinary updates wait before the bar shows them: 0, 1 or 7. Security updates and HyprDora's own
+    // show at once.
+    readonly property int updateReminderDays: [0, 1, 7].includes(overrides.updates?.reminderDays) ? overrides.updates.reminderDays : 7
+
     // Automations set in the settings: { dnd, coffee, mute: schedule, headphones: { enabled },
     // vpn: { enabled, homeNetworks, connection } }; a schedule is { enabled, from, to, days }, with times
     // in minutes after midnight and days numbered 1 (Monday) to 7.

@@ -16,6 +16,8 @@ Rectangle {
     // [{ value, label }], and the current value among them.
     property var options: []
     property var current: null
+    // What the setting does, shown above the choices; none when empty.
+    property string note: ""
     property bool compact: false
     readonly property bool choosable: options.length > 0
     readonly property bool open: menu?.submenu?.owner === row
@@ -25,7 +27,7 @@ Rectangle {
     /** Shows the choices beside the row. */
     function showOptions() {
         if (choosable)
-            menu?.openSubmenu(row, options, current, value => row.selected(value));
+            menu?.openSubmenu(row, options, current, value => row.selected(value), note);
     }
 
     height: compact ? 30 : 34

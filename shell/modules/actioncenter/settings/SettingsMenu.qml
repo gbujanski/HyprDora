@@ -123,7 +123,8 @@ Item {
     property point anchor: Qt.point(0, 0)
     property real anchorTop: 0
 
-    // Choices for one setting, shown beside the category's settings: { owner, y, options, current, select }.
+    // Choices for one setting, shown beside the category's settings: { owner, y, options, current, select,
+    // note }.
     property var submenu: null
 
     /**
@@ -132,14 +133,16 @@ Item {
      * @param {array} options  [{ value, label }]
      * @param {var} current  current value
      * @param {function} select  called with the chosen value
+     * @param {string} note  what the setting does, above the choices; none when empty
      */
-    function openSubmenu(owner, options, current, select) {
+    function openSubmenu(owner, options, current, select, note) {
         submenu = {
             owner: owner,
             y: owner.mapToItem(root, 0, 0).y,
             options: options,
             current: current,
-            select: select
+            select: select,
+            note: note ?? ""
         };
     }
 
@@ -388,8 +391,9 @@ Item {
         visible: root.submenu !== null
         x: flyout.x - width - 6
         y: Math.max(Theme.panelMargin, Math.min((root.submenu?.y ?? 0) - 6, root.height - height - Theme.panelMargin))
-        // As wide as the longest choice, so names such as application names fit, within the screen.
-        width: Math.min(Math.max(160, ...(root.submenu?.options ?? []).map(o => optionMetrics.advanceWidth(o.label))) + 12 + 10 + 8 + 30, flyout.x - Theme.panelMargin - 6)
+        // As wide as the longest choice, so names such as application names fit, within the screen; wider
+        // with a note, so it reads in a few lines.
+        width: Math.min(Math.max(root.submenu?.note ? 240 : 160, ...(root.submenu?.options ?? []).map(o => optionMetrics.advanceWidth(o.label))) + 12 + 10 + 8 + 30, flyout.x - Theme.panelMargin - 6)
         height: optionList.implicitHeight + 12
 
         // Measures a selected label, which is the widest form because it is drawn medium.
@@ -417,6 +421,19 @@ Item {
                 margins: 6
             }
             spacing: root.rowSpacing
+
+            Label {
+                width: optionList.width
+                visible: text !== ""
+                leftPadding: 6
+                rightPadding: 6
+                topPadding: 4
+                bottomPadding: 6
+                text: root.submenu?.note ?? ""
+                color: Theme.muted
+                font.pixelSize: Theme.fontSizeSmall
+                wrapMode: Text.WordWrap
+            }
 
             Repeater {
                 model: root.submenu?.options ?? []

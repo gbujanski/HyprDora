@@ -3,10 +3,11 @@ import qs.config
 import qs.components
 import qs.services
 
-// How the system looks for updates: how often, a pause, and a check now. How often and the pause hold for
-// the whole computer, so changing them asks for the administrator password in a window of its own, which the
-// action center would cover, so it closes first. A pause is confirmed before that: while it lasts nothing
-// looks for updates or reminds of them, not even security ones.
+// How the system looks for updates: how often, a pause, when ordinary updates show on the bar, whether they
+// download in the background, and a check now with when the last one was. How often, the pause and the
+// download hold for the whole computer, so changing them asks for the administrator password in a window of
+// its own, which the action center would cover, so it closes first. A pause is confirmed before that: while
+// it lasts nothing looks for updates or reminds of them, not even security ones.
 Column {
     id: root
 
@@ -40,6 +41,32 @@ Column {
             count: value / 3600
         }) : I18n.t("updates.settings.pause.days", {
             count: value / (24 * 3600)
+        });
+    }
+
+    // Days ordinary updates wait before the bar shows them.
+    readonly property var reminders: [0, 1, 7].map(days => ({
+                value: days,
+                label: I18n.t(`updates.settings.reminder.${days}`)
+            }))
+
+    /**
+     * When the system last looked for updates: today or yesterday with the time, or the date and time.
+     * @returns {string} empty when not known
+     */
+    function lastCheckedText() {
+        if (Updates.lastChecked === 0)
+            return "";
+        const when = new Date(Updates.lastChecked);
+        const time = when.toLocaleTimeString(I18n.locale, "HH:mm");
+        const days = Math.round((new Date().setHours(0, 0, 0, 0) - new Date(when).setHours(0, 0, 0, 0)) / 86400000);
+        const day = days === 0 ? I18n.t("updates.settings.today", {
+            time: time
+        }) : days === 1 ? I18n.t("updates.settings.yesterday", {
+            time: time
+        }) : `${when.toLocaleDateString(I18n.locale, "d MMM")}, ${time}`;
+        return I18n.t("updates.settings.lastChecked", {
+            time: day
         });
     }
 
@@ -151,11 +178,42 @@ Column {
         }
     }
 
+    // Its own setting, so it changes at once, with no password.
+    ChoiceRow {
+        width: root.width
+        menu: root.menu
+        title: I18n.t("updates.settings.reminder")
+        note: I18n.t("updates.settings.reminderNote")
+        valueText: I18n.t(`updates.settings.reminder.${Settings.updateReminderDays}`)
+        options: root.reminders
+        current: Settings.updateReminderDays
+        onSelected: value => Settings.setIn("updates", "reminderDays", value)
+    }
+
+    // Off, updates are still looked for; they download when installed.
+    ItemRow {
+        width: root.width
+        title: I18n.t("updates.settings.download")
+        onClicked: {
+            Panels.close("actioncenter");
+            Updates.setBackgroundDownload(!Updates.backgroundDownload);
+        }
+
+        trailing: Switch {
+            anchors.verticalCenter: parent.verticalCenter
+            checked: Updates.backgroundDownload
+            onToggled: {
+                Panels.close("actioncenter");
+                Updates.setBackgroundDownload(!Updates.backgroundDownload);
+            }
+        }
+    }
+
     ItemRow {
         width: root.width
         icon: Icons.refresh
         title: I18n.t("updates.settings.checkNow")
-        subtitle: Updates.checkingNow ? I18n.t("updates.settings.checking") : root.checkResult === "" ? "" : I18n.t(`updates.settings.check.${root.checkResult}`)
+        subtitle: Updates.checkingNow ? I18n.t("updates.settings.checking") : root.checkResult !== "" ? I18n.t(`updates.settings.check.${root.checkResult}`) : root.lastCheckedText()
         interactive: !Updates.checkingNow
         onClicked: {
             root.checkResult = "";

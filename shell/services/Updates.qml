@@ -47,7 +47,8 @@ Singleton {
     property real upToDateSince: 0
     property real now: Date.now()
     // Paused, nothing reminds of updates, not even security ones: the user looks after them.
-    readonly property bool notify: !paused && (securityCount > 0 || hyprdoraList.length > 0 || (count > 0 && now - upToDateSince >= 7 * 24 * 3600 * 1000))
+    // Ordinary updates wait Settings.updateReminderDays since the system was last up to date.
+    readonly property bool notify: !paused && (securityCount > 0 || hyprdoraList.length > 0 || (count > 0 && now - upToDateSince >= Settings.updateReminderDays * 24 * 3600 * 1000))
 
     // Set in the Updates settings and kept by the system (update-settings), as they also rule its services.
     // A pause lasts until restart, for good ("always"), or until pauseEnd; while paused nothing is checked or
@@ -62,6 +63,10 @@ Singleton {
     // from the system's cache, which its own timer refreshes at the same interval.
     readonly property real intervalMs: (interval === "weekly" ? 7 * 24 : interval === "daily" ? 24 : 3) * 3600 * 1000
     property real flatpaksCheckedAt: 0
+    // When the system last looked for updates, by its timer or by hand, in milliseconds; 0 when not known.
+    property real lastChecked: 0
+    // Whether updates download in the background; off, they are still looked for.
+    property bool backgroundDownload: true
     // A change of these settings or a check asked for by hand is under way.
     readonly property bool changingSettings: settingsChange.running
     readonly property bool checkingNow: manualCheck.running || manualPending
@@ -129,6 +134,7 @@ Singleton {
         stateFile.setText(JSON.stringify({
             upToDateSince: upToDateSince,
             flatpaksCheckedAt: flatpaksCheckedAt,
+            lastChecked: lastChecked,
             announcedVersion: announcedVersion
         }));
     }
@@ -152,6 +158,25 @@ Singleton {
      */
     function setInterval(value) {
         changeSettings(["interval", value]);
+    }
+
+    /**
+     * Turns the background download on or off, asking for the administrator password.
+     * @param {bool} on  whether updates download in the background
+     */
+    function setBackgroundDownload(on) {
+        changeSettings(["download", on ? "on" : "off"]);
+    }
+
+    /**
+     * Keeps a newer time of the last look for updates.
+     * @param {real} time  milliseconds since the epoch
+     */
+    function noteChecked(time) {
+        if (time > lastChecked) {
+            lastChecked = time;
+            saveState();
+        }
     }
 
     function changeSettings(args) {
@@ -211,6 +236,8 @@ Singleton {
     function check(byHand) {
         now = Date.now();
         pulledFile.reload();
+        if (!refreshTime.running)
+            refreshTime.running = true;
         if (paused && !byHand)
             return;
         if (!packageCheck.running)
@@ -269,7 +296,8 @@ Singleton {
         onRun: root.check()
     }
 
-    // key=value lines written by update-settings: pause=always or pause=END (seconds), interval=daily or weekly.
+    // key=value lines written by update-settings: pause=always or pause=END (seconds), interval=daily or weekly,
+    // download=off.
     FileView {
         id: settingsFile
         path: "/etc/hyprdora/updates.conf"
@@ -280,11 +308,13 @@ Singleton {
             root.pausedForGood = pause === "always";
             root.pauseEnd = /^\d+$/.test(pause) ? Number(pause) * 1000 : 0;
             root.interval = value("interval") || "often";
+            root.backgroundDownload = value("download") !== "off";
         }
         onLoadFailed: {
             root.pausedForGood = false;
             root.pauseEnd = 0;
             root.interval = "often";
+            root.backgroundDownload = true;
         }
     }
 
@@ -312,6 +342,21 @@ Singleton {
         }
     }
 
+    // When the system's timer last refreshed the package cache, as "Result=success" and
+    // "ExecMainExitTimestamp=@1795565291"; known since the computer started, so it is kept in the state.
+    Process {
+        id: refreshTime
+        command: ["systemctl", "show", "--timestamp=unix", "-p", "Result,ExecMainExitTimestamp", "dnf-makecache.service"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const success = /^Result=success$/m.test(text);
+                const time = /^ExecMainExitTimestamp=@(\d+)$/m.exec(text);
+                if (success && time)
+                    root.noteChecked(Number(time[1]) * 1000);
+            }
+        }
+    }
+
     Process {
         id: manualCheck
         command: ["pkexec", "/usr/libexec/hyprdora/update-check"]
@@ -325,6 +370,7 @@ Singleton {
                 return;
             }
             root.manualPending = true;
+            root.noteChecked(Date.now());
             root.check(true);
         }
     }
@@ -354,6 +400,7 @@ Singleton {
                 const state = JSON.parse(text());
                 root.upToDateSince = state.upToDateSince ?? 0;
                 root.flatpaksCheckedAt = state.flatpaksCheckedAt ?? 0;
+                root.lastChecked = state.lastChecked ?? 0;
                 root.announcedVersion = state.announcedVersion ?? "";
             } catch (e) {}
         }
